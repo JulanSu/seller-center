@@ -51,7 +51,7 @@ export default{
 				that.longitude=e.point.lng;
 				that.latitude= e.point.lat;
 				that.creatmap(that.longitude,that.latitude);//根据点击的经纬度重绘地图
-				that.$emit("listenToChildEvent",e.point.lng + "," + e.point.lat);//传递值给父组件
+				that.$emit("listenToChildEvent",e.point.lng , e.point.lat);//传递值给父组件
 			});
 		},
 		againmap(p1,p2,addre){//用户通过输入详细地址，构建地图
@@ -69,7 +69,8 @@ export default{
 		            var marker = new BMap.Marker(point);  // 创建标注
 		            map.addOverlay(marker);               // 将标注添加到地图中
 		            marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
-		            that.$emit("listenToChildEvent",point.lng + "," + point.lat);//传递值给父组件
+		            that.$emit("listenToChildEvent",point.lng, point.lat);//传递值给父组件
+		            that.mapevent(map);//给初始化的地图添加事件
 		        }else{
 		            alert("搜索不到哦!");
 		        }
@@ -77,7 +78,7 @@ export default{
 		}
 	},
 	mounted:function() {
-		this.creatmap(this.longitude,this.latitude);
+		this.creatmap(this.latitude,this.longitude);
 	}
 }
 </script>

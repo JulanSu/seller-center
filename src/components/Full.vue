@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="app-container">
     <app-header :sysUserName="sysUserName"></app-header>
     <div class="main">
         <!--导航菜单-->
@@ -7,8 +7,8 @@
       textColor="#fff" activeTextColor="#ffd04b">
         <template v-for="(item,index) in $router.options.routes" v-if="!item.hidden">
           <el-submenu :index="index+''" v-if="!item.leaf">
-            <template slot="title"><i :class="item.iconCls"></i><span slot="title" class="title">{{item.name}}</span></template>
-            <el-menu-item v-for="child in item.children" :index="child.path" v-if="!child.hidden" >{{child.name}}</el-menu-item>
+            <template slot="title"><i :class="item.iconCls"></i><span slot="title" class="side-title">{{item.name}}</span></template>
+            <el-menu-item v-for="child in item.children" :key="child.name" :index="child.path" v-if="!child.hidden" >{{child.name}}</el-menu-item>
           </el-submenu>
           <el-menu-item v-if="item.leaf && item.children.length>0" :index="item.children[0].path" class="sub-title"><i :class="item.iconCls"></i>{{item.children[0].name}}</el-menu-item>
         </template>
@@ -16,15 +16,12 @@
     <section class="content-container">
       <div class="grid-content bg-purple-light">
         <div class="breadcrumb-container">
-          
           <!-- <strong class="title">{{$route.path}}</strong> -->
-          <el-breadcrumb separator="/" class="breadcrumb">
-
-            <el-breadcrumb-item v-for="item in $route.matched" :to="{ path: item.path }">
+          <el-breadcrumb separator="/" class="breadcrumb-router">
+            <el-breadcrumb-item v-for="item in $route.matched" :key="item.path" :to="{ path: item.path }">
              {{ item.name }}
             </el-breadcrumb-item>
           </el-breadcrumb>
-          
         </div>
         <div :span="24" class="content-wrapper">
           <transition name="fade" mode="out-in">
@@ -49,7 +46,7 @@
       }
     },
     created(){
-      console.log(this.$route)
+
     },
     methods: {
       //退出登录
@@ -118,17 +115,19 @@
       color: $color-primary;
       background-color: #35404d;
     }
+
   }
 
   .el-menu--collapse {
     width: 64px;
   }
-  .breadcrumb {
+  .breadcrumb-router {
     position: relative;
     padding-bottom: 20px;
     border-bottom: 1px solid $color-primary;
+    border-radius: 0
   }
-  .container {
+  .app-container {
     position: absolute;
     top: 0px;
     bottom: 0px;

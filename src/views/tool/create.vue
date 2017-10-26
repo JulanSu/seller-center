@@ -1,0 +1,678 @@
+<template>
+    <section class="create-act">
+        <el-form ref="form" :model="form" label-width="130px" style='margin-top:30px'>
+           
+            <el-form-item label="现金券名称">
+                <el-input v-model="form.name" class='name' :maxlength='20'></el-input>
+            </el-form-item>
+
+            <el-form-item label="现金券领取时间">
+                <el-row style='padding-left:10px'>
+                    <el-date-picker type="datetime" placeholder="选择日期时间" v-model="form.getTime[0]" class='w180' :picker-options="pickerOptions0"></el-date-picker>
+                    <span style="margin:0 8px">至</span>
+                    <el-date-picker type="datetime" placeholder="选择日期时间" v-model="form.getTime[1]" class='w180' :picker-options="pickerOptions0"></el-date-picker>
+                </el-row>
+            </el-form-item>
+
+            <el-form-item label="现金券使用期限">
+                <el-radio-group v-model="userTime.type" style="padding-left:10px;">
+                    <el-radio label="有效时间段"></el-radio>
+                    <el-radio label="领取后有效天数"></el-radio>
+                </el-radio-group>
+                <el-row style='margin-top: 10px;padding:0 10px;' v-if="userTime.type =='有效时间段'">
+                    <el-date-picker type="datetime" placeholder="选择日期" v-model="userTime.timeSection[0]" class='w180' :picker-options="pickerOptions0"></el-date-picker>
+                    <span style="margin:0 8px">至</span>
+                    <el-date-picker type="datetime" placeholder="选择时间" v-model="userTime.timeSection[1]" class='w180' :picker-options="pickerOptions0"></el-date-picker>
+                </el-row>
+                <el-row style='margin-top: 10px;padding:0 10px;' v-else>
+                    <el-input v-model="userTime.timeNumber" class='w180' placeholder="请输入天数" :maxlength='10' @blur='isNumber($event)'></el-input>
+                    <span style="margin:0 8px">天</span>
+                </el-row>
+            </el-form-item>
+                
+            <el-form-item label="现金券面值与数量">
+                <el-radio-group v-model="cashType.type" style="padding-left:10px;">
+                    <el-radio label="会员等级券"></el-radio>
+                    <el-radio label="固定金额券"></el-radio>
+                    <el-radio label="满减券"></el-radio>
+                    <el-radio label="折扣券"></el-radio>
+                </el-radio-group>
+                <section class="cash" v-if="cashType.type=='会员等级券'">
+                    <el-row style='margin-top: 10px;' v-for="item in cashType.huiYuan" :key="item.name">
+                        <span class="cash-name">{{item.name}}</span>
+                        <el-input placeholder='请输入' style='width:210px'></el-input>
+                        <span style="margin:0 8px" v-model='item.money' :maxlength="10" @blur='isNumber($event)'>元</span>
+                        <el-input placeholder='发放数量' style='width:120px'></el-input>
+                        <span style="margin:0 8px" v-model='item.count' :maxlength="10" @blur='isNumber($event)'>张</span>
+                    </el-row>
+                </section>
+                <section class="cash" v-if="cashType.type=='固定金额券'">
+                    <el-row style='margin-top: 10px;padding-left: 10px'>
+                        <el-input placeholder='请输入' style='width:210px'></el-input>
+                        <span style="margin:0 8px" :maxlength="10" @blur='isNumber($event)'>元</span>
+                        <el-input placeholder='发放数量' style='width:120px'></el-input>
+                        <span style="margin:0 8px" :maxlength="10" @blur='isNumber($event)'>张</span>
+                    </el-row>
+                </section>
+                <section class="cash" v-if="cashType.type=='满减券'">
+                    <el-row style='margin-top: 10px;padding-left: 10px' v-for='(item,index) in cashType.manJian' :key="item.smallPrice">
+                        <el-input placeholder='现金券面值' style='width:210px' v-model='item.smallPrice' :maxlength="10" @blur='isNumber($event)'></el-input>
+                        <span style="margin:0 8px">————</span>
+                        <el-input placeholder='消费满足金额' style='width:210px' :maxlength="10" @blur='isNumber($event)'></el-input>
+                        <span style="margin:0 8px" v-model='item.largePrice'>元</span>
+                        <el-input placeholder='发放数量' style='width:120px' v-if="index == 0" :maxlength="10" @blur='isNumber($event)'></el-input>
+                        <span style="margin:0 8px" v-if="index == 0">张</span>
+                    </el-row>
+                    <el-row style='margin-top: 10px;padding-left: 10px' class='add' v-if="cashType.manJian.length < 4" >
+                        <div @click="addCash"> + <b>添加</b> </div>
+                    </el-row>
+                </section>
+                <section class="cash" v-if="cashType.type=='折扣券'">
+                    <el-row style='margin-top: 10px;padding-left: 10px'>
+                        <el-input placeholder='请输入' style='width:210px' :maxlength="2" @blur='isNumber($event)'></el-input>
+                        <span style="margin:0 8px">%</span>
+                        <el-input placeholder='发放数量' style='width:120px' :maxlength="10" @blur='isNumber($event)'></el-input>
+                        <span style="margin:0 8px">张</span>
+                    </el-row>
+                    <el-row style='margin-top: 10px;padding-left: 10px'>
+                        <el-input placeholder='请输入' style='width:210px' :maxlength="10" @blur='isNumber($event)'></el-input>
+                        <span style="margin:0 8px">元起用</span>
+                    </el-row>
+                    <el-row style='margin-top: 10px;padding-left: 10px'>
+                        <el-input placeholder='请输入' style='width:210px' :maxlength="10" @blur='isNumber($event)'></el-input>
+                        <span style="margin:0 8px">最多抵扣金额元</span>
+                    </el-row>
+                </section>
+              </el-form-item>
+
+            <el-form-item label="抵扣券价格">
+                <el-radio-group v-model="cashFree.type" style="padding-left:10px;">
+                  <el-radio label="免费"></el-radio>
+                  <el-radio label="付费"></el-radio>
+                </el-radio-group>
+                <el-row style='margin-top: 10px;padding-left:10px' v-if='cashFree.type =="付费"'>
+                    <el-input placeholder='现金值' style='width:210px' v-model
+                    ='cashFree.count' :maxlength="10" @blur='isNumber($event)'></el-input>
+                    <span style="margin:0 8px">元</span>
+                </el-row>
+            </el-form-item>
+
+            <el-form-item label="适用商品范围">
+                <el-radio-group v-model="forProduct.type" style="padding-left:10px;">
+                    <el-radio label="全部商品通用"></el-radio>
+                    <el-radio label="部分商品通用"></el-radio>
+                </el-radio-group>
+                <el-row v-if='forProduct.type == "部分商品通用"'>
+                    <div class="area">
+                        <div class='add-pro' @click="dialogProduct = true">
+                            <p>+</p>
+                            <span>添加商品</span>
+                        </div>
+                        <div class="img-con" v-for="item in forProduct.product" @mouseenter="item.deleteBtn=true" @mouseleave="item.deleteBtn=false" :key="item.productId">
+                            <img :src="item.productPicsUrl" alt="">
+                            <i class="el-icon-circle-cross" v-if='item.deleteBtn' @click='deleteProduct(item)'></i>
+                            <p>{{item.productTitle}}</p>
+                        </div>
+                    </div>
+                </el-row>
+            </el-form-item>
+
+            <el-form-item label="领取成功后提示" style="padding-left:10px">
+                <el-input style='width:520px' v-model='form.tips' :maxlength="30"></el-input>
+                <el-row class="tips">
+                    如无特殊说明，一律默认为“先谈单再出示现金券，可直接抵扣订单合同金额”，不能超过30个汉字
+                </el-row>
+            </el-form-item>
+
+            <el-form-item label="现金券详情页图" style="padding-left:10px">
+                <el-row class="tips">
+                   图片尺寸200px*200px以上，大小800k以内，格式要求jpg、jpeg、png
+                </el-row>
+                <el-upload class="img-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+                    <div class="picture" v-if="imageUrl" @mouseenter='showAgainBtn=true' @mouseleave='showAgainBtn=false'>
+                        <img :src="imageUrl" class="avatar">
+                        <p v-if='showAgainBtn'>重新上传</p>
+                    </div>
+                    <div v-else>
+                        <p>+</p>
+                        <span>添加上传图片</span>
+                    </div>
+                </el-upload>
+            </el-form-item>
+
+            <el-form-item label="现金券使用规则" style="padding-left:10px" class='textarea-con'>
+                <el-input type="textarea" v-model="form.rule" :maxlength='300'></el-input>
+            </el-form-item>
+
+            <el-form-item>
+                <el-button type="primary" @click="onSubmit" class='btn' :disabled="status">立即创建</el-button>
+            </el-form-item>
+        </el-form>
+        <!-- 选择商品弹窗 -->
+       <el-dialog title="添加商品" :visible.sync="dialogProduct" custom-class='pro-dialog' top="20%" :close-on-click-modal='false'>
+            <div class="pro-container">
+                <div class="pro-item" v-for="item in allProduct" @click='checkProduct(item)' :key="item.productId">
+                    <div class="img-con">
+                        <img :src="item.productPicsUrl" alt="">
+                        <div class="mask" v-if="item.checked"></div>
+                        <i class="el-icon-circle-check" v-if="item.checked"></i>
+                    </div>
+                    <p>{{item.productTitle}}</p>
+                </div>
+            </div>
+            <el-button type="primary" @click="sureCheck" class='check-btn'>提交</el-button>
+        </el-dialog>
+    </section> 
+</template>
+
+<script>
+    import axios from 'axios';
+    import { productList , createAct} from '@/api/toolApi';
+    export default {
+        data() {
+            return {
+                status: false,
+                dialogProduct: false,
+                imageUrl: '',
+                showAgainBtn: false,
+                userTime: {
+                    type: '有效时间段',
+                    timeSection: ['', ''],
+                    timeNumber: ''
+                },
+                pickerOptions0: {
+                    disabledDate(time) {
+                        return time.getTime() < Date.now();
+                    }
+                },
+                form: {
+                    name: '',
+                    getTime: ['',''],
+                    tips: '先谈单再出示现金券，可直接抵扣订单合同金额',
+                    rule: ''
+                },
+                cashType: {
+                    type: '满减券',
+                    huiYuan: [
+                        {name: '新会员', money: '', count: ''},
+                        {name: '老会员', money: '', count: ''},
+                        {name: 'VIP会员', money: '', count: ''},
+                        {name: '金卡会员', money: '', count: ''}
+                    ],
+                    guDing:{money: '', count: ''},
+                    manJian:[
+                        {smallPrice: '', largePrice: '', count: ''},
+                    ],
+                    zhekou: {percent: '', count: '', min: '', max: ''}
+                },
+                cashFree: {
+                    type: '免费',
+                    count: '' 
+                },
+                forProduct: {
+                    type: '全部商品通用',
+                    product: []
+                },
+                allProduct: [],
+            }
+        }, 
+        created(){
+            let self = this;
+            productList({'storeId':'1'}).then(res => {
+                self.allProduct = [...res.data.data]
+            })
+            if(self.$route.query.status != undefined){
+                self.status = self.$route.query.status;
+            }
+        },
+        watch:{
+            form:{
+                handler(val){
+                    this.getTimeChange(val)
+                },
+                deep:true
+            },
+            userTime:{
+                handler(val){
+                    this.userTimeChange(val)
+                },
+                deep:true
+            }
+            
+        },
+        methods: {
+            /*领取时间选择*/
+            getTimeChange(val){
+                let self = this;
+                let startTime = Date.parse(val.getTime[0]); 
+                let endTime = Date.parse(val.getTime[1]); 
+                let localDayEnd = new Date(new Date().toLocaleDateString()).getTime() + 24*60*60*1000 -1;  
+                if(startTime < localDayEnd){
+                    self.form.getTime[0] = '';
+                    self.warn('不可小于今天的23:59:59')
+                }
+                if(endTime < startTime){
+                    self.form.getTime[1] = '';
+                    self.warn('不可小于开始时间')
+                }
+                self.userTimeChange(self.userTime)
+            },
+            /*使用时间选择*/
+            userTimeChange(val){
+                let self = this;
+                let getStartTime = Date.parse(self.form.getTime[0]);
+                let userStartTime = Date.parse(val.timeSection[0]); 
+                let userEndTime = Date.parse(val.timeSection[1]);
+                if(userStartTime < getStartTime){
+                    self.userTime.timeSection[0] = '';
+                    self.warn('不可小于领取开始时间')
+                }
+                if(userEndTime < userStartTime){
+                    self.userTime.timeSection[1] = '';
+                    self.warn('不可小于开始时间')
+                }
+            },
+            addCash(){
+                let self = this,
+                    addObject = {smallPrice: '', largePrice: '', count: ''};
+                self.cashType.manJian.push(addObject);
+            },
+            /*选取商品*/
+            checkProduct(item){
+                let self = this;
+                item.checked = !item.checked;
+            },
+            sureCheck(){
+                let self = this;
+                self.dialogProduct = false;
+                self.forProduct.product = [];
+                for(let i=0; i<self.allProduct.length; i++){
+                    let that = self.allProduct[i];
+                    if(that.checked){
+                        self.forProduct.product.push(that);
+                    }
+                }
+                for(let i=0; i<self.forProduct.product.length; i++){
+                    let that = self.forProduct.product[i];
+                    self.$set(that,'deleteBtn',false);
+                }
+            },
+            /*删除商品*/
+            deleteProduct(item){
+                var self = this;
+                self.removeArrItem(self.forProduct.product, item)
+            },
+            /*上传图片规则*/
+            handleAvatarSuccess(res, file) {
+                this.imageUrl = URL.createObjectURL(file.raw);
+            },
+            beforeAvatarUpload(file) {
+                const isJPG = (file.type === 'image/jpeg' || file.type === 'image/png');
+                const isLt2M = file.size / 1024 < 800;
+                if (!isJPG) {
+                  this.$message.error('上传图片只能是png/jpg/jpeg格式!');
+                }
+                if (!isLt2M) {
+                  this.$message.error('上传图片大小不能超过 800K!');
+                }
+                return isJPG && isLt2M;
+            },
+            /*数组删除指定元素*/
+            removeArrItem(arr, val){
+                for(var i=0; i<arr.length; i++) {
+                    if(arr[i] == val) {
+                        arr.splice(i, 1);
+                        break;
+                    }
+                }
+            },
+            /*消息警告*/
+            warn(str){
+                this.$message({
+                    message: str,
+                    type: 'warning'
+                })
+            },
+            /*校验数字*/
+            isNumber(e){
+                let self = this;
+                let flag = /^[0-9]{1,10}$/.test(e.target.value)
+                if(!flag){
+                    e.target.value = ''
+                    if(e.target.attributes["maxlength"].value == 2){
+                        self.warn('请输入1-99的整数');
+                        return false;
+                    }
+                    self.warn('请输入数字')
+                }
+            },
+            /*提交表单数据*/
+            onSubmit(){
+                let self = this;
+                if(self.form.name == '' || self.form.getTime[0] == '' || self.form.getTime[1] == '' || self.form.tips == '' || self.form.rule == ''){
+                    return false;
+                }
+                
+                let postData = {
+                    "marketingCouponName现金券名称":"string",
+                    "couponReceiveBeginTime领取开始时间":"2017-10-24T05:49:41.469Z",
+                    "couponReceiveEndTime领取结束时间":"2017-10-24T05:49:41.469Z",
+                    "couponUseTimeType优惠券使用期限 0:有效时间段，1:领取后有效天数":0,
+                    "couponUseBeginTime使用开始时间":"2017-10-24T05:49:41.469Z",
+                    "couponUseEndTime使用结束时间":"2017-10-24T05:49:41.469Z",
+                    "couponUseDays领取后有效天数":0,
+
+                    "couponUseType现金券使用类型 0:会员等级，1固定金额，2，满减券，3折扣券":0,
+                    "couponUserLevel会员等级 0:新会员，1老会员，2，VIP会员，3金卡会员":0,//数组
+                    "couponUseMoney现金券金额":0,
+                    "couponDeliveryNum现金券领取数量":0,
+                    "couponMaxMoney现金券最大使用金额":0,
+                    "couponMinMoney现金券最小使用金额，满减券则是满xx金额":0,
+
+                    "couponAmount现金券价值金额 大于0时为购买价格":0,
+                    "buyProductId购买现金券商品ID":0,
+                    "couponReceiveTips领取成功后提示":"string",
+                    "couponDetailPic详情页图片地址":"string",
+                    "couponUseRule现金券使用规则":"string",
+                    "couponType现金券类型 0: 平台券，1:商家券":1,
+                    "marketingToolsId营销工具ID":0,
+                    "storeId店铺ID":0,
+                }
+                self.postData()
+            },
+            postData(){
+                console.log(7777)
+            }
+        },
+        mounted(){
+
+        }
+    }
+
+</script>
+
+<style lang="scss">
+    $color: #45cdb6;
+    .create-act {
+        width: 100%;
+        float: left;
+    }
+    .name{
+        margin-left: 10px;
+        width: 280px;
+    }
+    .cash{
+        .el-col{
+            padding: 0;
+        }
+        .cash-name{
+            display: inline-block;
+            width: 70px;
+            text-align: right;
+            margin-right: 8px;
+        }
+        .add{
+            font-size:25px;
+            overflow: hidden;
+            height: 30px;
+            position: relative;
+            color:#41cac0;
+            div{
+                width: 80px;
+                cursor: pointer;
+                 b{
+                    position: absolute;
+                    display: inline-block;
+                    height: 30px;
+                    line-height: 37px;
+                    font-weight: 400;
+                    font-size: 14px;
+                    margin-left: 10px;
+                }
+            }
+        }
+    }
+    .area{
+        margin: 10px 0 0 10px;
+        width: 820px;
+        height:184px;
+        background:#f5f7fa;
+        padding: 20px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        .add-pro{
+            float: left;
+            width: 100px;
+            height: 100px;
+            border:1px dashed #cccccc;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            p{
+                margin:18px 0 5px;
+                font-size: 80px;
+                color:#41cac0;
+            }
+            span{
+                font-size:14px;
+                color:#666666;
+            }
+        }
+        .img-con{
+            display: inline-block;
+            vertical-align: top;
+            width: 100px;
+            position: relative;
+            img{
+                width: 100px;
+                height: 100px;
+            }
+            i{
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                font-size: 16px;
+                cursor:pointer;
+                color: $color;
+                background: #fff;
+                border-radius: 8px;
+            }
+            p{
+                width: 100px;
+                font-size: 12px;
+                color: #666666;
+                line-height: 150%;
+                overflow:hidden; 
+                text-overflow:ellipsis;
+                display:-webkit-box; 
+                -webkit-line-clamp:2; 
+                /* autoprefixer: off*/
+                -webkit-box-orient: vertical;
+                /* autoprefixer: on*/
+            }
+        }
+        .img-con:nth-of-type(n+2){
+            margin-left: 10px;
+        }
+        .img-con:nth-of-type(n+8){
+            margin-top: 10px;
+        }
+        .img-con:nth-of-type(7n+1){
+            margin-left: 0;
+        }
+    }
+    .grade{
+        text-align: right;
+        margin-right: 10px;
+    }
+    .w180{
+        width:180px;
+    }
+    .tips{
+        font-size:12px;
+        color:#999999;
+    }
+    .img-uploader{
+        .el-upload--text{
+            width: 100px;
+            height: 100px;
+            border:1px dashed #cccccc;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            border-radius: none;
+            p{
+                margin:18px 0 5px;
+                font-size: 80px;
+                color:#41cac0;
+            }
+            span{
+                font-size:14px;
+                color:#666666;
+            }
+            .picture{
+                width:100%;
+                height: 100%;
+                position: relative;
+                p{
+                    position: absolute;
+                    bottom: 0;
+                    background: rgba(0,0,0,0.40);
+                    height: 24px;
+                    line-height: 24px;
+                    font-size: 12px;
+                    color: #FFFFFF;
+                    margin:0;
+                    width: 100%;
+                }
+                img{
+                    width: 100%;
+                    height: 100%;
+                }
+            }  
+        }   
+    }
+    .textarea-con{
+        .el-textarea{
+            padding-top:10px;
+            textarea{
+                width: 520px;
+                height: 150px;
+                resize: none;
+            }
+        }
+    }
+    .btn{
+        margin-left: 10px;
+        width: 100px;
+        height: 34px;
+        background:#41cac0;
+    }
+    /*弹窗样式*/
+    .pro-dialog{
+        width: 750px;
+        height: 580px;
+        .el-dialog__header{
+            padding: 0;
+            background: $color;
+            height: 52px;
+            line-height: 52px;
+            padding: 0 20px;
+            font-size: 16px;
+            span{
+                color: #fff;
+            }
+            .el-dialog__headerbtn{
+                padding-top:15px;
+                font-size: 14px;
+                i{
+                    color: #fff;
+                }
+            }
+        }
+        .el-dialog__body{
+            padding: 20px;
+            .pro-container{
+                height: 408px;
+                background: #F5F7FA;
+                border: 1px solid #DDDDDD;
+                padding: 20px;
+                overflow-x: hidden;
+                .pro-item{
+                    width: 100px;
+                    float: left;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    overflow: hidden;
+                    cursor: pointer;
+                    .img-con{
+                        width: 100px;
+                        height: 100px;
+                        position: relative;
+                        img{
+                            width: 100%;
+                            height: 100%
+                        }
+                        .mask{
+                            position: absolute;
+                            width: 100px;
+                            height: 100px;
+                            top: 0;
+                            background: rgba(51,51,51,0.49);
+                        }
+                        i{
+                            color: $color;
+                            font-size: 16px;
+                            position: absolute;
+                            right: 5px;
+                            top: 5px;
+                            background: #fff;
+                            border-radius: 7px 7px 8px 8px;
+                        }
+                    }
+                    p{
+                        width: 100px;
+                        font-size: 12px;
+                        color: #666666;
+                        margin-top: 10px;
+                        overflow:hidden; 
+                        text-overflow:ellipsis;
+                        display:-webkit-box; 
+                        -webkit-line-clamp:2; 
+                        /* autoprefixer: off*/
+                        -webkit-box-orient: vertical;
+                        /* autoprefixer: on*/
+                    }
+                }
+                .pro-item:nth-of-type(n+2){
+                    margin-left: 10px;
+                }
+                .pro-item:nth-of-type(6n+1){
+                    margin-left: 0;
+                }
+                .pro-item:nth-of-type(n+7){
+                    margin-top: 20px;
+                }
+            }
+            .check-btn{
+                width: 90px;
+                height:34px;
+                color: #fff;
+                font-size: 14px;
+                margin-top: 20px;
+                float: right;
+            }
+        }
+    }
+    .el-time-spinner{
+        box-sizing: content-box !important;
+        *{
+            box-sizing: content-box !important;
+        }
+    }
+</style>

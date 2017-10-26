@@ -1,5 +1,5 @@
 <template>
-  <div class="header navbar">
+  <div class="app-header app-navbar">
       <div class="logo logo-width">
         {{sysName}}
       </div>
@@ -30,7 +30,7 @@
 <script>
 
 export default {
-  name: 'header',
+  name: 'app-header',
   data(){
     return {
     }
@@ -58,14 +58,14 @@ export default {
 </script>
 <style lang="scss">
   @import '~scss_vars';
-  .navbar {
+  .app-navbar {
       position: relative;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
   }
-    .header {
+    .app-header {
       box-shadow:0 2px 5px 0 rgba(204,204,204,0.50);
       height: 60px;
       line-height: 60px;

@@ -2,7 +2,6 @@ import axios from 'axios';
 
 let base = '';
 let host = 'http://localhost:8080/Urban/rest';
-var rootIP = process.env.API_ROOT;
 
 export const requestLogin = params => { return axios.post(`${base}/login`, params).then(res => res.data); };
 
@@ -26,3 +25,4 @@ export const addUser = params => { return axios.get(`${base}/user/add`, { params
 export const getInfoList = params => { return axios.get(`${base}/info/list`, {params:params}); };
 // 联系我们
 export const getTelephone = params=>{return axios.get(`${base}/telephone/list`, {params:params});};
+

@@ -62,7 +62,7 @@
                 });
               } else {
                 sessionStorage.setItem('user', JSON.stringify(user));
-                this.$router.push({ path: '/seller-management/create-goods' });
+                this.$router.push({ path: '/seller-management/goods' });
               }
             });
           } else {
