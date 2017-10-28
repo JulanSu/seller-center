@@ -13,18 +13,21 @@
         </div>
         <el-menu default-active="" unique-opened class="category-menu" v-if="categoryData.length">
           <template  v-for="(item, index) in categoryData">
-            <el-submenu :index="index+''" v-if="item.subCate && item.subCate.length && item.cateName">
-              <template slot="title">{{item.cateName}}</template>
-              <template v-if="item.subCate && item.subCate.length" v-for="(items, index) in item.subCate">
-                <el-menu-item :index="items.cateId" @click="selectCateName(items, index)">{{items.cateName}}<i class="el-icon-arrow-right"></i></el-menu-item>
+            <el-menu-item :index="index+''" class="sub-title" @click="selectproductCateName(item, index)">
+              <span class="first-letter" v-if="showLetterIcon">A</span>{{item.productCateName}}<i class="el-icon-arrow-right" v-if="item.child && item.child.length"></i>
+            </el-menu-item>
+<!--             <el-submenu :index="index+''" v-if="item.child && item.child.length && item.productCateName">
+              <template slot="title">{{item.productCateName}}</template>
+              <template v-if="item.child && item.child.length" v-for="(items, index) in item.child">
+                <el-menu-item :index="items.cateId" @click="selectproductCateName(items, index)">{{items.productCateName}}<i class="el-icon-arrow-right"></i></el-menu-item>
               </template>
-            </el-submenu>
-            <el-menu-item v-if="!item.subCate || !item.subCate.length && item.cateName" :index="index+''" class="sub-title" @click="selectCateName(item, index)"><span class="first-letter" v-if="showLetterIcon">A</span>{{item.cateName}}<i class="el-icon-arrow-right" v-if="item.category.length"></i></el-menu-item>
+            </el-submenu> -->
+<!--             <el-menu-item v-if="!item.child || !item.child.length && item.productCateName" :index="index+''" class="sub-title" @click="selectproductCateName(item, index)"><span class="first-letter" v-if="showLetterIcon">A</span>{{item.productCateName}}<i class="el-icon-arrow-right" v-if="item.category.length"></i></el-menu-item> -->
           </template>     
         </el-menu>
         <el-menu default-active="" unique-opened class="category-menu search-list" v-if="searchList.length">
           <template  v-for="(item, index) in searchList">
-            <el-menu-item v-if="!item.subCate || !item.subCate.length && item.cateName" :index="index+''" class="sub-title" @click="selectCateName(item, index)"><span class="first-letter" v-if="showLetterIcon">A</span>{{item.cateName}}<i class="el-icon-arrow-right" v-if="item.category.length"></i></el-menu-item>
+            <el-menu-item v-if="!item.child || !item.child.length && item.productCateName" :index="index+''" class="sub-title" @click="selectproductCateName(item, index)"><span class="first-letter" v-if="showLetterIcon">A</span>{{item.productCateName}}<i class="el-icon-arrow-right" v-if="item.child.length"></i></el-menu-item>
           </template>     
         </el-menu>
       </div>
@@ -33,14 +36,13 @@
 </template>
 
 <script>
-
     export default {
         data() {
           return {
             searchList: [],
             keywords: '',
             searchValue: '',
-            curCateName: [],
+            curproductCateName: [],
             categoryNavIndex: 0,
             categoryDataCache: [],
             secoundCategoryData: []
@@ -85,6 +87,7 @@
           }
         },
         mounted () {
+          console.log('计算数据',this.categoryData)
           this.categoryDataCache = this.categoryData
         },
         methods: {
@@ -102,7 +105,7 @@
                         'ename'
                     ]) ||
                     reg.test(this.categoryData[i][
-                        'cateName'
+                        'productCateName'
                     ])
                 ){
                     _arr.push(this.categoryData[i]);
@@ -111,11 +114,11 @@
               this.searchList = _arr
             }  
           },
-          selectCateName (row, index) {
+          selectproductCateName (row, index) {
             let self = this
             this.$emit('categoryClick', row, index)
           },
-          getCateName(){
+          getproductCateName(){
 
           }
         }

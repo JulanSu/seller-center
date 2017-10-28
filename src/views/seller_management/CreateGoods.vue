@@ -5,7 +5,6 @@
         <el-row>
           <el-col :span="8">
             <category-menu title="一级类目" v-if="categoryData.length" :categoryData="categoryData" @categoryClick="firstHandle">
-              
             </category-menu>
           </el-col>
           <el-col :span="8">
@@ -19,8 +18,8 @@
           <span class="icon-arrow-top arrow-top-a"><span class="icon-arrow-top arrow-top-b"></span></span>
           <el-breadcrumb separator=">">
             <span class="breadcrumb-tips">你当前选择的是：</span>
-            <template v-if="curCateName.length" v-for="item in curCateName">
-              <el-breadcrumb-item>{{item.cateName}}</el-breadcrumb-item>
+            <template v-if="curCateGroup.length" v-for="item in curCateGroup">
+              <el-breadcrumb-item>{{item.productCateName}}</el-breadcrumb-item>
             </template>
           </el-breadcrumb>
         </div>
@@ -28,7 +27,7 @@
           <div style="text-align: center">
             <el-button type="primary" @click="linkGoodsForm">我已阅读以下规则，现在创建商品</el-button>
             <div class="block">
-              <el-checkbox v-model="checked">中国婚博会规则</el-checkbox>
+              <el-checkbox v-model="hunbohuiRule">中国婚博会规则</el-checkbox>
             </div>
           </div>
           <div class="guize">
@@ -55,98 +54,88 @@
 </template>
 
 <script>
+    const win = window;
+    const storeId = win.storeInfo && win.storeInfo.storeId ? win.storeInfo.storeId : ''
     import CategoryBar from '@/components/CategoryBar'
     import CategoryMenu from './components/CategoryMenu'
+    import { getGoodsCategoryList } from '@/api/seller'
     export default {
       components: { CategoryMenu, CategoryBar },
       data() {
         return {
-          curCateName: [],
-          checked: true,
+          storeId: storeId,
+          curCateGroup: [],
+          curCateRow: [],
+          hunbohuiRule: true,
           categoryBarTitle: '商品类目选择',
-          categoryData: [{
-            cateName:'大家电',
-            cateId:'222', 
-            ename:'dajia',
-            category:[{
-              cateName:'小家电',
-              ename:'fushixiebao', 
-              cateId:'2334', 
-              category:[{
-                cateName:'迷你家电',
-                ename:'fushixiebao', 
-                cateId:'24445', 
-                category:[]
-              }]
-            },{
-              cateName:'你好',
-              ename:'fushixiebao', 
-              cateId:'2334', 
-              category:[]
-            }]
-          },{
-            cateName:'迷你家电',
-            ename:'mini', 
-            cateId:'24445', 
-            category:[]
-          }],
+          categoryData: [],
           secoundCategoryData:[],
           thirstCategoryData:[]
         }
       },
       mounted: function () {
+        this.getGoodsCategory(this.storeId);
       },
       created(){
         //this.getGoodsCategory()
       },
       methods: {
+
         linkGoodsForm (){
-          console.log(this.curCateName)
-          var curCate = this.curCateName
+          console.log(this.curCateRow)
+          if(!this.hunbohuiRule) {
+            return;
+          }
+          var curCate = this.curCateGroup
           if(!curCate[2]) {
-            return false
+            return;
           }else {
             this.$router.push({
                 name: '新建',
                 query: {
-                  productCateId: curCate[2]['cateId'],
-                  cateName: curCate[2]['cateName']
+                  productCateId: curCate[2]['productCateId'],
+                  productCateName: curCate[2]['productCateName']
                 }
               })
           }
 
         },
-        getGoodsCategory(){
-          getGoodsCategoryList.then((res) => {
+        getGoodsCategory(storeId){
+          var self = this;
+          getGoodsCategoryList({
+            storeId: storeId
+          }).then((res) => {
             console.log(res)
+            if(res.data.code === 0) {
+              self.categoryData = res.data.data
+            }
             //NProgress.done();
           });
-        },
-        firstHandle (row, index){
-          // this.curCateName.push(row.cateName)
-          this.curCateName = []
-          console.log(row) 
-          this.getCurCateName(0, row)
-          
-          if(row.category.length) {
-            this.secoundCategoryData = row.category
-          }else {
-            this.secoundCategoryData = []
-            this.thirstCategoryData = []
-          }
-        },
-        secondHandle (row, index) {
-          this.curCateName.slice(2)
-          this.getCurCateName(1, row)
-          this.thirstCategoryData = row.category
 
         },
-        thirdHandle (row, index){
-          this.getCurCateName(2, row)
-          console.log(row, index)
+        firstHandle (row, index){
+          this.curCateGroup = []
+          this.getcurCateGroup(0, row)
+          this.secoundCategoryData = []
+          this.thirstCategoryData = []
+          this.secoundCategoryData = row.child
         },
-        getCurCateName (index, row){
-          this.$set(this.curCateName, index, row)
+        secondHandle (row, index) {
+          this.thirstCategoryData = []
+          this.thirstCategoryData = row.child
+          this.getcurCateGroup(1, row)
+        },
+        thirdHandle (row, index){
+          this.getcurCateGroup(2, row)
+        },
+        getcurCateGroup (index, row){
+          this.curCateRow = row
+
+          this.$set(this.curCateGroup, index, row)
+          if(index === 1 && this.curCateGroup.length === 3) {
+            this.curCateGroup.splice(index+1,1)
+          }
+          
         }
       }
     }

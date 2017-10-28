@@ -2,11 +2,11 @@
   <div class="goods-form">
     <el-form :model="goodsForm" :rules="goodsFormRules" ref="goodsForm" label-width="120px">
       <el-form-item label="当前类目" prop="cate">
-        {{initForm.cateName}}
+        {{initForm.productCateName}}
       </el-form-item>
 
       <el-form-item label="选择品牌" prop="brandId">
-        <el-select v-model="goodsForm.brandId" placeholder="选择品牌">
+        <el-select v-model.number="goodsForm.brandId" placeholder="选择品牌">
           <template v-for="brand in initForm.brandDTOList">
             <el-option :label="brand.nameCn" :value="brand.brandId" :key="brand.nameCn">{{brand.nameCn}}</el-option>
           </template>
@@ -23,7 +23,7 @@
       </el-form-item>
 
     <el-form-item label="类目属性" prop="productCateProperty">
-      <cate-property :catePropertyData="initForm.productCateProperty"></cate-property>
+      <cate-property v-if="initForm.productCateProperty.length" :catePropertyData="initForm.productCateProperty"></cate-property>
     </el-form-item> 
 
     <el-form-item label="商品规格" prop="catePropertyGroupList">
@@ -67,7 +67,7 @@
                 <table cellspacing="0" cellpadding="0" border="0" class="el-table__body" style="width: 100%">
                   <tbody>
                     <template v-for="productSku in goodsForm.productSkuTable">
-                      <tr class="el-table__row" v-if="productSku.data.length >= initForm.productSkuLength">
+                      <tr class="el-table__row">
 
                         <td v-for="data in productSku.data">
                           <div class="cell">{{data.value}}</div>
@@ -113,7 +113,7 @@
                     <tr class="el-table__row">
                       <td >
                         <div class="cell">
-                          <input class="" v-model="goodsForm.productSellPrice" />
+                          <input class="" v-model.number="goodsForm.productSellPrice" type="number" />
                         </div>
                       </td>
                       <td>
@@ -140,7 +140,7 @@
 
       <el-form-item label="服务范围" prop="sysArea">
         <el-select v-model="goodsForm.sysArea" multiple placeholder="请选择服务范围">
-          <template v-for="sysArea in initForm.sysAreaList">
+          <template v-if="initForm.sysAreaList" v-for="sysArea in initForm.sysAreaList">
             <el-option :label="sysArea.areaName" :value="sysArea.sysAreasId" :key="sysArea.areaName">
             </el-option>
           </template>
@@ -200,7 +200,10 @@
   import LogisticsServices from './goods_form/LogisticsServices.vue'
   import VueQuillEditor from 'vue-quill-editor'
   import { getStrLength } from '@/util/validator'
-
+  import { getGoodsFormData } from '@/api/seller'
+  const win = window;
+  const storeId = win.storeInfo && win.storeInfo.storeId ? win.storeInfo.storeId : ''
+  console.log('店铺ID', storeId)
   export default {
     components: {
       CategoryBar, 
@@ -218,18 +221,31 @@
       return {
         //表单提交所需要的数据结构
         goodsForm: {
-          productCateId: '', //类目ID
+          productCateId: 24, //类目ID
           brandId: '', //品牌ID
+          storeId: storeId,
           productTitle: '', //商品标题
           sellingPoint: '', //商品卖点
           storeCateList: [],//店铺中分类
           catePropertyGroupList: [], 
           productCatePropertyValue: [],
-          productPicUrlList: ['','',''], //商品图片列表 链接LIST
-          productSkuTable: [], //商品销售规格
+          productPicUrlList: ['http://3.tthunbohui.cn/n/00400M0y003100iFPx00aH8-c300x225-1ab9ae.jpg','http://3.tthunbohui.cn/n/00400M0y003100iFPx00aH8-c300x225-1ab9ae.jpg','http://3.tthunbohui.cn/n/00400M0y003100iFPx00aH8-c300x225-1ab9ae.jpg'], //商品图片列表 链接LIST
+          productSkuTable: [{
+            productPrice: 999,
+            productSkuQuantity: 100,
+            data:[{
+              id: 111,
+              name: '颜色',
+              value: '红色'
+            },{
+              id: 222,
+              name: '尺码',
+              value: 'L'
+            }]
+          }], //商品销售规格
           detailsContent: '这是在测试文本', //富文本
           sysArea: '', //服务范围 逗号隔开
-          shippingTemplateId: '', //物流模板ID
+          shippingTemplateId: 3333, //物流模板ID
           publishTime: '', //上架时间
           productRecommend: '', //是否推荐
           productStatus: '', //提交状态
@@ -237,21 +253,13 @@
         },
         //初始化表单时数据结构
         initForm: {
+          productCateName: '',
           //上架时间类型
           publishTimeType: '',
           //商品销售规格
           sellFormat: [],
           //服务范围
-          sysAreaList:[{
-            areaName: '杭州',
-            sysAreasId: 3331
-          },{
-            areaName: '宁波',
-            sysAreasId: 555
-          },{
-            areaName: '上海',
-            sysAreasId: 4444
-          }], 
+          sysAreaList:[], 
           storeShippingTemplate: {
             peisongArea: [
               {city: [], price: 12323, count: 222, cprice: 333},
@@ -288,84 +296,10 @@
             storeCateId: 13131            
           }],
           //商品销售规格
-          productSkuProperty: [{
-            cateConnector: '-',
-            catePropertyInputLimit: 0,
-            catePropertyName: '颜色',
-            catePropertyParentId: 1,
-            catePropertyRequired: 1, //0,1
-            catePropertySelection: 1,
-            catePropertyUnit: '',
-            options: [{
-              catePropertyValue: '红色',
-              productCatePropertyValuesId: 1
-            },{
-              catePropertyValue: '黄色',
-              productCatePropertyValuesId: 2
-            }],
-            productCatePropertyId: 3333111,
-            values: []
-
-          },{
-            cateConnector: '-',
-            catePropertyInputLimit: 0,
-            catePropertyName: '尺码',
-            catePropertyParentId: 1,
-            catePropertyRequired: 1, //0,1
-            catePropertySelection: 1,
-            catePropertyUnit: '',
-            options: [{
-              catePropertyValue: '175',
-              productCatePropertyValuesId: 1111
-            },{
-              catePropertyValue: '170',
-              productCatePropertyValuesId: 2222
-            },{
-              catePropertyValue: '180',
-              productCatePropertyValuesId: 2333
-            }],
-            productCatePropertyId: 3333111,
-            values: []
-
-          }] , //商品规格
+          productSkuProperty: [] , 
+          //商品规格
           skuPropertyData: [],
-          productCateProperty: [{
-            cateConnector: '-',
-            catePropertyInputLimit: 0,
-            catePropertyName: '母婴',
-            catePropertyParentId: 1,
-            catePropertyRequired: 1, //0,1
-            catePropertySelection: 1,
-            catePropertyUnit: '',
-            options: [{
-              catePropertyValue: '玩具',
-              productCatePropertyValuesId: 1
-            },{
-              catePropertyValue: '旅行',
-              productCatePropertyValuesId: 2
-            }],
-            productCatePropertyId: 3333111,
-            values: ''
-
-          },{
-            cateConnector: '-',
-            catePropertyInputLimit: 0,
-            catePropertyName: '家具',
-            catePropertyParentId: 123,
-            catePropertyRequired: 1444, //0,1
-            catePropertySelection: 2,
-            catePropertyUnit: '',
-            options: [{
-              catePropertyValue: '桌子',
-              productCatePropertyValuesId: 5555
-            },{
-              catePropertyValue: '茶几',
-              productCatePropertyValuesId: 4444
-            }],
-            productCatePropertyId: 3333111,
-            values: ''
-
-          }],
+          productCateProperty: [],
 
         },
         //表单校验
@@ -394,9 +328,9 @@
             }, message: '商品卖点最多不超过50个', trigger: 'change' 
             },
           ],
-          productCateProperty: [
-            { required: true, message: '请选择类目属性', trigger: 'blur' }
-          ],
+          // productCateProperty: [
+          //   { required: true, message: '请选择类目属性', trigger: 'blur' }
+          // ],
           productSkuTable: [
             {required: true, message: '请先选择商品销售规格', trigger: 'blur'}
           ],
@@ -413,6 +347,10 @@
     },
     computed: {
 
+
+      productSellPrice: function(val){
+        console.log(val)
+      },
       titleRulesClass: function(value){
 
         var productTitleRules = this.initForm.productTitleRules;
@@ -430,10 +368,64 @@
     watch: {
     
     },
+
     created() {
+
+      this.initFormData(this.$route.query)
       this.initProductSkuProperty()
     },
     methods: {
+      /**
+       * initFormData 初始化表单数据（加载表单默认数据）
+       * @param  { Object } route 路由查询信息
+       * @return {[type]}       [description]
+       */
+      initFormData(query) {
+
+        let goodsForm = this.goodsForm
+        let initForm = this.initForm
+        //判断是否存在类目ID
+        if(query.productCateId) {
+          goodsForm.productCateId = query.productCateId
+        }
+        if(query.productCateName) {
+          this.initForm.productCateName = query.productCateName
+        }
+
+        //获取表单初始化数据
+        this.getGoodsFormDataHandle(goodsForm.storeId, goodsForm.productCateId).then((res) => {
+          var data = res.data;
+
+          console.log('初始化数据', res)  
+          if(data.code === 0) {
+            if(data.data.sysAreaList && data.data.sysAreaList.length) {
+              initForm.sysAreaList = data.data.sysAreaList
+            }
+            
+
+            if(data.data.brandDTOList && data.data.brandDTOList.length) {
+              initForm.brandDTOList = data.data.brandDTOList
+            }
+
+            if(data.data.productCateProperty && data.data.productCateProperty.length) {
+              initForm.productCateProperty = data.data.productCateProperty
+            }
+
+            if(data.data.productSkuProperty && data.data.productSkuProperty.length) {
+              initForm.productSkuProperty = data.data.productSkuProperty
+            }
+          }
+
+        });
+        console.log(initForm.sysAreaList)      
+      },
+
+      getGoodsFormDataHandle (storeId, productCateId){
+        return getGoodsFormData({
+          storeId: storeId,
+          productCateId: productCateId
+        })
+      },
       productSkuHandle (data){
         var productSkuQuantity = 0
 
@@ -491,7 +483,9 @@
        */
       submitForm(formName) {
         var self = this
-        console.log(self.goodsForm)
+        self.goodsForm.productStatus = 1
+        console.log('提交数据',self.initForm.productCateProperty)
+
         // self.$refs[formName].validate((valid) => {
         //   if (valid) {
         //     console.log(self.goodsForm)

@@ -11,7 +11,7 @@ import router from '@/router/'
 import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'summernote/dist/summernote.css'
-import 'font-awesome/css/font-awesome.min.css'
+// import 'font-awesome/css/font-awesome.min.css'
 import '../theme/index.css'
 import './styles/main.css'
 

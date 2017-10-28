@@ -80,11 +80,15 @@
 
 <script>
   import CitySelection from './components/CitySelection.vue'
+  import { getNewestTemplate } from '@/api/seller'
+  const win = window;
+  const storeId = win.storeInfo && win.storeInfo.storeId ? win.storeInfo.storeId : ''
   const cityOptions = ['全国', '杭州市','宁波市','温州市']
   export default {
     components: { CitySelection },
     data() {
       return {
+        storeId: storeId,
         cities:cityOptions,
         dialogForm: {
           checkedCities: []
@@ -119,9 +123,18 @@
     },
     mounted () {
 
+      this.getNewestTemplateData(this.storeId)
       console.log(this.$route)
     },
     methods: {
+      getNewestTemplateData (storeId){
+
+        getNewestTemplate({
+          storeId: storeId
+        }).then((res)=>{
+          console.log('获取模板内容', res)
+        })
+      },
       disabledCheckedCities (city){
         console.log(city)
       },
