@@ -1,91 +1,102 @@
 <template>
-    <div>
-      <search-nav @onSearchClick="searchClickHandle"></search-nav>
-        <el-table
-          :data="tableData"
-          style="width: 100%" 
-          class="seller-table" highlight-current-row v-loading="listLoading">
-          <el-table-column
-            prop="id"
-            label="ID"
-            width="180">
-          </el-table-column>
-          <el-table-column
-            prop="goodsName"
-            label="商品名称"
-            width="180">
-          </el-table-column>
-          <el-table-column
-            prop="pic"
-            label="图片">
-            <template slot-scope="scope">
-              <div class="table-pic">
-                <img :src="scope.row.pic" />
-                
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="storeCategory"
-            label="店铺分类">
-          </el-table-column>
-          <el-table-column
-            prop="stock"
-            label="库存">
-          </el-table-column>
-          <el-table-column
-            prop="viewPrice"
-            label="展示价">
-          </el-table-column>
-          <el-table-column
-            prop="status"
-            label="上架状态">
-          </el-table-column>
-          <el-table-column
-            prop="operational"
-            label="操作">
-            <template slot-scope="scope">
-              <el-button type="text" @click="onEditorHandle">编辑</el-button>
-              <el-button type="text" @click="onDelHandle">删除</el-button>
-              <el-button type="text" @click="onSubmitHandle">提交</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <div class="block">
-          <el-pagination class="pagination-wrap"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage"
-            :page-sizes="[100, 200, 300, 400]"
-            :page-size="100"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="400">
-          </el-pagination>
-        </div>
+  <div>
+    <search-nav @onSearchClick="searchSubmitHandle"></search-nav>
+      <el-table
+        :data="tableData"
+        style="width: 100%" 
+        class="seller-table" highlight-current-row v-loading="listLoading">
+        <el-table-column
+          prop="id"
+          label="ID"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          prop="goodsName"
+          label="商品名称"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          prop="pic"
+          label="图片">
+          <template slot-scope="scope">
+            <div class="table-pic">
+              <img :src="scope.row.pic" />
+              
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="storeCategory"
+          label="店铺分类">
+        </el-table-column>
+        <el-table-column
+          prop="stock"
+          label="库存">
+        </el-table-column>
+        <el-table-column
+          prop="viewPrice"
+          label="展示价">
+        </el-table-column>
+        <el-table-column
+          prop="status"
+          label="上架状态">
+        </el-table-column>
+        <el-table-column
+          prop="operational"
+          label="操作">
+          <template slot-scope="scope">
+            <el-button type="text" @click="onEditorHandle">编辑</el-button>
+            <el-button type="text" @click="onDelHandle">删除</el-button>
+            <el-button type="text" @click="onSubmitHandle">提交</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="block">
+        <el-pagination class="pagination-wrap"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[100, 200, 300, 400]"
+          :page-size="100"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="400">
+        </el-pagination>
+      </div>
 
-      <el-dialog
-        :visible.sync="dialogVisible"
-        size="tiny" width="300" class="dialog-wrap" :title="dialogConfig.title">
+    <el-dialog
+      :visible.sync="dialogVisible"
+      size="tiny" width="300" class="dialog-wrap" :title="dialogConfig.title">
 
-        <div class="block"><h3 class="tips">{{dialogConfig.content}}</h3></div>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="entryDialogHandle(tableRow)">确 定</el-button>
-        </span>
-      </el-dialog>
-    </div>
-
+      <div class="block"><h3 class="tips">{{dialogConfig.content}}</h3></div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="entryDialogHandle(tableRow)">确 定</el-button>
+      </span>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
-  import SearchNav from './components/SearchNav'
+  import SearchNav from './components/SearchNav.vue'
     export default {
-      components: { SearchNav },
+      components: {
+        SearchNav
+      },
         data() {
             return {
               listLoading: false,
               tableRow: null,
+              formInline: {
+                user: '',
+                region: '',
+                goodsId: '',
+                goodsName: '',
+                storeCategory: '',
+                createDate: '',
+                createBegin: '',
+                createEnd: ''
 
+              },
               dialogConfig: {
                 title: '',
                 content: '',
@@ -159,32 +170,60 @@
             this.tableRow = row
             this.dialogVisible = true
           },
-          onEditorHandle () {
+          onEditorHandle() {
 
           },
-          onSubmitHandle () {
-
-          },
-          searchClickHandle (data) {
-            console.log(data)
-          },
-          onDelHandle(index, row) {
+          onSubmitHandle(){
             let self = this
-            this.$confirm('确定要删除这个商品吗？', '提示', {
-              type: 'warning'
-            }).then(() => {
-              this.listLoading = true;
-              //NProgress.start();
+            self.confirmHandle({
+              title: '提交',
+              content: '确定要提交这个商品吗？',
+              message: '商品提成功！',
+              type: 'success'
+            }, function(){
               let para = { id: row.id };
               removeUser(para).then((res) => {
-                this.listLoading = false;
+                self.listLoading = false;
                 //NProgress.done();
-                this.$message({
-                  message: '商品删除成功',
-                  type: 'success'
-                });
-                this.getUsers();
+                self.messageHandle('商品提交成功！', 'success')
               });
+            })
+          },
+          searchSubmitHandle (){
+
+          },
+          onDelHandle (index, row) {
+            let self = this
+            self.confirmHandle({
+              title: '删除',
+              content: '确定要删除这个商品吗？',
+              message: '商品删除成功！',
+              type: 'success'
+            }, function(){
+              let para = { id: row.id };
+              removeUser(para).then((res) => {
+                self.listLoading = false;
+                //NProgress.done();
+                self.messageHandle('商品删除成功！', 'success')
+              });
+            })
+          },
+          messageHandle (message, type){
+            let self = this
+            self.$message({
+              message: message,
+              type: type
+            });
+          },
+          confirmHandle (config, callback){
+            let self = this
+            self.$confirm(config.content, config.title, {
+              type: 'warning'
+            }).then(() => {
+              self.listLoading = true;
+              //NProgress.start();
+              
+              callback()
             }).catch(() => {
 
             });
@@ -196,32 +235,5 @@
 </script>
 
 <style lang="scss">
-  .seller-table {
-    .table-pic {
-      width: 60px;
-      height: 60px;
-      overflow: hidden;
-      img {
-        width: 100%;
-      }
-    }
-    .cell {
-      padding-top: 20px;
-      padding-bottom: 20px;
-    }   
-  }
 
-  .dialog-wrap {
-    .tips {
-      font-size: 16px;
-      text-align: center;
-    }
-  }
-  .pagination-wrap {
-    float: right;
-  }
-  .block {
-    padding: 30px 0;
-    overflow: hidden;
-  }
 </style>

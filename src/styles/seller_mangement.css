@@ -1,0 +1,28 @@
+.seller-table .table-pic {
+  width: 60px;
+  height: 60px;
+  overflow: hidden;
+}
+
+.seller-table .table-pic img {
+  width: 100%;
+}
+
+.seller-table tbody .cell {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.dialog-wrap .tips {
+  font-size: 16px;
+  text-align: center;
+}
+
+.pagination-wrap {
+  float: right;
+}
+
+.block {
+  padding: 30px 0;
+  overflow: hidden;
+}

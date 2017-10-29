@@ -17,7 +17,7 @@ const routers = [{
         component: CreateGoods, 
         name: '创建商品',
         children:[
-            { path: 'create', component: CreateGoods, name: '创建商品' },
+            { path: 'create', component: CreateGoods, name: '类目选择' },
             { path: 'form', component: GoodsForm, name: '新建' }
         ]
     },
@@ -34,7 +34,7 @@ const routers = [{
     { path: '/seller-management/yishangjia', component: YiShangJia, name: '已上架列表' },
     { path: '/seller-management/yixiajia', component: YiXiaJia, name: '已下架列表' },
     { path: '/seller-management/weitongguo', component: WeiTongGuo, name: '审核未通过列表' },
-    { path: '/seller-management/daishangjia', component: DaiShangJia, name: '审核未通过待上架列表' },
+    { path: '/seller-management/daishangjia', component: DaiShangJia, name: '待上架列表' },
     { path: '/seller-management/caogaoxiang', component: CaoGaoXiang, name: '草稿箱' },
     { path: '/seller-management/huishouzhan', component: HuiShouZhan, name: '回收站' }
 ]

@@ -23,14 +23,14 @@
             <p class="desc">请编辑可送达的地区，当用户选择下述地区以外的配送地址时，将提示用户无法下单。</p>
             <div class="area">
               <ul>
-                <li v-for="peisong in ruleForm.peisongArea">
-                  <div class="area-item"><el-input v-model="peisong.city.join('、')" style="width:208px" placeholder="浙江、江苏、上海" @focus="citySelectHandle(peisong)"></el-input></div>
+                <li v-for="(item, index) in ruleForm.peisongArea">
+                  <div class="area-item"><el-input v-model="item.city.join('、')" style="width:208px" placeholder="浙江、江苏、上海" @focus="citySelectHandle(item,index)"></el-input></div>
                   <div class="area-item">+运费</div>
-                  <div class="area-item"><el-input v-model="peisong.price" style="width:80px" placeholder=""></el-input></div>
+                  <div class="area-item"><el-input v-model="item.price" style="width:80px" placeholder=""></el-input></div>
                   <div class="area-item">元/件，满</div>
-                  <div class="area-item"><el-input v-model="peisong.count" style="width:80px" placeholder=""></el-input></div>
+                  <div class="area-item"><el-input v-model="item.count" style="width:80px" placeholder=""></el-input></div>
                   <div class="area-item">件</div>
-                  <div class="area-item"><el-input v-model="peisong.cprice" style="width:80px" placeholder=""></el-input></div>
+                  <div class="area-item"><el-input v-model="item.cprice" style="width:80px" placeholder=""></el-input></div>
                   <div class="area-item">元</div>
                 </li>
               </ul>
@@ -62,9 +62,16 @@
       size="small" @close="onDialogCancelHandle('dialogForm')">
         <el-form :model="dialogForm" :rules="dialogFormRules" ref="dialogForm" class="area-selection">
           <el-form-item label="" prop="checkedCities">
-            <el-checkbox-group v-model="dialogForm.checkedCities">
               <ul class="area-wrap">
-                <li v-for="city in cities"><el-checkbox :label="city" :key="city">{{city}}</el-checkbox></li>
+                <el-checkbox-group v-model="dialogForm.checkedCities">
+                  <li v-for="(value, key, index) in citiesMap" >
+                    <template v-if="value.checked">
+                      <el-checkbox :label="key" v-if="checkedCitiesIndex != value.index" :key="key" disabled></el-checkbox>
+                      <el-checkbox :label="key" v-else="" :key="key"></el-checkbox>
+                    </template>
+                    <el-checkbox :label="key" v-else="" :key="key"></el-checkbox>
+                  </li>
+                </el-checkbox-group>
               </ul>
             </el-checkbox-group>  
           </el-form-item>
@@ -89,11 +96,12 @@
     data() {
       return {
         storeId: storeId,
-        cities:cityOptions,
+        citiesMap: {},
+        curInputVal: [],
+        checkedCitiesIndex: '',
         dialogForm: {
           checkedCities: []
         },
-        curRow: {},
         isIndeterminate: false,
         isEditorStatus: false,
         dialogVisible: false,
@@ -105,7 +113,7 @@
           wuliuType: 'peisong',
           textarea:'dadadada',
           peisongArea: [
-          {city: [], price: 12323, count: 222, cprice: 333},
+          {city: ['杭州市'], price: 12323, count: 222, cprice: 333},
           {city: [], price: 12323, count: 222, cprice: 333}]
         },
         rules: {
@@ -115,18 +123,53 @@
         },
         dialogFormRules: {
           checkedCities:[{
-            required: true,
+            required: false,
             message: '请选择城市'
           }]
         }
       }
     },
-    mounted () {
-
-      this.getNewestTemplateData(this.storeId)
-      console.log(this.$route)
+    created () {
+      this.initCityMap()
+      //this.getNewestTemplateData(this.storeId)
+      //console.log(this.$route)
     },
     methods: {
+      initCityMap(){
+        let self = this;
+        let peisongArea = self.ruleForm.peisongArea
+        let cityMap = self.createCityMap(cityOptions)
+        let selectedCity = self.userSelectedCity(peisongArea)
+        let finishedMaps = self.updateCityMap(cityMap, selectedCity)
+        self.citiesMap = finishedMaps
+      },
+      createCityMap (cityList){
+        let self = this;
+        var obj = {}
+        if(cityList.length) {
+          for(var i=0;i<cityList.length;i++) {
+
+            obj[cityList[i]] = {
+              checked: false,
+              index: '',
+              name: cityList[i]
+            }
+          }
+        }
+        return obj
+      },  
+
+      userSelectedCity (peisongArea){
+        var city = []
+        if(peisongArea.length) {
+          for(var i=0;i<peisongArea.length;i++) {
+            for(var j=0;j<peisongArea[i]['city'].length;j++) {
+              city.push(peisongArea[i]['city'][j])
+            }
+          }
+        }
+        return city
+      },
       getNewestTemplateData (storeId){
 
         getNewestTemplate({
@@ -143,14 +186,11 @@
        * @param  { Object } row 运费模板对象
        * @return {[type]}     [description]
        */
-      citySelectHandle (row){
-        this.curRow = row;
-        if(!this.dialogForm.checkedCities.length) {
-          this.dialogForm.checkedCities = row.city 
-        }else {
-
-        }
-        
+      citySelectHandle (row, index){
+        let peisongArea = this.ruleForm.peisongArea
+        this.dialogForm.checkedCities = row.city
+        this.curInputVal = row
+        this.checkedCitiesIndex = index
         this.dialogVisible = true
       },
       /**
@@ -162,8 +202,8 @@
         let self = this;
         self.$refs[formName].validate((valid) => {
           if (valid) {
-            console.log(self.dialogForm.checkedCities)
-            self.curRow.city =  self.dialogForm.checkedCities
+            console.log('确认',self.dialogForm.checkedCities)
+            self.addInputText()
             self.dialogVisible = false
           } else {
             console.log('error submit!!');
@@ -171,6 +211,45 @@
           }
         });
 
+      },
+      addInputText() {
+        let self = this
+        let peisongArea = self.ruleForm.peisongArea
+        let checkedCities = self.dialogForm.checkedCities
+        let checkedCitiesIndex = self.checkedCitiesIndex
+        self.curInputVal.city = checkedCities
+        self.updateCityMap(self.citiesMap, checkedCities,  checkedCitiesIndex)
+      },
+      updateCityMap (citiesMap, checkedCities, checkedCitiesIndex){
+        console.log(checkedCitiesIndex)
+        var citiesMap = citiesMap,
+            checkedCities = checkedCities;
+        if(checkedCities.length) {
+          for(var i=0;i<checkedCities.length; i++) {
+            if(citiesMap[checkedCities[i]] != 'undefined') {
+              citiesMap[checkedCities[i]]['checked'] = true
+              if(checkedCitiesIndex != undefined) {
+                citiesMap[checkedCities[i]]['index'] = checkedCitiesIndex
+              }else {
+                citiesMap[checkedCities[i]]['index'] = i
+              }
+              
+            }else {
+              citiesMap[checkedCities[i]]['checked'] = false
+              citiesMap[checkedCities[i]]['index'] = ''
+            }
+          }
+        }else {
+          this.resetCitiesMap()
+        }
+        return citiesMap;
+        
+      },
+      resetCitiesMap(){
+        for (var obj in this.citiesMap){
+          this.citiesMap[obj]['checked'] = false
+          this.citiesMap[obj]['index'] = ''
+        }
       },
       /**
        * onDialogCancelHandle 弹窗关闭时的响应事件，重置表单
@@ -204,6 +283,7 @@
           }
         });
       },
+
       /**
        * resetForm 重置表单
        * @param  { String } formName 表单对象名称
