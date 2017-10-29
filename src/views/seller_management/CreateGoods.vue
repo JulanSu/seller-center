@@ -170,33 +170,5 @@
     width:6px;
     height:50px;
   }  
-  .category-nav-breadcrumb {
-    position: relative;
-    border: 1px solid $color-primary;
-    padding: 7px 20px;
-    margin-top: 20px;
-    position: relative;
-    background: #F5F7FA;
-    .icon-arrow-top {
-      position: absolute;
-      left: 30px;
-      top: -17px;
-      border-width: 8px;
-      border-style: solid;
-
-    }
-    .arrow-top-a {
-      border-color: #fff #fff #F5F7FA #fff
-    }
-    .arrow-top-b {
-      left: -8px;
-      top: -8px; 
-            border-color: #fff #fff $color-primary #fff
-      
-    }
-    .breadcrumb-tips {
-      color: #333;
-      float: left;
-    }
-  }
+  
 </style>

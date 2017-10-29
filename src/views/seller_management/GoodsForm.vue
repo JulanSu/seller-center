@@ -8,7 +8,7 @@
       <el-form-item label="选择品牌" prop="brandId">
         <el-select v-model.number="goodsForm.brandId" placeholder="选择品牌">
           <template v-for="brand in initForm.brandDTOList">
-            <el-option :label="brand.nameCn" :value="brand.brandId" :key="brand.nameCn">{{brand.nameCn}}</el-option>
+            <el-option  :label="brand.nameCn" :value="brand.nameCn"  :key="brand.nameCn"></el-option>
           </template>
           
         </el-select>
@@ -23,23 +23,11 @@
       </el-form-item>
 
     <el-form-item label="类目属性" prop="productCateProperty">
-      <cate-property v-if="initForm.productCateProperty.length" :catePropertyData="initForm.productCateProperty"></cate-property>
+      <cate-property v-if="initForm.productCateProperty.length" :catePropertyData="initForm.productCateProperty" @updateCatePropertyGroupList="updateCatePropertyGroupList"></cate-property>
     </el-form-item> 
 
     <el-form-item label="商品规格" prop="catePropertyGroupList">
-      <div class="block-form product-sku">
-        <template v-for="productCate in initForm.productSkuProperty">
-          <div class="cate-property-item" v-if="productCate.catePropertySelection == 1">
-            <el-form-item :label="productCate.catePropertyName">
-              <el-checkbox-group v-model="productCate.values" @change="setProductSkuProperty(productCate)">
-                <template v-for="option in productCate.options">
-                  <el-checkbox :label="option.catePropertyValue" :value="option.productCatePropertyValuesId" :key="option.productCatePropertyValuesId"></el-checkbox>
-                </template>
-              </el-checkbox-group>
-            </el-form-item>
-          </div>
-        </template>
-      </div>
+      <product-sku v-if="initForm.productSkuProperty.length" :skuData="initForm.productSkuProperty" @updateProductSkuProperty="updateProductSkuProperty"></product-sku>
     </el-form-item>
 
       <el-form-item label="商品销售规格" prop="productSkuTable" class="sellFormat-sku">
@@ -66,23 +54,22 @@
               <div class="el-table__body-wrapper">
                 <table cellspacing="0" cellpadding="0" border="0" class="el-table__body" style="width: 100%">
                   <tbody>
-                    <template v-for="productSku in goodsForm.productSkuTable">
-                      <tr class="el-table__row">
+                    <template v-if="goodsForm.productSkuTable.length" v-for="productSku in goodsForm.productSkuTable">
+                        <tr class="el-table__row">
 
-                        <td v-for="data in productSku.data">
-                          <div class="cell">{{data.value}}</div>
-                        </td>
-
-                        <td>
-                          <div class="cell">
-                            <input class="" v-model="productSku.productPrice" @keyup="productSkuHandle(goodsForm.productSkuTable)" /></div>
-                        </td>
-                        <td>
-                          <div class="cell">
-                            <input class="" v-model="productSku.productSkuQuantity" @keyup="productSkuHandle(goodsForm.productSkuTable)" />
-                          </div>
-                        </td>
-                      </tr>
+                            <td v-for="item in productSku.data">
+                              <div class="cell">{{item.value}}</div>
+                            </td>
+                          <td>
+                            <div class="cell">
+                              <input class="" v-model="productSku.productPrice" @keyup="productSkuHandle(goodsForm.productSkuTable)" /></div>
+                          </td>
+                          <td>
+                            <div class="cell">
+                              <input class="" v-model="productSku.productSkuQuantity" @keyup="productSkuHandle(goodsForm.productSkuTable)" />
+                            </div>
+                          </td>
+                        </tr>
                     </template>
                   </tbody>
                 </table><!---->
@@ -197,13 +184,14 @@
   import Summernote from './summernote/Summernote.vue'
   import UpdateImg from './goods_form/UpdateImg.vue'
   import CateProperty from './goods_form/CateProperty.vue'
+  import ProductSku from './goods_form/ProductSku.vue'
   import LogisticsServices from './goods_form/LogisticsServices.vue'
   import VueQuillEditor from 'vue-quill-editor'
   import { getStrLength } from '@/util/validator'
   import { getGoodsFormData } from '@/api/seller'
   const win = window;
   const storeId = win.storeInfo && win.storeInfo.storeId ? win.storeInfo.storeId : ''
-  console.log('店铺ID', storeId)
+
   export default {
     components: {
       CategoryBar, 
@@ -211,7 +199,8 @@
       Summernote, 
       UpdateImg, 
       CateProperty,
-      LogisticsServices
+      LogisticsServices,
+      ProductSku
     },
     data() {
       var validatorStrLength = (rule, value, callback, fn) => {
@@ -230,19 +219,7 @@
           catePropertyGroupList: [], 
           productCatePropertyValue: [],
           productPicUrlList: ['http://3.tthunbohui.cn/n/00400M0y003100iFPx00aH8-c300x225-1ab9ae.jpg','http://3.tthunbohui.cn/n/00400M0y003100iFPx00aH8-c300x225-1ab9ae.jpg','http://3.tthunbohui.cn/n/00400M0y003100iFPx00aH8-c300x225-1ab9ae.jpg'], //商品图片列表 链接LIST
-          productSkuTable: [{
-            productPrice: 999,
-            productSkuQuantity: 100,
-            data:[{
-              id: 111,
-              name: '颜色',
-              value: '红色'
-            },{
-              id: 222,
-              name: '尺码',
-              value: 'L'
-            }]
-          }], //商品销售规格
+          productSkuTable: [], //商品销售规格
           detailsContent: '这是在测试文本', //富文本
           sysArea: '', //服务范围 逗号隔开
           shippingTemplateId: 3333, //物流模板ID
@@ -349,7 +326,7 @@
 
 
       productSellPrice: function(val){
-        console.log(val)
+
       },
       titleRulesClass: function(value){
 
@@ -372,7 +349,7 @@
     created() {
 
       this.initFormData(this.$route.query)
-      this.initProductSkuProperty()
+      //this.initProductSkuProperty()
     },
     methods: {
       /**
@@ -395,8 +372,7 @@
         //获取表单初始化数据
         this.getGoodsFormDataHandle(goodsForm.storeId, goodsForm.productCateId).then((res) => {
           var data = res.data;
-
-          console.log('初始化数据', res)  
+          console.log('表单数据', res.data)
           if(data.code === 0) {
             if(data.data.sysAreaList && data.data.sysAreaList.length) {
               initForm.sysAreaList = data.data.sysAreaList
@@ -417,7 +393,7 @@
           }
 
         });
-        console.log(initForm.sysAreaList)      
+   
       },
 
       getGoodsFormDataHandle (storeId, productCateId){
@@ -435,12 +411,13 @@
             if(number) {
               productSkuQuantity += number
             }
-            console.log(data[i].productSkuQuantity)
+
           }          
         }
 
         this.initForm.productSkuQuantity = productSkuQuantity
       },
+
       initProductSkuProperty (){
         var obj = {};
 
@@ -484,7 +461,7 @@
       submitForm(formName) {
         var self = this
         self.goodsForm.productStatus = 1
-        console.log('提交数据',self.initForm.productCateProperty)
+        console.log('提交数据',self.goodsForm)
 
         // self.$refs[formName].validate((valid) => {
         //   if (valid) {
@@ -517,7 +494,9 @@
         var formartProductSku = this.getProductSkuProperty(formatData)
 
         this.goodsForm.productSkuTable = formartProductSku
-        console.log('最终渲染列表数据',  formartProductSku)
+        
+        //console.log('最终渲染列表数据',  formartProductSku)
+        
         this.productSkuHandle(formartProductSku)
         formatData = null
         productSkuProperty = null
@@ -578,6 +557,16 @@
           }          
         }
         return arr     
+      },
+      updateCatePropertyGroupList(value) {
+
+        this.goodsForm.catePropertyGroupList = value
+        console.log('更新类目属性', value)
+      },
+      updateProductSkuProperty (value) {
+
+        this.goodsForm.productSkuTable = value
+        console.log('更新商品规格', value)
       }
     }
   }

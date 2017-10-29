@@ -66,9 +66,8 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
         };
         this.listLoading = true;
         getClassifyList(para).then((res) => {
-          var data=res.data.data;
-          this.total = data.total;
-          this.users = data.list;
+          this.total = Number(res.data.data.total);
+          this.users = res.data.data.list;
           this.listLoading = false;
         });
       },

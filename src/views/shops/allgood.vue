@@ -38,32 +38,37 @@
     </el-col>
 
     <el-dialog
-        title="关联"
-        top="30%"
+      v-loading="listLoading"
+      title="关联"
+      top="30%"
       :visible.sync="dialogVisible1"
       size="tiny">
       <div class="relevanceGood">
         <el-checkbox-group v-model="roleAuthority">
-          <el-checkbox v-for="item in jurisdiction" :label="item.value" :key="item.value">
-              {{item.name}}
+          <el-checkbox v-for="item in jurisdiction" :label="item.storeCateId" :key="item.storeCateId">
+              {{item.cateName}}
           </el-checkbox>
+          <!-- <el-checkbox v-for="item in jurisdiction" :label="1" :key="1">
+              {{item.cateName}}
+          </el-checkbox> -->
         </el-checkbox-group> 
       </div>
         
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" >确定</el-button>
-          <el-button>取消</el-button>
+          <el-button type="primary" @click="addRelevanceBtn">确定</el-button>
+          <el-button @click="cancelBtn">取消</el-button>
         </span>
     </el-dialog>
   </section>
 </template>
 
 <script>
-import { pageStoreCateProduct,cateList } from '@/api/shopApi';
+import { pageStoreCateProduct,cateList,productListcate,productSave } from '@/api/shopApi';
 
   export default {
     data() {
       return {
+        productId:'',
         dialogVisible1:false,
         jurisdiction: [],
         roleAuthority:[],
@@ -74,29 +79,19 @@ import { pageStoreCateProduct,cateList } from '@/api/shopApi';
         listLoading: false
       }
     },
-    mounted:function(){
+    mounted() {
+      this.getPageStoreCateProduct();
       let para = {
         storeId:storeId,
       };
 
-      /*cateList(para).then((res) => {
-        this.jurisdiction = res.data.data.list;*/
-
-this.jurisdiction =[
-  {storeCateId: 2, storeId: 10, cateName: "测试", catePic: "", isUsed: 0, productNum: 0},
-  {storeCateId: 2, storeId: 10, cateName: "测试", catePic: "", isUsed: 0, productNum: 0},
-  {storeCateId: 4, storeId: 10, cateName: "测试分类", catePic: "", isUsed: 0, productNum: 0},
-  {storeCateId: 2, storeId: 10, cateName: "测试", catePic: "", isUsed: 0, productNum: 0},
-  {storeCateId: 2, storeId: 10, cateName: "测试", catePic: "", isUsed: 0, productNum: 0},
-  {storeCateId: 4, storeId: 10, cateName: "测试分类", catePic: "", isUsed: 0, productNum: 0},
-  {storeCateId: 923149914983104500, storeId: 10, cateName: "123", catePic: "", isUsed: 1, productNum: 0},
-  {storeCateId: 923153669652742100, storeId: 10, cateName: "123", catePic: "", isUsed: 1, productNum: 0}
-];
-
-      /*  this.listLoading = false;
+      cateList(para).then((res) => {
+        this.jurisdiction = res.data.data.list;
+        console.log(this.jurisdiction)
+        this.listLoading = false;
       }).catch((res)=> {
         this.listLoading = false;
-      });*/
+      });
     },
     methods: {
       //转换状态
@@ -115,16 +110,59 @@ this.jurisdiction =[
       },
       //关联按钮
       handleBangding(row){
+        this.dialogVisible1=true;
+        this.productId=row.productId;
         this.roleAuthority=[];
-        //获取该商品已关联的分类
-        let para = {
-          storeId:storeId
-        };
-        pageStoreCateProduct(para).then((res) => {
-          this.roleAuthority = res.data.data.list;
-          this.dialogVisible1=true;//显示关联弹框
-        })
+        var para = new URLSearchParams();
+        para.append('productId',row.productId);
+        
+        productListcate(para).then((res) => {
+          if(res.data.code==0){
+            this.roleAuthority=res.data.data;
+          }
+          this.listLoading = false;
+         
+        }).catch((res)=> {
+          this.listLoading = false;
+        });
        
+      },
+      //关联弹框的取消按钮
+      cancelBtn(){
+        this.dialogVisible1=false;
+      },
+      //关联弹框的确定关联按钮
+      addRelevanceBtn(){
+        console.log(this.roleAuthority)
+        var para = new URLSearchParams();
+        para.append('productId',this.productId);
+        para.append('storeCateIdList',this.roleAuthority);
+
+        productSave(para).then((res) => {
+          var that=this;
+          if(res.data.code==0){
+            this.$message({
+              message: '关联成功',
+              type: 'success',
+              onClose:function(){
+                that.getPageStoreCateProduct();
+                that.dialogVisible1=false;
+              }
+            });
+          }else{
+            this.$message({
+              message: '关联失败',
+              type: 'warning'
+            });
+          }
+          this.listLoading = false;
+        }).catch((res)=> {
+          this.listLoading = false;
+          this.$message({
+            message: '关联失败',
+            type: 'warning'
+          });
+        });
       },
       //获取用户列表
       getPageStoreCateProduct() {
@@ -146,9 +184,7 @@ this.jurisdiction =[
         this.page = val;
         this.getPageStoreCateProduct();
       }
-    },
-    mounted() {
-      this.getPageStoreCateProduct();
+
     }
   }
 

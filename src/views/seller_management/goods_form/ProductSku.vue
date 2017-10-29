@@ -1,30 +1,34 @@
 <template>
-  <div class="cate-property block-form">
-    <template v-for="productCate in catePropertyData">
-        <div class="cate-property-item" v-if=" productCate.catePropertySelection == 0">
+  <div class="block-form product-sku">
+    <template v-if="skuData.length" v-for="productCate in skuData">
+
+      <!-- 多选框 -->
+      <div class="cate-property-item" v-if="productCate.catePropertySelection == 1">
           <div class="text">{{productCate.catePropertyName}}</div>
-          <el-select v-model="productCate.values" placeholder="请选择服务范围" @change="changeHandle">
+          <div class="input">
+            <template v-for="(item, index) in productCate.options">
+              <el-checkbox :key="item.catePropertyValue" :label="item.catePropertyValue" v-model="productCate.values[index].value" :true-label="item.catePropertyValue" false-label=""  @change="changeHandle(productCate.values[index])"></el-checkbox>
+            </template>
+          </div>
+      </div>
+
+     <!-- 下拉选择框 --> 
+      <div class="cate-property-item" v-else-if="productCate.catePropertySelection == 0">
+        <el-form-item :label="productCate.catePropertyName">
+          <el-select v-model="productCate.values[0].value" placeholder="请选择服务范围" @change="changeHandle(productCate.values[0])">
             <template v-for="option in productCate.options">  
-              <el-option :text="option.catePropertyValue" :value="option.catePropertyValue" :key="option.productCatePropertyValuesId"></el-option>
+              <el-option :label="option.catePropertyValue" :value="option.catePropertyValue" :key="option.productCatePropertyValuesId"></el-option>
             </template>
           </el-select>
-        </div>
-        <div class="cate-property-item" v-else-if="productCate.catePropertySelection == 1">
+        </el-form-item>
+      </div>
+      <!-- 文本输入框 -->
+      <div class="cate-property-item" v-else-if="productCate.catePropertySelection == 2">
           <div class="text">{{productCate.catePropertyName}}</div>
           <div class="input">
-            <el-checkbox-group v-model="productCate.values" @change="changeHandle">
-                <template v-for="option in productCate.options">
-                  <el-checkbox :label="option.catePropertyValue" :key="option.productCatePropertyValuesId"></el-checkbox>
-                </template>
-              </el-checkbox-group>
+            <el-input  v-model="productCate.values[0].value" :value="productCate.values[0].value" placeholder="自定义属性" @change="changeHandle(productCate.values[0])"></el-input>
           </div>
-        </div>        
-        <div class="cate-property-item" v-else-if="productCate.catePropertySelection == 2 && productCate.catePropertyParentId != -1">
-          <div class="text">{{productCate.catePropertyName}}</div>
-          <div class="input">
-            <el-input :model="productCate.values" value="" placeholder="自定义属性" @change="changeHandle"></el-input>
-          </div>
-        </div>
+      </div>
     </template>
   </div>
 </template>
@@ -34,14 +38,14 @@
   export default {
     data() {
       return {
-        goodsForm: {
-          catePropertyOptionValuesDTOList: [],
-          catePropertyGroupList: []
-        }
+        productSkuProperty: [],
+        productSkuTable: [],
+        skuDataLength: 0,
+        tables: []
       }
     },
     props: {
-      catePropertyData:{
+      skuData: {
         type: Array,
         default: function(){
           return []
@@ -49,90 +53,111 @@
       }
     },
     computed: {
-      initGroupList: function(){
-
-        return 'aaa'
-
-        console.log('计算属性',this.catePropertyData)
-      }
       
     },
     created (){
+      this.skuDataLength = this.skuData.length
       this.formartData()
     },
     methods: {
-      formartData: function(){
-        var data = this.catePropertyData
-        var saveData = this.formartSaveData(data)
-
-        //this.formartValues(saveData)
-
-      },
-      formartValues: function(data){
+      formartData (){
         var self = this
-        var dataA = []
-        for(var i=0;i<data.length;i++) {
-          if(data[i]['catePropertySelection'] == 2 && data[i]['catePropertyParentId'] == "-1") {
-            var obj = {}
-            if(data[i]['options'].length) {
-              for(var j=0;j<data[i]['options'].length;j++) {
-                data[i]['options'][j] = self.getGroupSaveValueDTO(data[i]['options'][j])
-              }
-            }
-          }
-          data[i] = self.getGroupSaveDTO(data[i])
-        }
-        //console.log('超级格式化', data)
-      },
-      formartSaveData: function(data){
-        var input = []
-        var aaaa = []
-        for(var i=0; i<data.length; i++) {
-          if(data[i]['catePropertySelection'] == 2 && data[i]['catePropertyParentId'] == "-1") {
-            input.push(data[i])
-          }else if(data[i]['catePropertySelection'] == 2 && data[i]['catePropertyParentId'] != 0) {
-            aaaa.push(data[i])
-          }else if(data[i]['catePropertySelection'] == 2 && data[i]['catePropertyParentId'] == 0){
-            input.push(data[i])
-          }else if(data[i]['catePropertySelection'] == 0 || data[i]['catePropertySelection'] == 1){
-            input.push(data[i])
-          }
-        }
-        
-        if(input.length) {
-          for (var j=0; j<input.length;j++) {
-            for(var k=0;k<aaaa.length;k++) {
-              if(input[j]['productCatePropertyId'] == aaaa[k]['catePropertyParentId']) {
-                console.log(aaaa, input)
-                input[j]['options'].push(aaaa[k])
-              }
-            }
-          }
-        }
-        
-        return input;
-      },
-      getGroupSaveDTO(data){
-        var obj = {}
-        obj.cateConnector = data.cateConnector
-        obj.catePropertyName = data.catePropertyName
-        obj.catePropertyParentId = data.catePropertyParentId
-        obj.catePropertyUnit = data.catePropertyUnit
-        obj.productCatePropertyId = data.productCatePropertyId
-        obj.values = data.values
-        return obj
-      },
-      getGroupSaveValueDTO(data){
-        var obj = {}
-        obj.id = data.productCatePropertyId
-        obj.name = data.catePropertyName
-        obj.value = data.values
-      },
-      changeHandle(value){
-        console.log('我在被监听', value)
-      }
-    }
+        var cateData = self.formartCateData(this.skuData)
+        var genData = self.gen(cateData)
 
+        self.productSkuTable = self.getProductSkuProperty(genData)
+        console.log('商品销售规格', self.productSkuTable)
+      },
+
+      formartCateData (data){
+        var arr = []
+        for(var i=0; i < data.length; i++) {
+          arr[i] = data[i]['values']
+        }
+        return arr;
+      },
+      /**
+       * getProductSkuProperty 给合并后的选项增加其他属性
+       * @param  { Object } data 用户已选规格合并后的数据
+       * @return { Array }      格式化后的规格属性列表
+       */
+      getProductSkuProperty (data){
+        var arr = []
+        if(data.length){
+          for(var i=0; i<data.length; i++) {
+              var obj = {};
+              obj.productPrice = ''
+              obj.productSkuQuantity = ''
+              obj.data = data[i]
+              arr.push(obj)
+          }          
+        }
+        return arr     
+      },
+      /**
+       * gen 多维数组，多对多合并
+       * @param  { Array } list 商品规格属性列表
+       * @return {[type]}      [description]
+       */
+      gen (list){
+        var result = []
+        _gen(list, 0, [])
+        return result
+
+        function _gen (list, level, path) {
+          if (level >= list.length) {
+            return result.push(path.slice(0))
+          }
+          var lev = list[level]
+          for (var i = 0; i < lev.length; i += 1) {
+            path.push(lev[i])
+            _gen(list, level + 1, path)
+            path.pop()
+          }
+        }
+      },
+      changeHandle (row) {
+        console.log('我正在被改动', row)
+        var rowData = this.addRow(row)
+        var productSkuTable = this.formartAddRow(rowData)
+        console.log(productSkuTable, '你好')
+        this.$emit('updateProductSkuProperty', this.tables)
+        productSkuTable = null
+      },
+      formartAddRow(data){
+        for(var i=0; i<data.length;i++) {
+          var b = data[i]['data'].every(function(item, index, array){
+            return !!item.value
+          })
+          if(b) {
+            this.tables.push(data[i])
+          }
+        }
+      
+      },
+      addRow(row){
+        var self = this
+        var productSkuTable = self.productSkuTable
+
+        var json = JSON.stringify(productSkuTable)
+        var data = JSON.parse(json)
+        for(var i=0; i< data.length; i++) {
+          for(var j=0; j< data[i]['data'].length; j++) {
+            if(row.name == data[i]['data']['name'] &&
+              row.id == data[i]['data']['id']
+              ) {
+              data[i]['data']['value'] = row.value
+            }
+          }
+        }
+        return data    
+      },
+
+      delRow(){
+
+      }
+
+    }
   }
 </script>
 
@@ -153,7 +178,6 @@
         width: 80px;
       }
       .input {
-        width: 160px;
         position: relative;
         display: inline-block;
       }

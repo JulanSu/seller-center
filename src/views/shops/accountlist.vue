@@ -20,7 +20,7 @@
       <el-table-column label="操作" min-width="200" align="center">
         <template slot-scope="scope">
           <router-link :to="{name:'编辑子帐号', params: { id: scope.row.storeOperatorId}}">编辑</router-link>
-          <span @click="handleOptation(scope.row)">{{scope.row.isUsed==1?"使用中":"已冻结"}}</span>
+          <span @click="handleOptation(scope.row)">{{scope.row.isUsed==1?"冻结":"解结"}}</span>
           <span @click="handleDel(scope.row)">删除</span>
         </template>
       </el-table-column>
@@ -69,7 +69,7 @@ import {operatorList,operatorChangeStatus,operatorRemove} from '@/api/shopApi';
 
         operatorList(para).then((res) => {
           this.listLoading = false;
-          this.total = res.data.data.total;
+          this.total = Number(res.data.data.total);
           this.datas = res.data.data.list;
 
         });
