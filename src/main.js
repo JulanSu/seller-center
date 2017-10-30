@@ -14,7 +14,7 @@ import 'summernote/dist/summernote.css'
 // import 'font-awesome/css/font-awesome.min.css'
 import '../theme/index.css'
 import './styles/main.css'
-
+import './assets/iconfont/iconfont.css'
 //import NProgress from 'nprogress'
 //import 'nprogress/nprogress.css'
 

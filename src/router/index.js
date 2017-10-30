@@ -50,7 +50,7 @@ const routers = new VueRouter({
         path: '/seller-management',
         component: Full,
         name: '商品管理',
-        iconCls: 'fa fa-id-card-o',//图标样式class
+        iconCls: 'iconfont icon-shangpu',//图标样式class
         children: goodsManagementRoutes
     },
     /*消息中心*/
@@ -69,20 +69,20 @@ const routers = new VueRouter({
         path: '/transaction',
         component: Full,
         name: '交易管理',
-        iconCls: 'fa fa-id-card-o',//图标样式class
+        iconCls: 'iconfont icon-jiaoyiguanli',//图标样式class
         children: transaction
     },
     {
         path: '/store',
         component: Full,
         name: '店铺管理',
-        iconCls: 'fa fa-bar-chart',
+        iconCls: 'iconfont icon-shangpinguanli',
         children:shopsManagementRoutes 
     },
     {   path: '/marketing-center',
         component: Full,
         name: '营销中心',
-        iconCls: 'fa fa-bar-chart',
+        iconCls: 'iconfont icon-yingxiaozhongxin',
         children:marketingCenter 
     }
     ]

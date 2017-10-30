@@ -93,6 +93,9 @@
     background:#2a3542;
     border-radius: 0;
     color: #fff;
+    .iconfont {
+      margin-right: 10px;
+    }
     .title {
       color: #fff;
     }

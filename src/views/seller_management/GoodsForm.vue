@@ -6,12 +6,7 @@
       </el-form-item>
 
       <el-form-item label="选择品牌" prop="brandId">
-        <el-select v-model.number="goodsForm.brandId" placeholder="选择品牌">
-          <template v-for="brand in initForm.brandDTOList">
-            <el-option  :label="brand.nameCn" :value="brand.nameCn"  :key="brand.nameCn"></el-option>
-          </template>
-          
-        </el-select>
+        <brand-select v-model="goodsForm.brandId" :brandDTOList="initForm.brandDTOList"></brand-select>
       </el-form-item>
 
       <el-form-item label="商品标题" prop="productTitle">
@@ -26,7 +21,7 @@
       <cate-property v-if="initForm.productCateProperty.length" :catePropertyData="initForm.productCateProperty" @updateCatePropertyGroupList="updateCatePropertyGroupList"></cate-property>
     </el-form-item> 
 
-    <el-form-item label="商品规格" prop="catePropertyGroupList">
+    <el-form-item label="商品规格" prop="catePropertyList">
       <product-sku v-if="initForm.productSkuProperty.length" :skuData="initForm.productSkuProperty" @updateProductSkuProperty="updateProductSkuProperty"></product-sku>
     </el-form-item>
 
@@ -126,21 +121,11 @@
       </el-form-item>
 
       <el-form-item label="服务范围" prop="sysArea">
-        <el-select v-model="goodsForm.sysArea" multiple placeholder="请选择服务范围">
-          <template v-if="initForm.sysAreaList" v-for="sysArea in initForm.sysAreaList">
-            <el-option :label="sysArea.areaName" :value="sysArea.sysAreasId" :key="sysArea.areaName">
-            </el-option>
-          </template>
-        </el-select>
+        <sys-area :sysAreaList="initForm.sysAreaList" @change="upSysAreaHandle"></sys-area>
       </el-form-item>
 
       <el-form-item label="店铺中分类" prop="storeCateList">
-        <div class="block-form cate-property">
-          <el-checkbox-group 
-            v-model="goodsForm.storeCateList">
-            <el-checkbox v-for="storeCate in initForm.storeCateList" :label="storeCate.cateName" :key="storeCate.cateName">{{storeCate.cateName}}</el-checkbox>
-          </el-checkbox-group>
-        </div>
+        <store-cate v-model="goodsForm.storeCateList" :storeCateList="initForm.storeCateList"></store-cate>
       </el-form-item>
 
       <div class="logistics-info wuliu" prop="shippingTemplateId">
@@ -149,18 +134,8 @@
       </div>
       <div class="other-info">
         <category-bar title="其他信息"></category-bar> 
-        <el-form-item label="上架时间" prop="publishTimeType">
-          <el-radio-group v-model="initForm.publishTimeType">
-            <el-radio label="立即上架" name="1"></el-radio>
-            <el-radio label="定时上架" name="2"></el-radio>
-          </el-radio-group>
-          <div style="margin-top:5px;" v-if="goodsForm.initForm === '定时上架'">
-            <el-date-picker
-              v-model="goodsForm.publishTime"
-              type="datetime"
-              placeholder="选择日期时间" style="width: 280px;">
-            </el-date-picker>
-          </div>
+        <el-form-item label="上架时间" prop="publishTimeType" >
+          <publish-time v-model="goodsForm.publishTime"></publish-time>
         </el-form-item>
         <el-form-item label="是否推荐" prop="productRecommend">
           <el-radio-group v-model="goodsForm.productRecommend">
@@ -185,10 +160,16 @@
   import UpdateImg from './goods_form/UpdateImg.vue'
   import CateProperty from './goods_form/CateProperty.vue'
   import ProductSku from './goods_form/ProductSku.vue'
+  import PublishTime from './goods_form/PublishTime.vue'
+  import SysArea from './goods_form/SysArea.vue'
+  import StoreCate from './goods_form/StoreCate.vue'
+  import BrandSelect from './goods_form/BrandSelect.vue'
   import LogisticsServices from './goods_form/LogisticsServices.vue'
+
   import VueQuillEditor from 'vue-quill-editor'
   import { getStrLength } from '@/util/validator'
-  import { getGoodsFormData } from '@/api/seller'
+  import { getGoodsFormData, saveGoodsFormData} from '@/api/seller'
+  import merge from 'merge'
   const win = window;
   const storeId = win.storeInfo && win.storeInfo.storeId ? win.storeInfo.storeId : ''
 
@@ -200,7 +181,11 @@
       UpdateImg, 
       CateProperty,
       LogisticsServices,
-      ProductSku
+      ProductSku,
+      SysArea,
+      PublishTime,
+      StoreCate,
+      BrandSelect
     },
     data() {
       var validatorStrLength = (rule, value, callback, fn) => {
@@ -210,20 +195,20 @@
       return {
         //表单提交所需要的数据结构
         goodsForm: {
+          productId: null, //商品ID
           productCateId: 24, //类目ID
           brandId: '', //品牌ID
-          storeId: storeId,
+          storeId: storeId, //店铺ID
           productTitle: '', //商品标题
           sellingPoint: '', //商品卖点
           storeCateList: [],//店铺中分类
-          catePropertyGroupList: [], 
-          productCatePropertyValue: [],
+          catePropertyList: [], //类目属性
           productPicUrlList: ['http://3.tthunbohui.cn/n/00400M0y003100iFPx00aH8-c300x225-1ab9ae.jpg','http://3.tthunbohui.cn/n/00400M0y003100iFPx00aH8-c300x225-1ab9ae.jpg','http://3.tthunbohui.cn/n/00400M0y003100iFPx00aH8-c300x225-1ab9ae.jpg'], //商品图片列表 链接LIST
           productSkuTable: [], //商品销售规格
           detailsContent: '这是在测试文本', //富文本
           sysArea: '', //服务范围 逗号隔开
           shippingTemplateId: 3333, //物流模板ID
-          publishTime: '', //上架时间
+          publishTime: '2017-10-30 13:47:39', //上架时间
           productRecommend: '', //是否推荐
           productStatus: '', //提交状态
           productSellPrice: '', //展示价格及库存的价格
@@ -231,11 +216,7 @@
         //初始化表单时数据结构
         initForm: {
           productCateName: '',
-          //上架时间类型
           publishTimeType: '',
-          //商品销售规格
-          sellFormat: [],
-          //服务范围
           sysAreaList:[], 
           storeShippingTemplate: {
             peisongArea: [
@@ -243,17 +224,7 @@
               {city: [], price: 12323, count: 222, cprice: 333}
             ]
           },
-          cateName: '婚纱摄影',
-          brandDTOList: [{
-            brandId: 1233,
-            nameCn: '三安啊',
-            storeId: 133111
-
-          },{
-            brandId: 34444,
-            nameCn: '中国啊啊啊',
-            storeId: 555555
-          }],
+          brandDTOList: [],
           productTitleRules: {
             max: 25,
             curLen: 0
@@ -262,20 +233,12 @@
             max: 50,
             curLen: 0
           },
-          publishTimeType: [],
           productSkuLength: 0,
           productSkuQuantity: 0,
-          storeCateList: [{
-            cateName: '性价比之王',
-            storeCateId: 13131            
-          },{
-            cateName: '豪华套系',
-            storeCateId: 13131            
-          }],
+          storeCateList: [],
           //商品销售规格
           productSkuProperty: [] , 
           //商品规格
-          skuPropertyData: [],
           productCateProperty: [],
 
         },
@@ -352,6 +315,11 @@
       //this.initProductSkuProperty()
     },
     methods: {
+      publishTimeHandle (value){
+
+        this.goodsForm.publishTime = value
+        console.log(value)
+      },
       /**
        * initFormData 初始化表单数据（加载表单默认数据）
        * @param  { Object } route 路由查询信息
@@ -373,12 +341,13 @@
         this.getGoodsFormDataHandle(goodsForm.storeId, goodsForm.productCateId).then((res) => {
           var data = res.data;
           console.log('表单数据', res.data)
+          //console.log('表单合并后的数据', merge({}, this.initForm, res.data.data ))
           if(data.code === 0) {
+
             if(data.data.sysAreaList && data.data.sysAreaList.length) {
               initForm.sysAreaList = data.data.sysAreaList
             }
             
-
             if(data.data.brandDTOList && data.data.brandDTOList.length) {
               initForm.brandDTOList = data.data.brandDTOList
             }
@@ -390,6 +359,16 @@
             if(data.data.productSkuProperty && data.data.productSkuProperty.length) {
               initForm.productSkuProperty = data.data.productSkuProperty
             }
+
+            if(data.data.storeCateList && data.data.storeCateList.length) {
+              initForm.storeCateList = data.data.storeCateList
+            }
+
+            if(data.data.brandDTOList && data.data.brandDTOList.length) {
+              initForm.brandDTOList = data.data.brandDTOList
+            }
+
+            this.goodsForm.productId = data.data.productId
           }
 
         });
@@ -418,41 +397,6 @@
         this.initForm.productSkuQuantity = productSkuQuantity
       },
 
-      initProductSkuProperty (){
-        var obj = {};
-
-        var productSkuProperty = this.initForm.productSkuProperty;
-        for(var i=0; i < productSkuProperty.length; i++) {
-          
-          obj[productSkuProperty[i].catePropertyName] = []
-          
-        }
-        this.initForm.skuPropertyData = obj  
-        this.initForm.productSkuLength = productSkuProperty.length
-        
-      },
-      /**
-       * gen 多维数组，多对多合并
-       * @param  { Array } list 商品规格属性列表
-       * @return {[type]}      [description]
-       */
-      gen (list){
-        var result = []
-        _gen(list, 0, [])
-        return result
-
-        function _gen (list, level, path) {
-          if (level >= list.length) {
-            return result.push(path.slice(0))
-          }
-          var lev = list[level]
-          for (var i = 0; i < lev.length; i += 1) {
-            path.push(lev[i])
-            _gen(list, level + 1, path)
-            path.pop()
-          }
-        }
-      },
       /**
        * submitForm 表单提交，提交时需要对表单校验
        * @param  { String } formName 表单名称
@@ -462,7 +406,10 @@
         var self = this
         self.goodsForm.productStatus = 1
         console.log('提交数据',self.goodsForm)
-
+        console.log(JSON.stringify(self.goodsForm))
+        // saveGoodsFormData(self.goodsForm).then((res)={
+        //   console.log(res)
+        // })
         // self.$refs[formName].validate((valid) => {
         //   if (valid) {
         //     console.log(self.goodsForm)
@@ -472,101 +419,25 @@
         //   }
         // });
       },
-      setProductSkuProperty (row) {
-        var productSkuProperty = this.initForm.productSkuProperty
 
-        if(productSkuProperty[row.catePropertyName]) {
-          var arr = []
-          for(var i=0; i< row.values.length; i++) {
-            var id = this.getProductCatePropertyValuesId(row.values[i], row.options)
-            var obj = {
-              id: id,
-              name: row.catePropertyName,
-              value: row.values[i]
-            }
-            arr.push(obj)
-          }
-          productSkuProperty[row.catePropertyName] = arr
-        }
-        
-        var productSkuRowDTO = this.formartProductSkuRowDTO(productSkuProperty, row)
-        var formatData = this.gen(productSkuRowDTO)
-        var formartProductSku = this.getProductSkuProperty(formatData)
+      brandChangeHandle (value){
+        console.log(value)
 
-        this.goodsForm.productSkuTable = formartProductSku
-        
-        //console.log('最终渲染列表数据',  formartProductSku)
-        
-        this.productSkuHandle(formartProductSku)
-        formatData = null
-        productSkuProperty = null
-        productSkuRowDTO = null
-        formartProductSku = null
+        return 11111
       },
 
-      /**
-       * formartProductSkuRowDTO 根据下标格式化用户已选择的属性
-       * @param  { Array } data 用户所选属性
-       * @return { Array }      根据规格属性对用户所选的数据进行排序
-       */
-      formartProductSkuRowDTO (data) {
-        var arr = []
-        var self = this
-        var index = 0
-        for(var key in data) {
-          if(data[key].length) {
-            arr[index] = data[key]
-            index++         
-          }
-        }
-        return arr
-      },
-      /**
-       * getProductCatePropertyValuesId 获取商品规格属性ID
-       * @param  { String } catePropertyValue 类目属性值
-       * @param  { Object } options           商品属性
-       * @return { Number }                   规格属性ID
-       */
-      getProductCatePropertyValuesId (catePropertyValue, options){
-        var id = '';
-        if(options.length > 0) {
-          for(var i=0; i< options.length; i++) {
-            if(catePropertyValue == options[i]['catePropertyValue']) {
-              id = options[i]['productCatePropertyValuesId']
-              break;
-            }
-          }          
-        }
-        return id;
-      }, 
-
-      /**
-       * getProductSkuProperty 给合并后的选项增加其他属性
-       * @param  { Object } data 用户已选规格合并后的数据
-       * @return { Array }      格式化后的规格属性列表
-       */
-      getProductSkuProperty (data){
-        var arr = []
-        if(data.length){
-          for(var i=0; i<data.length; i++) {
-              var obj = {};
-              obj.productPrice = ''
-              obj.productSkuQuantity = ''
-              obj.data = data[i]
-              arr.push(obj)
-          }          
-        }
-        return arr     
-      },
       updateCatePropertyGroupList(value) {
 
-        this.goodsForm.catePropertyGroupList = value
+        this.goodsForm.catePropertyList = value
         console.log('更新类目属性', value)
       },
       updateProductSkuProperty (value) {
 
         this.goodsForm.productSkuTable = value
         console.log('更新商品规格', value)
+      },
+      upSysAreaHandle (value) {
+        this.goodsForm.sysArea = value
       }
     }
   }

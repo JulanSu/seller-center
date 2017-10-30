@@ -1,5 +1,7 @@
 <template>
-  <div>
+  <div class="create-goods page-container">
+    <loading-mask v-if="!categoryData.length"></loading-mask>
+    <template v-else>
     <category-bar :title="categoryBarTitle"></category-bar>
       <template v-if="$route.name === '创建商品'">
         <el-row>
@@ -50,6 +52,7 @@
         </div>
       </template>
     <router-view v-if="$route.name === '新建'"></router-view>
+    </template>
   </div>
 </template>
 
@@ -57,10 +60,12 @@
     const win = window;
     const storeId = win.storeInfo && win.storeInfo.storeId ? win.storeInfo.storeId : ''
     import CategoryBar from '@/components/CategoryBar'
+    import LoadingMask from '@/components/LoadingMask'
     import CategoryMenu from './components/CategoryMenu'
+    
     import { getGoodsCategoryList } from '@/api/seller'
     export default {
-      components: { CategoryMenu, CategoryBar },
+      components: { CategoryMenu, CategoryBar, LoadingMask },
       data() {
         return {
           storeId: storeId,
@@ -144,6 +149,10 @@
 
 <style lang="scss">
 @import '~scss_vars';
+  .page-container {
+    position: relative;
+    min-height: 500px;
+  }
   .guize {
     height: 200px;
     overflow: hidden;

@@ -4,39 +4,38 @@
       <el-col :span="24">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="wuliu-form">
           <el-form-item label="物流模板" prop="template">
-            <el-select v-model="ruleForm.template" placeholder="选择物流模板">
-              <el-option label="新建模板" value="new"></el-option>
-              <el-option label="货运模板" value="beijing"></el-option>
-            </el-select>
+<!--             <el-select v-model="ruleForm.template" placeholder="选择物流模板">
+              <el-option v-if="initTemplateData.length" v-for="item in initTemplateData" :label="" value="new"></el-option>
+            </el-select> -->
             <el-button type="primary" @click="$router.push({psth: '/seller-management/wuliu'})" v-if="isEditorStatus">新建物流模板</el-button>
           </el-form-item>
           <el-form-item label="模板名称" prop="templateName">
             <el-input v-model="ruleForm.templateName" style="width: 398px;"></el-input>
           </el-form-item>
           <el-form-item label="配送自提" prop="type">
-            <el-radio-group v-model="ruleForm.wuliuType" @change="peiSongHandle">
-              <el-radio label="peisong">配送</el-radio>
-              <el-radio label="ziti">自提</el-radio>
+            <el-radio-group v-model="ruleForm.templateType" @change="peiSongHandle">
+              <el-radio label="0">配送</el-radio>
+              <el-radio label="1">自提</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="配送范围及运费" prop="title" v-if="ruleForm.wuliuType == 'peisong'">
+          <el-form-item label="配送范围及运费" prop="title" v-if="ruleForm.templateType == 0">
             <p class="desc">请编辑可送达的地区，当用户选择下述地区以外的配送地址时，将提示用户无法下单。</p>
             <div class="area">
               <ul>
-                <li v-for="(item, index) in ruleForm.peisongArea">
-                  <div class="area-item"><el-input v-model="item.city.join('、')" style="width:208px" placeholder="浙江、江苏、上海" @focus="citySelectHandle(item,index)"></el-input></div>
+                <li v-for="(item, index) in ruleForm.templateValueList">
+                  <div class="area-item"><el-input v-model="item.sysAreaIds" style="width:208px" placeholder="浙江、江苏、上海" @focus="citySelectHandle(item,index)"></el-input></div>
                   <div class="area-item">+运费</div>
-                  <div class="area-item"><el-input v-model="item.price" style="width:80px" placeholder=""></el-input></div>
+                  <div class="area-item"><el-input v-model="item.shippingCost" style="width:80px" placeholder=""></el-input></div>
                   <div class="area-item">元/件，满</div>
-                  <div class="area-item"><el-input v-model="item.count" style="width:80px" placeholder=""></el-input></div>
+                  <div class="area-item"><el-input v-model="item.shippingLimitNum" style="width:80px" placeholder=""></el-input></div>
                   <div class="area-item">件</div>
-                  <div class="area-item"><el-input v-model="item.cprice" style="width:80px" placeholder=""></el-input></div>
+                  <div class="area-item"><el-input v-model="item.shippingLimitCost" style="width:80px" placeholder=""></el-input></div>
                   <div class="area-item">元</div>
                 </li>
               </ul>
             </div>
           </el-form-item>
-          <el-form-item label="自提描述" prop="title" v-if="ruleForm.wuliuType == 'ziti'">
+          <el-form-item label="自提描述" prop="title" v-if="ruleForm.templateType == 'ziti'">
             <p class="desc">请填写买家自提商品时，需要注意的事项。</p>
             <div class="area">
               <el-input
@@ -90,31 +89,35 @@
   import { getNewestTemplate } from '@/api/seller'
   const win = window;
   const storeId = win.storeInfo && win.storeInfo.storeId ? win.storeInfo.storeId : ''
-  const cityOptions = ['全国', '杭州市','宁波市','温州市']
   export default {
     components: { CitySelection },
     data() {
       return {
-        storeId: storeId,
+        storeId: '1',
+        initTemplateData:{},
         citiesMap: {},
         curInputVal: [],
         checkedCitiesIndex: '',
+        areaList: [],
         dialogForm: {
           checkedCities: []
         },
-        isIndeterminate: false,
         isEditorStatus: false,
         dialogVisible: false,
-        showPeiSongTemp: false,
-        showZiTiTemp: false,
         ruleForm: {
-          template: '',
-          templateName: '',
-          wuliuType: 'peisong',
-          textarea:'dadadada',
-          peisongArea: [
-          {city: ['杭州市'], price: 12323, count: 222, cprice: 333},
-          {city: [], price: 12323, count: 222, cprice: 333}]
+          templateValueList: [{
+            sysAreaIds: '',
+            shippingCost: '',
+            shippingLimitNum: '',
+            shippingLimitCost: ''
+          }],//运费模板列表
+          storeId: '1',  //店铺ID
+          templateName: '', //模板名称
+          storeShippingTemplateId: '',//运费模板ID
+          templateType: 0
+        },
+        initForm: {
+
         },
         rules: {
           templateName: [{
@@ -129,19 +132,28 @@
         }
       }
     },
+    computed: {
+
+    },
     created () {
-      this.initCityMap()
-      //this.getNewestTemplateData(this.storeId)
+      //this.initCityMap()
+      // console.log('获取模板内容', this.getNewestTemplateData(this.storeId))
+      this.getNewestTemplateData(this.storeId, function(res){
+        console.log('获取物流数据',res)
+      })
+
+      console.log(this.areaList)
+      // this.initCityMap()
       //console.log(this.$route)
     },
     methods: {
       initCityMap(){
         let self = this;
-        let peisongArea = self.ruleForm.peisongArea
-        let cityMap = self.createCityMap(cityOptions)
-        let selectedCity = self.userSelectedCity(peisongArea)
-        let finishedMaps = self.updateCityMap(cityMap, selectedCity)
-        self.citiesMap = finishedMaps
+        let templateValueList = self.ruleForm.templateValueList
+        let cityMap = self.createCityMap(self.areaList)
+        // let selectedCity = self.userSelectedCity(templateValueList)
+        // let finishedMaps = self.updateCityMap(cityMap, selectedCity)
+        // self.citiesMap = finishedMaps
       },
       createCityMap (cityList){
         let self = this;
@@ -159,24 +171,28 @@
         return obj
       },  
 
-      userSelectedCity (peisongArea){
+      userSelectedCity (templateValueList){
         var city = []
-        if(peisongArea.length) {
-          for(var i=0;i<peisongArea.length;i++) {
-            for(var j=0;j<peisongArea[i]['city'].length;j++) {
-              city.push(peisongArea[i]['city'][j])
+        if(templateValueList.length) {
+          for(var i=0;i<templateValueList.length;i++) {
+            for(var j=0;j<templateValueList[i]['city'].length;j++) {
+              city.push(templateValueList[i]['city'][j])
             }
           }
         }
         return city
       },
-      getNewestTemplateData (storeId){
+      getNewestTemplateData (storeId, callback){
+        var self = this
+          getNewestTemplate({
+            storeId: 1
+          }).then((res)=>{
 
-        getNewestTemplate({
-          storeId: storeId
-        }).then((res)=>{
-          console.log('获取模板内容', res)
-        })
+            if(res.data.code === 0) {
+              callback(res.data.data)
+              console.log(res.data.data)
+            }
+          })
       },
       disabledCheckedCities (city){
         console.log(city)
@@ -187,7 +203,7 @@
        * @return {[type]}     [description]
        */
       citySelectHandle (row, index){
-        let peisongArea = this.ruleForm.peisongArea
+        let templateValueList = this.ruleForm.templateValueList
         this.dialogForm.checkedCities = row.city
         this.curInputVal = row
         this.checkedCitiesIndex = index
@@ -214,14 +230,14 @@
       },
       addInputText() {
         let self = this
-        let peisongArea = self.ruleForm.peisongArea
+        let templateValueList = self.ruleForm.templateValueList
         let checkedCities = self.dialogForm.checkedCities
         let checkedCitiesIndex = self.checkedCitiesIndex
         self.curInputVal.city = checkedCities
         self.updateCityMap(self.citiesMap, checkedCities,  checkedCitiesIndex)
       },
       updateCityMap (citiesMap, checkedCities, checkedCitiesIndex){
-        console.log(checkedCitiesIndex)
+
         var citiesMap = citiesMap,
             checkedCities = checkedCities;
         if(checkedCities.length) {
