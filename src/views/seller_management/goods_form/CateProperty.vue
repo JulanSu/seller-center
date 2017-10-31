@@ -134,6 +134,7 @@
         obj.catePropertyUnit = data.catePropertyUnit
         obj.productCatePropertyId = data.productCatePropertyId
         obj.catePropertySelection = data.catePropertySelection
+        obj.catePropertyType = data.catePropertyType
         obj.options = data.options
         if(data)
         obj.values = data.values

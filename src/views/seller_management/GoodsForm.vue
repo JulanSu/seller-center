@@ -120,8 +120,8 @@
         <summernote v-model="goodsForm.detailsContent"></summernote>
       </el-form-item>
 
-      <el-form-item label="服务范围" prop="sysArea">
-        <sys-area :sysAreaList="initForm.sysAreaList" @change="upSysAreaHandle"></sys-area>
+      <el-form-item label="服务范围" prop="serviceArea">
+        <city-site-list :citySiteList="initForm.citySiteList" @change="upSysAreaHandle"></city-site-list>
       </el-form-item>
 
       <el-form-item label="店铺中分类" prop="storeCateList">
@@ -161,7 +161,7 @@
   import CateProperty from './goods_form/CateProperty.vue'
   import ProductSku from './goods_form/ProductSku.vue'
   import PublishTime from './goods_form/PublishTime.vue'
-  import SysArea from './goods_form/SysArea.vue'
+  import CitySiteList from './goods_form/CitySiteList.vue'
   import StoreCate from './goods_form/StoreCate.vue'
   import BrandSelect from './goods_form/BrandSelect.vue'
   import LogisticsServices from './goods_form/LogisticsServices.vue'
@@ -182,7 +182,7 @@
       CateProperty,
       LogisticsServices,
       ProductSku,
-      SysArea,
+      CitySiteList,
       PublishTime,
       StoreCate,
       BrandSelect
@@ -206,7 +206,7 @@
           productPicUrlList: ['http://3.tthunbohui.cn/n/00400M0y003100iFPx00aH8-c300x225-1ab9ae.jpg','http://3.tthunbohui.cn/n/00400M0y003100iFPx00aH8-c300x225-1ab9ae.jpg','http://3.tthunbohui.cn/n/00400M0y003100iFPx00aH8-c300x225-1ab9ae.jpg'], //商品图片列表 链接LIST
           productSkuTable: [], //商品销售规格
           detailsContent: '这是在测试文本', //富文本
-          sysArea: '', //服务范围 逗号隔开
+          serviceArea: '', //服务范围 逗号隔开
           shippingTemplateId: 3333, //物流模板ID
           publishTime: '2017-10-30 13:47:39', //上架时间
           productRecommend: '', //是否推荐
@@ -217,7 +217,7 @@
         initForm: {
           productCateName: '',
           publishTimeType: '',
-          sysAreaList:[], 
+          citySiteList:[], 
           storeShippingTemplate: {
             peisongArea: [
               {city: [], price: 12323, count: 222, cprice: 333},
@@ -279,7 +279,7 @@
             {required: true, message: '请先选择商品销售规格', trigger: 'blur'}
           ],
           // 服务范围
-          sysArea: [  
+          citySiteList: [  
             {required: true, message: '请先选择服务范围', trigger: 'blur'}
           ]
         }
@@ -344,8 +344,8 @@
           //console.log('表单合并后的数据', merge({}, this.initForm, res.data.data ))
           if(data.code === 0) {
 
-            if(data.data.sysAreaList && data.data.sysAreaList.length) {
-              initForm.sysAreaList = data.data.sysAreaList
+            if(data.data.citySiteList && data.data.citySiteList.length) {
+              initForm.citySiteList = data.data.citySiteList
             }
             
             if(data.data.brandDTOList && data.data.brandDTOList.length) {
@@ -437,7 +437,7 @@
         console.log('更新商品规格', value)
       },
       upSysAreaHandle (value) {
-        this.goodsForm.sysArea = value
+        this.goodsForm.serviceArea = value
       }
     }
   }

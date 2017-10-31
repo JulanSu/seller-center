@@ -3,19 +3,21 @@
     <el-row class="block">
       <el-col :span="24">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="wuliu-form">
-          <el-form-item label="物流模板" prop="template">
-<!--             <el-select v-model="ruleForm.template" placeholder="选择物流模板">
-              <el-option v-if="initTemplateData.length" v-for="item in initTemplateData" :label="" value="new"></el-option>
-            </el-select> -->
+          <el-form-item label="物流模板" prop="storeShippingTemplateId">
+            <el-select v-model="ruleForm.storeShippingTemplateId" placeholder="选择物流模板">
+              <template v-if="initTemplateData.length">
+                <el-option v-for="item in initTemplateData" :label="item.name" :value="item.versionId"></el-option>
+              </template>
+            </el-select>
             <el-button type="primary" @click="$router.push({psth: '/seller-management/wuliu'})" v-if="isEditorStatus">新建物流模板</el-button>
           </el-form-item>
           <el-form-item label="模板名称" prop="templateName">
             <el-input v-model="ruleForm.templateName" style="width: 398px;"></el-input>
           </el-form-item>
           <el-form-item label="配送自提" prop="type">
-            <el-radio-group v-model="ruleForm.templateType" @change="peiSongHandle">
-              <el-radio label="0">配送</el-radio>
-              <el-radio label="1">自提</el-radio>
+            <el-radio-group v-model.number="ruleForm.templateType" @change="peiSongHandle">
+              <el-radio :label="0">配送</el-radio>
+              <el-radio :label="1">自提</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="配送范围及运费" prop="title" v-if="ruleForm.templateType == 0">
@@ -63,13 +65,14 @@
           <el-form-item label="" prop="checkedCities">
               <ul class="area-wrap">
                 <el-checkbox-group v-model="dialogForm.checkedCities">
-                  <li v-for="(value, key, index) in citiesMap" >
+<!--                   <li v-for="(value, key, index) in citiesMap" >
                     <template v-if="value.checked">
                       <el-checkbox :label="key" v-if="checkedCitiesIndex != value.index" :key="key" disabled></el-checkbox>
                       <el-checkbox :label="key" v-else="" :key="key"></el-checkbox>
                     </template>
                     <el-checkbox :label="key" v-else="" :key="key"></el-checkbox>
-                  </li>
+                  </li> -->
+
                 </el-checkbox-group>
               </ul>
             </el-checkbox-group>  
@@ -87,6 +90,7 @@
 <script>
   import CitySelection from './components/CitySelection.vue'
   import { getNewestTemplate } from '@/api/seller'
+  import merge from 'merge'
   const win = window;
   const storeId = win.storeInfo && win.storeInfo.storeId ? win.storeInfo.storeId : ''
   export default {
@@ -136,13 +140,18 @@
 
     },
     created () {
-      //this.initCityMap()
-      // console.log('获取模板内容', this.getNewestTemplateData(this.storeId))
-      this.getNewestTemplateData(this.storeId, function(res){
-        console.log('获取物流数据',res)
-      })
+      var self = this
+      self.getNewestTemplateData(this.storeId, function(res){
 
-      console.log(this.areaList)
+        console.log('获取物流数据',res, self.ruleForm)
+        self.initTemplateData = res.data
+        self.ruleForm = res.firstData
+        self.ruleForm.templateValueList[0].sysAreaIds = '110000,210000,150000'
+        var cityMap = self.createCityMap(res.area) 
+        var selectedCity = self.userSelectedArea(res.firstData.templateValueList)
+        self.citiesMap = self.updateCityMap(cityMap, selectedCity)
+      })
+      
       // this.initCityMap()
       //console.log(this.$route)
     },
@@ -151,7 +160,7 @@
         let self = this;
         let templateValueList = self.ruleForm.templateValueList
         let cityMap = self.createCityMap(self.areaList)
-        // let selectedCity = self.userSelectedCity(templateValueList)
+        // let selectedCity = self.userSelectedArea(templateValueList)
         // let finishedMaps = self.updateCityMap(cityMap, selectedCity)
         // self.citiesMap = finishedMaps
       },
@@ -160,27 +169,47 @@
         var obj = {}
         if(cityList.length) {
           for(var i=0;i<cityList.length;i++) {
-
-            obj[cityList[i]] = {
-              checked: false,
-              index: '',
-              name: cityList[i]
+            if(cityList[i].areaName !== '全国') {
+              obj[cityList[i].areaCode] = {
+                checked: false,
+                index: '',
+                id: cityList[i].areaCode,
+                name: cityList[i].areaName
+              }              
             }
+
           }
         }
+        console.log('格式化车呢故事', obj)
         return obj
       },  
-
-      userSelectedCity (templateValueList){
-        var city = []
+      /**
+       * userSelectedArea 获取用户已选城市
+       * @param  { Array } templateValueList 用户已保存的物流模板信息
+       * @return {[type]}                   [description]
+       */
+      userSelectedArea (templateValueList){
+        var sysAreaCodeArr = []
         if(templateValueList.length) {
           for(var i=0;i<templateValueList.length;i++) {
-            for(var j=0;j<templateValueList[i]['city'].length;j++) {
-              city.push(templateValueList[i]['city'][j])
+            var arr = this.formartArr(templateValueList[i]['sysAreaIds'])
+            for(var j=0;j<arr.length;j++) {
+              var obj = {
+                areaCode: arr[j],
+                index: i
+              }
+              sysAreaCodeArr.push(obj)
             }
           }
         }
-        return city
+
+        console.log('dasda',sysAreaCodeArr)
+        return sysAreaCodeArr
+      },
+      formartArr (str){
+        if(str){
+          return str.split(',')
+        }
       },
       getNewestTemplateData (storeId, callback){
         var self = this
@@ -230,7 +259,6 @@
       },
       addInputText() {
         let self = this
-        let templateValueList = self.ruleForm.templateValueList
         let checkedCities = self.dialogForm.checkedCities
         let checkedCitiesIndex = self.checkedCitiesIndex
         self.curInputVal.city = checkedCities
@@ -240,31 +268,36 @@
 
         var citiesMap = citiesMap,
             checkedCities = checkedCities;
+
+            console.log(citiesMap, checkedCities)
         if(checkedCities.length) {
           for(var i=0;i<checkedCities.length; i++) {
-            if(citiesMap[checkedCities[i]] != 'undefined') {
-              citiesMap[checkedCities[i]]['checked'] = true
+            console.log('测试数据',citiesMap[checkedCities[i].areaCode])
+            if(citiesMap[checkedCities[i].areaCode] != 'undefined') {
+              citiesMap[checkedCities[i].areaCode].checked = true
               if(checkedCitiesIndex != undefined) {
-                citiesMap[checkedCities[i]]['index'] = checkedCitiesIndex
+                citiesMap[checkedCities[i].areaCode].index = checkedCitiesIndex
               }else {
-                citiesMap[checkedCities[i]]['index'] = i
+                citiesMap[checkedCities[i].areaCode].index = checkedCities[i].index
               }
               
             }else {
-              citiesMap[checkedCities[i]]['checked'] = false
-              citiesMap[checkedCities[i]]['index'] = ''
+              citiesMap[checkedCities[i].areaCode].checked = false
+              citiesMap[checkedCities[i].areaCode].index = ''
             }
           }
         }else {
-          this.resetCitiesMap()
+          this.resetCitiesMap(citiesMap)
         }
+
+        console.log('合并数据',citiesMap)
         return citiesMap;
         
       },
-      resetCitiesMap(){
-        for (var obj in this.citiesMap){
-          this.citiesMap[obj]['checked'] = false
-          this.citiesMap[obj]['index'] = ''
+      resetCitiesMap(citiesMap){
+        for (var obj in citiesMap){
+          citiesMap[obj]['checked'] = false
+          citiesMap[obj]['index'] = ''
         }
       },
       /**
@@ -295,6 +328,26 @@
             console.log('提交表单',self.ruleForm)
           } else {
             console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+
+      /**
+       * resetForm 重置表单
+       * @param  { String } formName 表单对象名称
+       * @return {[type]}          [description]
+       */
+      resetForm(formName) {
+        this.$refs[formName].resetFields();
+      }
+    }
+  }
+</script>
+
+<style lang="scss">
+
+</style>
             return false;
           }
         });

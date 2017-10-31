@@ -88,6 +88,7 @@
               var obj = {};
               obj.productPrice = ''
               obj.productSkuQuantity = ''
+              obj.productSkuSerialId = null
               obj.data = data[i]
               arr.push(obj)
           }          
