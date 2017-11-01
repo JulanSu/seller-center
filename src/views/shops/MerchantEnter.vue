@@ -11,8 +11,11 @@
 					<upload-pictures :note="uploadTishi1"></upload-pictures>
 				</el-form-item>
 				<el-form-item label="组织机构代码（注册号）" label-width="200px" prop="orgCode">
-					<el-input v-model="ruleForm.orgCode" placeholder="请输入组织机构代码（注册号）" class="wid400"></el-input>
+					<el-input :maxlength="30" v-model.number="ruleForm.orgCode" placeholder="请输入组织机构代码（注册号）" class="wid400"></el-input>
 				</el-form-item>
+				<!-- <el-form-item label="组织机构代码（注册号）" label-width="200px" prop="orgCode">
+					<el-input :maxlength="30" v-model = 'ruleForm.searcBarCode' placeholder="请输入组织机构代码（注册号）"  class="wid400"></el-input>
+				</el-form-item> -->
 			</div>
 
 			<category-bar :title="categoryBarTitle2"></category-bar>
@@ -34,7 +37,7 @@
 
 				
 				<el-form-item label="身份证号" label-width="200px" prop="identityNumber">
-					<el-input v-model="ruleForm.identityNumber" placeholder="请输入身份证" class="wid400"></el-input>
+					<el-input v-model="ruleForm.identityNumber"  placeholder="请输入身份证" class="wid400"></el-input>
 				</el-form-item>
 			</div>
 			<el-form-item label="法人身份证正面" label-width="200px">
@@ -67,13 +70,13 @@
 				<el-input v-model="ruleForm.name" placeholder="请输入店铺名称"  class="wid400"></el-input>
 			</el-form-item>
 			<el-form-item label="选择您的主营行业 "  prop="selIndustry" label-width="200px">
-				<el-button class='selIndustryBtn'>选择主营行业</el-button>
-				<div class="myIndustry" v-if="ruleForm.selIndustry">
+				<el-button class='selIndustryBtn' @click="selCategory">选择主营行业</el-button>
+				<div class="myIndustry" v-if="ruleForm.selIndustry.length">
 					<h4>已选：</h4>
 					<ul>
-						<li>
-							<b>家装>卫浴陶瓷</b>
-							<el-button type="text">删除</el-button>
+						<li v-for="(item,index) in ruleForm.selIndustry">
+							<b>{{item[0]}}>{{item[1]}}</b>
+							<el-button type="text" @click="delIndustry(index)">删除</el-button>
 						</li>
 					</ul>
 				</div>
@@ -97,6 +100,7 @@
 			<el-form-item label="" label-width="200px">
 				<el-button type="primary" @click="submitForm('ruleForm')">提交审核</el-button>
 			</el-form-item>	
+			 
 		</el-form>
 
 		<el-dialog title="" :visible.sync="dialogVisible" custom-class="big-img">
@@ -107,8 +111,9 @@
 		    title=""
 		    top="30%"
 			:visible.sync="dialogVisible1"
+			custom-class="suc"
 			size="tiny">
-			<div class="suc">
+			<div class="suc-string">
 				<span class="el-icon-circle-check"></span>
 				<div>
 					<h2>您已成功提交审核</h2>
@@ -121,26 +126,80 @@
 			    <el-button type="primary" @click="getBack">立即进入商户中心</el-button>
 		    </span>
 		</el-dialog>
+
+		<el-dialog
+	        title="选择主营行业"
+	        top="30%"
+	        :visible.sync="dialogVisible2"
+	        custom-class="relevance-good"
+	        size="tiny">
+	      <div class="">
+	        <el-row>
+		      <el-col :span="8">
+		        <category-menu title="一级行业" v-if="categoryData.length" :categoryData="categoryData" @categoryClick="firstHandle">
+		        </category-menu>
+		      </el-col>
+		      <el-col :span="8">
+		        <category-menu title="二级行业" v-if="secoundCategoryData.length" :categoryData="secoundCategoryData" @categoryClick="secondHandle"></category-menu>
+		      </el-col>
+		    </el-row>
+		    <div class="category-nav-breadcrumb">
+		      <span class="icon-arrow-top arrow-top-a"><span class="icon-arrow-top arrow-top-b"></span></span>
+		      <el-breadcrumb separator=">">
+		        <span class="breadcrumb-tips">已选：</span>
+		        <template v-if="curCateName.length" v-for="(item,index) in curCateName">
+		        	<b v-if="index!=0" class="el-breadcrumb__separator">/</b>
+		        	<span v-for="(value,index) in item">
+		        		<b v-if="index==1" class="el-breadcrumb__separator">&gt;</b>
+						<b>{{value}}</b>
+		        	</span>
+		        </template>
+		      </el-breadcrumb>
+		    </div>
+	      </div>
+	        
+	        <span slot="footer" class="dialog-footer">
+	          <el-button type="primary"  @click="industrySel">确定</el-button>
+	          <el-button @click="dialogVisible2 = false">取消</el-button>
+	        </span>
+	    </el-dialog>
+	   
 	</section>
 	
 </template>
 
 <script>
 import CategoryBar from '@/components/CategoryBar.vue'/*标题*/
+import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 import UploadPictures from '@/components/UploadPictures.vue'/*上传图片组件*/
 import VDistpicker from 'v-distpicker';/*城市三级联动*/
 import MapView from '@/components/Map';/*地图组件*/
-import { merchantSave } from '@/api/shopApi';
-
+import { merchantSave,industryListall } from '@/api/shopApi';
+// 注册
+/*Vue.filter('onlyNumber', function (value) {
+  return value.replace(/[^/d]/g,''); 
+});*/
 export default {
 	components: {
 		CategoryBar,
+		CategoryMenu,
 		UploadPictures,
 		VDistpicker,
 		MapView	
 	},
 	data() {
 		return {
+			
+			//类目选择
+			curCateName:[],
+			stCateName:'',
+			categoryData: [],
+			industryCateId:[],
+			industryCateIdList:[],
+            secoundCategoryData:[],
+
+          	dialogVisible2:false,
+
 			dialogVisible1:false,
 			height:300,
 			selCity:"",
@@ -170,12 +229,13 @@ export default {
 			listLoading:false,
 
 			ruleForm: {
+				searcBarCode:'',
 				enterpriseName:'',
 				orgCode: '',
 				legalPerson: '',
 				identityNumber: '',
 				name: '',
-				selIndustry:"1",
+				selIndustry:[],
 				detailedAddress: '',
 				contactName:'',
 			    contactMobile:'',
@@ -207,9 +267,9 @@ export default {
 	            	{ required: true, message: '请输入店铺名称', trigger: 'blur' },
 	            	{ min: 1, max: 20, message: '长度为 1 到 20 位', trigger: 'blur' }
 	          	],
-	          	selIndustry:[
+	          	/*selIndustry:[
 	          		{ required: true, message: '请选择主营行业', trigger: 'change' },
-	          	],
+	          	],*/
 	          	detailedAddress:[
 	          		{ required: true, message: '请输入详细地址', trigger: 'blur' },
 	          	],
@@ -229,12 +289,91 @@ export default {
 
 		}
 	},
+/*	watch:{
+		'ruleForm.searcBarCode':function(){
+			
+            this.ruleForm.searcBarCode=this.ruleForm.searcBarCode.replace(/\W/g,'');
+            var newVal=this.ruleForm.searcBarCode;
+            console.log(newVal)
+            this.$set(this.ruleForm,'searcBarCode',newVal);
+            console.log(this.ruleForm.searcBarCode)
+        },
+
+		'ruleForm.orgCode':function(){
+			this.ruleForm.orgCode=this.ruleForm.orgCode.replace(/[\d]/g,'');
+			console.log(this.ruleForm.orgCode)
+		}
+		'ruleForm.orgCode':function(){
+            this.ruleForm.orgCode=this.ruleForm.orgCode.replace(/\D/g,'');
+            console.log(this.ruleForm.orgCode)
+        }
+	},*/
     mounted:function(){
 		//调用地图
 	    this.$refs.MapView.creatmap(this.ruleForm.longitude,this.ruleForm.latitude);
 
+	    //获取行业数据
+	    industryListall({}).then((res) => {
+	      this.categoryData = res.data.data;
+	    });
+
     },
 	methods: {
+		/*filterNumber(value){
+			this.ruleForm.orgCode=this.ruleForm.orgCode.replace(/[^/d]/g,'');
+		},*/
+		//选择行业
+		selCategory(){
+			this.dialogVisible2=true;
+			this.curCateName=[];
+			this.secoundCategoryData=[];
+		},
+		//一级类目选择事件
+		firstHandle (row, index){
+
+			this.stCateName='';
+			this.stCateName=row.industryCateName;
+	        if(row.secondIndustryList.length) {
+	            this.secoundCategoryData = row.secondIndustryList;
+	        }else {
+	            this.secoundCategoryData = [];
+	        }
+        },
+        //二级类目选择事件
+        secondHandle (row, index) {
+        	var maxArr=this.ruleForm.selIndustry.concat(this.curCateName);
+   			this.industryCateId.push(row.industryCateId);
+        	if(maxArr.length>9){
+        		this.$message({
+		          message: '主营行业不能超过10个哦',
+		          type: 'warning'
+		        });
+		        return false;
+        	}
+            this.curCateName.push([this.stCateName,row.industryCateName]);
+
+        },
+        //选择行业的确定按钮
+        industrySel(){
+        	if (this.curCateName.length==0) {
+        		return false;
+        	}else{
+        		this.ruleForm.selIndustry=this.ruleForm.selIndustry.concat(this.curCateName);
+        		this.industryCateIdList=this.industryCateIdList.concat(this.industryCateId);
+				
+        		this.dialogVisible2=false;
+        	}
+        },
+        //删除所选行业
+        delIndustry(index){
+        	Array.prototype.baoremove = function(dx) 
+			{ 
+			  if(isNaN(dx)||dx>this.length){return false;} 
+			  this.splice(dx,1); 
+			} 
+        	this.ruleForm.selIndustry.baoremove(index);
+        	this.industryCateIdList.baoremove(index);
+        },
 		/*查看示例图*/
 		iconSimple(src){
 			this.exampleSrc=src;
@@ -323,7 +462,7 @@ export default {
 		            para.append('contactName',this.ruleForm.contactName);
 		            para.append('contactMobile',this.ruleForm.contactMobile);
 		            para.append('name',this.ruleForm.name);
-		            para.append('industryCateIdList',["1","1"]);
+		            para.append('industryCateIdList',this.industryCateIdList);
 		            para.append('address',this.ruleForm.address);
 		            para.append('longitude',Number(this.ruleForm.latitude*1000000));
 					para.append('latitude',Number(this.ruleForm.longitude*1000000));
@@ -349,177 +488,4 @@ export default {
 
 	}
 }
-
 </script>
-
-<style lang="scss">
-.merchant-enter{
-	position:relative;
-	/* 公共样式 */
-	p,ul,ol,li,h4{
-		margin: 0;
-		padding:0;
-	}
-	ol,ul{
-		list-style: none;
-	}
-    .wid400{
-    	width:400px;
-    }
-    .wid280{
-    	width:280px;
-    }
-
-    /* 只读样式 */
-    .exhibition{
-    	padding-left:10px;
-    	font-size:14px;
-		color:#333333;
-    }
-    .big-img{
-    	width:480px;
-    	height:360px;
-    	margin-bottom:0;
-    	background:transparent;
-    	box-shadow:0 0 0;
-    	.el-dialog__body{
-    		width:430px;
-    		height:270px;
-    		text-align:center;
-    		line-height:270px;
-    		padding:0;
-    		img{
-    			width:430px;
-    		}
-    	}
-    }
-    .example{
-		position:absolute;
-		width:200px;
-		height:100px;
-		bottom:0px;
-		left:195px;
-		span{
-			float:right;
-			font-size: 14px;
-			color: #666666;
-			line-height:40px;
-			padding-right:20px;
-		}
-		div{
-			cursor:pointer;
-			float:right;
-			width:100px;
-			height:100px;
-			overflow: hidden;
-			line-height:100px;
-			text-align:center;
-			img{
-				max-width:100%;
-			}
-		}
-	}
-
-    .selector-btn{
-    	padding:0;
-    	position:absolute;
-    	right:20px;
-    	top:40px;
-    	height:22px;
-    	line-height:22px;
-    	font-size:16px;
-		color:#41cac0;
-    }
-    .category-bar{
-    	padding:40px 0 20px 40px;
-    }
-
-    .selIndustryBtn{
-    	background:#eeeeee;
-    	width:118px;
-    }
-    .myIndustry{
-    	width:398px;
-    	border:1px solid #eee;
-    	margin-top:20px;
-    	font-size:14px;
-		color:#333333;
-    	h4{
-    		background:#f5f7fa;
-			width:398px;
-			height:38px;
-			line-height:38px;
-			padding-left:20px;
-			font-weight:normal;
-    	}
-    	li{
-    		border-top:1px solid #eee;
-    		padding:0 20px;
-    		b{
-    			font-weight:normal;
-    		}
-    		.el-button--text{
-    			float:right;
-    			span{
-    				color:#ff0201;
-    			}
-    			span:hover{
-    				text-decoration: underline;
-    			}
-    		}
-
-    	}
-    	
-    }
-	/* 成功弹框样式 */
-	.el-dialog--tiny{
-		min-width:490px;
-		.el-dialog__footer{
-			padding-bottom:50px;
-			.dialog-footer{
-				display:block;
-				text-align:center;
-			}
-		}
-		.el-dialog__body{
-			padding:40px 20px;
-			.suc{
-				width:340px;
-				height:50px;
-				margin:0 auto;
-				
-				span{
-					float:left;
-					display:inline-block;
-					width:50px;
-					height:50px;
-					font-size: 46px;
-		    		margin-top: 3px;
-		    		color:#41cac0;
-		    		padding-right:10px;
-				}
-				div{
-					float:left;
-					width:280px;
-					h2{
-						font-size: 18px;
-						color: #333333;
-						height:25px;
-						line-height:25px;
-						margin:0;
-					}
-					p{
-						font-size: 14px;
-						color: #999999;
-						height:20px;
-						line-height:20px;
-						padding-top:5px;
-					}
-				}
-			}
-		}
-		
-	}
-}
-    
-</style>

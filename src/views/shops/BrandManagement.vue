@@ -1,33 +1,34 @@
 <template>
 	<section class="brand" v-if='$route.name==="品牌管理"'>
-		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
+		<el-col :span="24" class="tool-bar" style="padding-bottom: 0px;">
 		    <router-link to="/store/brand-management/sel-brand" class="selbrand" icon="plus">
 		      	<el-button type="primary" icon="plus">创建商品</el-button>
 		    </router-link>
 	    </el-col>
-		<ul>
-			<li  v-for="(myBrand,index) in myBrands" @click="jump(myBrand.id)">
+		<ul v-loading="listLoading">
+			<li  v-for="(myBrand,index) in myBrands" @click="jump(myBrand.storeBrandId)">
 				<div class="brandlogo">
-					<img :src="myBrand.src">
+					<img :src="myBrand.authorizationUrl">
 				</div>
 				<div class="brandlist">
-					<h3>
-						<b>{{myBrand.tit}}</b>
-						<span v-if="myBrand.state==1"  style="color:#41cac0;">(通过)</span>
-						<span v-else-if="myBrand.state==2"  style="color:#ff0201;">(未通过)</span>
-						<span v-else-if="myBrand.state==3" style="color:#41cac0;">(审核中)</span>
-						<span v-else style="color:#ff0201;">(已取消)</span>
+					<h3><!-- 已过期 已禁用 -->
+						<b>{{myBrand.nameCn}}</b>
+						<span v-if="pastDue(myBrand)" style="color:#ff0201;">(已过期)</span>
+						<span v-else-if="myBrand.isUsed==0" style="color:#ff0201;">(已禁用)</span>
+						<span v-else>
+							<span v-if="myBrand.isVerified==1"  style="color:#41cac0;">(审核通过)</span>
+							<span v-else-if="myBrand.isVerified==2"  style="color:#ff0201;">(未通过)</span>
+							<span v-else-if="myBrand.isVerified==0" style="color:#41cac0;">(审核中)</span>
+							<span v-else-if="myBrand.isVerified==3" style="color:#ff0201;">(已取消)</span> 
+						</span>
+						
 					</h3>
-					<p>渠道：{{myBrand.channel}}</p>
-					<p>授权城市：{{myBrand.hostCity}}</p>
-					<p>有效时间：{{myBrand.validTime}}</p>
+					<p>渠道：{{myBrand.ways}}</p>
+					<p>授权城市：{{myBrand.cityNames}}</p>
+					<p>截止时间：{{time(myBrand)}}</p>
 
-					<div class="btns" v-if="myBrand.state==1">
-						<span class="forbidden" @click.stop="forbidden(myBrand.id)">禁用</span>
-						<span class="startusing" @click.stop="startusing(myBrand.id)">启用</span>
-					</div>
-					<div class="btns" v-if="myBrand.state==3">
-						<span class="cancel" @click.stop="cancel(myBrand.id)">取消</span>
+					<div class="btns" v-if="!pastDue(myBrand)&&(myBrand.isVerified==0)&&(myBrand.isUsed!=0)">
+						<span class="cancel" @click.stop="cancel(myBrand.storeBrandId)">取消</span>
 					</div>			
 				</div>
 			</li>
@@ -38,49 +39,14 @@
 </template>
 
 <script>
-	/*import { Group,  ChinaAddressData, XAddress } from 'vux';*/
+import { brandList,brandChangeStatus,brandCancelverify } from '@/api/shopApi';
+import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 
 	export default {
 		data() {
 			return {
-				myBrands:[
-					{
-						id:1,
-					    src:"http://1.hapn.cc:20080/n/00803Rtc00fj1k3zoMa02w4.gif",
-					  	tit:'NIKE耐克',
-					  	state:"1",
-					  	channel:'线上渠道，线下渠道',
-					  	hostCity:'上海',
-					  	validTime:'2010年6月10号至2020年6月10号'
-					},
-					{
-						id:2,
-					  	src:"http://1.hapn.cc:20080/n/00803Rtc00fj1k3zoMa02w4.gif",
-					  	tit:'NIKE耐克',
-					  	state:"2",
-					  	channel:'线上渠道，线下渠道',
-					  	hostCity:'杭州',
-					  	validTime:'2010年6月10号至2020年6月10号'
-					},
-					{
-						id:3,
-					  	src:"http://1.hapn.cc:20080/n/00803Rtc00fj1k3zoMa02w4.gif",
-					  	tit:'NIKE耐克',
-					  	state:"3",
-					  	channel:'线上渠道，线下渠道',
-					  	hostCity:'北京',
-					  	validTime:'2010年6月10号至2020年6月10号'
-					},
-					{
-						id:4,
-					  	src:"http://1.hapn.cc:20080/n/00803Rtc00fj1k3zoMa02w4.gif",
-					  	tit:'NIKE耐克',
-					  	state:"4",
-					  	channel:'线上渠道，线下渠道',
-					  	hostCity:'杭州',
-					  	validTime:'2010年6月10号至2020年6月10号'
-					}
-				],
+				myBrands:[],//品牌列表的数据
+				listLoading:false,//懒加载标志
 				form: {
 					username: '',
 					region: '',
@@ -93,143 +59,64 @@
 				}
 			}
 		},
+
+	    mounted() {
+	      this.getBrandList();//获取品牌列表
+	    },
+
 		methods: {
 			/*点击列表跳转详情*/
 			jump(id){
-				this.$router.push({ path: 'brand-management/add-brand', query: { id: id}});
+				this.$router.push({ path: 'brand-management/compile-brand', query: { storeBrandId: id,compile:1}});
 			},
-			/*禁用按钮*/
-			forbidden(id){
-				alert(id)
+
+			/*取消按钮*/
+			cancel(id){		
+		    	let para = {
+			          storeBrandId:id
+			        };
+		        this.listLoading = true;
+		        brandCancelverify(para).then((res) => {
+		        	if(res.data.code==0){
+		        		this.getBrandList();
+		        	}
+		          	this.listLoading = false;
+		        }).catch((res)=> {
+		          	this.listLoading = false;
+		        });
 			},
-			/*启用按钮*/
-			startusing(id){
-				alert(id)
+
+			//判断时间是否过期
+			pastDue(myBrand){
+				var flag=false;
+				var nowData=new Date().getTime();
+				if(nowData>myBrand.endValidTime){
+					flag=true;
+				}
+				return flag;
 			},
-			/*删除按钮*/
-			cancel(id){
-				alert(id)
-			},
-			onSubmit() {
-				console.log('submit!');
-			},
-			test(){
-				console.log(this.addressData);
-			}
+			//将毫秒数转化为时间格式
+	        time: function (myBrand) {
+	        	var endData=new Date(myBrand.endValidTime);
+	        	return endData.getFullYear()+" / "+(endData.getMonth()+1)+" / "+endData.getDate();
+	        },
+			//获取品牌列表
+		    getBrandList() {
+		        let para = {
+		          storeId:storeId
+		        };
+
+		        this.listLoading = true;
+		        brandList(para).then((res) => {
+		        	if(res.data.code==0){
+		        		this.myBrands = res.data.data;
+		        	}
+		          	this.listLoading = false;
+		        }).catch((res)=> {
+		          	this.listLoading = false;
+		        });
+		    }
 		}
 	}
 
 </script>
-<style lang="scss">
-.brand{
-	position:relative;
-
-	/*公共样式*/
-	a{
-		text-decoration:none;
-	}
-	ul,ol{
-		list-style:none;
-	}
-	h3,p,ul,ol{
-		margin:0;
-	}
-
-	/* 创建商品按钮 */
-	.toolbar{
-		position:absolute;
-		top:-56px;
-		left:-30px;
-		background:none;
-  		padding:0;
-  		.selbrand{
-			float:right;
-		}
-	}
-
-	/* 列表样式 */
-	ul{
-		width:100%;
-		overflow:hidden;
-		padding:0;
-		li{
-			float:left;
-			width:480px;
-			height:160px;
-			margin-top:30px;
-			cursor:pointer;
-			.brandlogo{
-				width:158px;
-				height:158px;
-				line-height:158px;
-				text-align:center;
-				overflow: hidden;
-				float:left;
-				border:1px solid #ccc;
-				img{
-					max-width:100%;
-				}
-			}
-			.brandlist{
-				float:left;
-				padding-left:20px;
-				h3{
-					font-size:16px;
-					color:#333333;
-					height:22px;
-					line-height:22px;
-					margin-bottom:10px;
-					b{
-						float:left;
-						height:22px;
-						line-height:22px;
-						max-width:200px;
-						overflow: hidden;
-						white-space: nowrap;
-						text-overflow: ellipsis;
-						font-size:16px;
-						color:#333;
-						font-weight:normal;
-					}
-					span{
-						font-size:14px;
-						float:left;
-						height:22px;
-						line-height:22px;
-						padding-left:15px;
-					}
-				}
-				p{
-					font-size:14px;
-					color:#666666;
-					height:20px;
-					line-height:20px;
-					margin-bottom:10px;
-				}
-				.btns{
-					margin-top:15px;
-					span{
-						display:inline-block;
-						width:60px;
-						height:30px;
-						line-height:30px;
-						text-align:center;
-						margin-right:20px;
-						color:#666666;;
-						font-size:12px;
-						border:1px solid #ccc;
-						cursor: pointer;
-					}
-					.forbidden{
-						background:#45cdb6;
-						color:#fff !important;
-						border:1px solid #45cdb6 !important;
-					}
-				}
-			}
-		}
-	}
-}
-	
-
-</style>

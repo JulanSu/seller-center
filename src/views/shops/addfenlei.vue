@@ -98,7 +98,6 @@ export default {
           para.append('isUsed',this.ruleForm.isUsed);
           
           if(this.isAdd==2){//2是编辑
-
             para.append('storeCateId',this.ruleForm.storeCateId);
             cateUpdate(para).then((res)=> {
               this.sucFun(res);

@@ -1,16 +1,21 @@
 import axios from 'axios';
 import Qs from 'qs';
 
-let base = '';
+let base = 'http://192.168.89.68:8083';
 let host = '';
 var rootIP = process.env.API_ROOT;
 
 //店铺信息
 export const getShopMessage = params => { return axios.get(`${base}/store/get`, { params: params }); };
 export const updateShopMessage = params => { return axios.post(`${base}/store/update`,params); };
+
 //查看店铺资质信息
 export const storeGetMerchant = params => { return axios.get(`${base}/store/get_merchant`, { params: params }); };
 export const merchantUpdate = params => { return axios.post(`${base}/merchant/update`,params); };
+
+//获取行业分类
+export const industryListall = params => { return axios.get(`${base}/industry/listall`, { params: params }); };
+
 
 //提交入住审核
 export const merchantSave = params => { return axios.post(`${base}/merchant/save`,params); };
@@ -49,11 +54,16 @@ export const cateUpdate = params => { return axios.post(`${base}/store/cate/upda
 export const productList = params => { return axios.get(`${base}/store/cate/product/list`, { params: params }); };
 export const productRemove = params => { return axios.post(`${base}/store/cate/product/remove`,params); };
 export const categoryAll = params => { return axios.get(`${base}/product/category/all`, { params: params }); };
+export const productListcate = params => { return axios.post(`${base}/store/cate/product/listcate`,params); };
+export const productSave = params => { return axios.post(`${base}/store/cate/product/save`,params); };
 
 
 //我的品牌
 export const brandChangeStatus = params => { return axios.post(`${base}/store/brand/change_status`, params); };
 export const brandGet = params => { return axios.get(`${base}/store/brand/get`, { params: params }); };
-export const brandList = params => { return axios.get(`${base}/store/brand/update`,{ params: params }); };
+export const brandList = params => { return axios.get(`${base}/store/brand/list`,{ params: params }); };
 export const storeBrandUpdate = params => { return axios.post(`${base}/store/brand/update`, params); };
 export const brandVerify = params => { return axios.post(`${base}/store/brand/verify`,  params); };
+export const listindustrybrand = params => { return axios.get(`${base}/store/brand/listindustrybrand`,{ params: params }); };
+export const brandCancelverify = params => { return axios.get(`${base}/store/brand/cancelverify`,{ params: params }); };
+export const brandSavebrand = params => { return axios.post(`${base}/store/brand/savebrand`,  params); };

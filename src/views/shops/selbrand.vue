@@ -1,129 +1,263 @@
 <template>
-	<section class="selbrand">
+	<section class="sel-brand">
 		<category-bar :title="categoryBarTitle"></category-bar>
-		<div class="searchhezi">
-			<div class="hezi">
-				<input placeholder="请输入你想经营的品牌名称" class="searchbrand"></input>
-				<span class="searchbtn">搜索</span>
-			</div>
-			<div class="levelhezi">
-				<ul class="stair">
-					<li class="oneli">
-						<p>
-							<span>结婚</span><i></i>
-						</p>
-						<ul class="twolevel" v-if>
-							<li class="twoli">
-								<p>
-									<span>卫浴陶瓷</span><i></i>
-								</p>
-								<ul class="threelevel">
-									<li class="threeli"><span>结婚</span><i></i></li>
-									<li  class="threeli"><span>家装</span><i></i></li>
-									<li  class="threeli"><span>母婴</span><i></i></li>
-								</ul>
-							</li>
-							<li  class="twoli">
-								<p>
-									<span>地板门窗</span><i></i>
-								</p>
-								<ul class="threelevel">
-									<li class="threeli"><span>结婚</span><i></i></li>
-									<li  class="threeli"><span>家装</span><i></i></li>
-									<li  class="threeli"><span>母婴</span><i></i></li>
-								</ul>
-							</li>
-						</ul>
-					</li>
-					<li class="oneli">
-						<p>
-							<span>结婚</span><i></i>
-						</p>
-						<ul  class="twolevel">
-							<li class="twoli">
-								<p>
-									<span>卫浴陶瓷</span><i></i>
-								</p>
-							</li>
-						</ul>
-					</li>
-					<li class="oneli">
-						<p>
-							<span>结婚</span><i></i>
-						</p>
-						<ul  class="twolevel">
-							<li class="twoli">
-								<p>
-									<span>卫浴陶瓷</span><i></i>
-								</p>
-							</li>
-						</ul>
-					</li>
-				</ul>		
-			</div>	
+		<div style="min-width:980px">
+	        <el-row>
+		      <el-col :span="8" style="width:240px;">
+		        <category-menu title="一级行业" v-if="categoryData.length" :categoryData="categoryData" @categoryClick="firstHandle">
+		        </category-menu>
+		      </el-col>
+		      <el-col :span="8" style="width:240px;" class="no-bor">
+		        <category-menu title="二级行业" v-if="secoundCategoryData.length" :categoryData="secoundCategoryData" @categoryClick="secondHandle"></category-menu>
+		      </el-col>
+          <el-col v-if="logos.length||allBrand.length" :span="8" style="min-width:240px;" class="all-logo">
+            <ul>
+              <li v-for="(item,index) in logosBtn"  :class="{ sel:index==thisIndex }" @click="searchBrand(item,index)">{{item}}</li>
+            </ul>
+            <ol>
+              <li v-for="(item,index) in logos" @click="thirdHandle(item)">{{item.nameCn}}</li>
+            </ol>
+          </el-col>
+		    </el-row>
 
-		</div>
-		<div class="showsel">
-			<div class="brandsel">
-				<b>您当前选择的是：</b>
+	      </div>
+
+		<div class="show-sel">
+			<div class="brand-sel">
+				<b v-if="curCateName">您当前选择的是：</b>
+				<template v-if="curCateName" v-for="(item,key) in curCateName">
+		        <span>
+              <b>{{item}}</b>
+              <i class="el-icon-circle-close" @click="delBrand(item,key)"></i> 
+            </span>	
+		    </template>
 			</div>
-			<div class="brandbtn">
+			<div class="brand-btn">
 				<span>没有找到品牌？——</span>
 				<router-link to="/store/brand-management/create-brand" class="addbrand">创建品牌</router-link>
 			</div>
 		</div>
 		<div class="btns">
-			<router-link to="/store/brand-management/add-brand" class="makesure">确定</router-link>
-			<router-link to="/store/brand-management" class="cancel">取消</router-link>
+      <el-button type="primary" @click="addBrandBtn">确定</el-button>
+			<router-link to="/store/brand-management">
+        <el-button>取消</el-button>   
+      </router-link>
 		</div>
 	</section>
 </template>
 
 <script>
-	import CategoryBar from '@/components/CategoryBar.vue'
-    export default {
-      components: {CategoryBar},
-      data() {
-        return {
-          categoryBarTitle: '选择品牌'
+import CategoryBar from '@/components/CategoryBar.vue'/*标题*/
+import CategoryMenu from '@/components/CategoryMenu2.vue'/*类目选择*/
+import { listindustrybrand } from '@/api/shopApi';
+
+export default {
+    components: {
+    	CategoryBar,
+    	CategoryMenu
+    },
+
+    data() {
+      return {
+        categoryBarTitle: '选择品牌',
+
+        //类目选择
+  			curCateName:{},
+  			stCateName:'',
+  			categoryData: [],
+  			industryCateId:[],
+  			industryCateIdList:[],
+	      secoundCategoryData:[],
+        brands:{},
+
+        //品牌按照字母筛选品牌
+        logosBtn:["全部","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"
+        ],
+        logos:[],//品牌数据
+        allBrand:[],//用于记录品牌的全部数据
+        thisIndex:0
+      }
+	  },
+
+    methods:{
+  		//一级类目选择事件
+  		firstHandle (row, index){
+
+  			this.stCateName='';
+  			this.stCateName=row.industryCateName;
+
+        this.secoundCategoryData = row.secondIndustryList;
+        this.thirstCategoryData = [];
+        this.logos = [];
+      },
+
+      //二级类目选择事件
+      secondHandle (row, index) {
+        this.thirstCategoryData = [];
+        this.allBrand=this.logos = row.brandList;
+  			this.industryCateId.push(row.industryCateId);
+       
+      },
+      //三级类目选择事件
+      thirdHandle(row){
+        this.$set(this.curCateName,row.brandId,row.nameCn);
+
+      },
+      //删除品牌
+      delBrand(val,key){
+        this.$delete(this.curCateName,key);
+      },
+      //添加品牌的确定按钮
+      addBrandBtn(){
+        if(JSON.stringify(this.curCateName)== "{}"){
+          this.$message({
+            message: '请选择品牌',
+            type: 'warning'
+          });
+        }else{
+          this.$router.push({ path: '/store/brand-management/add-brand', query:this.curCateName })
         }
       },
-      mounted: function () {
 
+      //按照字符搜索品牌
+      searchBrand(item,index){
+        this.thisIndex=index;
+        if(index==0){//全部
+          this.logos=this.allBrand;
+        }else{
+          this.logos=[];
+          for(var i=0;i<this.allBrand.length;i++){
+            if(this.allBrand[i].nameEn.substr(0,1).toUpperCase()==item){
+               this.logos.push(this.allBrand[i]);
+            }
+          }
+        }
+      }
+
+  	},
+
+  	mounted:function(){
+      let para = {
+        storeId:storeId
+      };
+      this.listLoading = true;
+      listindustrybrand(para).then((res) => {
+        this.listLoading = false;
+        if(res.data.code==0){
+          this.categoryData= res.data.data;
+        }
+        
+      }).catch((res)=> {
+        this.listLoading = false;
+      });
+  	}
+}
+
+</script>
+<style lang="scss">
+.sel-brand{
+	a{
+		text-decoration:none;
+		color:#333;
+	}
+	ul,ol{
+		list-style:none;
+		padding:0;
+	}
+	h3,p,ul,ol{
+		margin:0;
+	}
+	.el-dialog__header{
+	  background:#f5f7fa;
+	  box-shadow:inset 0 -1px 0 0 #dddddd;
+	  padding:15px 20px;
+	}
+	.show-sel{
+    width:980px;
+		background:#fffaf2;
+		border:1px solid #fad29a;
+		overflow: hidden;
+    padding:10px 0;
+		margin-top:10px;
+		.brand-sel{
+			padding-left:20px;
+			font-size:12px;
+			min-width:150px;
+			float:left;
+			b{
+				color:#333;
+			}
+      span{
+        margin-left:20px;
+        cursor:pointer;
+        position:relative;
+        i{
+          position:absolute;
+          display:block;
+          top:-4px;
+          right:-12px;
+          color:red;
+        }
+      }
+		}
+		.brand-btn{
+			float:right;
+			width:220px;
+			text-align:right;
+			padding-right:20px;
+			color:#333;
+      font-size:12px;
+		}
+	}
+	.btns{
+    width:980px;
+    text-align:center;
+		text-align:center;
+		margin-top:30px;
+
+	}
+  .all-logo{
+    width:500px;
+    height:365px;
+    border:1px solid #ddd;
+    border-left:0;
+    ul{
+      height:40px;
+      line-height:40px;
+      border-bottom:1px solid #ddd;
+      li{
+        display:inline-block;
+        width:17px;
+        cursor:pointer;
+        text-align:center;
+        display:inline;
+        padding:0 4px;
+      }
+      li.all{
+
+      }
+      li.sel{
+        color:#41cac0;
+      }
+    }
+    ol{
+      padding:8px 0;
+      li{
+        display:inline-block;
+        width:125px;
+        text-align:center;
+        height:34px;
+        line-height:34px;
+        cursor:pointer;
       }
     }
 
-</script>
-<style scoped>
-a{
-	text-decoration:none;
-	color:#333;
-}
-ul,ol{
-	list-style:none;
-	padding:0;
-}
-h3,p,ul,ol{
-	margin:0;
-}
-
-.selbrand .searchhezi{
-	padding:15px 20px;
-	border:1px solid #9fdbd1;
-}
-.selbrand .hezi{
-	height:32px;
-	width:380px;
-	margin-bottom:15px;
-}
-.selbrand .hezi .searchbrand{
-	float:left;
-	border:1px solid #cccccc;
-	width:283px;
-	height:30px;
-	padding-left: 15px;
-	font-size:12px;
-	color:#333333;
+  }
+  .no-bor{
+    .category-nav{
+      border-left:0;
+    }
+  }
 }
 .selbrand .hezi .searchbrand::-webkit-input-placeholder { /* WebKit browsers */ 
 	color: #333; 
@@ -137,102 +271,5 @@ h3,p,ul,ol{
 .selbrand .hezi .searchbrand:-ms-input-placeholder { /* Internet Explorer 10+ */ 
 	color: #333; 
 } 
-.selbrand .hezi .searchbtn{
-	background:#45cdb6;
-	width:60px;
-	height:34px;
-	font-size:12px;
-	color:#ffffff;
-	line-height:34px;
-	text-align:center;
-	float:right;
-	cursor:pointer;
-}
-.selbrand .levelhezi{
-	height:264px;
-}
-.selbrand .levelhezi ul{
-	width:197px;
-	height:252px;
-	border:1px solid #9fdbd1;
-	padding:6px 5px;
-}
-.selbrand .levelhezi ul .secondlevel{
-	display:none;
-}
-.selbrand .levelhezi ul li{
-	cursor:pointer;
-	height:27px;
-	line-height:27px;
-	padding:0 10px;
-	color:#333;
-}
-.selbrand .levelhezi ul li.oneli:hover{
-	background:rgba(141,215,214,0.50);
-}
-.selbrand .levelhezi ul li.oneli:hover>span{
-	color:#333;
-}
-.selbrand .levelhezi ul.stair{
-	position:relative;
-}
-.selbrand .levelhezi ul.stair li{
-	color:#41cac0;
-	font-size:12px;
-}
-.selbrand .levelhezi ul.stair li ul.twolevel,
-.selbrand .levelhezi ul.stair li ul.twolevel .threelevel{
-	position:absolute;
-	top:-1px;
-	left:208px;
-}
-.selbrand .twolevel,.addbrand .threelevel{
-	display:none;
-}
 
-.selbrand .showsel{
-	background:#fffaf2;
-	border:1px solid #fad29a;
-	height:30px;
-	line-height:30px;
-	margin-top:10px;
-}
-.selbrand .brandsel{
-	padding-left:20px;
-	font-size:12px;
-	min-width:150px;
-	float:left;
-}
-.showsel .brandsel b{
-	color:#333;
-}
-.showsel .brandbtn{
-	float:right;
-	width:220px;
-	text-align:right;
-	padding-right:20px;
-	color:#333;
-}
-.selbrand .btns{
-	text-align:center;
-	margin-top:30px;
-}
-.selbrand .btns a{
-	display:inline-block;
-	background:#41cac0;
-	width:100px;
-	height:40px;
-	line-height:40px;
-	font-size:14px;
-	color:#fff;
-}
-.selbrand .btns a.cancel{
-	background:#fff;
-	color:#666;
-	border:1px solid #cccccc;
-	width:98px;
-	height:38px;
-	line-height:38px;
-	margin-left:30px;
-}
 </style>

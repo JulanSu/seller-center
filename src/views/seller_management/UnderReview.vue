@@ -1,137 +1,113 @@
 <template>
-    <div>
-      <div class="block">
-        <el-row> 
-          <el-col :span="2">
-        <el-button type="primary" icon="plus">创建商品</el-button>
-      </el-col>
-      <el-col :span="22">
-        <el-form :inline="true" :model="formInline" class="demo-form-inline">
-          <el-form-item label="商品名称">
-            <el-input v-model="formInline.goodsName" placeholder="请输入商品名称"></el-input>
-          </el-form-item>
-          <el-form-item label="商品ID">
-            <el-input v-model="formInline.goodsId" placeholder="商品ID"></el-input>
-          </el-form-item>
-          <el-form-item label="店铺分类">
-            <el-select v-model="formInline.storeCategory" placeholder="店铺分类" style="width: 160px;">
-              <el-option label="区域一" value="shanghai"></el-option>
-              <el-option label="区域二" value="beijing"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="创建时间">
-                <el-date-picker
-                  v-model="formInline.createDate"
-                  type="daterange"
-                  placeholder="选择日期范围">
-                </el-date-picker>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">查询</el-button>
-          </el-form-item>
-        </el-form>
-      </el-col>
-      </el-row>
+  <div>
+    <search-nav @onSearchClick="searchSubmitHandle"></search-nav>
+      <el-table
+        :data="tableData"
+        style="width: 100%" 
+        class="seller-table" highlight-current-row v-loading="listLoading">
+        <el-table-column
+          prop="productId"
+          label="ID"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          prop="productTitle"
+          label="商品名称"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          prop="productCoverUrl"
+          label="图片">
+          <template slot-scope="scope">
+            <div class="table-pic">
+              <img :src="scope.row.productCoverUrl" />
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="storeCateNameList"
+          label="店铺分类">
+          <template slot-scope="scope">
+            <span v-if="scope.row.storeCateNameList">{{scope.row.storeCateNameList.join('/')}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="productSkuAllQuantity"
+          label="库存">
+        </el-table-column>
+        <el-table-column
+          prop="productSellPrice"
+          label="展示价">
+        </el-table-column>
+        <el-table-column
+          prop="productStatus"
+          label="上架状态">
+        </el-table-column>
+        <el-table-column
+          prop="operational"
+          label="操作">
+          <template slot-scope="scope">
+            <el-button type="text" @click="onEditorHandle(scope.row)">编辑</el-button>
+            <el-button type="text" @click="onDelHandle(scope.row)">删除</el-button>
+            <el-button type="text" @click="onSubmitHandle(scope.row)">提交</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="block" v-if="pagination.total > pagination.pageSize">
+        <el-pagination class="pagination-wrap"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pagination.curPage"
+          :page-sizes="[10, 20, 30, 40]"
+          :page-size="pagination.pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pagination.total">
+        </el-pagination>
       </div>
-        <el-table
-          :data="tableData"
-          style="width: 100%" 
-          class="seller-table" highlight-current-row v-loading="listLoading">
-          <el-table-column
-            prop="id"
-            label="ID"
-            width="180">
-          </el-table-column>
-          <el-table-column
-            prop="goodsName"
-            label="商品名称"
-            width="180">
-          </el-table-column>
-          <el-table-column
-            prop="pic"
-            label="图片">
-            <template slot-scope="scope">
-              <div class="table-pic">
-                <img :src="scope.row.pic" />
-                
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="storeCategory"
-            label="店铺分类">
-          </el-table-column>
-          <el-table-column
-            prop="stock"
-            label="库存">
-          </el-table-column>
-          <el-table-column
-            prop="viewPrice"
-            label="展示价">
-          </el-table-column>
-          <el-table-column
-            prop="status"
-            label="上架状态">
-          </el-table-column>
-          <el-table-column
-            prop="operational"
-            label="操作">
-            <template slot-scope="scope">
-            <el-dropdown @command="dropdownHandle($event, scope.$index, scope.row)">
-              <el-button type="primary">
-                编辑<i class="el-icon-caret-bottom el-icon--right"></i>
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="delete">删除</el-dropdown-item>
-                <el-dropdown-item command="submit">提交</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-            </template>
-          </el-table-column>
-        </el-table>
-        <div class="block">
-          <el-pagination class="pagination-wrap"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage"
-            :page-sizes="[100, 200, 300, 400]"
-            :page-size="100"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="400">
-          </el-pagination>
-        </div>
 
-      <el-dialog
-        :visible.sync="dialogVisible"
-        size="tiny" width="300" class="dialog-wrap" :title="dialogConfig.title">
+    <el-dialog
+      :visible.sync="dialogVisible"
+      size="tiny" width="300" class="dialog-wrap" :title="dialogConfig.title">
 
-        <div class="block"><h3 class="tips">{{dialogConfig.content}}</h3></div>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="entryDialogHandle(tableRow)">确 定</el-button>
-        </span>
-      </el-dialog>
-    </div>
-
+      <div class="block"><h3 class="tips">{{dialogConfig.content}}</h3></div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="entryDialogHandle(tableRow)">确 定</el-button>
+      </span>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
-
+  import SearchNav from './components/SearchNav.vue'
+  import { getInreviewList, getStoreCate } from '@/api/seller'
+  const win = window;
+  const storeId = win.config && win.config.storeId ? win.config.storeId : ''
     export default {
+      components: {
+        SearchNav
+      },
         data() {
             return {
-              listLoading: false,
+              pagination: {
+                total: '',
+                pageSize: 10,
+                curPage: 1
+              },
+              listLoading: true,
               tableRow: null,
               formInline: {
                 user: '',
                 region: '',
                 goodsId: '',
                 goodsName: '',
-                storeCategory: '',
+                storeCateNameList: '',
                 createDate: '',
                 createBegin: '',
                 createEnd: ''
 
+              },
+              initData: {
               },
               dialogConfig: {
                 title: '',
@@ -140,44 +116,73 @@
               },
               dialogVisible: false,
               currentPage: 4,
-              tableData: [{
-                id: 33131,
-                goodsName: '喜乐蒂',
-                pic: 'https://raw.githubusercontent.com/taylorchen709/markdown-images/master/vueadmin/user.png',
-                storeCategory: '店铺分类',
-                stock: 111,
-                viewPrice: 998,
-                status: '回收站',
-                operational: null
-
-              },{
-                id: 33131,
-                goodsName: '喜乐蒂',
-                pic: 'https://raw.githubusercontent.com/taylorchen709/markdown-images/master/vueadmin/user.png',
-                storeCategory: '店铺分类',
-                stock: 111,
-                viewPrice: 998,
-                status: '回收站',
-                operational: null
-
-              }]
+              tableData: []
             }
         },
         mounted () {
 
         },
+        created(){
+
+          this.getInreviewList(storeId, 1, 10)
+        },
         methods: {
+          /**
+           * getInreviewList 获取商品列表
+           * @param  { String } storeId         店铺ID
+           * @param  { Number } pageNum         当前页面
+           * @param  { Number } pageSize        当前页面显示条目
+           * @param  { Number } productId       商品ID
+           * @param  { Number } productName   商品名称 
+           * @param  { String } storeCateId     店铺分类ID
+           * @param  { String } searchStartTime 搜索开始时间
+           * @param  { String } searchEndTime   搜索结束时间
+           * @return {[type]}                 [description]
+           */
+          getInreviewList (
+              storeId, 
+              pageNum,
+              pageSize,
+              productId, 
+              productName, 
+              storeCateId, 
+              searchStartTime, 
+              searchEndTime
+            ){
+            var self = this
+            getInreviewList({
+              storeId: storeId,
+              productId: productId || '',
+              productName: productName || '',
+              storeCateId: storeCateId || '',
+              searchStartTime: searchStartTime || '',
+              searchEndTime: searchEndTime || '',
+              pageNum: pageNum,
+              pageSize: pageSize
+            }).then((res)=>{
+              var data = res.data.data
+              if(res.data.code === 0) {
+                self.tableData = data.list
+                self.pagination.total = parseInt(data.total)
+                self.pagination.pageSize = pageSize
+                self.listLoading = false
+              }
+              console.log('获取商品列表', res)
+            })
+          },
           onSubmit() {
             console.log('submit!');
           },
           handleClick(row){
             this.dialogVisible = true
           },
-          handleSizeChange(val) {
-            console.log(`每页 ${val} 条`);
+          handleSizeChange(pageSize) {
+            this.getInreviewList(storeId, 1, pageSize)
+            console.log(`每页 ${pageSize} 条`);
           },
-          handleCurrentChange(val) {
-            console.log(`当前页: ${val}`);
+          handleCurrentChange(pageNum) {
+            this.getInreviewList(storeId, pageNum, 10)
+            console.log(`当前页: ${pageNum}`);
           },
 
           entryDialogHandle (row){
@@ -194,7 +199,7 @@
           },
           dropdownHandle (event, index, row){
             if(event === 'delete') {
-              this.handleDel(index, row)
+              this.onDelHandle(index, row)
             }else if(event === 'submit') {
               this.submitHandle(row)
             }
@@ -206,23 +211,60 @@
             this.tableRow = row
             this.dialogVisible = true
           },
-          handleDel: function (index, row) {
+          onEditorHandle() {
+
+          },
+          onSubmitHandle(){
             let self = this
-            this.$confirm('确定要删除这个商品吗？', '提示', {
-              type: 'warning'
-            }).then(() => {
-              this.listLoading = true;
-              //NProgress.start();
+            self.confirmHandle({
+              title: '提交',
+              content: '确定要提交这个商品吗？',
+              message: '商品提成功！',
+              type: 'success'
+            }, function(){
               let para = { id: row.id };
               removeUser(para).then((res) => {
-                this.listLoading = false;
+                self.listLoading = false;
                 //NProgress.done();
-                this.$message({
-                  message: '商品删除成功',
-                  type: 'success'
-                });
-                this.getUsers();
+                self.messageHandle('商品提交成功！', 'success')
               });
+            })
+          },
+          searchSubmitHandle (value){
+            console.log('商品查询后的', value)
+          },
+          onDelHandle (index, row) {
+            let self = this
+            self.confirmHandle({
+              title: '删除',
+              content: '确定要删除这个商品吗？',
+              message: '商品删除成功！',
+              type: 'success'
+            }, function(){
+              let para = { id: row.id };
+              removeUser(para).then((res) => {
+                self.listLoading = false;
+                //NProgress.done();
+                self.messageHandle('商品删除成功！', 'success')
+              });
+            })
+          },
+          messageHandle (message, type){
+            let self = this
+            self.$message({
+              message: message,
+              type: type
+            });
+          },
+          confirmHandle (config, callback){
+            let self = this
+            self.$confirm(config.content, config.title, {
+              type: 'warning'
+            }).then(() => {
+              self.listLoading = true;
+              //NProgress.start();
+              
+              callback()
             }).catch(() => {
 
             });
@@ -234,32 +276,5 @@
 </script>
 
 <style lang="scss">
-  .seller-table {
-    .table-pic {
-      width: 60px;
-      height: 60px;
-      overflow: hidden;
-      img {
-        width: 100%;
-      }
-    }
-    .cell {
-      padding-top: 20px;
-      padding-bottom: 20px;
-    }   
-  }
 
-  .dialog-wrap {
-    .tips {
-      font-size: 16px;
-      text-align: center;
-    }
-  }
-  .pagination-wrap {
-    float: right;
-  }
-  .block {
-    padding: 30px 0;
-    overflow: hidden;
-  }
 </style>

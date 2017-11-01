@@ -1,9 +1,9 @@
 <template>
   <div class="cate-property block-form">
-    <template v-for="productCate in catePropertyData">
+    <template v-if="catePropertyGroupList.length" v-for="productCate in catePropertyGroupList">
         <div class="cate-property-item" v-if=" productCate.catePropertySelection == 0">
           <div class="text">{{productCate.catePropertyName}}</div>
-          <el-select v-model="productCate.values" placeholder="请选择服务范围" @change="changeHandle">
+          <el-select v-model="productCate.values[0].value" placeholder="请选择服务范围" @change="changeHandle">
             <template v-for="option in productCate.options">  
               <el-option :text="option.catePropertyValue" :value="option.catePropertyValue" :key="option.productCatePropertyValuesId"></el-option>
             </template>
@@ -12,17 +12,24 @@
         <div class="cate-property-item" v-else-if="productCate.catePropertySelection == 1">
           <div class="text">{{productCate.catePropertyName}}</div>
           <div class="input">
-            <el-checkbox-group v-model="productCate.values" @change="changeHandle">
-                <template v-for="option in productCate.options">
-                  <el-checkbox :label="option.catePropertyValue" :key="option.productCatePropertyValuesId"></el-checkbox>
-                </template>
-              </el-checkbox-group>
+            <template v-for="(item, index) in productCate.options">
+              <el-checkbox :key="item.catePropertyValue" :label="item.catePropertyValue" v-model="productCate.values[index].value" :true-label="item.catePropertyValue" false-label=""  @change="changeHandle"></el-checkbox>
+            </template>
           </div>
         </div>        
-        <div class="cate-property-item" v-else-if="productCate.catePropertySelection == 2 && productCate.catePropertyParentId != -1">
+        <template v-else-if="productCate.catePropertySelection == 2 && productCate.catePropertyParentId == '-1'">
+          <div class="cate-property-item" v-if="productCate.values.length" v-for="item in productCate.values">
+              <div class="text">{{item.name}}</div>
+              <div class="input">
+                  <el-input  v-model="item.value" :value="item.value" placeholder="自定义属性" @change="changeHandle"></el-input>
+              </div>
+          </div>
+        </template>
+        <div class="cate-property-item" v-else-if="productCate.catePropertySelection == 2 && productCate.catePropertyParentId != '-1'">
           <div class="text">{{productCate.catePropertyName}}</div>
           <div class="input">
-            <el-input :model="productCate.values" value="" placeholder="自定义属性" @change="changeHandle"></el-input>
+              <el-input  v-model="productCate.values[0].value" :value="productCate.values[0].value" placeholder="自定义属性" @change="changeHandle"></el-input>
+            
           </div>
         </div>
     </template>
@@ -34,10 +41,7 @@
   export default {
     data() {
       return {
-        goodsForm: {
-          catePropertyOptionValuesDTOList: [],
-          catePropertyGroupList: []
-        }
+        catePropertyGroupList: []
       }
     },
     props: {
@@ -49,53 +53,63 @@
       }
     },
     computed: {
-      initGroupList: function(){
-
-        return 'aaa'
-
-        console.log('计算属性',this.catePropertyData)
-      }
       
     },
     created (){
-      this.formartData()
+      this.formartData(this.catePropertyData)
     },
     methods: {
-      formartData: function(){
-        var data = this.catePropertyData
+      formartData: function(data){
         var saveData = this.formartSaveData(data)
-
-        //this.formartValues(saveData)
+        this.catePropertyGroupList = this.formartValues(saveData)
 
       },
+
       formartValues: function(data){
-        var self = this
-        var dataA = []
-        for(var i=0;i<data.length;i++) {
-          if(data[i]['catePropertySelection'] == 2 && data[i]['catePropertyParentId'] == "-1") {
-            var obj = {}
-            if(data[i]['options'].length) {
-              for(var j=0;j<data[i]['options'].length;j++) {
-                data[i]['options'][j] = self.getGroupSaveValueDTO(data[i]['options'][j])
-              }
-            }
-          }
-          data[i] = self.getGroupSaveDTO(data[i])
+        var arr = []
+        for(var i=0 ; i<data.length; i++) {
+          arr.push(this.getGroupSaveDTO(data[i]))
         }
-        //console.log('超级格式化', data)
+        return arr
+      },
+      formartOptions(options, data){
+        var arr = []
+        for(var i=0; i<options.length;i++) {
+          var obj ={}
+          obj.id = options[i].productCatePropertyValuesId
+          obj.name = data.catePropertyName
+          obj.value = ''
+          arr.push(obj)
+        }
+        return arr;
       },
       formartSaveData: function(data){
+
         var input = []
         var aaaa = []
-        for(var i=0; i<data.length; i++) {
+        for(var i=0; i < data.length; i++) {
           if(data[i]['catePropertySelection'] == 2 && data[i]['catePropertyParentId'] == "-1") {
+            data[i]['value'] = []
             input.push(data[i])
           }else if(data[i]['catePropertySelection'] == 2 && data[i]['catePropertyParentId'] != 0) {
+            
+            data[i]['values'] = [this.getGroupSaveValueDTO(data[i])]
             aaaa.push(data[i])
           }else if(data[i]['catePropertySelection'] == 2 && data[i]['catePropertyParentId'] == 0){
+            
+            data[i]['values'] = [this.getGroupSaveValueDTO(data[i])]
             input.push(data[i])
-          }else if(data[i]['catePropertySelection'] == 0 || data[i]['catePropertySelection'] == 1){
+          }else if(data[i]['catePropertySelection'] == 1){
+            var arr = []
+            if(data[i]['options'].length) {
+              data[i]['values'] = this.formartOptions(data[i]['options'], data[i])
+            }
+            
             input.push(data[i])
+          }else if(data[i]['catePropertySelection'] == 0) {
+            
+            data[i]['values'] = [this.getGroupSaveValueDTO(data[i])]
+            input.push(data[i])           
           }
         }
         
@@ -103,8 +117,7 @@
           for (var j=0; j<input.length;j++) {
             for(var k=0;k<aaaa.length;k++) {
               if(input[j]['productCatePropertyId'] == aaaa[k]['catePropertyParentId']) {
-                console.log(aaaa, input)
-                input[j]['options'].push(aaaa[k])
+                input[j]['values'].push(this.getGroupSaveValueDTO(aaaa[k]))
               }
             }
           }
@@ -114,11 +127,16 @@
       },
       getGroupSaveDTO(data){
         var obj = {}
+
         obj.cateConnector = data.cateConnector
         obj.catePropertyName = data.catePropertyName
         obj.catePropertyParentId = data.catePropertyParentId
         obj.catePropertyUnit = data.catePropertyUnit
         obj.productCatePropertyId = data.productCatePropertyId
+        obj.catePropertySelection = data.catePropertySelection
+        obj.catePropertyType = data.catePropertyType
+        obj.options = data.options
+        if(data)
         obj.values = data.values
         return obj
       },
@@ -126,13 +144,29 @@
         var obj = {}
         obj.id = data.productCatePropertyId
         obj.name = data.catePropertyName
-        obj.value = data.values
+        obj.value = ''
+        return obj;
       },
+
       changeHandle(value){
-        console.log('我在被监听', value)
+        var jsonData = JSON.stringify(this.catePropertyGroupList)
+        var saveData = this.getSaveData(jsonData)
+        this.$emit('updateCatePropertyGroupList', saveData);
+      },
+      getSaveData(json){
+        var newData = JSON.parse(json)
+        if(newData.length) {
+          for(var i=0;i<newData.length;i++) {
+            for(var obj in newData[i]) {
+              if(obj === 'catePropertySelection' || obj === 'options') {
+                delete newData[i][obj]
+              }
+            }
+          }
+        }
+        return newData;
       }
     }
-
   }
 </script>
 
@@ -153,7 +187,6 @@
         width: 80px;
       }
       .input {
-        width: 160px;
         position: relative;
         display: inline-block;
       }

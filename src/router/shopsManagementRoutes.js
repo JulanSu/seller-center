@@ -48,7 +48,8 @@ const routers = [
                 children: [
                     { path: '/store/brand-management/sel-brand', component: selBrand, name: '选择品牌' },
                     { path: '/store/brand-management/add-brand', component: addBrand, name: '添加品牌' },
-                    { path: '/store/brand-management/create-brand', component: createBrand, name: '创建品牌'}
+                    { path: '/store/brand-management/create-brand', component: createBrand, name: '创建品牌'},
+                    { path: '/store/brand-management/compile-brand', component: addBrand, name: '编辑品牌' }
                 ]
             },
             { 

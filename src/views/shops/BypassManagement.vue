@@ -112,8 +112,8 @@ export default {
 		list-style: none;
 		li{
 			float:left;
-			width:318px;
-			height:95px;
+			width:306px;
+			height:93px;
 			text-align:center;
 			span{
 				font-size:14px;

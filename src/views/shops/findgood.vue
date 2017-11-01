@@ -74,7 +74,7 @@ import { productList,productRemove} from '@/api/shopApi';
         this.listLoading = true;
 
         productList(para).then((res) => {
-          this.total = res.data.data.total;
+          this.total = Number(res.data.data.total);
           this.datas = res.data.data.list;
 
           this.listLoading = false;

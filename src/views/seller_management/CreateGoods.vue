@@ -1,5 +1,7 @@
 <template>
-  <div>
+  <div class="create-goods page-container">
+    <loading-mask v-if="!categoryData.length"></loading-mask>
+    <template v-else>
     <category-bar :title="categoryBarTitle"></category-bar>
       <template v-if="$route.name === '创建商品'">
         <el-row>
@@ -49,18 +51,21 @@
           </div>
         </div>
       </template>
-    <router-view v-if="$route.name === '新建'"></router-view>
+    <router-view v-if="$route.name === '新建' || $route.name === '编辑'"></router-view>
+    </template>
   </div>
 </template>
 
 <script>
     const win = window;
-    const storeId = win.storeInfo && win.storeInfo.storeId ? win.storeInfo.storeId : ''
+    const storeId = win.config && win.config.storeId ? win.config.storeId : ''
     import CategoryBar from '@/components/CategoryBar'
+    import LoadingMask from '@/components/LoadingMask'
     import CategoryMenu from './components/CategoryMenu'
+    
     import { getGoodsCategoryList } from '@/api/seller'
     export default {
-      components: { CategoryMenu, CategoryBar },
+      components: { CategoryMenu, CategoryBar, LoadingMask },
       data() {
         return {
           storeId: storeId,
@@ -144,6 +149,10 @@
 
 <style lang="scss">
 @import '~scss_vars';
+  .page-container {
+    position: relative;
+    min-height: 500px;
+  }
   .guize {
     height: 200px;
     overflow: hidden;
@@ -170,33 +179,5 @@
     width:6px;
     height:50px;
   }  
-  .category-nav-breadcrumb {
-    position: relative;
-    border: 1px solid $color-primary;
-    padding: 7px 20px;
-    margin-top: 20px;
-    position: relative;
-    background: #F5F7FA;
-    .icon-arrow-top {
-      position: absolute;
-      left: 30px;
-      top: -17px;
-      border-width: 8px;
-      border-style: solid;
-
-    }
-    .arrow-top-a {
-      border-color: #fff #fff #F5F7FA #fff
-    }
-    .arrow-top-b {
-      left: -8px;
-      top: -8px; 
-            border-color: #fff #fff $color-primary #fff
-      
-    }
-    .breadcrumb-tips {
-      color: #333;
-      float: left;
-    }
-  }
+  
 </style>

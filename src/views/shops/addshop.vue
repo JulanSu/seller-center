@@ -7,8 +7,8 @@
 			<el-form-item label="门店联系人" label-width="120px" prop="contactPerson">
 				<el-input v-model="ruleForm.contactPerson" placeholder="请输入门店联系人" class="wid280"></el-input>
 			</el-form-item>
-			<el-form-item label="联系人手机号" label-width="120px" prop="contactPerson">
-				<el-input v-model="ruleForm.contactPerson" placeholder="请输入联系人手机号" class="wid280"></el-input>
+			<el-form-item label="联系人手机号" label-width="120px" prop="contactMobile">
+				<el-input v-model="ruleForm.contactMobile" placeholder="请输入联系人手机号" class="wid280"></el-input>
 			</el-form-item>
 			<el-form-item label="营业时间" label-width="120px" prop="workTime">
 				<el-input v-model="ruleForm.workTime" placeholder="请输入营业时间" class="wid280"></el-input>
@@ -85,6 +85,7 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
         	storeBranchId:'',
 	        name: '',
 	        contactPerson: '',
+	        contactMobile:'',
 	        workTime: '',
 	        address: '',
 	        longitude:120.186535,
@@ -95,6 +96,10 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
           name: [
             { required: true, message: '请输入门店名称', trigger: 'blur' },
             { min: 1, max: 30, message: '长度在 1 到 30 位', trigger: 'blur' }
+          ],
+          contactMobile:[
+          	{ required: true, message: '请输入联系人手机号', trigger: 'blur' },
+            { min:11, max: 11, message: '长度为 11 位', trigger: 'blur'}
           ],
           contactPerson: [
             { required: true, message: '请输入门店联系人', trigger: 'blur' },
@@ -222,8 +227,9 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 		},
 		update(para){//编辑门店提交接口
 			updateClassify(para).then((res) => {
-				this.dialogVisible1 = true;
+				
 	        	if(res.data.code==0){
+	        		this.dialogVisible1 = true;
 	        	}else{
 	        		this.$message.error(res.data.message);
 	        	}
@@ -254,6 +260,7 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 					
 					para.append('name',this.ruleForm.name);
 					para.append('contactPerson',this.ruleForm.contactPerson);
+					para.append('contactMobile',this.ruleForm.contactMobile);	
 					para.append('workTime',this.ruleForm.workTime);
 					para.append('address',this.sel+'*'+this.ruleForm.address);
 					para.append('longitude',Number(this.ruleForm.latitude*1000000));

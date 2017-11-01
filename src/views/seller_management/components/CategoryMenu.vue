@@ -14,7 +14,8 @@
         <el-menu default-active="" unique-opened class="category-menu" v-if="categoryData.length">
           <template  v-for="(item, index) in categoryData">
             <el-menu-item :index="index+''" class="sub-title" @click="selectproductCateName(item, index)">
-              <span class="first-letter" v-if="showLetterIcon">A</span>{{item.productCateName}}<i class="el-icon-arrow-right" v-if="item.child && item.child.length"></i>
+              <span class="first-letter" v-if="showLetterIcon">A</span>{{item.productCateName}}
+              <i class="el-icon-arrow-right" v-if="item.child && item.child.length"></i>
             </el-menu-item>
 <!--             <el-submenu :index="index+''" v-if="item.child && item.child.length && item.productCateName">
               <template slot="title">{{item.productCateName}}</template>
@@ -114,6 +115,7 @@
               this.searchList = _arr
             }  
           },
+
           selectproductCateName (row, index) {
             let self = this
             this.$emit('categoryClick', row, index)

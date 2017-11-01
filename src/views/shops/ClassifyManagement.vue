@@ -50,7 +50,7 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
         roleAuthority:[1],
         datas: [],
         total: 0,
-        pageSize: 10,//每页显示多少条
+        pageSize: 1,//每页显示多少条
         page:1,//当前页数
         listLoading: false,
         addLoading: false
@@ -66,9 +66,8 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
         };
         this.listLoading = true;
         cateList(para).then((res) => {
-          this.total = res.data.data.total;
+          this.total = Number(res.data.data.total);
           this.datas = res.data.data.list;
-          console.log(res.data.data.list)
           this.listLoading = false;
         }).catch((res)=> {
           this.listLoading = false;
