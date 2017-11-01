@@ -25,7 +25,7 @@
             <el-menu-item v-if="item.industryCateName"  :index="index+''" class="sub-title" @click="selectproductCateName(item, index)">
               <span class="first-letter" v-if="showLetterIcon">A</span>
               {{item.industryCateName}}
-              <i class="el-icon-arrow-right" v-if="item.secondIndustryList"></i> 
+              <i class="el-icon-arrow-right" v-if="item.secondIndustryList||item.brandList"></i> 
             </el-menu-item>
           </template>     
         </el-menu>

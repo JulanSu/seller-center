@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Full from '@/components/Full.vue'
-
 //import mendian from '@/views/charts/mendian.vue'
 import PersonMessage from '@/views/message/PersonMessage.vue'
 
@@ -11,14 +10,11 @@ import goodsManagementRoutes from './goodsManagementRoutes.js'
 //店铺管理路由
 import shopsManagementRoutes from './shopsManagementRoutes.js'
 
-
 /*交易管理路由*/
 import transaction from './transactionRoutes.js'
 
 /*营销路由管理*/
 import marketingCenter from './marketingCenterRoutes.js'
-
-
 
 Vue.use(VueRouter)
 
@@ -42,13 +38,13 @@ const routers = new VueRouter({
         path: '/',
         component: Full,
         name: '',
-        redirect: '/seller-management',
         hidden: true
     },
     {
 
         path: '/seller-management',
         component: Full,
+        redirect: '/seller-management/goods',
         name: '商品管理',
         iconCls: 'iconfont icon-shangpu',//图标样式class
         children: goodsManagementRoutes
@@ -85,7 +81,7 @@ const routers = new VueRouter({
         iconCls: 'iconfont icon-yingxiaozhongxin',
         children:marketingCenter 
     }
-    ]
+  ]
 })
 
 export default routers;

@@ -1,46 +1,92 @@
 <template>
+  
   <div class="goods-form">
-    <el-form :model="goodsForm" :rules="goodsFormRules" ref="goodsForm" label-width="120px">
-      <el-form-item label="当前类目" prop="cate">
-        {{initForm.productCateName}}
+    
+    <template v-if="initForm.finished">
+      <el-form :model="goodsForm" :rules="goodsFormRules" ref="goodsForm" label-width="120px">
+        <el-form-item label="当前类目" prop="cate">
+          {{initForm.productCateName}}
+        </el-form-item>
+
+        <el-form-item label="选择品牌" prop="brandId">
+          <brand-select v-model="goodsForm.brandId" :brandDTOList="initForm.brandDTOList"></brand-select>
+        </el-form-item>
+
+        <el-form-item label="商品标题" prop="productTitle">
+          <el-input v-model="goodsForm.productTitle" placeholder="商品标题"><template slot="append"><span :class="['error', titleRulesClass]">{{initForm.productTitleRules.curLen}}</span>/25</template></el-input>
+        </el-form-item>
+
+        <el-form-item label="商品卖点" prop="sellingPoint">
+          <el-input v-model="goodsForm.sellingPoint" placeholder="商品卖点"><template slot="append"><span :class="['error', sellingPointRulesClass]">{{initForm.sellingPointRules.curLen}}</span>/50</template></el-input>
+        </el-form-item>
+
+      <el-form-item label="类目属性" prop="productCateProperty">
+        <cate-property v-if="initForm.productCateProperty.length" :catePropertyData="initForm.productCateProperty" @updateCatePropertyGroupList="updateCatePropertyGroupList"></cate-property>
+      </el-form-item> 
+
+      <el-form-item label="商品规格" prop="catePropertyList">
+        <product-sku v-if="initForm.productSkuProperty.length" :skuData="initForm.productSkuProperty" @updateProductSkuProperty="updateProductSkuProperty"></product-sku>
       </el-form-item>
 
-      <el-form-item label="选择品牌" prop="brandId">
-        <brand-select v-model="goodsForm.brandId" :brandDTOList="initForm.brandDTOList"></brand-select>
-      </el-form-item>
+        <el-form-item label="商品销售规格" prop="productSkuTable" class="sellFormat-sku">
+            <div class="el-table el-table--fit el-table--striped el-table--enable-row-hover el-table--enable-row-transition" style="width: 100%;">
+              <div class="el-table__header-wrapper">
+                <table cellspacing="0" cellpadding="0" border="0" class="el-table__header" style="width:100%">
+                    <thead>
+                      <tr>
+                        <template v-for="productCate in initForm.productSkuProperty">
+                          <th colspan="1" rowspan="1" class="is-leaf">
+                            <div class="cell">{{productCate.catePropertyName}}</div>
+                          </th>
+                        </template>
+                        <th colspan="1" rowspan="1" class="is-leaf">
+                          <div class="cell">价格</div>
+                        </th>
+                        <th colspan="1" rowspan="1" class="is-leaf">
+                          <div class="cell">库存</div>
+                        </th>
+                      </tr>
+                    </thead>
+                  </table>
+                </div>
+                <div class="el-table__body-wrapper">
+                  <table cellspacing="0" cellpadding="0" border="0" class="el-table__body" style="width: 100%">
+                    <tbody>
+                      <template v-if="goodsForm.productSkuTable.length" v-for="productSku in goodsForm.productSkuTable">
+                          <tr class="el-table__row">
 
-      <el-form-item label="商品标题" prop="productTitle">
-        <el-input v-model="goodsForm.productTitle" placeholder="商品标题"><template slot="append"><span :class="['error', titleRulesClass]">{{initForm.productTitleRules.curLen}}</span>/25</template></el-input>
-      </el-form-item>
+                              <td v-for="item in productSku.data">
+                                <div class="cell">{{item.value}}</div>
+                              </td>
+                            <td>
+                              <div class="cell">
+                                <input class="" v-model="productSku.productPrice" @keyup="productSkuHandle(goodsForm.productSkuTable)" /></div>
+                            </td>
+                            <td>
+                              <div class="cell">
+                                <input class="" v-model="productSku.productSkuQuantity" @keyup="productSkuHandle(goodsForm.productSkuTable)" />
+                              </div>
+                            </td>
+                          </tr>
+                      </template>
+                    </tbody>
+                  </table><!---->
+                </div><!----><!----><!----><!---->
 
-      <el-form-item label="商品卖点" prop="sellingPoint">
-        <el-input v-model="goodsForm.sellingPoint" placeholder="商品卖点"><template slot="append"><span :class="['error', sellingPointRulesClass]">{{initForm.sellingPointRules.curLen}}</span>/50</template></el-input>
-      </el-form-item>
+          </div>   
+        </el-form-item>
 
-    <el-form-item label="类目属性" prop="productCateProperty">
-      <cate-property v-if="initForm.productCateProperty.length" :catePropertyData="initForm.productCateProperty" @updateCatePropertyGroupList="updateCatePropertyGroupList"></cate-property>
-    </el-form-item> 
-
-    <el-form-item label="商品规格" prop="catePropertyList">
-      <product-sku v-if="initForm.productSkuProperty.length" :skuData="initForm.productSkuProperty" @updateProductSkuProperty="updateProductSkuProperty"></product-sku>
-    </el-form-item>
-
-      <el-form-item label="商品销售规格" prop="productSkuTable" class="sellFormat-sku">
+        <el-form-item label="展示价格及库存" prop="productSellPrice" class="sellFormat-sku">
           <div class="el-table el-table--fit el-table--striped el-table--enable-row-hover el-table--enable-row-transition" style="width: 100%;">
-            <div class="el-table__header-wrapper">
-              <table cellspacing="0" cellpadding="0" border="0" class="el-table__header" style="width:100%">
+              <div class="el-table__header-wrapper">
+                <table cellspacing="0" cellpadding="0" border="0" class="el-table__header" style="width:100%">
                   <thead>
                     <tr>
-                      <template v-for="productCate in initForm.productSkuProperty">
-                        <th colspan="1" rowspan="1" class="is-leaf">
-                          <div class="cell">{{productCate.catePropertyName}}</div>
-                        </th>
-                      </template>
                       <th colspan="1" rowspan="1" class="is-leaf">
-                        <div class="cell">价格</div>
+                        <div class="cell">价格（元）</div>
                       </th>
                       <th colspan="1" rowspan="1" class="is-leaf">
-                        <div class="cell">库存</div>
+                        <div class="cell">总数量</div>
                       </th>
                     </tr>
                   </thead>
@@ -49,108 +95,66 @@
               <div class="el-table__body-wrapper">
                 <table cellspacing="0" cellpadding="0" border="0" class="el-table__body" style="width: 100%">
                   <tbody>
-                    <template v-if="goodsForm.productSkuTable.length" v-for="productSku in goodsForm.productSkuTable">
-                        <tr class="el-table__row">
-
-                            <td v-for="item in productSku.data">
-                              <div class="cell">{{item.value}}</div>
-                            </td>
-                          <td>
-                            <div class="cell">
-                              <input class="" v-model="productSku.productPrice" @keyup="productSkuHandle(goodsForm.productSkuTable)" /></div>
-                          </td>
-                          <td>
-                            <div class="cell">
-                              <input class="" v-model="productSku.productSkuQuantity" @keyup="productSkuHandle(goodsForm.productSkuTable)" />
-                            </div>
-                          </td>
-                        </tr>
-                    </template>
+                      <tr class="el-table__row">
+                        <td >
+                          <div class="cell">
+                            <input class="" v-model.number="goodsForm.productSellPrice" type="number" />
+                          </div>
+                        </td>
+                        <td>
+                          <div class="cell" v-if="initForm.productSkuQuantity">
+                            {{initForm.productSkuQuantity}}
+                          </div>
+                        </td>
+                      </tr>
                   </tbody>
                 </table><!---->
               </div><!----><!----><!----><!---->
+          </div> 
+        </el-form-item>
+        <el-form-item label="商品图片" prop="productPicUrlList" class="sellFormat-sku update-img">
+          <p class="desc">请编辑可送达的地区，当用户选择下述地区以外的配送地址时，将提示用户无法下单。</p>
+          <div>
+            <update-img v-model="goodsForm.productPicUrlList"></update-img>
+          </div>
+        </el-form-item>
 
-        </div>   
-      </el-form-item>
+        <el-form-item label="商品描述" prop="detailsContent" class="sellFormat-sku">
+          <summernote v-model="goodsForm.detailsContent"></summernote>
+        </el-form-item>
 
-      <el-form-item label="展示价格及库存" prop="productSellPrice" class="sellFormat-sku">
-        <div class="el-table el-table--fit el-table--striped el-table--enable-row-hover el-table--enable-row-transition" style="width: 100%;">
-            <div class="el-table__header-wrapper">
-              <table cellspacing="0" cellpadding="0" border="0" class="el-table__header" style="width:100%">
-                <thead>
-                  <tr>
-                    <th colspan="1" rowspan="1" class="is-leaf">
-                      <div class="cell">价格（元）</div>
-                    </th>
-                    <th colspan="1" rowspan="1" class="is-leaf">
-                      <div class="cell">总数量</div>
-                    </th>
-                  </tr>
-                </thead>
-              </table>
-            </div>
-            <div class="el-table__body-wrapper">
-              <table cellspacing="0" cellpadding="0" border="0" class="el-table__body" style="width: 100%">
-                <tbody>
-                    <tr class="el-table__row">
-                      <td >
-                        <div class="cell">
-                          <input class="" v-model.number="goodsForm.productSellPrice" type="number" />
-                        </div>
-                      </td>
-                      <td>
-                        <div class="cell" v-if="initForm.productSkuQuantity">
-                          {{initForm.productSkuQuantity}}
-                        </div>
-                      </td>
-                    </tr>
-                </tbody>
-              </table><!---->
-            </div><!----><!----><!----><!---->
-        </div> 
-      </el-form-item>
-      <el-form-item label="商品图片" prop="productPicUrlList" class="sellFormat-sku update-img">
-        <p class="desc">请编辑可送达的地区，当用户选择下述地区以外的配送地址时，将提示用户无法下单。</p>
-        <div>
-          <update-img v-model="goodsForm.productPicUrlList"></update-img>
+        <el-form-item label="服务范围" prop="serviceArea">
+          <city-site-list :citySiteList="initForm.citySiteList" @change="upSysAreaHandle"></city-site-list>
+        </el-form-item>
+
+        <el-form-item label="店铺中分类" prop="storeCateList">
+          <store-cate v-model="goodsForm.storeCateList" :storeCateList="initForm.storeCateList"></store-cate>
+        </el-form-item>
+
+        <div class="logistics-info wuliu" prop="shippingTemplateId">
+          <category-bar title="宝贝物流服务"></category-bar>
+          <logistics-services v-model="goodsForm.shippingTemplateId" :logisticsData="initForm.storeShippingTemplate"></logistics-services>
         </div>
-      </el-form-item>
-
-      <el-form-item label="商品描述" prop="detailsContent" class="sellFormat-sku">
-        <summernote v-model="goodsForm.detailsContent"></summernote>
-      </el-form-item>
-
-      <el-form-item label="服务范围" prop="serviceArea">
-        <city-site-list :citySiteList="initForm.citySiteList" @change="upSysAreaHandle"></city-site-list>
-      </el-form-item>
-
-      <el-form-item label="店铺中分类" prop="storeCateList">
-        <store-cate v-model="goodsForm.storeCateList" :storeCateList="initForm.storeCateList"></store-cate>
-      </el-form-item>
-
-      <div class="logistics-info wuliu" prop="shippingTemplateId">
-        <category-bar title="宝贝物流服务"></category-bar>
-        <logistics-services v-model="goodsForm.shippingTemplateId" :logisticsData="initForm.storeShippingTemplate"></logistics-services>
-      </div>
-      <div class="other-info">
-        <category-bar title="其他信息"></category-bar> 
-        <el-form-item label="上架时间" prop="publishTimeType" >
-          <publish-time v-model="goodsForm.publishTime"></publish-time>
+        <div class="other-info">
+          <category-bar title="其他信息"></category-bar> 
+          <el-form-item label="上架时间" prop="publishTimeType" >
+            <publish-time v-model="goodsForm.publishTime"></publish-time>
+          </el-form-item>
+          <el-form-item label="是否推荐" prop="productRecommend">
+            <el-radio-group v-model="goodsForm.productRecommend">
+              <el-radio :label="1">是</el-radio>
+              <el-radio :label="0">否</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </div>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm('goodsForm')">保存</el-button>
+          <el-button type="primary" @click="">放入草稿箱</el-button>
+          <!-- <el-button @click="resetForm('goodsForm')">重置</el-button> -->
         </el-form-item>
-        <el-form-item label="是否推荐" prop="productRecommend">
-          <el-radio-group v-model="goodsForm.productRecommend">
-            <el-radio :label="1">是</el-radio>
-            <el-radio :label="0">否</el-radio>
-          </el-radio-group>
-        </el-form-item>
-      </div>
-      <el-form-item>
-        <el-button type="primary" @click="submitForm('goodsForm')">保存</el-button>
-        <el-button type="primary" @click="">放入草稿箱</el-button>
-        <!-- <el-button @click="resetForm('goodsForm')">重置</el-button> -->
-      </el-form-item>
-    </el-form>
-
+      </el-form>
+    </template>
+    <loading-mask v-else></loading-mask>
   </div>
 </template>
 <script>
@@ -165,13 +169,12 @@
   import StoreCate from './goods_form/StoreCate.vue'
   import BrandSelect from './goods_form/BrandSelect.vue'
   import LogisticsServices from './goods_form/LogisticsServices.vue'
-
   import VueQuillEditor from 'vue-quill-editor'
   import { getStrLength } from '@/util/validator'
   import { getGoodsFormData, saveGoodsFormData} from '@/api/seller'
   import merge from 'merge'
   const win = window;
-  const storeId = win.storeInfo && win.storeInfo.storeId ? win.storeInfo.storeId : ''
+  const storeId = win.config && win.config.storeId ? win.config.storeId : ''
 
   export default {
     components: {
@@ -193,10 +196,11 @@
         fn(len)
       }
       return {
+
         //表单提交所需要的数据结构
         goodsForm: {
-          productId: null, //商品ID
-          productCateId: 24, //类目ID
+          productId: null, //商品ID 10000061
+          productCateId: '', //类目ID
           brandId: '', //品牌ID
           storeId: storeId, //店铺ID
           productTitle: '', //商品标题
@@ -240,6 +244,7 @@
           productSkuProperty: [] , 
           //商品规格
           productCateProperty: [],
+          finished: false
 
         },
         //表单校验
@@ -310,75 +315,96 @@
     },
 
     created() {
-
-      this.initFormData(this.$route.query)
+      console.log(this.$route)
+      this.initFormData()
       //this.initProductSkuProperty()
     },
     methods: {
       publishTimeHandle (value){
 
         this.goodsForm.publishTime = value
-        console.log(value)
+        
       },
       /**
        * initFormData 初始化表单数据（加载表单默认数据）
        * @param  { Object } route 路由查询信息
        * @return {[type]}       [description]
        */
-      initFormData(query) {
-
+      initFormData($route) {
+        let self = this
+        let route = this.$route
         let goodsForm = this.goodsForm
         let initForm = this.initForm
+        //判断是否编辑页面，是否存在店铺ID，是否存在商品ID
+        if(route.name === '编辑' && storeId && route.query.productId) {
+        
+          self.getEditorFormdata(storeId, goodsForm.productId)
+          goodsForm.productId = route.query.productId
+          return 
+
+        }
+
         //判断是否存在类目ID
-        if(query.productCateId) {
-          goodsForm.productCateId = query.productCateId
+        if(route.name === '新建' && storeId && route.query.productCateId && route.query.productCateName) {
+          self.getGoodsFormDataHandle(storeId, route.query.productCateId)
+          goodsForm.productCateId = route.query.productCateId
+          initForm.productCateName = route.query.productCateName
         }
-        if(query.productCateName) {
-          this.initForm.productCateName = query.productCateName
-        }
 
-        //获取表单初始化数据
-        this.getGoodsFormDataHandle(goodsForm.storeId, goodsForm.productCateId).then((res) => {
-          var data = res.data;
-          console.log('表单数据', res.data)
-          //console.log('表单合并后的数据', merge({}, this.initForm, res.data.data ))
-          if(data.code === 0) {
-
-            if(data.data.citySiteList && data.data.citySiteList.length) {
-              initForm.citySiteList = data.data.citySiteList
-            }
-            
-            if(data.data.brandDTOList && data.data.brandDTOList.length) {
-              initForm.brandDTOList = data.data.brandDTOList
-            }
-
-            if(data.data.productCateProperty && data.data.productCateProperty.length) {
-              initForm.productCateProperty = data.data.productCateProperty
-            }
-
-            if(data.data.productSkuProperty && data.data.productSkuProperty.length) {
-              initForm.productSkuProperty = data.data.productSkuProperty
-            }
-
-            if(data.data.storeCateList && data.data.storeCateList.length) {
-              initForm.storeCateList = data.data.storeCateList
-            }
-
-            if(data.data.brandDTOList && data.data.brandDTOList.length) {
-              initForm.brandDTOList = data.data.brandDTOList
-            }
-
-            this.goodsForm.productId = data.data.productId
-          }
-
-        });
-   
       },
-
+      /**
+       * getEditorFormdata 获取编辑商品的数据
+       * @param  { String } storeId   店铺ID
+       * @param  { String } productId 商品ID
+       * @return {[type]}           [description]
+       */
+      getEditorFormdata(storeId, productId){
+        getGoodsFormData({
+          storeId: storeId,
+          productId: productId
+        }).then((res) => {
+          console.log(res)
+        })
+      },
       getGoodsFormDataHandle (storeId, productCateId){
-        return getGoodsFormData({
+        let self = this
+        let initForm = this.initForm
+        getGoodsFormData({
           storeId: storeId,
           productCateId: productCateId
+        }).then((res)=>{
+          let data = res.data.data
+          console.log('数据请求完成', res)
+          if(res.data.code === 0) {
+
+            if(data.citySiteList && data.citySiteList.length) {
+              initForm.citySiteList = data.citySiteList
+            }
+            
+            if(data.brandDTOList && data.brandDTOList.length) {
+              initForm.brandDTOList = data.brandDTOList
+            }
+
+            if(data.productCateProperty && data.productCateProperty.length) {
+              initForm.productCateProperty = data.productCateProperty
+            }
+
+            if(data.productSkuProperty && data.productSkuProperty.length) {
+              initForm.productSkuProperty = data.productSkuProperty
+            }
+
+            if(data.storeCateList && data.storeCateList.length) {
+              initForm.storeCateList = data.storeCateList
+            }
+
+            if(data.brandDTOList && data.brandDTOList.length) {
+              initForm.brandDTOList = data.brandDTOList
+            }
+
+            self.goodsForm.productId = data.productId
+            self.initForm.finished = true
+            console.log('请求成功后，数据格式化', self.goodsForm)
+          }
         })
       },
       productSkuHandle (data){
@@ -406,10 +432,9 @@
         var self = this
         self.goodsForm.productStatus = 1
         console.log('提交数据',self.goodsForm)
-        console.log(JSON.stringify(self.goodsForm))
-        // saveGoodsFormData(self.goodsForm).then((res)={
-        //   console.log(res)
-        // })
+        saveGoodsFormData(self.goodsForm).then((res)=> {
+           console.log(res)
+        })
         // self.$refs[formName].validate((valid) => {
         //   if (valid) {
         //     console.log(self.goodsForm)

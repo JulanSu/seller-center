@@ -1,41 +1,36 @@
 <template>
 	<section class="sel-brand">
 		<category-bar :title="categoryBarTitle"></category-bar>
-		<div class="">
+		<div style="min-width:980px">
 	        <el-row>
-		      <el-col :span="8" style="min-width:240px;">
+		      <el-col :span="8" style="width:240px;">
 		        <category-menu title="一级行业" v-if="categoryData.length" :categoryData="categoryData" @categoryClick="firstHandle">
 		        </category-menu>
 		      </el-col>
-		      <el-col :span="8" style="min-width:240px;">
+		      <el-col :span="8" style="width:240px;" class="no-bor">
 		        <category-menu title="二级行业" v-if="secoundCategoryData.length" :categoryData="secoundCategoryData" @categoryClick="secondHandle"></category-menu>
 		      </el-col>
+          <el-col v-if="logos.length||allBrand.length" :span="8" style="min-width:240px;" class="all-logo">
+            <ul>
+              <li v-for="(item,index) in logosBtn"  :class="{ sel:index==thisIndex }" @click="searchBrand(item,index)">{{item}}</li>
+            </ul>
+            <ol>
+              <li v-for="(item,index) in logos" @click="thirdHandle(item)">{{item.nameCn}}</li>
+            </ol>
+          </el-col>
 		    </el-row>
-		    <div class="category-nav-breadcrumb">
-		      <span class="icon-arrow-top arrow-top-a"><span class="icon-arrow-top arrow-top-b"></span></span>
-		      <el-breadcrumb separator=">">
-		        <span class="breadcrumb-tips">已选：</span>
-		        <template v-if="curCateName.length" v-for="(item,index) in curCateName">
-		        	<b v-if="index!=0" class="el-breadcrumb__separator">/</b>
-		        	<span v-for="(value,index) in item">
-		        		<b v-if="index==1" class="el-breadcrumb__separator">&gt;</b>
-						<b>{{value}}</b>
-		        	</span>
-		        </template>
-		      </el-breadcrumb>
-		    </div>
+
 	      </div>
 
 		<div class="show-sel">
 			<div class="brand-sel">
-				<b>您当前选择的是：</b>
-				<template v-if="curCateName.length" v-for="(item,index) in curCateName">
-		        	<b v-if="index!=0" class="el-breadcrumb__separator">/</b>
-		        	<span v-for="(value,index) in item">
-		        		<b v-if="index==1" class="el-breadcrumb__separator">&gt;</b>
-						<b>{{value}}</b>
-		        	</span>
-		        </template>
+				<b v-if="curCateName">您当前选择的是：</b>
+				<template v-if="curCateName" v-for="(item,key) in curCateName">
+		        <span>
+              <b>{{item}}</b>
+              <i class="el-icon-circle-close" @click="delBrand(item,key)"></i> 
+            </span>	
+		    </template>
 			</div>
 			<div class="brand-btn">
 				<span>没有找到品牌？——</span>
@@ -43,15 +38,18 @@
 			</div>
 		</div>
 		<div class="btns">
-			<router-link to="/store/brand-management/add-brand" class="makesure">确定</router-link>
-			<router-link to="/store/brand-management" class="cancel">取消</router-link>
+      <el-button type="primary" @click="addBrandBtn">确定</el-button>
+			<router-link to="/store/brand-management">
+        <el-button>取消</el-button>   
+      </router-link>
 		</div>
 	</section>
 </template>
 
 <script>
 import CategoryBar from '@/components/CategoryBar.vue'/*标题*/
-import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
+import CategoryMenu from '@/components/CategoryMenu2.vue'/*类目选择*/
+import { listindustrybrand } from '@/api/shopApi';
 
 export default {
     components: {
@@ -60,222 +58,99 @@ export default {
     },
 
     data() {
-        return {
-            categoryBarTitle: '选择品牌',
+      return {
+        categoryBarTitle: '选择品牌',
 
-            //类目选择
-			curCateName:[],
-			stCateName:'',
-			categoryData: [],
-			industryCateId:[],
-			industryCateIdList:[],
-	        secoundCategoryData:[]
-        }
-	},
+        //类目选择
+  			curCateName:{},
+  			stCateName:'',
+  			categoryData: [],
+  			industryCateId:[],
+  			industryCateIdList:[],
+	      secoundCategoryData:[],
+        brands:{},
+
+        //品牌按照字母筛选品牌
+        logosBtn:["全部","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"
+        ],
+        logos:[],//品牌数据
+        allBrand:[],//用于记录品牌的全部数据
+        thisIndex:0
+      }
+	  },
 
     methods:{
-		//一级类目选择事件
-		firstHandle (row, index){
+  		//一级类目选择事件
+  		firstHandle (row, index){
 
-			this.stCateName='';
-			this.stCateName=row.industryCateName;
-	        if(row.secondIndustryList.length) {
-	            this.secoundCategoryData = row.secondIndustryList;
-	        }else {
-	            this.secoundCategoryData = [];
-	        }
-        },
+  			this.stCateName='';
+  			this.stCateName=row.industryCateName;
 
-        //二级类目选择事件
-        secondHandle (row, index) {
-   			this.industryCateId.push(row.industryCateId);
-            this.curCateName.push([this.stCateName,row.industryCateName]);
-        },
+        this.secoundCategoryData = row.secondIndustryList;
+        this.thirstCategoryData = [];
+        this.logos = [];
+      },
 
-        //选择行业的确定按钮
-        industrySel(){
-        	if (this.curCateName.length==0) {
-        		return false;
-        	}else{
-        		this.industryCateIdList=this.industryCateIdList.concat(this.industryCateId);
-        		this.dialogVisible2=false;
-        	}
+      //二级类目选择事件
+      secondHandle (row, index) {
+        this.thirstCategoryData = [];
+        this.allBrand=this.logos = row.brandList;
+  			this.industryCateId.push(row.industryCateId);
+       
+      },
+      //三级类目选择事件
+      thirdHandle(row){
+        this.$set(this.curCateName,row.brandId,row.nameCn);
+
+      },
+      //删除品牌
+      delBrand(val,key){
+        this.$delete(this.curCateName,key);
+      },
+      //添加品牌的确定按钮
+      addBrandBtn(){
+        if(JSON.stringify(this.curCateName)== "{}"){
+          this.$message({
+            message: '请选择品牌',
+            type: 'warning'
+          });
+        }else{
+          this.$router.push({ path: '/store/brand-management/add-brand', query:this.curCateName })
         }
+      },
+
+      //按照字符搜索品牌
+      searchBrand(item,index){
+        this.thisIndex=index;
+        if(index==0){//全部
+          this.logos=this.allBrand;
+        }else{
+          this.logos=[];
+          for(var i=0;i<this.allBrand.length;i++){
+            if(this.allBrand[i].nameEn.substr(0,1).toUpperCase()==item){
+               this.logos.push(this.allBrand[i]);
+            }
+          }
+        }
+      }
 
   	},
 
-	mounted:function(){
-		this.categoryData =[
-    {
-      "industryCateId": 1,
-      "industryCateName": "婚纱",
-      "industryCateAlias": "hs",
-      "industryCateEname": "hunsha",
-      "secondIndustryList": [
-        {
-          "createdBy": 0,
-          "createdAt": 1508399314000,
-          "updatedBy": 0,
-          "updatedAt": 1509004887000,
-          "delFlag": 0,
-          "idStr": "4",
-          "industryCateId": 4,
-          "industryCateName": "地板",
-          "industryCateAlias": "asjdhjasgd,asjdhgasgd",
-          "industryCateEname": "asdhjasfjahs",
-          "parentId": 1,
-          "shortOrder": 2,
-          "catePath": 0,
-          "isUse": 0,
-          "id": 4
-        },
-        {
-          "createdBy": 0,
-          "createdAt": 1508399347000,
-          "updatedBy": 0,
-          "updatedAt": 1509004890000,
-          "delFlag": 0,
-          "idStr": "5",
-          "industryCateId": 5,
-          "industryCateName": "门窗",
-          "industryCateAlias": "asjdh",
-          "industryCateEname": "asd",
-          "parentId": 1,
-          "shortOrder": 3,
-          "catePath": 0,
-          "isUse": 1,
-          "id": 5
-        },
-        {
-          "createdBy": 0,
-          "createdAt": 1508399750000,
-          "updatedBy": 0,
-          "updatedAt": 1509004928000,
-          "delFlag": 0,
-          "idStr": "6",
-          "industryCateId": 6,
-          "industryCateName": "挖土",
-          "industryCateAlias": "asj",
-          "industryCateEname": "as",
-          "parentId": 1,
-          "shortOrder": 4,
-          "catePath": 0,
-          "isUse": 1,
-          "id": 6
-        },
-        {
-          "createdBy": 0,
-          "createdAt": 1508399756000,
-          "updatedBy": 0,
-          "updatedAt": 1509020887000,
-          "delFlag": 0,
-          "idStr": "7",
-          "industryCateId": 7,
-          "industryCateName": "美食",
-          "industryCateAlias": "aj",
-          "industryCateEname": "a",
-          "parentId": 1,
-          "shortOrder": 5,
-          "catePath": 0,
-          "isUse": 0,
-          "id": 7
+  	mounted:function(){
+      let para = {
+        storeId:storeId
+      };
+      this.listLoading = true;
+      listindustrybrand(para).then((res) => {
+        this.listLoading = false;
+        if(res.data.code==0){
+          this.categoryData= res.data.data;
         }
-      ]
-    },
-    {
-      "industryCateId": 2,
-      "industryCateName": "摄影",
-      "industryCateAlias": "sy",
-      "industryCateEname": "sheying",
-      "secondIndustryList": [
-        {
-          "createdBy": 0,
-          "createdAt": 1509011544000,
-          "updatedBy": 0,
-          "updatedAt": 1509011544000,
-          "delFlag": 0,
-          "idStr": "14",
-          "industryCateId": 14,
-          "industryCateName": "摄影2",
-          "industryCateAlias": "sy2",
-          "industryCateEname": "sheyinger",
-          "parentId": 2,
-          "shortOrder": 1,
-          "catePath": 0,
-          "isUse": 1,
-          "id": 14
-        }
-      ]
-    },
-    {
-      "industryCateId": 8,
-      "industryCateName": "测试3",
-      "industryCateAlias": "cs3",
-      "industryCateEname": "ceshi3",
-      "secondIndustryList": [
-        {
-          "createdBy": 0,
-          "createdAt": 1508501002000,
-          "updatedBy": 0,
-          "updatedAt": 1508915247000,
-          "delFlag": 0,
-          "idStr": "9",
-          "industryCateId": 9,
-          "industryCateName": "测试1",
-          "industryCateAlias": "cs1",
-          "industryCateEname": "ceshi1",
-          "parentId": 8,
-          "shortOrder": 1,
-          "catePath": 0,
-          "isUse": 1,
-          "id": 9
-        },
-        {
-          "createdBy": 0,
-          "createdAt": 1508501007000,
-          "updatedBy": 0,
-          "updatedAt": 1508915250000,
-          "delFlag": 0,
-          "idStr": "10",
-          "industryCateId": 10,
-          "industryCateName": "测试2",
-          "industryCateAlias": "cs2",
-          "industryCateEname": "ceshi2",
-          "parentId": 8,
-          "shortOrder": 2,
-          "catePath": 0,
-          "isUse": 1,
-          "id": 10
-        }
-      ]
-    },
-    {
-      "industryCateId": 12,
-      "industryCateName": "测试",
-      "industryCateAlias": "cs",
-      "industryCateEname": "ceshi",
-      "secondIndustryList": [
-        {
-          "createdBy": 0,
-          "createdAt": 1509011319000,
-          "updatedBy": 0,
-          "updatedAt": 1509011332000,
-          "delFlag": 0,
-          "idStr": "13",
-          "industryCateId": 13,
-          "industryCateName": "测试添加二级",
-          "industryCateAlias": "cstjej",
-          "industryCateEname": "ceshitianjaierji",
-          "parentId": 12,
-          "shortOrder": 1,
-          "catePath": 0,
-          "isUse": 0,
-          "id": 13
-        }
-      ]
-    }
-  ];
-	}
+        
+      }).catch((res)=> {
+        this.listLoading = false;
+      });
+  	}
 }
 
 </script>
@@ -298,10 +173,11 @@ export default {
 	  padding:15px 20px;
 	}
 	.show-sel{
+    width:980px;
 		background:#fffaf2;
 		border:1px solid #fad29a;
-		height:30px;
-		line-height:30px;
+		overflow: hidden;
+    padding:10px 0;
 		margin-top:10px;
 		.brand-sel{
 			padding-left:20px;
@@ -311,6 +187,18 @@ export default {
 			b{
 				color:#333;
 			}
+      span{
+        margin-left:20px;
+        cursor:pointer;
+        position:relative;
+        i{
+          position:absolute;
+          display:block;
+          top:-4px;
+          right:-12px;
+          color:red;
+        }
+      }
 		}
 		.brand-btn{
 			float:right;
@@ -318,31 +206,58 @@ export default {
 			text-align:right;
 			padding-right:20px;
 			color:#333;
+      font-size:12px;
 		}
 	}
 	.btns{
+    width:980px;
+    text-align:center;
 		text-align:center;
 		margin-top:30px;
-		a{
-			display:inline-block;
-			background:#41cac0;
-			width:100px;
-			height:40px;
-			line-height:40px;
-			font-size:14px;
-			color:#fff;
-		}
-		a.cancel{
-			background:#fff;
-			color:#666;
-			border:1px solid #cccccc;
-			width:98px;
-			height:38px;
-			line-height:38px;
-			margin-left:30px;
-		}
-	}
 
+	}
+  .all-logo{
+    width:500px;
+    height:365px;
+    border:1px solid #ddd;
+    border-left:0;
+    ul{
+      height:40px;
+      line-height:40px;
+      border-bottom:1px solid #ddd;
+      li{
+        display:inline-block;
+        width:17px;
+        cursor:pointer;
+        text-align:center;
+        display:inline;
+        padding:0 4px;
+      }
+      li.all{
+
+      }
+      li.sel{
+        color:#41cac0;
+      }
+    }
+    ol{
+      padding:8px 0;
+      li{
+        display:inline-block;
+        width:125px;
+        text-align:center;
+        height:34px;
+        line-height:34px;
+        cursor:pointer;
+      }
+    }
+
+  }
+  .no-bor{
+    .category-nav{
+      border-left:0;
+    }
+  }
 }
 .selbrand .hezi .searchbrand::-webkit-input-placeholder { /* WebKit browsers */ 
 	color: #333; 

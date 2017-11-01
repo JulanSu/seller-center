@@ -6,60 +6,62 @@
         style="width: 100%" 
         class="seller-table" highlight-current-row v-loading="listLoading">
         <el-table-column
-          prop="id"
+          prop="productId"
           label="ID"
           width="180">
         </el-table-column>
         <el-table-column
-          prop="goodsName"
+          prop="productTitle"
           label="商品名称"
           width="180">
         </el-table-column>
         <el-table-column
-          prop="pic"
+          prop="productCoverUrl"
           label="图片">
           <template slot-scope="scope">
             <div class="table-pic">
-              <img :src="scope.row.pic" />
-              
+              <img :src="scope.row.productCoverUrl" />
             </div>
           </template>
         </el-table-column>
         <el-table-column
-          prop="storeCategory"
+          prop="storeCateNameList"
           label="店铺分类">
+          <template slot-scope="scope">
+            <span v-if="scope.row.storeCateNameList">{{scope.row.storeCateNameList.join('/')}}</span>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="stock"
+          prop="productSkuAllQuantity"
           label="库存">
         </el-table-column>
         <el-table-column
-          prop="viewPrice"
+          prop="productSellPrice"
           label="展示价">
         </el-table-column>
         <el-table-column
-          prop="status"
+          prop="productStatus"
           label="上架状态">
         </el-table-column>
         <el-table-column
           prop="operational"
           label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="onEditorHandle">编辑</el-button>
-            <el-button type="text" @click="onDelHandle">删除</el-button>
-            <el-button type="text" @click="onSubmitHandle">提交</el-button>
+            <el-button type="text" @click="onEditorHandle(scope.row)">编辑</el-button>
+            <el-button type="text" @click="onDelHandle(scope.row)">删除</el-button>
+            <el-button type="text" @click="onSubmitHandle(scope.row)">提交</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <div class="block">
+      <div class="block" v-if="pagination.total > pagination.pageSize">
         <el-pagination class="pagination-wrap"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[100, 200, 300, 400]"
-          :page-size="100"
+          :current-page="pagination.curPage"
+          :page-sizes="[10, 20, 30, 40]"
+          :page-size="pagination.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="400">
+          :total="pagination.total">
         </el-pagination>
       </div>
 
@@ -78,24 +80,34 @@
 
 <script>
   import SearchNav from './components/SearchNav.vue'
+  import { getInreviewList, getStoreCate } from '@/api/seller'
+  const win = window;
+  const storeId = win.config && win.config.storeId ? win.config.storeId : ''
     export default {
       components: {
         SearchNav
       },
         data() {
             return {
-              listLoading: false,
+              pagination: {
+                total: '',
+                pageSize: 10,
+                curPage: 1
+              },
+              listLoading: true,
               tableRow: null,
               formInline: {
                 user: '',
                 region: '',
                 goodsId: '',
                 goodsName: '',
-                storeCategory: '',
+                storeCateNameList: '',
                 createDate: '',
                 createBegin: '',
                 createEnd: ''
 
+              },
+              initData: {
               },
               dialogConfig: {
                 title: '',
@@ -104,44 +116,73 @@
               },
               dialogVisible: false,
               currentPage: 4,
-              tableData: [{
-                id: 33131,
-                goodsName: '喜乐蒂',
-                pic: 'https://raw.githubusercontent.com/taylorchen709/markdown-images/master/vueadmin/user.png',
-                storeCategory: '店铺分类',
-                stock: 111,
-                viewPrice: 998,
-                status: '回收站',
-                operational: null
-
-              },{
-                id: 33131,
-                goodsName: '喜乐蒂',
-                pic: 'https://raw.githubusercontent.com/taylorchen709/markdown-images/master/vueadmin/user.png',
-                storeCategory: '店铺分类',
-                stock: 111,
-                viewPrice: 998,
-                status: '回收站',
-                operational: null
-
-              }]
+              tableData: []
             }
         },
         mounted () {
 
         },
+        created(){
+
+          this.getInreviewList(storeId, 1, 10)
+        },
         methods: {
+          /**
+           * getInreviewList 获取商品列表
+           * @param  { String } storeId         店铺ID
+           * @param  { Number } pageNum         当前页面
+           * @param  { Number } pageSize        当前页面显示条目
+           * @param  { Number } productId       商品ID
+           * @param  { Number } productName   商品名称 
+           * @param  { String } storeCateId     店铺分类ID
+           * @param  { String } searchStartTime 搜索开始时间
+           * @param  { String } searchEndTime   搜索结束时间
+           * @return {[type]}                 [description]
+           */
+          getInreviewList (
+              storeId, 
+              pageNum,
+              pageSize,
+              productId, 
+              productName, 
+              storeCateId, 
+              searchStartTime, 
+              searchEndTime
+            ){
+            var self = this
+            getInreviewList({
+              storeId: storeId,
+              productId: productId || '',
+              productName: productName || '',
+              storeCateId: storeCateId || '',
+              searchStartTime: searchStartTime || '',
+              searchEndTime: searchEndTime || '',
+              pageNum: pageNum,
+              pageSize: pageSize
+            }).then((res)=>{
+              var data = res.data.data
+              if(res.data.code === 0) {
+                self.tableData = data.list
+                self.pagination.total = parseInt(data.total)
+                self.pagination.pageSize = pageSize
+                self.listLoading = false
+              }
+              console.log('获取商品列表', res)
+            })
+          },
           onSubmit() {
             console.log('submit!');
           },
           handleClick(row){
             this.dialogVisible = true
           },
-          handleSizeChange(val) {
-            console.log(`每页 ${val} 条`);
+          handleSizeChange(pageSize) {
+            this.getInreviewList(storeId, 1, pageSize)
+            console.log(`每页 ${pageSize} 条`);
           },
-          handleCurrentChange(val) {
-            console.log(`当前页: ${val}`);
+          handleCurrentChange(pageNum) {
+            this.getInreviewList(storeId, pageNum, 10)
+            console.log(`当前页: ${pageNum}`);
           },
 
           entryDialogHandle (row){
@@ -189,8 +230,8 @@
               });
             })
           },
-          searchSubmitHandle (){
-
+          searchSubmitHandle (value){
+            console.log('商品查询后的', value)
           },
           onDelHandle (index, row) {
             let self = this

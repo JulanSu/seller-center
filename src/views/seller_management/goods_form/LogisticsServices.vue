@@ -11,9 +11,8 @@
       <span>配送</span>
     </el-form-item>
     <el-form-item label="配送范围及运费">
-      <div class="area">
-        <ul>
-          <li>
+      <div class="area-list">
+        <div class="area-list-wrap">
             <div class="area-item"><el-input style="width:208px" value="浙江、江苏、上海" disabled></el-input></div>
             <div class="area-item">+运费</div>
             <div class="area-item"><el-input disabled value="111" style="width:80px" placeholder=""></el-input></div>
@@ -22,8 +21,7 @@
             <div class="area-item">件</div>
             <div class="area-item"><el-input disabled value="111" style="width:80px" placeholder=""></el-input></div>
             <div class="area-item">元</div>
-          </li>
-        </ul>
+        </div>
       </div>
     </el-form-item>
   </div>

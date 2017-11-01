@@ -4,65 +4,93 @@
             <el-tab-pane label="店铺活动" name="storeActive" class='tab-select'>
 
                 <el-row class='search'>
-                    <el-select v-model="statusValue" placeholder="活动状态" style='width:120px'>
+                    <el-select v-model="storeStatus" placeholder="活动状态" style='width:120px'>
                         <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value"></el-option>
                     </el-select>
-                    <el-select v-model="toolValue" placeholder="营销工具" style='width:120px;margin-left:20px;'>
+                    <el-select v-model="toolCheck" placeholder="营销工具" style='width:120px;margin-left:20px;'>
                         <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value"></el-option>
                     </el-select>
-                    <el-input v-model="storeActiveId" placeholder='输入活动名称/ID查询' class='search-input'></el-input>
-                    <el-button type="primary" class='search-btn' @click='search1'>查询</el-button>
+                    <el-input v-model="storeKeyword" placeholder='输入活动名称/ID查询' class='search-input'></el-input>
+                    <el-button type="primary" class='search-btn' @click='searchStore'>查询</el-button>
                 </el-row>
 
-                <el-table :data="tableData1" class='table-con' align='center' :row-style="{height:'100px'}">
-                    <el-table-column prop="id" label="活动ID" align='center'></el-table-column>
-                    <el-table-column prop="name" label="活动名称" align='center'></el-table-column>
-                    <el-table-column prop="tool" label="营销工具" align='center'></el-table-column>
-                    <el-table-column prop="timeOn" label="活动时间" align='center'></el-table-column>
-                    <el-table-column prop="timeCreate" label="创建时间" align='center'></el-table-column>
-                    <el-table-column prop="status" label="活动状态" align='center'></el-table-column>
+                <el-table :data="storeTable" class='table-con' align='center' :row-style="{height:'100px'}">
+                    <el-table-column prop="marketingActivityId" label="活动ID" align='center'></el-table-column>
+                    <el-table-column prop="activityName" label="活动名称" align='center'></el-table-column>
+                    <el-table-column prop="toolsName" label="营销工具" align='center'></el-table-column>
+                    <el-table-column label="活动时间" align='center'>
+                         <template slot-scope="scope">
+                            <div>{{switchTime(scope.row.activityBeginTime)}} 至 {{switchTime(scope.row.activityEndTime)}}</div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="创建时间" align='center'>
+                         <template slot-scope="scope">
+                            <div>{{switchTime(scope.row.createAt)}}</div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="活动状态" align='center'>
+                        <template slot-scope="scope">
+                            <div>{{switchStoreStatus(scope.row.activityShowStatus)}}</div>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="操作" align='center'>
                         <template slot-scope="scope">
-                            <el-button @click="handleClick(scope.row)" type="text" size="small" style="color: #45cdb6">编辑</el-button>
+                            <el-button @click="storeNextGo(scope.row)" type="text" size="small" style="color: #45cdb6">编辑</el-button>
                           </template>
                     </el-table-column>
                 </el-table>
 
                 <div class="block">
-                    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage4" :page-sizes="[20, 30, 50, 100, 150]" :page-size="20" layout="sizes, prev, pager, next, jumper,total" :total="100">
+                    <el-pagination @size-change="storeSizeChange" @current-change="storeCurrentChange" :current-page="currentPageStore" :page-sizes="[20, 50, 100]" :page-size="pageSizeStore" layout="sizes, prev, pager, next, jumper,total" :total="totalStore">
                     </el-pagination>
                 </div>
 
             </el-tab-pane>
             <el-tab-pane label="平台活动" name="platformActive">
                 <el-row class='search'>
-                    <el-select v-model="platformActiveStatus" placeholder="活动状态" style='width:120px'>
+                    <el-select v-model="platStatus" placeholder="活动状态" style='width:120px'>
                         <el-option v-for="item in options3" :key="item.value" :label="item.label" :value="item.value"></el-option>
                     </el-select>
-                    <el-select v-model="platformActiveJoin" placeholder="报名状态" style='width:120px;margin-left:20px;'>
+                    <el-select v-model="signStatus" placeholder="报名状态" style='width:120px;margin-left:20px;'>
                         <el-option v-for="item in options4" :key="item.value" :label="item.label" :value="item.value"></el-option>
                     </el-select>
-                    <el-select v-model="platformActiveCheck" placeholder="审核状态" style='width:120px;margin-left:20px;'>
+                    <el-select v-model="auditStatus" placeholder="审核状态" style='width:120px;margin-left:20px;'>
                         <el-option v-for="item in options5" :key="item.value" :label="item.label" :value="item.value"></el-option>
                     </el-select>
-                    <el-input v-model="platformActiveId" placeholder='输入活动名称/ID查询' class='search-input'></el-input>
-                    <el-button type="primary" class='search-btn' @click='search2'>查询</el-button>
+                    <el-input v-model="platKeyword" placeholder='输入活动名称/ID查询' class='search-input'></el-input>
+                    <el-button type="primary" class='search-btn' @click='searchPlat'>查询</el-button>
                 </el-row>
-                <el-table :data="tableData2" class='table-con' align='center' :row-style="{height:'100px'}">
-                    <el-table-column prop="id" label="活动ID" align='center'></el-table-column>
-                    <el-table-column prop="name" label="活动名称" align='center'></el-table-column>
-                    <el-table-column prop="time" label="活动时间" align='center'></el-table-column>
-                    <el-table-column prop="order" label="报名状态" align='center'></el-table-column>
-                    <el-table-column prop="check" label="审核状态" align='center'></el-table-column>
-                    <el-table-column prop="status" label="活动状态" align='center'></el-table-column>
+                <el-table :data="platTable" class='table-con' align='center' :row-style="{height:'100px'}">
+                    <el-table-column prop="marketingActivityId" label="活动ID" align='center'></el-table-column>
+                    <el-table-column prop="activityName" label="活动名称" align='center'></el-table-column>
+                    <el-table-column label="活动时间" align='center'>
+                         <template slot-scope="scope">
+                            <div>{{switchTime(scope.row.activityBeginTime)}} 至 {{switchTime(scope.row.activityEndTime)}}</div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="报名状态" align='center'>
+                        <template slot-scope="scope">
+                            <div>{{switchStatus(scope.row.signStatus).sign}}</div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="审核状态" align='center'>
+                        <template slot-scope="scope">
+                            <div>{{switchStatus(scope.row.auditStatus).audit}}</div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="活动状态" align='center'>
+                        <template slot-scope="scope">
+                            <div>{{switchStatus(scope.row.activityShowStatus).plat}}</div>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="操作" align='center'>
                         <template slot-scope="scope">
-                            <el-button @click="directGo(scope.row)" type="text" size="small" style="color: #45cdb6">编辑</el-button>
-                          </template>
+                            <el-button @click="platNextGo(scope.row)" type="text" size="small" style="color: #45cdb6">编辑</el-button>
+                        </template>
                     </el-table-column>
                 </el-table>
                 <div class="block">
-                    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage4" :page-sizes="[20, 30, 50, 100, 150]" :page-size="100" layout="sizes, prev, pager, next, jumper,total" :total="100">
+                    <el-pagination @size-change="platSizeChange" @current-change="platCurrentChange" :current-page="currentPagePlat" :page-sizes="[20,50, 100]" :page-size="pageSizePlat" layout="sizes, prev, pager, next, jumper,total" :total="totalPlat">
                     </el-pagination>
               </div>
             </el-tab-pane>
@@ -71,119 +99,208 @@
     <section v-else><el-row><router-view></router-view></el-row></section>
 </template>
 <script>
+    import { storeActList, platformActList} from '@/api/toolApi';
     export default {
         data() {
             return {
-                currentPage4: 1,
-                storeActiveId: '',
                 activeName: 'storeActive',
-                statusValue: '',
+                currentPageStore: 1,
+                pageSizeStore: 20,
+                totalStore: 0,
+                storeKeyword: '',
+                storeStatus: '',
+                toolCheck: '',
                 options1: [
-                        {value: 'will',label: '未开始'}, 
-                        {value: 'doing',label: '进行中'}, 
-                        {value: 'done',label: '已结束'}
+                        {value: 0,label: '全部'}, 
+                        {value: 3,label: '未开始'}, 
+                        {value: 1,label: '进行中'}, 
+                        {value: 2,label: '已结束'}
                 ],
-                toolValue: '',
-                options2: [{value: 'coupon',label: '现金券'}],
-                tableData1: [
-                {
-                    id: '16544',
-                    name: '芙兰朵露',
-                    tool: '上海市普陀区金沙江路 1518 弄',
-                    timeOn: '2017-08-18 00:00 至 2017-08-20 00:00',
-                    timeCreate: '2017-08-18 00:00',
-                    status: '进行中'
-                },
-                {
-                    id: '16544',
-                    name: '芙兰朵露',
-                    tool: '上海市普陀区金沙江路 1518 弄',
-                    timeOn: '2017-08-18 00:00 至 2017-08-20 00:00',
-                    timeCreate: '2017-08-18 00:00',
-                    status: '未开始'
-                }],
-                platformActiveId: '',
-                platformActiveStatus:'',
-                platformActiveJoin:'',
-                platformActiveCheck:'',
+                options2: [
+                        {value: '1',label: '全部'},
+                        {value: '1',label: '现金券'}
+                        ],  
+                storeTable: [],           
+                /*平台活动数据*/
+                platTable: [],
+                currentPagePlat: 1,
+                pageSizePlat: 20,
+                totalPlat: 0,
+                platStatus: null,
+                signStatus: null,
+                auditStatus: null,
+                platKeyword: '',
                 options3: [
-                        {value: 'will',label: '未开始'}, 
-                        {value: 'doing',label: '进行中'}, 
-                        {value: 'done',label: '已结束'}
+                    {value: 0,label: '全部'}, 
+                    {value: 3,label: '未开始'}, 
+                    {value: 1,label: '进行中'}, 
+                    {value: 2,label: '已结束'}
                 ],
                 options4: [
-                        {value: 'jion',label: '确认参与'}, 
-                        {value: 'canJion',label: '未回应'}, 
-                        {value: 'noJoin',label: '逾期未回应'}
+                    {value: 0,label: '全部'}, 
+                    {value: 2,label: '确认参与'}, 
+                    {value: 1,label: '未回应'}, 
+                    {value: 3,label: '逾期未回应'}
                 ],
                 options5: [
-                        {value: 'waitCheck',label: '未审核'}, 
-                        {value: 'noCheck',label: '审核不通过'}, 
-                        {value: 'checked',label: '审核通过'}
-                ],
-                tableData2: [
-                {
-                    id: '16544',
-                    name: '放飞梦想，看见世界',
-                    time: '2017-08-18 00:00 至 2017-08-20 00:00',
-                    order: '确认参与',
-                    check: '审核通过',
-                    status: '已结束'
-                },
-                {
-                    id: '16544',
-                    name: '放飞梦想，看见世界',
-                    time: '2017-08-18 00:00 至 2017-08-20 00:00',
-                    order: '未参与',
-                    check: '未审核',
-                    status: '进行中'
-                },
-                {
-                    id: '16544',
-                    name: '放飞梦想，看见世界',
-                    time: '2017-08-18 00:00 至 2017-08-20 00:00',
-                    order: '未参与',
-                    check: '审核未通过',
-                    status: '未开始'
-                }]
+                    {value: 0,label: '全部'},
+                    {value: 1,label: '未审核'}, 
+                    {value: 2,label: '审核通过'},
+                    {value: 3,label: '审核不通过'}
+                ]
             }
         },
         created(){
+            /*获取店铺活动*/
+            let params1 = {
+                storeId: 1,
+                toolsId: 1,
+                activityStatus: 0,
+                page: 1,
+                size: 20
+            };
+            this.getStoreData(params1)
+            /*获取平台活动*/
+            let params2 = {
+                storeId: 1,
+                activityStatus: 0,
+                signStatus: 0,
+                auditStatus: 0,
+                page: 1,
+                size: 20
+            };
+            this.getPlatData(params2)
         },
         methods: {
             /*店铺活动搜索*/
-            search1(){
+            searchStore(){
+                let self = this;
+                self.getStoreData(self.getStoreParams())
+            },
+            getStoreParams(){
                 let self = this,
-                    postData = {
-                        status: self.statusValue,
-                        tool: self.toolValue,
-                        storeActiveId: self.storeActiveId
+                    params = {
+                        storeId: 1,
+                        toolsId: self.toolCheck,
+                        activityStatus: self.storeStatus,
+                        page: self.currentPageStore,
+                        size: self.pageSizeStore,
+                        keyword: self.storeKeyword
                     }
-                console.log(postData)
+                return params;
+            },
+            getStoreData(obj){
+                let self = this;
+                storeActList(obj).then(res => {
+                    self.storeTable = res.data.data.list;
+                    self.totalStore = Number(res.data.data.total)
+                })
+            },
+            storeSizeChange(val) {
+                let self = this;
+                self.pageSizeStore = val;
+                self.getStoreData(self.getStoreParams())
+            },
+            storeCurrentChange(val) {
+                let self = this;
+                self.currentPageStore = val;
+                self.getStoreData(self.getStoreParams())
+            },
+            storeNextGo(row){
+                let self = this,
+                    topParams = {
+                        type: 'store',                      //表示店铺活动
+                        actStatus: row.activityShowStatus,  //店铺活动状态
+                        actId: row.marketingActivityId      //活动Id
+                    }
+                self.$router.push({path:'/marketing-center/tool/create',query: topParams});
+            },
+            /*店铺活动状态转化*/
+            switchStoreStatus(a){
+                switch(a) {
+                    case 0: return '未开始'; break;
+                    case 1: return '进行中'; break;
+                    default: return '已结束'; 
+                }
             },
             /*平台活动搜索*/
-            search2(){
-                
+            searchPlat(){
+                let self = this;
+                self.getPlatData(self.getPlatParams())
             },
-            handleClick(row) {
-                // console.log(row);
-                let self = this,actStatus;
-                row.status == '未开始' ? actStatus = false : actStatus = true;
-                self.$router.push({path:'/marketing-center/tool/create', query: {status: actStatus}});
+            getPlatParams(){
+                let self = this,
+                    params = {
+                        storeId: 1,
+                        activityStatus: self.platStatus,
+                        signStatus: self.signStatus,
+                        auditStatus: self.auditStatus,
+                        page: self.currentPagePlat,
+                        size: self.pageSizePlat,
+                        keyword: self.platKeyword
+                    }
+                return params;
             },
-            handleSizeChange(val) {
-                console.log(`每页 ${val} 条`);
+            getPlatData(obj){
+                let self = this;
+                platformActList(obj).then(res => {
+                    self.platTable = res.data.data.list;
+                    self.totalPlat = Number(res.data.data.total)
+                })
             },
-            handleCurrentChange(val) {
-                console.log(`当前页: ${val}`);
+            /*平台活动转换*/
+            switchStatus(a){
+                let st = {};
+                switch(a) {
+                    case 0:
+                        st = {plat: '未开始', sign: '未回应', audit: '未审核'}
+                        break;
+                    case 1:
+                        st = {plat: '进行中', sign: '确定参加', audit: '审核通过'}
+                        break;
+                    case 2:
+                        st = {plat: '已结束', sign: '逾期未回应', audit: '审核不通过'}
+                        break;
+                }
+                return st
             },
-            directGo(row) {
-                let self = this,thref,actStatus;
-                thref = row.order == '未参与' ? '/marketing-center/management/attend':'/marketing-center/tool/create';
-                actStatus = row.status == '未开始' ? actStatus = false : actStatus = true;
-                self.$router.push({path:thref,query: {status: actStatus,}});
+            /*时间戳转换*/
+            switchTime(val){
+                function add0(m){return m<10?'0'+m:m }
+                let time = new Date(val),
+                    y = time.getFullYear(),
+                    m = time.getMonth()+1,
+                    d = time.getDate(),
+                    h = time.getHours(),
+                    mm = time.getMinutes(),
+                    s = time.getSeconds();
+                return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
+            },
+            platSizeChange(val) {
+                let self = this;
+                self.pageSizePlat = val;
+                self.getPlatData(self.getPlatParams())
+            },
+            platCurrentChange(val) {
+                let self = this;
+                self.currentPagePlat = val;
+                self.getPlatData(self.getPlatParams())
+            },
+            platNextGo(row) {
+                /**
+                 * 跳转平台活动页
+                 * 1.活动ID
+                 * 2.商家参与状态
+                 * 3.审核状态
+                 **/  
+                let self = this,
+                    actId = row.marketingActivityId,
+                    signStatus = 0,//row.signStatus,
+                    auditStatus = row.auditStatus
+                self.$router.push({path:'/marketing-center/management/attend',query: {
+                    type: 'platform',actId: actId,signStatus: signStatus,auditStatus: auditStatus}});
             }
-        }   
+        }
     }
 
 </script>

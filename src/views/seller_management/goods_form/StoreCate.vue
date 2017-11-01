@@ -1,8 +1,12 @@
 <template>
-  <div class="block-form cate-property">
+  <div class="block-form cate-property store-cate">
     <el-checkbox-group 
       v-model="storeCateArr">
-      <el-checkbox v-for="storeCate in storeCateList" :label="storeCate.cateName" :key="storeCate.cateName" @change="changeHandle(storeCate)">{{storeCate.cateName}}</el-checkbox>
+      <ul class="">
+        <li v-for="storeCate in storeCateList">
+          <el-checkbox :label="storeCate.cateName" :key="storeCate.cateName" @change="changeHandle(storeCate)">{{storeCate.cateName}}</el-checkbox>
+        </li>
+      </ul>
     </el-checkbox-group>
   </div>
 </template>
@@ -58,5 +62,11 @@
 </script>
 
 <style lang="scss">
-
+  .store-cate {
+    ul,li {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+  }
 </style>

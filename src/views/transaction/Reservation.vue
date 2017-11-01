@@ -1,39 +1,33 @@
 <template>
     <section class="coupon-con" v-if="$route.name=='结算管理'">
          <el-row class='search-row'>
-            <span>一级类目</span>
-            <el-input v-model="form.name" class='w180'></el-input>
-            <span>二级类目</span>
-            <el-select v-model="value1" placeholder="活动状态" class='w180'>
-                <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value"></el-option>
-            </el-select>
-            <span>三级类目</span>
-            <el-select v-model="value1" placeholder="活动状态" class='w180'>
-                <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value"></el-option>
-            </el-select>
             <span>订单编号</span>
-            <el-input v-model="form.number" class='w180'></el-input>
+            <el-input v-model="form.orderNumber" class='w180'></el-input>
             <span>创建时间</span>
-            <el-date-picker type="date" v-model="form.startTime" class='w120'></el-date-picker>
+            <el-date-picker type="date" v-model="form.startTime" class='w120' @change='chooseTime'></el-date-picker>
             <span>—</span>
-            <el-date-picker type="date" v-model="form.endTime" class='w120'></el-date-picker>
-            <el-button type="primary" class='search-btn'>查询</el-button>
+            <el-date-picker type="date" v-model="form.endTime" class='w120' @change='chooseTime'></el-date-picker>
+            <el-button type="primary" class='search-btn' @click="searchParams">查询</el-button>
         </el-row>
-        <el-table :data="tableData" class='table-con' align='center' :row-style="{height:'100px'}" @cell-click='tt'>
-            <el-table-column prop="id" label="订单编号" align='center'></el-table-column>
-            <el-table-column prop="time" label="创建时间" align='center'></el-table-column>
-            <el-table-column prop="storeName" label="买家手机" align='center'></el-table-column>
-            <el-table-column prop="proName" label="订单金额" align='center'></el-table-column>
-            <el-table-column prop="uesrName" label="商家优惠" align='center'></el-table-column>
-            <el-table-column prop="uesrPhone" label="平台补贴" align='center' ></el-table-column>
-            <el-table-column prop="status" label="用户实付" align='center'></el-table-column>
-            <el-table-column prop="fenrun" label="平台分润" align='center'></el-table-column>
-            <el-table-column prop="shouru" label="商家总收入" align='center'></el-table-column>
-            <el-table-column prop="yishou" label="已收入金额" align='center'></el-table-column>
-            <el-table-column prop="jiesuan" label="结算金额" align='center'></el-table-column>
+        <el-table :data="tableData" class='table-con' align='center' :row-style="{height:'100px'}">
+            <el-table-column label="订单编号" align='center'>
+                <template slot-scope="scope">
+                    <div @click='directionGo(scope.row)'>{{scope.row.serialNumber}}</div>    
+                </template>
+            </el-table-column>
+            <el-table-column prop="createdAt" label="创建时间" align='center'></el-table-column>
+            <el-table-column prop="buyerPhone" label="买家手机" align='center'></el-table-column>
+            <el-table-column prop="orderTotalMoney" label="订单金额" align='center'></el-table-column>
+            <el-table-column prop="storePrivilege" label="商家优惠" align='center'></el-table-column>
+            <el-table-column prop="platformSubsidy" label="平台补贴" align='center' ></el-table-column>
+            <el-table-column prop="userCost" label="用户实付" align='center'></el-table-column>
+            <el-table-column prop="platformCommission" label="平台分润" align='center'></el-table-column>
+            <el-table-column prop="storeIncome" label="商家总收入" align='center'></el-table-column>
+            <el-table-column prop="settledAmount" label="已收入金额" align='center'></el-table-column>
+            <el-table-column prop="settleAmount" label="结算金额" align='center'></el-table-column>
         </el-table>
         <div class="block">
-            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage4" :page-sizes="[10, 20, 30, 40]" :page-size="100" layout="sizes, prev, pager, next, jumper,total" :total="100">
+            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[20,50,100]" :page-size="pageSize" layout="sizes, prev, pager, next, jumper,total" :total="total">
                 </el-pagination>
         </div>
     </section>
@@ -41,79 +35,99 @@
 </template>
 
 <script>
+    import {accountList } from '@/api/ordersApi'
     export default {
         data() {
             return {
-                currentPage1: 5,
-                currentPage2: 5,
-                currentPage3: 5,
-                currentPage4: 4,
-                tableData: [
-                {
-                    id: 'DD10171001SY00001',
-                    time: '2017-08-20 12:12',
-                    storeName: '18233052568',
-                    proName: '1000.00',
-                    uesrName: '-100',
-                    uesrPhone: '0.00',
-                    status: '900.00',
-                    fenrun: '-50.00',
-                    shouru: '850.00',
-                    yishou: '850.00',
-                    jiesuan: '0.00'         
-                },
-                {
-                    id: 'DD10171001SY00001',
-                    time: '2017-08-20 12:12',
-                    storeName: '18233052568',
-                    proName: '1000.00',
-                    uesrName: '-100',
-                    uesrPhone: '0.00',
-                    status: '900.00',
-                    fenrun: '-50.00',
-                    shouru: '850.00',
-                    yishou: '850.00',
-                    jiesuan: '0.00'     
-                }],
+                total: 0,
+                pageSize: 20,
+                currentPage: 1,
+                tableData: [],
                 form: {
-                    name: '',
-                    number: '',
+                    orderNumber: '',
                     startTime: '',
                     endTime: ''
-                },
-                value1: '',
-                options1: [{
-                    value: '0',
-                    label: '未开始'
-                }, 
-                {
-                    value: '1',
-                    label: '进行中'
-                }, 
-                {
-                    value: '2',
-                    label: '已结束'
-                }, 
-                {
-                    value: '3',
-                    label: '已关闭'
-                }],
+                }
             }
         },
         created(){
+            let params = {
+                pageNum: 1,
+                pageSize: 20,
+                storeId: 10
+            }
+            this.getData(params)
         },
         methods: {
-            handleSizeChange(val) {
-                console.log(`每页 ${val} 条`);
-            },
-            handleCurrentChange(val) {
-                console.log(`当前页: ${val}`);
-            },
-            tt(row, column, cell){
-                var self = this;
-                if(cell.className.indexOf('column_1') > -1){
-                    self.$router.push('')
+            /*日期选择限制*/
+            chooseTime(){
+                let self = this;
+                let sTime = Date.parse(self.form.startTime);
+                let eTime = Date.parse(self.form.endTime);
+                if(sTime > eTime){
+                    self.form.endTime = '';
+                    self.warn('不可小于查询起始时间')
                 }
+            },
+            /*格式化时间*/
+            timeFormat(time){
+                let m = (time.getMonth() + 1) > 9 ? time.getMonth() + 1 : '0' +  (time.getMonth() + 1),
+                    d = time.getDate() > 9 ? time.getDate()  : '0' +  time.getDate();
+                let cTime = time.getFullYear() + '-' + m + '-' + d;
+                return cTime;
+            },
+            /*查询结算列表*/
+            searchParams(){
+                this.getData(this.getParams());
+            },
+            /*获取参数*/
+            getParams(){
+                let self = this,params = {};
+                params.storeId = 10;
+                params.orderNumber = self.form.orderNumber == '' ? null : self.form.orderNumber;
+                params.startDate = self.form.startTime == '' ? null : self.timeFormat(self.form.startTime);
+                params.endDate = self.form.endTime == '' ? null : self.timeFormat(self.form.endTime);
+                params.pageNum = self.currentPage;
+                params.pageSize = self.pageSize;
+                return params;
+            },
+            /*从接口获取数据*/
+            getData(obj){
+                let self = this;
+                accountList(obj).then(res => {
+                    let moc = res.data
+                    if(!moc.data){
+                        this.tableData = [];
+                        this.total = 0;
+                        return false;
+                    }
+                    this.total = Number(moc.data.total);
+                    this.tableData = moc.data.list
+                })
+            },
+            /*页面条数*/
+            handleSizeChange(val) {
+                let self = this;
+                self.pageSize = val
+                self.getData(self.getParams())
+            },
+            /*页面页数*/
+            handleCurrentChange(val) {
+                let self = this;
+                self.pageSize = val
+                self.getData(self.getParams())
+            },
+            directionGo(row){
+                var self = this,
+                    orderId = row.orderStoreId;
+                self.$router.push(`/transaction/reservation/reservation-detail?orderId=${orderId}`)
+            },
+            /*消息警告*/
+            warn(str){
+                this.$message({
+                    message: str,
+                    type: 'warning'
+                })
             }
         }   
     }

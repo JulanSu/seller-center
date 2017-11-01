@@ -16,9 +16,11 @@ const routers = [{
         path: '/seller-management/goods', 
         component: CreateGoods, 
         name: '创建商品',
+
         children:[
             { path: 'create', component: CreateGoods, name: '类目选择' },
-            { path: 'form', component: GoodsForm, name: '新建' }
+            { path: 'form', component: GoodsForm, name: '新建' },
+            { path: 'editor', component: GoodsForm, name: '编辑' }
         ]
     },
     { 

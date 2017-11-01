@@ -1,13 +1,14 @@
 import axios from 'axios';
 import Qs from 'qs';
 
-let base = 'http://192.168.88.42:8083';
+let base = 'http://192.168.89.68:8083';
 let host = '';
 var rootIP = process.env.API_ROOT;
 
 //店铺信息
 export const getShopMessage = params => { return axios.get(`${base}/store/get`, { params: params }); };
 export const updateShopMessage = params => { return axios.post(`${base}/store/update`,params); };
+
 //查看店铺资质信息
 export const storeGetMerchant = params => { return axios.get(`${base}/store/get_merchant`, { params: params }); };
 export const merchantUpdate = params => { return axios.post(`${base}/merchant/update`,params); };
@@ -63,3 +64,6 @@ export const brandGet = params => { return axios.get(`${base}/store/brand/get`, 
 export const brandList = params => { return axios.get(`${base}/store/brand/list`,{ params: params }); };
 export const storeBrandUpdate = params => { return axios.post(`${base}/store/brand/update`, params); };
 export const brandVerify = params => { return axios.post(`${base}/store/brand/verify`,  params); };
+export const listindustrybrand = params => { return axios.get(`${base}/store/brand/listindustrybrand`,{ params: params }); };
+export const brandCancelverify = params => { return axios.get(`${base}/store/brand/cancelverify`,{ params: params }); };
+export const brandSavebrand = params => { return axios.post(`${base}/store/brand/savebrand`,  params); };

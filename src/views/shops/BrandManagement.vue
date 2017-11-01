@@ -27,8 +27,8 @@
 					<p>授权城市：{{myBrand.cityNames}}</p>
 					<p>截止时间：{{time(myBrand)}}</p>
 
-					<div class="btns" v-if="myBrand.isVerified==0" slot-scope="scope">
-						<span class="cancel" @click.stop="cancel(scope.row)">取消</span>
+					<div class="btns" v-if="!pastDue(myBrand)&&(myBrand.isVerified==0)&&(myBrand.isUsed!=0)">
+						<span class="cancel" @click.stop="cancel(myBrand.storeBrandId)">取消</span>
 					</div>			
 				</div>
 			</li>
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { brandList,brandChangeStatus } from '@/api/shopApi';
+import { brandList,brandChangeStatus,brandCancelverify } from '@/api/shopApi';
 import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 
 	export default {
@@ -69,13 +69,14 @@ import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 			jump(id){
 				this.$router.push({ path: 'brand-management/compile-brand', query: { storeBrandId: id,compile:1}});
 			},
-			/*禁用按钮*/
-			forbidden(row){
-				this.listLoading = true;
-				var para = new URLSearchParams();
-		        para.append('storeBrandId',row.storeBrandId);
-		        para.append('isUsed',row.isUsed);
-				brandChangeStatus(para).then((res) => {
+
+			/*取消按钮*/
+			cancel(id){		
+		    	let para = {
+			          storeBrandId:id
+			        };
+		        this.listLoading = true;
+		        brandCancelverify(para).then((res) => {
 		        	if(res.data.code==0){
 		        		this.getBrandList();
 		        	}
@@ -84,20 +85,7 @@ import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 		          	this.listLoading = false;
 		        });
 			},
-			/*启用按钮*/
-			startusing(id){
-				alert(id)
-			},
-			/*删除按钮*/
-			cancel(id){
-				alert(id)
-			},
-			onSubmit() {
-				console.log('submit!');
-			},
-			test(){
-				console.log(this.addressData);
-			},
+
 			//判断时间是否过期
 			pastDue(myBrand){
 				var flag=false;

@@ -1,100 +1,69 @@
 <template>
     <section class="profit">
         <el-row class='detail-row'>
-            <el-col :span='5'>订单编号：12120351455</el-col>
-            <el-col :span='5'>买家：182****4444</el-col>
+            <el-col :span='5'>订单编号：{{form.serialNumber}}</el-col>
+            <el-col :span='5'>买家：{{form.buyerPhone}}</el-col>
             <el-col :span='5'>是否展会订单：否</el-col>
         </el-row>
-        <el-table :data="tableData" class='table-con' align='center' :row-style="{height:'100px'}" @cell-click='tt'>
-            <el-table-column prop="id" label="时间" align='center'></el-table-column>
-            <el-table-column prop="time" label="商品名称" align='center'></el-table-column>
-            <el-table-column prop="storeName" label="数量" align='center'></el-table-column>
-            <el-table-column prop="proName" label="商家优惠" align='center'>
+        <el-table :data="tableData" class='table-con' align='center' :row-style="{height:'100px'}">
+            <el-table-column prop="createdAt" label="时间" align='center'></el-table-column>
+            <el-table-column prop="productName" label="商品名称" align='center'></el-table-column>
+            <el-table-column prop="productNum" label="数量" align='center'></el-table-column>
+            <el-table-column prop="orderTotalMoney" label="订单金额" align='center'></el-table-column>
+            <el-table-column label="商家优惠" align='center'>
                 <template slot-scope="scope">
                     <div class="store-count">
-                        <p>-100.00</p>
-                        <p>会员节优惠：-￥{{scope.row.youhui[0]}}</p>
-                        <p>商家现金券：-￥{{scope.row.youhui[1]}}</p>
+                        <p>-{{scope.row.storePrivilege}}</p>
+                        <p v-for="item in scope.row.proPri">{{item.mes}}：-￥{{item.count}}</p>
                     </div>
                     <!-- <div class="platform-count"></div> -->
                 </template>
             </el-table-column>
-            <el-table-column prop="uesrName" label="平台补贴" align='center'>
-                 <template slot-scope="scope">
+            <el-table-column prop="platformSubsidy" label="平台补贴" align='center'>
+                 <!-- <template slot-scope="scope">
                     <div class="platform-count">
-                        <p>-100.00</p>
-                        <p>会员节优惠：-￥{{scope.row.youhui[0]}}</p>
-                        <p>商家现金券：-￥{{scope.row.youhui[1]}}</p>
-                    </div>
-                </template>
+                        <p>-100.00</p> -->
+                       <!--  <p>会员节优惠：-￥{{scope.row.youhui[0]}}</p>
+                        <p>商家现金券：-￥{{scope.row.youhui[1]}}</p> -->
+                    <!-- </div>
+                </template> -->
             </el-table-column>
-            <el-table-column prop="uesrPhone" label="用户实付" align='center' ></el-table-column>
-            <el-table-column prop="status" label="平台分润" align='center'></el-table-column>
-            <el-table-column prop="shouru" label="商家总收入" align='center'></el-table-column>
-            <el-table-column prop="yishou" label="已收入金额" align='center'></el-table-column>
-            <el-table-column prop="jiesuan" label="结算金额" align='center'></el-table-column>
+            <el-table-column prop="userCost" label="用户实付" align='center' ></el-table-column>
+            <el-table-column prop="platformCommission" label="平台分润" align='center'></el-table-column>
+            <el-table-column prop="storeIncome" label="商家总收入" align='center'></el-table-column>
+            <el-table-column prop="settledAmount" label="已收入金额" align='center'></el-table-column>
+            <el-table-column prop="settleAmount" label="结算金额" align='center'></el-table-column>
         </el-table>
     </section>
 </template>
 
 <script>
+    import {accountDetail} from '@/api/ordersApi';
     export default {
         data() {
             return {
-                tableData: [
-                {
-                    id: '2017-09-11 12:22',
-                    time: '周大福《乘风破浪》阿正同款18k金戒指...等3种商品',
-                    storeName: '1',
-                    proName: '1000.00',
-                    uesrName: '100',
-                    uesrPhone: '900.00',
-                    status: '900.00',
-                    shouru: '850.00',
-                    yishou: '850.00',
-                    jiesuan: '0.00',
-                    youhui: [
-                        '50','200','150','30'
-                    ]  
-                },
-                {
-                    id: 'DD10171001SY00001',
-                    time: '周大福《乘风破浪》阿正同款18k金戒指...等3种商品',
-                    storeName: '18233052568',
-                    proName: '1000.00',
-                    uesrName: '-100',
-                    uesrPhone: '0.00',
-                    status: '900.00',
-                    shouru: '850.00',
-                    yishou: '850.00',
-                    jiesuan: '0.00',
-                    youhui: [
-                        '100','200','150','30'
-                    ] 
-                }],
-                form: {
-                    name: '',
-                    number: '',
-                    startTime: '',
-                    endTime: ''
-                },
+                tableData: null,
+                form: {},
                 value1: '',
             }
         },
         created(){
+            let orderId = this.$route.query.orderId;
+            accountDetail({orderStoreId: orderId}).then( res => {
+                this.form = res.data.data;
+                this.tableData = res.data.data.accountProductList;
+                for(let i=0; i<this.tableData.length; i++){
+                    let that = this.tableData[i];
+                    that.proPri = [];
+                    for(let key in that.privileges){
+                        let money = {mes: key,count: that.privileges[key]}
+                        that.proPri.push(money)
+                    }
+                }
+            })
         },
         methods: {
-            handleSizeChange(val) {
-                console.log(`每页 ${val} 条`);
-            },
-            handleCurrentChange(val) {
-                console.log(`当前页: ${val}`);
-            },
-            tt(row, column, cell){
-                var self = this;
-                console.log(typeof cell.className);
-                console.log(typeof cell)
-            }
+           
         }   
     }
 

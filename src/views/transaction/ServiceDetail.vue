@@ -367,7 +367,6 @@
                 color: #fff;
                 width: 80px;
                 height: 40px;
-                line-height: 40px;
                 text-align: center;
                 border-radius: 5px;
             }

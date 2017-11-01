@@ -51,14 +51,14 @@
           </div>
         </div>
       </template>
-    <router-view v-if="$route.name === '新建'"></router-view>
+    <router-view v-if="$route.name === '新建' || $route.name === '编辑'"></router-view>
     </template>
   </div>
 </template>
 
 <script>
     const win = window;
-    const storeId = win.storeInfo && win.storeInfo.storeId ? win.storeInfo.storeId : ''
+    const storeId = win.config && win.config.storeId ? win.config.storeId : ''
     import CategoryBar from '@/components/CategoryBar'
     import LoadingMask from '@/components/LoadingMask'
     import CategoryMenu from './components/CategoryMenu'

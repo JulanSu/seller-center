@@ -11,8 +11,11 @@
 					<upload-pictures :note="uploadTishi1"></upload-pictures>
 				</el-form-item>
 				<el-form-item label="组织机构代码（注册号）" label-width="200px" prop="orgCode">
-					<el-input v-model="ruleForm.orgCode" placeholder="请输入组织机构代码（注册号）" class="wid400"></el-input>
+					<el-input :maxlength="30" v-model.number="ruleForm.orgCode" placeholder="请输入组织机构代码（注册号）" class="wid400"></el-input>
 				</el-form-item>
+				<!-- <el-form-item label="组织机构代码（注册号）" label-width="200px" prop="orgCode">
+					<el-input :maxlength="30" v-model = 'ruleForm.searcBarCode' placeholder="请输入组织机构代码（注册号）"  class="wid400"></el-input>
+				</el-form-item> -->
 			</div>
 
 			<category-bar :title="categoryBarTitle2"></category-bar>
@@ -34,7 +37,7 @@
 
 				
 				<el-form-item label="身份证号" label-width="200px" prop="identityNumber">
-					<el-input v-model="ruleForm.identityNumber" placeholder="请输入身份证" class="wid400"></el-input>
+					<el-input v-model="ruleForm.identityNumber"  placeholder="请输入身份证" class="wid400"></el-input>
 				</el-form-item>
 			</div>
 			<el-form-item label="法人身份证正面" label-width="200px">
@@ -97,6 +100,7 @@
 			<el-form-item label="" label-width="200px">
 				<el-button type="primary" @click="submitForm('ruleForm')">提交审核</el-button>
 			</el-form-item>	
+			 
 		</el-form>
 
 		<el-dialog title="" :visible.sync="dialogVisible" custom-class="big-img">
@@ -159,6 +163,7 @@
 	          <el-button @click="dialogVisible2 = false">取消</el-button>
 	        </span>
 	    </el-dialog>
+	   
 	</section>
 	
 </template>
@@ -170,7 +175,10 @@ import UploadPictures from '@/components/UploadPictures.vue'/*上传图片组件
 import VDistpicker from 'v-distpicker';/*城市三级联动*/
 import MapView from '@/components/Map';/*地图组件*/
 import { merchantSave,industryListall } from '@/api/shopApi';
-
+// 注册
+/*Vue.filter('onlyNumber', function (value) {
+  return value.replace(/[^/d]/g,''); 
+});*/
 export default {
 	components: {
 		CategoryBar,
@@ -181,6 +189,7 @@ export default {
 	},
 	data() {
 		return {
+			
 			//类目选择
 			curCateName:[],
 			stCateName:'',
@@ -220,6 +229,7 @@ export default {
 			listLoading:false,
 
 			ruleForm: {
+				searcBarCode:'',
 				enterpriseName:'',
 				orgCode: '',
 				legalPerson: '',
@@ -279,6 +289,25 @@ export default {
 
 		}
 	},
+/*	watch:{
+		'ruleForm.searcBarCode':function(){
+			
+            this.ruleForm.searcBarCode=this.ruleForm.searcBarCode.replace(/\W/g,'');
+            var newVal=this.ruleForm.searcBarCode;
+            console.log(newVal)
+            this.$set(this.ruleForm,'searcBarCode',newVal);
+            console.log(this.ruleForm.searcBarCode)
+        },
+
+		'ruleForm.orgCode':function(){
+			this.ruleForm.orgCode=this.ruleForm.orgCode.replace(/[\d]/g,'');
+			console.log(this.ruleForm.orgCode)
+		}
+		'ruleForm.orgCode':function(){
+            this.ruleForm.orgCode=this.ruleForm.orgCode.replace(/\D/g,'');
+            console.log(this.ruleForm.orgCode)
+        }
+	},*/
     mounted:function(){
 		//调用地图
 	    this.$refs.MapView.creatmap(this.ruleForm.longitude,this.ruleForm.latitude);
@@ -290,6 +319,9 @@ export default {
 
     },
 	methods: {
+		/*filterNumber(value){
+			this.ruleForm.orgCode=this.ruleForm.orgCode.replace(/[^/d]/g,'');
+		},*/
 		//选择行业
 		selCategory(){
 			this.dialogVisible2=true;

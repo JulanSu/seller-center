@@ -2,39 +2,39 @@
     <section class="search" v-if="$route.name=='售后订单查询'">
         <el-row class='search-row1'>
             <span>买家手机</span>
-            <el-input v-model="form.userPhone" class='w180' placeholder='请输入手机号码' @blur="phoneIsRight"></el-input>
+            <el-input v-model="form.userPhone" class='w180' placeholder='请输入手机号码' @blur="numberIsRight(1)" :maxlength='11'></el-input>
             <span>订单类型</span>
-            <el-select v-model="form.typeCheck" class='w180'>
-                <el-option v-for="item in form.orderType" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            <el-select v-model="form.typeCheck" class='w180' @change="changeOrder">
+                <el-option v-for="item in form.orderType" :key="item.orderId" :label="item.orderName" :value="item.orderId"></el-option>
             </el-select>
             <span>售后进度</span>
             <el-select v-model="form.planCheck" placeholder="活动状态" class='w180'>
-                <el-option v-for="item in form.orderPlan" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                <el-option v-for="item in form.orderPlan" :key="item.statusId" :label="item.label" :value="item.statusId"></el-option>
             </el-select>
             <span>订单编号</span>
-            <el-input v-model="form.orderNumber" class='w180' placeholder='请输入订单号'></el-input>
+            <el-input v-model="form.orderNumber" class='w180' placeholder='请输入订单号' @blur="numberIsRight(2)"></el-input >
             <span>申请售后时间</span>
             <el-date-picker type="date" v-model="form.startTime" class='w120' @change="chooseTime"></el-date-picker>
             <span>—</span>
             <el-date-picker type="date" v-model="form.endTime" class='w120' @change="chooseTime"></el-date-picker>
-            <el-button type="primary" class='search-btn'>查询</el-button>
+            <el-button type="primary" class='search-btn' @click="searchParams">查询</el-button>
         </el-row>
         <el-table :data="tableData" class='table-con' align='center' :row-style="{height:'100px'}">
-            <el-table-column prop="id" label="订单号" align='center'></el-table-column>
-            <el-table-column prop="time" label="下单时间" align='center'></el-table-column>
-            <el-table-column prop="storeName" label="商品名称" align='center'></el-table-column>
-            <el-table-column prop="proName" label="用户昵称" align='center'></el-table-column>
-            <el-table-column prop="uesrName" label="用户手机号" align='center'></el-table-column>
-            <el-table-column prop="uesrPhone" label="售后状态" align='center'></el-table-column>
+            <el-table-column prop="serialNumber" label="订单号" align='center'></el-table-column>
+            <el-table-column prop="orderTime" label="申请售后时间" align='center'></el-table-column>
+            <el-table-column prop="pNamee" label="商品名称" align='center'></el-table-column>
+            <el-table-column prop="infoName" label="买家昵称" align='center'></el-table-column>
+            <el-table-column prop="infoTelephone" label="买家手机号" align='center'></el-table-column>
+            <el-table-column prop="orderStoreStatus" label="售后进度" align='center'></el-table-column>
             <el-table-column label="操作" align='center'>
                 <template slot-scope="scope">
-                    <el-button @click="handleClick(scope.row)" type="text" size="small" style="color: #45cdb6">处理完成</el-button>
-                    <el-button @click="searchDetail(scope.$index, scope.row)" type="text" size="small">查看详情</el-button>
+                    <el-button @click="handleClick(scope.row)" type="text" size="small" style="color: #45cdb6" v-if="scope.row.orderStoreStatus == '待处理'">去处理</el-button>
+                    <el-button @click="handleClick(scope.row)" type="text" size="small">查看详情</el-button>
                   </template>
             </el-table-column>
         </el-table>
         <div class="block">
-            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="1" :page-sizes="[10, 20, 30, 40]" :page-size="100" layout="sizes, prev, pager, next, jumper,total" :total="100">
+            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[20,50,100]" :page-size="pageSize" layout="sizes, prev, pager, next, jumper,total" :total="total">
                 </el-pagination>
         </div>
     </section>
@@ -42,63 +42,60 @@
 </template>
 
 <script>
+    import { orderStoreAfter } from '@/api/ordersApi'
     export default {
         data() {
             return {
-                onRight: false,
-                autoClick: false,
+                total: null,
+                pageSize: 20,
+                currentPage: 1,
                 form: {
                     userPhone: '',
-                    typeCheck: 'quanBu',
-                    planCheck: 'quanBu',
+                    typeCheck: null,
+                    planCheck: null,
                     orderType: [
-                            {label: '全部', value: 'quanBu'},
-                            {label: '全款订单', value: 'quanKuan'},
-                            {label: '定金订单', value: 'dingJin'},
-                            {label: '点券订单', value: 'dianQuan'},
-                            {label: '现金券订单', value: 'xianJinQuan'}
+                            {orderName: '全部', orderId: null},
+                            {orderName: '全款订单', orderId: 1},
+                            {orderName: '定金订单', orderId: 2},
+                            {orderName: '点券订单', orderId: 3},
+                            {orderName: '现金券订单', orderId: 4},
                     ],
                     orderPlan:[
-                            {label: '全部', value: 'quanBu'},
-                            {label: '未处理', value: 'weiChiLi'},
-                            {label: '已处理', value: 'yiChuLi'},
-                            {label: '售后完成', value: 'wanCheng'}
+                            {label: '全部', statusId: null},
+                            {label: '待处理', statusId: 5},
+                            {label: '待平台审核', statusId: 6},
+                            {label: '售后完成', statusId: 7},
+                            {label: '取消售后', statusId: 8},
                     ],
                     orderNumber: '',
                     startTime: '',
                     endTime: ''
                 },
-                tableData: [
-                {
-                    id: '16544',
-                    time: '2017-09-11 12:22',
-                    storeName: '周大福',
-                    proName: '周大福《乘风破浪》阿正同款18k金戒指3种商品',
-                    uesrName: '芙兰朵露',
-                    uesrPhone: '15256666299',
-                    status: '待发货'
-                },
-                 {
-                    id: '16544',
-                    time: '2017-09-11 12:22',
-                    storeName: '周大福',
-                    proName: '周大福《乘风破浪》阿正同款18k金戒指3种商品',
-                    uesrName: '芙兰朵露',
-                    uesrPhone: '15256666299',
-                    status: '待发货'
-                }]
+                tableData: []
             }
         },
         created(){
+            this.getTableData({storeId:10,pageNum:1,pageSize:20})
         },
         methods: {
-            /*手机号校验*/
-            phoneIsRight(){
+            /*订单类型变化*/
+            changeOrder(){
+                let self = this;
+                self.form.planCheck = null;
+            },
+            /*手机号和数字校验*/
+            numberIsRight(a){
                 let self = this;
                 let flag = /^1[0-9]{10}$/.test(self.form.userPhone);
-                if(!flag){
+                if(!flag && self.form.userPhone != '' && a == 1){
                     self.form.userPhone = '';
                     self.warn('请输入正确的手机号')
+                    return false;
+                }
+                if(a != 1 && self.form.orderNumber != ''){
+                    self.form.orderNumber = '';
+                    self.warn('请输入正确的订单号')
+                    return false;
                 }
             },
             /*日期选择限制*/
@@ -111,19 +108,94 @@
                     self.warn('不可小于查询起始时间')
                 }
             },
+            /*订单状态转换*/
+            switchStatus(a) {
+                let st = ''
+                switch(a) {
+                    case 1:st = '待用户支付'; break;
+                    case 2:st = '待发货';break;
+                    case 3:st = '待收货';break;
+                    case 4:st = '交易成功';break;
+                    case 5:st = '待处理';break;
+                    case 6:st = '待平台审核';break;
+                    case 7:st = '售后完成';break;
+                    case 8:st = '取消售后';break;
+                    case 9:st = '订单关闭';break;
+                }
+                return st;
+            },
+            /*根据条件查询*/
+            searchParams(){
+                let self = this,params = {};
+                self.getTableData(self.getParams())
+            },
+            /*格式化时间*/
+            timeFormat(time){
+                let m = (time.getMonth() + 1) > 9 ? time.getMonth() + 1 : '0' +  (time.getMonth() + 1),
+                    d = time.getDate() > 9 ? time.getDate()  : '0' +  time.getDate();
+                let cTime = time.getFullYear() + '-' + m + '-' + d;
+                return cTime;  
+            },
+            /*获取参数*/
+            getParams(){
+                let self = this,params = {};
+                params.storeId = 1;
+                params.infoTelephone = self.form.userPhone == '' ? null : self.form.userPhone;
+                params.orderStoreType = self.form.typeCheck;
+                params.orderStoreStatus = [];
+                if(self.form.statusCheck == undefined){
+                    params.orderStoreStatus = null
+                }else{
+                    if(self.form.typeCheck == 3 && self.form.statusCheck == 34){
+                        params.orderStoreStatus = [...[3,4]]
+                    }else{
+                        params.orderStoreStatus.push(self.form.statusCheck)
+                    }
+                }
+                params.orderNumber = self.form.orderNumber == '' ? null : self.form.orderNumber;
+                params.orderStartTime = self.form.startTime == '' ? null : self.timeFormat(self.form.startTime);
+                params.orderEndTime = self.form.endTime == '' ? null : self.timeFormat(self.form.endTime);
+                params.pageNum = self.currentPage;
+                params.pageSize = self.pageSize;
+                return params;
+            },
+            /*获取页面数据*/
+            getTableData(obj){
+                let self = this;
+                orderStoreAfter(obj).then(res => {
+                    let moc = res.data
+                    if(!moc.data){
+                        this.tableData = [];
+                        this.total = 0;
+                        return false;
+                    }
+                    console.log(moc)
+                    for(let i=0; i<moc.data.list.length; i++) {
+                        let that = moc.data.list[i];
+                        that.infoTelephone = that.infoTelephone.substr(0, 3) + '****' + that.infoTelephone.substr(7)
+                        that.pName = that.productNames  //.join('')
+                        that.orderStoreStatus = this.switchStatus(that.orderStoreStatus)
+                    }
+                    this.total = Number(moc.data.total);
+                    this.tableData = moc.data.list
+                })
+            },
+            /*页面条数*/
             handleSizeChange(val) {
-                console.log(`每页 ${val} 条`);
+                let self = this;
+                self.pageSize = val
+                self.getTableData(self.getParams())
             },
+            /*页数更改*/
             handleCurrentChange(val) {
-                console.log(`当前页: ${val}`);
-            },
-            searchDetail(row) {
-                var self = this;
-                self.$router.push('/transaction/service-orders/service-detail')
-
+                let self = this;
+                self.currentPage = val;
+                self.getTableData(self.getParams())
             },
             handleClick(row) {
-
+                let self = this,
+                    orderId = row.orderStoreId;
+                    self.$router.push(`/transaction/service-orders/service-detail?orderId=${orderId}` )
             },
             /*消息警告*/
             warn(str){

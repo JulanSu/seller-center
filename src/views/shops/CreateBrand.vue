@@ -3,7 +3,7 @@
 		<el-form :model="ruleForm" :rules="rules" ref="ruleForm">
 			<h2>阶段一：填写品牌信息</h2>
 			<el-form-item label="注册地" label-width="200px" class="lefttit">
-			    <el-radio-group v-model="ruleForm.domicile" @change="resetForm('ruleForm')">
+			    <el-radio-group v-model="ruleForm.registerLocation" @change="resetForm('ruleForm')">
 			        <el-radio :label="1">中国大陆地区</el-radio>
 			        <el-radio :label="2">中国港澳台地区</el-radio>
 			        <el-radio :label="3">国外地区</el-radio>
@@ -11,28 +11,28 @@
 			</el-form-item>
 			<category-bar :title="categoryBarTitle1"></category-bar>
 
-			<el-form-item prop="brandChineseName" label="品牌名称" label-width="200px">
-				<el-input v-model="ruleForm.brandChineseName" class="wid400" ></el-input>
+			<el-form-item prop="nameCn" label="品牌名称" label-width="200px">
+				<el-input v-model="ruleForm.nameCn" class="wid400" ></el-input>
 			</el-form-item>	
-			<el-form-item  prop="brandEnglishName" label="品牌英文名称"  label-width="200px">
-				<el-input v-model="ruleForm.brandEnglishName" class="wid400"></el-input>
+			<el-form-item  prop="nameEn" label="品牌英文名称"  label-width="200px">
+				<el-input v-model="ruleForm.nameEn" class="wid400"></el-input>
 			</el-form-item>
 
 			<div v-if="isshow">
-				<el-form-item prop="hongkong" label="品牌发源地"  label-width="200px">
-					<el-input v-model="ruleForm.hongkong" class="wid400"></el-input>
+				<el-form-item prop="orign" label="品牌发源地"  label-width="200px">
+					<el-input v-model="ruleForm.orign" class="wid400"></el-input>
 				</el-form-item>
 			</div>
 
 			<div v-if="!isshow">	
-				<el-form-item prop="registratNumber" label="商标注册号" label-width="200px">
-					<el-input v-model="ruleForm.registratNumber" class="wid400"></el-input>
+				<el-form-item prop="trademarkNumber" label="商标注册号" label-width="200px">
+					<el-input v-model="ruleForm.trademarkNumber" class="wid400"></el-input>
 				</el-form-item>	
-				<el-form-item prop="applicant" label="商标申请人"  label-width="200px">
-					<el-input v-model="ruleForm.applicant" class="wid400"></el-input>
+				<el-form-item prop="trademarkApplicant" label="商标申请人"  label-width="200px">
+					<el-input v-model="ruleForm.trademarkApplicant" class="wid400"></el-input>
 				</el-form-item>
-				<el-form-item prop="registratType" label="注册类型" label-width="200px">
-				    <el-radio-group v-model="ruleForm.registratType">
+				<el-form-item prop="trademarkType" label="注册类型" label-width="200px">
+				    <el-radio-group v-model="ruleForm.trademarkType">
 				        <el-radio label="R标"></el-radio>
 				        <el-radio label="TM标"></el-radio>
 				    </el-radio-group>
@@ -46,22 +46,22 @@
 				</el-form-item>
 			</div>
 			
-			<el-form-item prop="authorized" label="授权渠道 " label-width="200px">
-				<el-input v-model="ruleForm.authorized" class="wid400"></el-input>
+			<el-form-item prop="ways" label="授权渠道 " label-width="200px">
+				<el-input v-model="ruleForm.ways" class="wid400"></el-input>
 			</el-form-item>	
-			<el-form-item prop="hostCity" label="授权城市"  label-width="200px">
-				<el-input v-model="ruleForm.hostCity" class="wid400"></el-input>
+			<el-form-item prop="cityNames" label="授权城市"  label-width="200px">
+				<el-input v-model="ruleForm.cityNames" class="wid400"></el-input>
 			</el-form-item>
 			<el-form-item label="有效时间"  label-width="200px">
 			    <el-col style="width:190px;">
-			      <el-form-item prop="dateStart">
-			        <el-date-picker type="date" v-model="ruleForm.dateStart" style="width: 100%;"></el-date-picker>
+			      <el-form-item prop="startValidTime">
+			        <el-date-picker type="date" v-model="ruleForm.startValidTime" style="width: 100%;"></el-date-picker>
 			      </el-form-item>
 			    </el-col>
 			    <el-col class="line" style="text-align:center;width:20px;">-</el-col>
 			    <el-col style="width:190px;">
-			      <el-form-item prop="dateEnd">
-			        <el-date-picker type="date" v-model="ruleForm.dateEnd" style="width: 100%;"></el-date-picker>
+			      <el-form-item prop="endValidTime">
+			        <el-date-picker type="date" v-model="ruleForm.endValidTime" style="width: 100%;"></el-date-picker>
 			      </el-form-item>
 			    </el-col>
 			</el-form-item>
@@ -79,20 +79,20 @@
 
 			<div v-if="isshow">
 				<category-bar :title="categoryBarTitle2"></category-bar>
-				<el-form-item prop="domestic" label="国内经营人姓名" label-width="200px">
-					<el-input v-model="ruleForm.domestic" class="wid400"></el-input>
+				<el-form-item prop="domesticOperator" label="国内经营人姓名" label-width="200px">
+					<el-input v-model="ruleForm.domesticOperator" class="wid400"></el-input>
 				</el-form-item>	
-				<el-form-item prop="idNumber" label="身份证号"  label-width="200px" >
-					<el-input v-model="ruleForm.idNumber" class="wid400"></el-input>
+				<el-form-item prop="domesticOperatorIDCard" label="身份证号"  label-width="200px" >
+					<el-input v-model="ruleForm.domesticOperatorIDCard" class="wid400"></el-input>
 				</el-form-item>
-				<el-form-item prop="phone" label="手机号码"  label-width="200px">
-					<el-input v-model="ruleForm.phone" class="wid400"></el-input>
+				<el-form-item prop="domesticOperatorPhone" label="国内经营人手机号码"  label-width="200px">
+					<el-input v-model="ruleForm.domesticOperatorPhone" class="wid400"></el-input>
 				</el-form-item>
 				
 			</div>
 
-			<el-form-item prop="tel" label="联系电话"  label-width="200px">
-				<el-input v-model="ruleForm.tel" class="wid400"></el-input>
+			<el-form-item prop="contactMobile" label="联系电话"  label-width="200px">
+				<el-input v-model="ruleForm.contactMobile" class="wid400"></el-input>
 				<p class="tishi">审核同学有疑问时，会通过此联系方式联系您</p>
 			</el-form-item>
 			<el-form-item label="" label-width="200px">
@@ -127,6 +127,7 @@
 <script>
 import CategoryBar from '@/components/CategoryBar.vue'/*标题组件*/
 import UploadPictures from '@/components/UploadPictures.vue'/*上传图片组件*/
+import { brandSavebrand } from '@/api/shopApi';
 
 export default {
   	components: { 
@@ -145,79 +146,81 @@ export default {
       	src1:"http://2.hapn.cc:20080/n/00802v_b009W1MMTZ0a02w8.jpg",
 
         ruleForm: {
-			domicile:1,
-		 	brandChineseName: '',
-			brandEnglishName: '',
-			hongkong: '',
-			registratNumber: '',
-			applicant: "",
-			registratType:[],
+			registerLocation:1,
+		 	nameCn: '',
+			nameEn: '',
+			orign: '',
+			trademarkNumber: '',
+			trademarkApplicant: "",
+			trademarkType:[],
 			industry: [],
 			identity: '',
-			authorized:"",
-			hostCity:"",
-			dateStart: '',
-			dateEnd: '',
-			domestic: '',
-			idNumber: '',
-			phone: "",
-			tel:""
+			ways:"",
+			logo:'',
+			customsDeclaration:'',
+			cityNames:"",
+			startValidTime: '',
+			endValidTime: '',
+			domesticOperator: '',
+			domesticOperatorIDCard: '',
+			domesticOperatorPhone: "",
+			contactMobile:""
 		},
         rules: {
-          brandChineseName: [
+          nameCn: [
             { required: true, message: '请输入品牌名称', trigger: 'blur' },
             { min: 1, max: 20, message: '长度在 1 到 20 位', trigger: 'blur' }
           ],
-          brandEnglishName: [
+          nameEn: [
             { required: true, message: '请输入品牌英文名称', trigger: 'blur' },
             { min: 1, max: 50, message: '长度为 1 到 50 位', trigger: 'blur' }
           ],
-          hongkong: [
+          orign: [
             { required: true, message: '请输入品牌发源地', trigger: 'blur' },
             { max: 50, message: '长度最多 50 位', trigger: 'blur' }
           ],
-          registratNumber: [
+          trademarkNumber: [
             { required: true, message: '请输入商标注册号', trigger: 'blur' },
             { min: 8, max: 8, message: '长度为8位', trigger: 'blur' }
           ],
-          applicant: [
+          trademarkApplicant: [
             { required: true, message: '请输入商标申请人', trigger: 'blur' },
             { min: 2, max: 30, message: '长度在 2 到 30 位', trigger: 'blur' }
           ],
-          registratType: [
+          trademarkType: [
             { required: true, message: '请选择注册类型', trigger: 'change' }
           ],
           industry: [
             { type:'array', required: true, message: '请选择品牌注册所属行业', trigger: 'change' }
           ],
-          authorized: [
+          ways: [
             { required: true, message: '请输入授权渠道', trigger: 'blur' },
             { max: 50, message: '长度最多 50 位', trigger: 'blur' }
           ],
-          hostCity: [
+          cityNames: [
             { required: true, message: '请输入授权城市', trigger: 'blur' },
             { max: 20, message: '长度最多 20 位', trigger: 'blur' }
           ],
-          dateStart: [
+          startValidTime: [
             { type: 'date', required: true, message: '请选择有效起始时间', trigger: 'blur' }
           ],
-          dateEnd: [
+          endValidTime: [
             { type: 'date', required: true, message: '请选择有效结束时间', trigger: 'blur' }
           ],
-          domestic: [
+          domesticOperator: [
             { required: true, message: '国内经营人姓名', trigger: 'blur' },
             { min:2, max: 30, message: '长度为 2 到 30 位', trigger: 'blur' }
           ],
-          idNumber: [
+          domesticOperatorIDCard: [
             { required: true, message: '请填写身份证号', trigger: 'blur' },
             { min:18, max: 18, message: '长度为 18 位', trigger: 'blur' }
           ],
-          phone: [
+          domesticOperatorPhone: [
             { required: true, message: '请填写手机号码', trigger: 'blur' },
             { min: 11, max: 11, message: '长度为 11 位', trigger: 'blur' }
           ],
-          tel: [
-            { required: true, message: '请填写联系电话', trigger: 'blur' },
+          contactMobile: [
+            {  message: '请填写联系电话', trigger: 'blur' },
             { min: 11, max: 11, message: '长度为 11 位', trigger: 'blur' }
           ]
         }
@@ -225,10 +228,21 @@ export default {
     },
     computed:{
     	isshow:function(){
-    		return this.ruleForm.domicile==1?false:true;
+    		return this.ruleForm.registerLocation==1?false:true;
     	}
     },
     methods: {
+    	/*提示消息*/
+    	hint(tit,type,duration,fun){
+    		this.$message({
+	            message: tit,
+	            type: type,
+	            duration:duration,
+	            onClose:function(){
+	            	fun();
+	            }
+	        });
+    	},
     	/*查看示例图*/
 		iconSimple(src){
 			this.exampleSrc=src;
@@ -238,7 +252,46 @@ export default {
 	    submitForm(formName) {
 	        this.$refs[formName].validate((valid) => {
 	            if (valid) {
-	          		this.dialogVisible1 = true;
+	          		var para = new URLSearchParams();  
+			        para.append('storeId',storeId);
+			        para.append('authorizationUrl',this.ruleForm.authorizationUrl);
+			        para.append('ways',this.ruleForm.ways);
+			        para.append('cityNames',this.ruleForm.cityNames);
+			        para.append('startValidTime',this.ruleForm.startValidTime);
+			        para.append('endValidTime',this.ruleForm.endValidTime);
+			        para.append('contactMobile',this.ruleForm.contactMobile);
+			        para.append('registerLocation',this.ruleForm.registerLocation);
+			        para.append('trademarkNumber',this.ruleForm.trademarkNumber);
+			        para.append('trademarkApplicant',this.ruleForm.trademarkApplicant);
+			        para.append('trademarkType',this.ruleForm.trademarkType);
+			        para.append('nameCn',this.ruleForm.nameCn);
+
+			        para.append('nameEn',this.ruleForm.nameEn);
+			        para.append('registerIndustry',this.ruleForm.registerIndustry);
+			        para.append('logo',this.ruleForm.logo);
+			        para.append('orign',this.ruleForm.orign);
+			        para.append('customsDeclaration',this.ruleForm.customsDeclaration);
+			        para.append('domesticOperator',this.ruleForm.domesticOperator);
+			        para.append('domesticOperatorIDCard',this.ruleForm.domesticOperatorIDCard);
+			        para.append('domesticOperatorPhone',this.ruleForm.domesticOperatorPhone);
+
+			        this.listLoading = true;
+			        brandSavebrand(para).then((res) => {
+			        	if(res.data.code==0){
+			        		
+			        		this.dialogVisible1=true;
+
+			        	}else{
+			        		if(res.data.message){
+					    		this.hint(res.data.message,'warning',2000,function(){
+					    			return false;
+					    		});
+			        		}
+			        	}
+			          	this.listLoading = false;
+			        }).catch((res)=> {
+			          	this.listLoading = false;
+			        });
 		        }else {
 	            	return false;
 	            }

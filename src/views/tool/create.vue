@@ -40,27 +40,27 @@
                 <section class="cash" v-if="cashType.type=='会员等级券'">
                     <el-row style='margin-top: 10px;' v-for="item in cashType.huiYuan" :key="item.name">
                         <span class="cash-name">{{item.name}}</span>
-                        <el-input placeholder='请输入' style='width:210px'></el-input>
-                        <span style="margin:0 8px" v-model='item.money' :maxlength="10" @blur='isNumber($event)'>元</span>
-                        <el-input placeholder='发放数量' style='width:120px'></el-input>
-                        <span style="margin:0 8px" v-model='item.count' :maxlength="10" @blur='isNumber($event)'>张</span>
+                        <el-input placeholder='请输入' style='width:210px' v-model='item.money'  @blur='isNumber($event, item.money)' :maxlength="10"></el-input>
+                        <span style="margin:0 8px">元</span>
+                        <el-input placeholder='发放数量' style='width:120px'  v-model='item.count'  @blur='isNumber($event)' :maxlength="10"></el-input>
+                        <span style="margin:0 8px">张</span>
                     </el-row>
                 </section>
                 <section class="cash" v-if="cashType.type=='固定金额券'">
                     <el-row style='margin-top: 10px;padding-left: 10px'>
-                        <el-input placeholder='请输入' style='width:210px'></el-input>
-                        <span style="margin:0 8px" :maxlength="10" @blur='isNumber($event)'>元</span>
-                        <el-input placeholder='发放数量' style='width:120px'></el-input>
-                        <span style="margin:0 8px" :maxlength="10" @blur='isNumber($event)'>张</span>
+                        <el-input placeholder='请输入' style='width:210px' v-model="cashType.guDing.money"  @blur='isNumber($event)' :maxlength="10"></el-input>
+                        <span style="margin:0 8px" >元</span>
+                        <el-input placeholder='发放数量' style='width:120px' v-model="cashType.guDing.count"  @blur='isNumber($event)' :maxlength="10"></el-input>
+                        <span style="margin:0 8px">张</span>
                     </el-row>
                 </section>
                 <section class="cash" v-if="cashType.type=='满减券'">
                     <el-row style='margin-top: 10px;padding-left: 10px' v-for='(item,index) in cashType.manJian' :key="item.smallPrice">
                         <el-input placeholder='现金券面值' style='width:210px' v-model='item.smallPrice' :maxlength="10" @blur='isNumber($event)'></el-input>
                         <span style="margin:0 8px">————</span>
-                        <el-input placeholder='消费满足金额' style='width:210px' :maxlength="10" @blur='isNumber($event)'></el-input>
-                        <span style="margin:0 8px" v-model='item.largePrice'>元</span>
-                        <el-input placeholder='发放数量' style='width:120px' v-if="index == 0" :maxlength="10" @blur='isNumber($event)'></el-input>
+                        <el-input placeholder='消费满足金额' style='width:210px' :maxlength="10" @blur='isNumber($event)'  v-model='item.largePrice'></el-input>
+                        <span style="margin:0 8px">元</span>
+                        <el-input placeholder='发放数量' style='width:120px' v-if="index == 0" :maxlength="10" @blur='isNumber($event)' v-model='item.count'></el-input>
                         <span style="margin:0 8px" v-if="index == 0">张</span>
                     </el-row>
                     <el-row style='margin-top: 10px;padding-left: 10px' class='add' v-if="cashType.manJian.length < 4" >
@@ -69,17 +69,17 @@
                 </section>
                 <section class="cash" v-if="cashType.type=='折扣券'">
                     <el-row style='margin-top: 10px;padding-left: 10px'>
-                        <el-input placeholder='请输入' style='width:210px' :maxlength="2" @blur='isNumber($event)'></el-input>
+                        <el-input placeholder='请输入' style='width:210px' :maxlength="2" @blur='isNumber($event)' v-model="cashType.zheKou.percent"></el-input>
                         <span style="margin:0 8px">%</span>
-                        <el-input placeholder='发放数量' style='width:120px' :maxlength="10" @blur='isNumber($event)'></el-input>
+                        <el-input placeholder='发放数量' style='width:120px' :maxlength="10" @blur='isNumber($event)' v-model="cashType.zheKou.count"></el-input>
                         <span style="margin:0 8px">张</span>
                     </el-row>
                     <el-row style='margin-top: 10px;padding-left: 10px'>
-                        <el-input placeholder='请输入' style='width:210px' :maxlength="10" @blur='isNumber($event)'></el-input>
+                        <el-input placeholder='请输入' style='width:210px' :maxlength="10" @blur='isNumber($event)' v-model="cashType.zheKou.min"></el-input>
                         <span style="margin:0 8px">元起用</span>
                     </el-row>
                     <el-row style='margin-top: 10px;padding-left: 10px'>
-                        <el-input placeholder='请输入' style='width:210px' :maxlength="10" @blur='isNumber($event)'></el-input>
+                        <el-input placeholder='请输入' style='width:210px' :maxlength="10" @blur='isNumber($event)' v-model="cashType.zheKou.max"></el-input>
                         <span style="margin:0 8px">最多抵扣金额元</span>
                     </el-row>
                 </section>
@@ -91,8 +91,7 @@
                   <el-radio label="付费"></el-radio>
                 </el-radio-group>
                 <el-row style='margin-top: 10px;padding-left:10px' v-if='cashFree.type =="付费"'>
-                    <el-input placeholder='现金值' style='width:210px' v-model
-                    ='cashFree.count' :maxlength="10" @blur='isNumber($event)'></el-input>
+                    <el-input placeholder='现金值' style='width:210px' v-model='cashFree.count' :maxlength="10" @blur='isNumber($event,"cashFree","count")'></el-input>
                     <span style="margin:0 8px">元</span>
                 </el-row>
             </el-form-item>
@@ -100,9 +99,9 @@
             <el-form-item label="适用商品范围">
                 <el-radio-group v-model="forProduct.type" style="padding-left:10px;">
                     <el-radio label="全部商品通用"></el-radio>
-                    <el-radio label="部分商品通用"></el-radio>
+                    <el-radio label="部分商品可用"></el-radio>
                 </el-radio-group>
-                <el-row v-if='forProduct.type == "部分商品通用"'>
+                <el-row v-if='forProduct.type == "部分商品可用"'>
                     <div class="area">
                         <div class='add-pro' @click="dialogProduct = true">
                             <p>+</p>
@@ -145,7 +144,7 @@
             </el-form-item>
 
             <el-form-item>
-                <el-button type="primary" @click="onSubmit" class='btn' :disabled="status">立即创建</el-button>
+                <el-button type="primary" @click="onSubmit" class='btn' :disabled="status">{{btnText}}</el-button>
             </el-form-item>
         </el-form>
         <!-- 选择商品弹窗 -->
@@ -162,22 +161,24 @@
             </div>
             <el-button type="primary" @click="sureCheck" class='check-btn'>提交</el-button>
         </el-dialog>
-    </section> 
+    </section>
 </template>
 
 <script>
-    import axios from 'axios';
-    import { productList , createAct} from '@/api/toolApi';
+    import qs from 'qs';
+    import { productList , createAct, attendAct} from '@/api/toolApi';
     export default {
         data() {
             return {
                 status: false,
                 dialogProduct: false,
+                btnText: '立即创建',
                 imageUrl: '',
                 showAgainBtn: false,
+                beginTime: null,
                 userTime: {
                     type: '有效时间段',
-                    timeSection: ['', ''],
+                    timeSection: [null, null],
                     timeNumber: ''
                 },
                 pickerOptions0: {
@@ -186,28 +187,28 @@
                     }
                 },
                 form: {
-                    name: '',
-                    getTime: ['',''],
+                    name: 'woshiojh',
+                    getTime: [null,null],
                     tips: '先谈单再出示现金券，可直接抵扣订单合同金额',
-                    rule: ''
+                    rule: 'asdasdkjas'
                 },
                 cashType: {
-                    type: '满减券',
+                    type: '会员等级券',
                     huiYuan: [
-                        {name: '新会员', money: '', count: ''},
-                        {name: '老会员', money: '', count: ''},
-                        {name: 'VIP会员', money: '', count: ''},
-                        {name: '金卡会员', money: '', count: ''}
+                        {name: '新会员', money: '1', count: '1'},
+                        {name: '老会员', money: '4', count: '5'},
+                        {name: 'VIP会员', money: '2', count: '2'},
+                        {name: '金卡会员', money: '3', count: '3'}
                     ],
                     guDing:{money: '', count: ''},
                     manJian:[
                         {smallPrice: '', largePrice: '', count: ''},
                     ],
-                    zhekou: {percent: '', count: '', min: '', max: ''}
+                    zheKou: {percent: '', count: '', min: '', max: ''}
                 },
                 cashFree: {
-                    type: '免费',
-                    count: '' 
+                    type: '付费',
+                    count: '33' 
                 },
                 forProduct: {
                     type: '全部商品通用',
@@ -216,14 +217,24 @@
                 allProduct: [],
             }
         }, 
+        props:[
+            'bTime','eTime'
+        ],
         created(){
-            let self = this;
-            productList({'storeId':'1'}).then(res => {
-                self.allProduct = [...res.data.data]
-            })
-            if(self.$route.query.status != undefined){
-                self.status = self.$route.query.status;
-            }
+            this.typeFrom()
+            // productList({'storeId':'1'}).then(res => {
+            //     self.allProduct = [...res.data.data]
+            // })
+            
+            this.allProduct = [
+                {productTitle: '死都飞机哦是的', productId: '4', productPicsUrl:'http://touxiang.qqzhi.com/uploads/2012-11/1111121721542.jpg'},
+                {productTitle: '死都飞机哦是的', productId: '5', productPicsUrl:'http://touxiang.qqzhi.com/uploads/2012-11/1111121721542.jpg'},
+                {productTitle: '死都飞机哦是的', productId: '6', productPicsUrl:'http://touxiang.qqzhi.com/uploads/2012-11/1111121721542.jpg'},
+                {productTitle: '死都飞机哦是的', productId: '7', productPicsUrl:'http://touxiang.qqzhi.com/uploads/2012-11/1111121721542.jpg'},
+                {productTitle: '死都飞机哦是的', productId: '8', productPicsUrl:'http://touxiang.qqzhi.com/uploads/2012-11/1111121721542.jpg'},
+                {productTitle: '死都飞机哦是的', productId: '9', productPicsUrl:'http://touxiang.qqzhi.com/uploads/2012-11/1111121721542.jpg'},
+                {productTitle: '死都飞机哦是的', productId: '10', productPicsUrl:'http://touxiang.qqzhi.com/uploads/2012-11/1111121721542.jpg'},
+            ]
         },
         watch:{
             form:{
@@ -241,6 +252,39 @@
             
         },
         methods: {
+            /*判断来自那个页面*/
+            typeFrom(){
+                let self = this;
+                if(self.$route.query.type){
+                    self.btnText = '保存';
+                    let type = self.$route.query.type;
+                    type == 'store' ? self.fromStore() : self.fromPlatform();
+                }
+            },
+
+            /*来自店铺活动页*/
+            fromStore(){
+                let self = this;
+                self.$route.query.actStatus != '0' ? self.status = true : '';
+                self.getLastData();
+            },
+            /*来自平台列表页*/
+            fromPlatform(){
+                let self = this,
+                    auditStatus = this.$route.query.auditStatus;    //审核状态 0未审核，1通过，2不通过
+                if(auditStatus == '0' || auditStatus == '2'){
+                    let timesTamp = Date.parse(new Date());
+                    self.status = timesTamp < self.eTime ? false : true;
+                }else{
+                    self.status = true;
+                }
+
+            },
+            /*获得曾经填的数据*/
+            getLastData(){
+                let self = this;
+
+            },
             /*领取时间选择*/
             getTimeChange(val){
                 let self = this;
@@ -338,7 +382,7 @@
                 let self = this;
                 let flag = /^[0-9]{1,10}$/.test(e.target.value)
                 if(!flag){
-                    e.target.value = ''
+                    e.target.value = '';
                     if(e.target.attributes["maxlength"].value == 2){
                         self.warn('请输入1-99的整数');
                         return false;
@@ -349,43 +393,184 @@
             /*提交表单数据*/
             onSubmit(){
                 let self = this;
-                if(self.form.name == '' || self.form.getTime[0] == '' || self.form.getTime[1] == '' || self.form.tips == '' || self.form.rule == ''){
+                if(self.form.name == '' || !self.form.getTime[0] || !self.form.getTime[1] || self.form.tips == '' || self.form.rule == ''){
+                    self.warn('请把内容输入完整')
                     return false;
                 }
-                
-                let postData = {
-                    "marketingCouponName现金券名称":"string",
-                    "couponReceiveBeginTime领取开始时间":"2017-10-24T05:49:41.469Z",
-                    "couponReceiveEndTime领取结束时间":"2017-10-24T05:49:41.469Z",
-                    "couponUseTimeType优惠券使用期限 0:有效时间段，1:领取后有效天数":0,
-                    "couponUseBeginTime使用开始时间":"2017-10-24T05:49:41.469Z",
-                    "couponUseEndTime使用结束时间":"2017-10-24T05:49:41.469Z",
-                    "couponUseDays领取后有效天数":0,
-
-                    "couponUseType现金券使用类型 0:会员等级，1固定金额，2，满减券，3折扣券":0,
-                    "couponUserLevel会员等级 0:新会员，1老会员，2，VIP会员，3金卡会员":0,//数组
-                    "couponUseMoney现金券金额":0,
-                    "couponDeliveryNum现金券领取数量":0,
-                    "couponMaxMoney现金券最大使用金额":0,
-                    "couponMinMoney现金券最小使用金额，满减券则是满xx金额":0,
-
-                    "couponAmount现金券价值金额 大于0时为购买价格":0,
-                    "buyProductId购买现金券商品ID":0,
-                    "couponReceiveTips领取成功后提示":"string",
-                    "couponDetailPic详情页图片地址":"string",
-                    "couponUseRule现金券使用规则":"string",
-                    "couponType现金券类型 0: 平台券，1:商家券":1,
-                    "marketingToolsId营销工具ID":0,
-                    "storeId店铺ID":0,
+                if(self.userTime.type == "有效时间段"){
+                    if(!self.userTime.timeSection[0] || !self.userTime.timeSection[1]){
+                        self.warn('请输入现金券使用期限')
+                        return false;
+                    }
                 }
+                if(self.userTime.type == "领取后有效天数"){
+                    if(self.userTime.timeNumber == ''){
+                        self.warn('请输入现金券使用期限')
+                        return false;
+                    }
+                }
+                if(self.cashType.type == "会员等级券"){
+                    for(let i=0; i<self.cashType.huiYuan.length; i++){
+                        let that = self.cashType.huiYuan[i];
+                        if(that.money == '' || that.count == ''){
+                            self.warn('请输入现金券面值')
+                            return false;
+                        }
+                    }
+                }
+                if(self.cashType.type == "固定金额券"){
+                   if(self.cashType.guDing.money == '' || self.cashType.guDing.count== ''){
+                        self.warn('请输入现金券面值')
+                        return false;
+                   }
+                }
+                if(self.cashType.type == "满减券"){
+                    if(self.cashType.manJian[0].smallPrice == '' || self.cashType.manJian[0].largePrice == '' || self.cashType.manJian[0].count == ''){
+                            self.warn('请输入现金券面值')
+                            return false;
+                    }
+                }
+                if(self.cashType.type == "折扣券"){
+                    if(self.cashType.zheKou.percent == '' || self.cashType.zheKou.count == '' || self.cashType.zheKou.min == '' || self.cashType.zheKou.max == '' ){
+                            self.warn('请输入现金券面值')
+                            return false;
+                    }
+                }
+                if(self.cashFree.type == '付费'){
+                    if(self.cashFree.count == ''){
+                        self.warn('请输入抵扣券价格')
+                        return false;
+                    }
+                }
+                if(self.forProduct.type == '部分商品可用'){
+                    if(self.forProduct.product.length == 0){
+                        self.warn('请选择商品')
+                        return false;
+                    }
+                }
+                // if(self.imageUrl == ''){
+                //     self.warn('请选择现金券详情图')
+                //     return false;
+                // }
                 self.postData()
             },
             postData(){
-                console.log(7777)
+                let self = this,params = {};  
+                var para = new URLSearchParams();
+                para.append('marketingCouponName','rowstoreOperatorId');         
+                params.marketingCouponName = self.form.name;    //现金券名称
+                params.storeId = 1,              //店铺ID
+                params.marketingToolsId = 1,     //营销工具ID
+                params.couponReceiveBeginTime = self.timeFormat(self.form.getTime[0]);  //领取开始时间
+                params.couponReceiveEndTime = self.timeFormat(self.form.getTime[1]); //领取结束时间
+                params.couponReceiveTips = self.form.tips;  //领取提示
+                params.couponUseRule = self.form.rule;      //领取规则
+                params.couponDetailPic = '' //self.imageUrl;     //现金券详情图片
+                params.marketingCouponDeliveryTypeList = []; //现金券面额
+                if(self.userTime.type == '有效时间段'){
+                    params.couponUseTimeType = 0;   //优惠券使用期限 0:有效时间段，1:领取后有效天数
+                    params.couponUseBeginTime = self.timeFormat(self.userTime.timeSection[0])
+                    params.couponUseEndTime = self.timeFormat(self.userTime.timeSection[1])
+                }else{
+                    params.couponUseTimeType = 1;
+                    params.couponUseDays = self.userTime.timeNumber;
+                }
+                if(self.cashType.type == '会员等级券'){
+                    params.couponUseType = 0;       //现金券使用类型 0:会员等级，1固定金额，2，满减券，3折扣券            
+                    for(let i=0; i<self.cashType.huiYuan.length; i++){
+                        let that = self.cashType.huiYuan[i],
+                            cash = {
+                                couponDeliveryNum: that.count,      //现金券领取数量:'0'
+                                couponUseMoney: that.money,          //现金券金额
+                                couponUserLevel: i  //会员等级 0:新会员，1老会员，2，VIP会员，3金卡会员
+                            };
+                        params.marketingCouponDeliveryTypeList.push(cash);
+                    }
+                }else if(self.cashType.type == '固定金额券'){
+                    params.couponUseType = 1;
+                    let cash = {
+                        couponDeliveryNum: self.cashType.guDing.count,
+                        couponUseMoney: self.cashType.guDing.money,
+                    }
+                    params.marketingCouponDeliveryTypeList.push(cash);
+                }else if(self.cashType.type == '满减券'){
+                    params.couponUseType = 2;
+                    for(let i=0; i<self.cashType.manJian.length; i++){
+                        let that = self.cashType.manJian[i],
+                        cash = {
+                            couponDeliveryNum: that.count,
+                            couponMinMoney: that.smallPrice,
+                            couponMaxMoney: that.largePrice
+                        }
+                    params.marketingCouponDeliveryTypeList.push(cash);
+                    }
+                }else{
+                    params.couponUseType = 3;
+                    let cash = {
+                        couponDeliveryNum: self.cashType.manJian.count,
+                        couponUseMoney: self.cashType.manJian.percent,
+                        couponMaxMoney: self.cashType.manJian.max,
+                        couponMinMoney: self.cashType.manJian.min
+                    }
+                    params.marketingCouponDeliveryTypeList.push(cash);
+                }
+                self.cashFree.type == '免费' ? params.couponAmount = '0' : params.couponAmount = self.cashFree.count;
+                if(self.forProduct.type == '全部商品通用'){
+                    params.couponRangeType = 0;        //现金券适用范围 0店铺，1类目，2商品
+                    params.marketingCouponRangeList = [params.storeId];//现金券适用范围,全部商品时，传storeId
+                }else{
+                    params.couponRangeType = 2; 
+                    params.marketingCouponRangeList = [];
+                    for(let i=0; i<self.forProduct.product.length; i++){
+                        let that = self.forProduct.product[i];
+                        params.marketingCouponRangeList.push(that.productId)
+                    }
+                }
+                self.$route.query.signStatus == undefined ? self.createActive(params) : self.attendActive(params);
+                
+            },
+            createActive(a){
+                let self = this;
+                createAct(a).then(res => {
+                    if(res.data.message === '成功'){
+                        this.$alert('创建活动成功', '成功', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                self.$router.push('/marketing-center/management');
+                            }
+                        });
+                    }else{
+                        self.warn('res.data.data')
+                    }
+                })
+            },
+            attendActive(a){
+                let self = this;
+                a.marketingActivityId = self.$route.query.actId;
+                attendAct(a).then(res => {
+                    if(res.data.message === '成功'){
+                        this.$alert('参加活动成功', '成功', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                self.$router.push('/marketing-center/management');
+                            }
+                        });
+                    }else{
+                        self.warn('res.data.data')
+                    }
+                })
+            },
+            timeFormat(time){
+                let mou = (time.getMonth() + 1) > 9 ? time.getMonth() + 1 : '0' +  (time.getMonth() + 1),
+                    d = time.getDate() > 9 ? time.getDate()  : '0' +  time.getDate(),
+                    h = time.getHours() > 9 ? time.getHours()  : '0' +  time.getHours(),
+                    m = time.getMinutes() > 9 ? time.getMinutes()  : '0' +  time.getMinutes(),
+                    s = time.getSeconds() > 9 ? time.getSeconds()  : '0' +  time.getSeconds();
+                let cTime = time.getFullYear() + '-' + mou + '-' + d + ' ' + h + ':' + m + ':' + s;
+                return cTime;  
             }
         },
         mounted(){
-
         }
     }
 
@@ -503,6 +688,16 @@
             margin-left: 0;
         }
     }
+    .area::-webkit-scrollbar{
+        width: 4px;
+        background-color: #ddd;
+    }
+    .area::-webkit-scrollbar-track-piece{
+        background: #ddd;
+    }
+    .area::-webkit-scrollbar-thumb{
+        background-color: #41CAC0;  
+    }
     .grade{
         text-align: right;
         margin-right: 10px;
@@ -533,6 +728,9 @@
             span{
                 font-size:14px;
                 color:#666666;
+            }
+            input{
+                display: none;
             }
             .picture{
                 width:100%;
@@ -658,6 +856,16 @@
                 .pro-item:nth-of-type(n+7){
                     margin-top: 20px;
                 }
+            }
+            .pro-container::-webkit-scrollbar{
+                width: 4px;
+                background-color: #ddd;
+            }
+            .pro-container::-webkit-scrollbar-track-piece{
+                background: #ddd;
+            }
+            .pro-container::-webkit-scrollbar-thumb{
+                background-color: #41CAC0;  
             }
             .check-btn{
                 width: 90px;
