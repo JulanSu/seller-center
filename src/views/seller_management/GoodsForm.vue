@@ -120,7 +120,7 @@
         </el-form-item>
 
         <el-form-item label="商品描述" prop="detailsContent" class="sellFormat-sku">
-          <summernote v-model="goodsForm.detailsContent"></summernote>
+<!--           <summernote v-model="goodsForm.detailsContent"></summernote> -->
         </el-form-item>
 
         <el-form-item label="服务范围" prop="serviceArea">
@@ -160,7 +160,7 @@
 <script>
   import 'vue-easytable/libs/themes-base/index.css'
   import CategoryBar from '@/components/CategoryBar.vue'
-  import Summernote from './summernote/Summernote.vue'
+  // import Summernote from './summernote/Summernote.vue'
   import UpdateImg from './goods_form/UpdateImg.vue'
   import CateProperty from './goods_form/CateProperty.vue'
   import ProductSku from './goods_form/ProductSku.vue'
@@ -180,7 +180,7 @@
     components: {
       CategoryBar, 
       VueQuillEditor, 
-      Summernote, 
+      // Summernote, 
       UpdateImg, 
       CateProperty,
       LogisticsServices,
@@ -337,8 +337,8 @@
         let initForm = this.initForm
         //判断是否编辑页面，是否存在店铺ID，是否存在商品ID
         if(route.name === '编辑' && storeId && route.query.productId) {
-        
-          self.getEditorFormdata(storeId, goodsForm.productId)
+          console.log('我在编辑中')
+          self.getEditorFormdata(storeId, route.query.productId)
           goodsForm.productId = route.query.productId
           return 
 

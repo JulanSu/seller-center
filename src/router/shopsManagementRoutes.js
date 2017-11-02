@@ -31,11 +31,11 @@ const shopManagement = resolve => require(['@/views/shops/ShopManagement.vue'],r
 const addShop = resolve => require(['@/views/shops/AddShop.vue'],resolve);
 /*店铺管理 =E */
 const routers = [
-            { 
+            /*{ 
                 path: '/store/merchant-enter', 
                 component: merchantEnter, 
                 name: '阶段一：提交企业资质' 
-            },
+            },*/
              { 
                 path: '/store/message',  
                 component: message, 

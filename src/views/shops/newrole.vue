@@ -2,7 +2,7 @@
 	<section class="new-role">
 		<el-form v-loading="listLoading" :model="ruleForm" label-width="80px" :rules="rules" ref="ruleForm" style="width:60%;min-width:600px;">
 			<el-form-item label="岗位名称" label-width="100px" prop="roleName">
-				<el-input v-model="ruleForm.roleName" placeholder="请输入岗位名称" class="wid270"></el-input>
+				<el-input :maxlength="20" v-model="ruleForm.roleName" placeholder="请输入岗位名称" class="wid270"></el-input>
 			</el-form-item>	
 			<el-form-item label="权限" label-width="100px" prop="jurisdiction">
 			    <el-checkbox-group v-model="ruleForm.roleAuthority">
@@ -36,8 +36,8 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority} from '@/api/shopApi';
 
         rules: {
           roleName: [
-            { required: true, message: '请输入岗位名称', trigger: 'blur' },
-            { min: 1, max: 20, message: '长度在 1 到 20 位', trigger: 'blur' }
+            { required: true, message: '请输入角色名称', trigger: 'blur' },
+            { min: 1, max: 20, message: '请输入角色名称', trigger: 'blur' }
           ]
         }
       };

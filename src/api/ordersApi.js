@@ -1,10 +1,6 @@
 import axios from 'axios';
 
-var postAxios = axios.create({
-  	headers: {"content-type": "application/x-www-form-urlencoded",}
-});
-
-const base = 'http://192.168.88.212:8083';
+const base = config.apiHost;
 
 /*订单分类和状态*/
 export const orderStatus = params => { return axios.get(`${base}/order/listorderstatusandtype`,  {params:params}); }
@@ -24,4 +20,8 @@ export const postAfter = params => { return postAxios.post(`${base}/orderafter/s
 export const accountList = params => { return axios.get(`${base}/order/listaccountstore`,  {params:params}); }
 /*结算明细*/
 export const accountDetail = params => { return axios.get(`${base}/order/getaccountproductdetail`,  {params:params}); }
+
+/*发出的点券*/
+export const cashList = params => { return axios.get(`${base}/marketing/voucher/list`,  {params:params}); }
+
 

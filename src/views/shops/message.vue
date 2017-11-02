@@ -6,33 +6,33 @@
 				<el-input v-model="ruleForm.shopType" :readonly="true" placeholder=""  class="wid280"></el-input>
 			</el-form-item>
 			<el-form-item label="店铺名称" prop="name"  label-width="120px">
-				<el-input v-model="ruleForm.name" placeholder="店铺名称"  class="wid280"></el-input>
+				<el-input :maxlength="20" v-model="ruleForm.name" placeholder="店铺名称"  class="wid280"></el-input>
 			</el-form-item>
 			<el-form-item label="店铺公告"  prop="notice" label-width="120px">
-				<el-input v-model="ruleForm.notice" placeholder="店铺公告"  class="wid280"></el-input>
+				<el-input  :maxlength="50" v-model="ruleForm.notice" placeholder="店铺公告"  class="wid280"></el-input>
 			</el-form-item>
 			<el-form-item label="店铺LOGO" label-width="120px">
-				<upload-pictures :note="uploadTishi1"></upload-pictures>
+				<upload-pictures :url="ruleForm.logo" :note="uploadTishi1" :listen="'listenToPic1'" @listenToPic1="sucpic1"></upload-pictures>
 			</el-form-item>
 			<el-form-item label="店铺主图" label-width="120px">
-				<upload-pictures :note="uploadTishi2"></upload-pictures>
+				<upload-pictures :url="ruleForm.broadwiseLogo" :note="uploadTishi2" :listen="'listenToPic2'" @listenToPic2="sucpic2"></upload-pictures>
 			</el-form-item>
 			<el-form-item label="门店地址"  label-width="120px">
 				<v-distpicker :province="select.province" :city="select.city" :area="select.area" @province="onProvince" @city="onCity" @selected="onSelected"></v-distpicker>
 			</el-form-item>
 			<el-form-item label="" label-width="120px" prop="address">
-				<el-input v-model="ruleForm.address" placeholder="输入详细地址" class="wid280"></el-input>
+				<el-input v-model="ruleForm.address" placeholder="输入详细地址" class="wid280" @change="searchDetail" @focus="searchFocus"></el-input>
 				<el-button type="primary" class="mapbtn" @click="searchbtn">搜索地图</el-button>
 			</el-form-item>
 			<el-form-item label="经纬坐标" label-width="120px">
 				<p>{{ ruleForm.latitude+","+ruleForm.longitude}}</p>
 			</el-form-item>
 			<el-form-item label="" label-width="120px">
-				<map-view :height="height" :longitude="ruleForm.longitude" :latitude="ruleForm.latitude" @listenToChildEvent="showsite" ref="MapView">
+				<map-view :height="height" :longitude="ruleForm.longitude" :latitude="ruleForm.latitude" @listenToChildEvent="showsite" @listenToSel="showKey" ref="MapView">
 				</map-view>
 			</el-form-item>
 			<el-form-item label="营业时间" prop="workTime" label-width="120px">
-				<el-input v-model="ruleForm.workTime" placeholder="请输入营业时间" class="wid280"></el-input>
+				<el-input :maxlength="50" v-model="ruleForm.workTime" placeholder="请输入营业时间" class="wid280"></el-input>
 			</el-form-item>
 			<el-form-item label="服务范围" label-width="120px">
 				<div class="exhibition">
@@ -50,10 +50,10 @@
 				</div>
 			</el-form-item>
 			<el-form-item label="运营人姓名" prop="contactName" label-width="120px">
-				<el-input v-model="ruleForm.contactName" placeholder="请输入运营人姓名" class="wid280"></el-input>
+				<el-input :maxlength="30" v-model="ruleForm.contactName" placeholder="入驻时的姓名 " class="wid280"></el-input>
 			</el-form-item>
 			<el-form-item label="运营人手机号" prop="contactMobile" label-width="120px">
-				<el-input v-model="ruleForm.contactMobile" name="username" placeholder="请输入运营人手机号" class="wid280"></el-input>
+				<el-input :maxlength="11" v-model="ruleForm.contactMobile" name="username" placeholder="入驻时的手机号" class="wid280"></el-input>
 			</el-form-item>		
 			<el-form-item label="合作有效期" label-width="120px">
 				<div class="exhibition">
@@ -86,6 +86,18 @@ export default {
 		MapView	
 	},
 	data() {
+		var validatePhone = (rule, value, callback) => {
+	        if (value === '') {
+	          callback(new Error('请输入手机号'));
+	        } else {
+	        	var first=value.slice(0,1);
+		        if ((value.length!=11)||(first!=1)) {
+		          	callback(new Error('请输入正确的手机号'));
+		        }else{
+		        	callback();
+		        }
+	        }
+	    };
 		return {
 			categoryBarTitle: '店铺基本信息',
 			uploadTishi1:"请传160*160,格式要求jpg,jpeg,png,不超过10MB",
@@ -124,11 +136,8 @@ export default {
 			},
 	        rules: {
 	          	name: [
-	            	{ required: true, message: '请输入活店铺名称', trigger: 'blur' },
+	            	{ required: true, message: '请输入店铺名称', trigger: 'blur' },
 	            	{ min: 1, max: 20, message: '长度在 1 到 20 位', trigger: 'blur' }
-	          	],
-	          	notice: [
-	            	{ required: false, max: 50, message: '长度最多 50 位', trigger: 'blur' }
 	          	],
 	          	address: [
 	            	{ required: true, message: '请输入门店详细地址', trigger: 'blur' }
@@ -138,18 +147,27 @@ export default {
 		        ],
 	          	contactName: [
 	            	{ required: true, message: '请输入运营人姓名', trigger: 'blur' },
-	            	{ min: 2, max: 30, message: '长度在 2 到 30 位', trigger: 'blur' }
+	            	{ min: 2, max: 30, message: '请输入正确的运营人姓名', trigger: 'blur' }
 	          	],
 	          	contactMobile: [
-	            	{ required: true, message: '请输入运营人手机号码', trigger: 'blur' },
-	            	{ min: 11, max: 11, message: '长度为 11 位', trigger: 'blur' }
+	          		{ validator: validatePhone,trigger: 'blur' }
 	          	]
 	        }
 
 		}
 	},
+	watch: {
+          // 如果路由有变化，会再次执行该方法
+        "$route": function(){
+            alert(222)
+        }
+    },
     mounted() {
-      this.getShop();
+      	this.getShop();
+      	var that=this;
+    	window.document.onclick=function(){
+    		that.$refs.MapView.clearKey();
+    	}
     },
     computed: {
     	//将毫秒数转化为时间格式
@@ -161,6 +179,37 @@ export default {
     },
 
 	methods: {
+		//店铺logo上传成功之后
+		sucpic1(url){
+			this.ruleForm.logo=url;
+		},
+		//店铺主图上传成功之后
+		sucpic2(url){
+			this.ruleForm.broadwiseLogo=url;
+		},
+		fetchDate(){
+				alert(1)
+			},
+		//搜索关键字后点击筛选下拉结果，点击的元素的值传给父元素的input输入框
+		showKey(key){
+			this.ruleForm.address=key;
+		},
+		searchFocus(){
+			var addr=this.selProvince+this.selCity+this.selArea+this.ruleForm.address;
+			if(!addr){
+				this.$message({
+		          message: '请先选择省市区',
+		          type: 'warning'
+		        });
+		        
+			}
+		},
+		//地图输入框输入时匹配地址
+		searchDetail(){
+			var addr=this.selProvince+this.selCity+this.selArea+this.ruleForm.address;
+			this.$refs.MapView.againmap(this.ruleForm.longitude,this.ruleForm.latitude,addr,this.ruleForm.address);
+
+		},
 		//获取店铺信息
 	    getShop() {
 	        let para = {
@@ -270,7 +319,7 @@ export default {
 					para.append('workTime',this.ruleForm.workTime);
 					para.append('contactName',this.ruleForm.contactName);
 					para.append('contactMobile',this.ruleForm.contactMobile);	
-
+console.log(this.ruleForm.logo,this.ruleForm.broadwiseLogo)
 			        updateShopMessage(para).then((res) => {
 			        	if(res.data.code==0){
 			        		this.$message({
@@ -314,6 +363,11 @@ export default {
     }
     .category-bar{
     	padding:40px 0 20px 40px;
+    }
+    ol,ul,li{
+    	padding:0;
+    	margin:0;
+    	list-style:none;
     }
 }
     

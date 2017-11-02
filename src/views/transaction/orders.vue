@@ -1,22 +1,17 @@
 <template>
     <section class="search" v-if="$route.name=='订单查询'">
         <el-row class='search-row'>
-            <span>用户手机号</span>
             <el-input v-model="form.userPhone" class='w180' placeholder='请输入手机号码' :maxlength='11' @blur="numberIsRight(1)"></el-input>
-            <span>订单类型</span>
             <el-select v-model="form.typeCheck" placeholder="订单类型" class='w180' @change="changeOrder">
                 <el-option v-for="item in form.orderType" :key="item.orderId" :label="item.orderName" :value="item.orderId"></el-option>
             </el-select>
-            <span>订单状态</span>
             <el-select v-model="form.statusCheck" placeholder="订单状态" class='w180'>
                 <el-option v-for="item in form.orderStatus" :key="item.statusId" :label="item.label" :value="item.statusId"></el-option>
             </el-select>
-            <span>订单号</span>
             <el-input v-model="form.orderNumber" class='w180' placeholder='请输入订单号' :maxlength='15' @blur="numberIsRight(2)"></el-input>
-            <span>下单时间</span>
-            <el-date-picker type="date" v-model="form.startTime" class='w120' @change='chooseTime'></el-date-picker>
+            <el-date-picker type="date" v-model="form.startTime" class='w120' @change='chooseTime' placeholder='订单时间'></el-date-picker>
             <span>—</span>
-            <el-date-picker type="date" v-model="form.endTime" class='w120' @change='chooseTime'></el-date-picker>
+            <el-date-picker type="date" v-model="form.endTime" class='w120' @change='chooseTime' placeholder='订单时间'></el-date-picker>
             <el-button type="primary" class='search-btn' @click='searchParams'>查询</el-button>
         </el-row>
         <el-table :data="tableData" class='table-con' align='center' :row-style="{height:'100px'}">
@@ -337,17 +332,13 @@
             width:120px;
         }
         .search-row{
-            span{
+            >div:nth-of-type(n+2){
+                margin-left: 10px;
+            }
+            >span{
                 font-size:14px;
                 color:#666666;
-                margin-right: 10px;
-            }
-            span:nth-of-type(n+2){
-                margin-left: 20px;
-            }
-            span:nth-of-type(6){
                 margin-left: 10px;
-                color: #999;
             }
             .search-btn{
                 margin-left: 40px;

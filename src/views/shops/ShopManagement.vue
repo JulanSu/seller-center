@@ -56,6 +56,14 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
         listLoading: false,
       }
     },
+    watch: {
+     '$route' (to, from) {
+      console.log(this.$route.path);
+      if(this.$route.path=="/store/shop-management"){
+        this.getUsers();
+      }
+     }
+   },
     methods: {
       //获取用户列表
       getUsers() {
@@ -90,8 +98,8 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
             cancelButtonText: '取消',
             beforeClose: (action, instance, done) => {
               if (action === 'confirm') {
-                instance.confirmButtonLoading = true;
-                instance.confirmButtonText = '执行中...';
+                //instance.confirmButtonLoading = true;
+                //instance.confirmButtonText = '执行中...';
                 //编辑门店提交接口
                 var para = new URLSearchParams();
                 para.append('storeBranchId',row.storeBranchId);
@@ -99,15 +107,17 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
                 updateClassify(para).then((res) => {
                   if(res.data.code==0){
                     this.getUsers();
-                    instance.confirmButtonLoading = false;
+                    //instance.confirmButtonLoading = false;
                     done();
 
                   }else{
+                    done();
                     this.$message.error(res.data.message);
+
                   }
                   
                 }).catch((res)=> {
-                  this.listLoading = false;
+                  //this.listLoading = false;
                 });
               }else {
                 done();

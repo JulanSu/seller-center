@@ -2,7 +2,7 @@
   <section class="add-fenlei">
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
       <el-form-item label="名称" label-width="100px" prop="cateName">
-        <el-input v-model="ruleForm.cateName" placeholder="请输入店铺名称" class="wid280"></el-input>
+        <el-input :maxlength="10" v-model="ruleForm.cateName" placeholder="请输入店铺名称" class="wid280"></el-input>
       </el-form-item>
       <el-form-item label="店铺LOGO" label-width="100px">
         <upload-pictures :note="uploadLogo"></upload-pictures>

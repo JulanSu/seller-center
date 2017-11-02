@@ -6,61 +6,60 @@
         style="width: 100%" 
         class="seller-table" highlight-current-row v-loading="listLoading">
         <el-table-column
-          prop="id"
+          prop="productId"
           label="ID"
           width="180">
         </el-table-column>
         <el-table-column
-          prop="goodsName"
+          prop="productTitle"
           label="商品名称"
           width="180">
         </el-table-column>
         <el-table-column
-          prop="pic"
+          prop="productCoverUrl"
           label="图片">
           <template slot-scope="scope">
             <div class="table-pic">
-              <img :src="scope.row.pic" />
-              
+              <img :src="scope.row.productCoverUrl" />
             </div>
           </template>
         </el-table-column>
         <el-table-column
-          prop="storeCategory"
+          prop="storeCateNameList"
           label="店铺分类">
+          <template slot-scope="scope">
+            <span v-if="scope.row.storeCateNameList">{{scope.row.storeCateNameList.join('/')}}</span>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="stock"
+          prop="productSkuAllQuantity"
           label="库存">
         </el-table-column>
         <el-table-column
-          prop="viewPrice"
+          prop="productSellPrice"
           label="展示价">
         </el-table-column>
         <el-table-column
-          prop="status"
+          prop="productStatus"
           label="上架状态">
+          <template slot-scope="scope">
+            <span>{{getProductStatusValue(scope.row.productStatus)}}</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="operational"
           label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="onEditorHandle">编辑</el-button>
-            <el-button type="text" @click="onDelHandle">删除</el-button>
-            <el-button type="text" @click="onSubmitHandle">提交</el-button>
+            <el-button type="text" @click="onEditorHandle(scope.row)">编辑</el-button>
+            <el-button type="text" @click="onDelHandle(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <div class="block">
-        <el-pagination class="pagination-wrap"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[100, 200, 300, 400]"
-          :page-size="100"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="400">
-        </el-pagination>
+      <div class="block" v-if="pagination.total > pagination.pageSize">
+        <pagination 
+          :paginationConfig="pagination"
+          @handleSizeChange="handleSizeChange"
+          @handleCurrentChange="handleCurrentChange"></pagination>
       </div>
 
     <el-dialog
@@ -78,70 +77,132 @@
 
 <script>
   import SearchNav from './components/SearchNav.vue'
+  import Pagination from './components/Pagination.vue'
+  import { getProductStatus } from '@/util/product_status'
+  import { getProductList, getStoreCate, onDraftBoxDelete } from '@/api/seller'
+  import merge from 'merge'
+  const win = window;
+  const storeId = win.config && win.config.storeId ? win.config.storeId : ''
     export default {
-      components: {
-        SearchNav
-      },
+        components: {
+          SearchNav,
+          Pagination
+        },
         data() {
-            return {
-              listLoading: false,
-              tableRow: null,
-              formInline: {
-                user: '',
-                region: '',
-                goodsId: '',
-                goodsName: '',
-                storeCategory: '',
-                createDate: '',
-                createBegin: '',
-                createEnd: ''
+          return {
+            searchData:{
+              storeId: storeId,
+              productId: '',
+              productName: '',
+              storeCateId: '',
+              searchStartTime: '',
+              searchEndTime: '',
+              pageNum: 1,
+              pageSize: 10,
+              productStatus: 0
+            },
+            pagination: {
+              total: '',
+              pageSize: 10,
+              curPage: 1
+            },
+            listLoading: true,
+            tableRow: null,
+            dialogConfig: {
+              title: '',
+              content: '',
+              message: ''
+            },
+            messageConfig: {
 
-              },
-              dialogConfig: {
-                title: '',
-                content: '',
-                message: ''
-              },
-              dialogVisible: false,
-              currentPage: 4,
-              tableData: [{
-                id: 33131,
-                goodsName: '喜乐蒂',
-                pic: 'https://raw.githubusercontent.com/taylorchen709/markdown-images/master/vueadmin/user.png',
-                storeCategory: '店铺分类',
-                stock: 111,
-                viewPrice: 998,
-                status: '回收站',
-                operational: null
-
-              },{
-                id: 33131,
-                goodsName: '喜乐蒂',
-                pic: 'https://raw.githubusercontent.com/taylorchen709/markdown-images/master/vueadmin/user.png',
-                storeCategory: '店铺分类',
-                stock: 111,
-                viewPrice: 998,
-                status: '回收站',
-                operational: null
-
-              }]
-            }
+            },
+            dialogVisible: false,
+            tableData: []
+          }
         },
         mounted () {
 
         },
+        created(){
+          this.getProductList({
+            pageNum: 1,
+            pageSize: 10
+          })
+        },
         methods: {
-          onSubmit() {
-            console.log('submit!');
+          /**
+           * onEditorHandle 编辑回调,跳转到编辑页
+           * @param  { Object } row 当前行的数据
+           * @return {[type]}     [description]
+           */
+          onEditorHandle (row){
+            this.$router.push({
+              path: '/seller-management/goods/editor', 
+              query:{productId: row.productId}
+            })
           },
-          handleClick(row){
-            this.dialogVisible = true
+          getProductStatusValue(statusNumber){
+            var statusValue = getProductStatus(statusNumber)
+            if(statusValue) {
+              return statusValue
+            }
           },
-          handleSizeChange(val) {
-            console.log(`每页 ${val} 条`);
+          /**
+           * getProductList 获取商品列表
+           * @param  { String } storeId         店铺ID
+           * @param  { Number } pageNum         当前页面
+           * @param  { Number } pageSize        当前页面显示条目
+           * @param  { Number } productId       商品ID
+           * @param  { Number } productName   商品名称 
+           * @param  { String } storeCateId     店铺分类ID
+           * @param  { String } searchStartTime 搜索开始时间
+           * @param  { String } searchEndTime   搜索结束时间
+           * @return {[type]}                 [description]
+           */
+          getProductList (params){
+            var self = this
+            var formartData = merge(self.searchData, params)
+            getProductList(formartData).then((res)=>{
+              var data = res.data.data
+              if(res.data.code === 0) {
+                self.tableData = data.list
+                self.pagination.total = parseInt(data.total)
+                self.pagination.pageSize = formartData.pageSize
+                self.listLoading = false
+              }
+              console.log('获取商品列表', res)
+            })
           },
-          handleCurrentChange(val) {
-            console.log(`当前页: ${val}`);
+          onDelHandle (row){
+            let self = this
+            self.confirmHandle({
+              title: '商品删除',
+              content: '确定要删除这个商品吗'
+            }, function(){
+              onDraftBoxDelete({
+                productId: row.productId
+              }).then((res)=>{
+                self.listLoading = false;
+                self.messageHandle('商品删除成功！', 'success')
+                self.getProductList({
+                  pageNum: 1,
+                  pageSize: 10
+                })
+                
+              })
+            })
+          },
+          handleSizeChange(pageSize) {
+            this.getProductList({
+              pageNum:1, 
+              pageSize: pageSize
+            })
+          },
+          handleCurrentChange(pageNum) {
+            this.getProductList({
+              pageNum: pageNum, 
+              pageSize: 10              
+            })
           },
 
           entryDialogHandle (row){
@@ -153,61 +214,13 @@
               type: 'success'
             });
           },
-          submitHandle (row){
-
-          },
-          dropdownHandle (event, index, row){
-            if(event === 'delete') {
-              this.onDelHandle(index, row)
-            }else if(event === 'submit') {
-              this.submitHandle(row)
+          searchSubmitHandle (value){
+            if(!value) {
+              return 
             }
+            this.getProductList(value)
           },
-          deleteHandle (row){
-            this.dialogConfig.title = '删除'
-            this.dialogConfig.content = '确定要删除这个商品吗？'
-            this.dialogConfig.message = '商品删除成功'
-            this.tableRow = row
-            this.dialogVisible = true
-          },
-          onEditorHandle() {
 
-          },
-          onSubmitHandle(){
-            let self = this
-            self.confirmHandle({
-              title: '提交',
-              content: '确定要提交这个商品吗？',
-              message: '商品提成功！',
-              type: 'success'
-            }, function(){
-              let para = { id: row.id };
-              removeUser(para).then((res) => {
-                self.listLoading = false;
-                //NProgress.done();
-                self.messageHandle('商品提交成功！', 'success')
-              });
-            })
-          },
-          searchSubmitHandle (){
-
-          },
-          onDelHandle (index, row) {
-            let self = this
-            self.confirmHandle({
-              title: '删除',
-              content: '确定要删除这个商品吗？',
-              message: '商品删除成功！',
-              type: 'success'
-            }, function(){
-              let para = { id: row.id };
-              removeUser(para).then((res) => {
-                self.listLoading = false;
-                //NProgress.done();
-                self.messageHandle('商品删除成功！', 'success')
-              });
-            })
-          },
           messageHandle (message, type){
             let self = this
             self.$message({
@@ -222,12 +235,12 @@
             }).then(() => {
               self.listLoading = true;
               //NProgress.start();
-              
               callback()
             }).catch(() => {
 
             });
-          }
+          },
+
         }
 
     }

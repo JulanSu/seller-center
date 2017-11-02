@@ -7,7 +7,7 @@
       <div class="category-main">
         <div class="category-search" v-if="isSearch">
           <el-input
-            placeholder="输入名称/拼音"
+            placeholder="请输入关键字搜索"
             v-model="keywords">
           </el-input>
         </div>

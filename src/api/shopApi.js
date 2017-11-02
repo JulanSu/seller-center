@@ -1,7 +1,12 @@
 import axios from 'axios';
 import Qs from 'qs';
 
-let base = 'http://192.168.89.68:8083';
+
+
+/*let base = 'http://192.168.88.42:8083';*/
+let base = 'http://shop.dmp.hzjiehun.bid';
+let pichost='http://gss.dmp.hzjiehun.bid';
+
 let host = '';
 var rootIP = process.env.API_ROOT;
 
@@ -67,3 +72,8 @@ export const brandVerify = params => { return axios.post(`${base}/store/brand/ve
 export const listindustrybrand = params => { return axios.get(`${base}/store/brand/listindustrybrand`,{ params: params }); };
 export const brandCancelverify = params => { return axios.get(`${base}/store/brand/cancelverify`,{ params: params }); };
 export const brandSavebrand = params => { return axios.post(`${base}/store/brand/savebrand`,  params); };
+export const brandCheckbrandname = params => { return axios.get(`${base}/store/brand/checkbrandname`, { params: params }); };
+
+//上传图片接口
+export const gssUpload = params => { return axios.post(`${pichost}/gss/upload`, params); };
+

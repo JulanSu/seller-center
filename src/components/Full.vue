@@ -87,40 +87,6 @@
 
 <style lang="scss">
   @import '~scss_vars';
-
-  .pro-sidebar {
-    width: 200px;
-    background:#2a3542;
-    border-radius: 0;
-    color: #fff;
-    .iconfont {
-      margin-right: 10px;
-    }
-    .title {
-      color: #fff;
-    }
-    .el-menu {
-      background-color: #2a3542;
-    }
-    .el-submenu__title,
-    .el-menu-item {
-      color: #FFF;
-
-      &:hover {
-        background-color: #35404d;
-        color: $color-primary;
-      }
-    }
-    .el-menu-item {
-      font-size:12px;
-    }
-    .el-menu-item.is-active {
-      color: $color-primary;
-      background-color: #35404d;
-    }
-
-  }
-
   .el-menu--collapse {
     width: 64px;
   }

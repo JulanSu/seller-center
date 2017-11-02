@@ -1,22 +1,17 @@
 <template>
     <section class="search" v-if="$route.name=='售后订单查询'">
         <el-row class='search-row1'>
-            <span>买家手机</span>
-            <el-input v-model="form.userPhone" class='w180' placeholder='请输入手机号码' @blur="numberIsRight(1)" :maxlength='11'></el-input>
-            <span>订单类型</span>
-            <el-select v-model="form.typeCheck" class='w180' @change="changeOrder">
+            <el-input v-model="form.userPhone" class='w180' placeholder='请输入买家手机号码' @blur="numberIsRight(1)" :maxlength='11'></el-input>
+            <el-select v-model="form.typeCheck" class='w180' @change="changeOrder" placeholder='订单类型'>
                 <el-option v-for="item in form.orderType" :key="item.orderId" :label="item.orderName" :value="item.orderId"></el-option>
             </el-select>
-            <span>售后进度</span>
-            <el-select v-model="form.planCheck" placeholder="活动状态" class='w180'>
+            <el-select v-model="form.planCheck" placeholder="售后进度" class='w180'>
                 <el-option v-for="item in form.orderPlan" :key="item.statusId" :label="item.label" :value="item.statusId"></el-option>
             </el-select>
-            <span>订单编号</span>
             <el-input v-model="form.orderNumber" class='w180' placeholder='请输入订单号' @blur="numberIsRight(2)"></el-input >
-            <span>申请售后时间</span>
-            <el-date-picker type="date" v-model="form.startTime" class='w120' @change="chooseTime"></el-date-picker>
+            <el-date-picker type="date" v-model="form.startTime" class='w120' @change="chooseTime" placeholder='售后时间'></el-date-picker>
             <span>—</span>
-            <el-date-picker type="date" v-model="form.endTime" class='w120' @change="chooseTime"></el-date-picker>
+            <el-date-picker type="date" v-model="form.endTime" class='w120' @change="chooseTime" placeholder='售后时间'></el-date-picker>
             <el-button type="primary" class='search-btn' @click="searchParams">查询</el-button>
         </el-row>
         <el-table :data="tableData" class='table-con' align='center' :row-style="{height:'100px'}">
@@ -76,6 +71,7 @@
         },
         created(){
             this.getTableData({storeId:10,pageNum:1,pageSize:20})
+            console.log(config.toolsStoreId)
         },
         methods: {
             /*订单类型变化*/
@@ -229,17 +225,13 @@
             width:120px;
         }
         .search-row1{
-            span{
+            >div:nth-of-type(n+2){
+                margin-left:10px;
+            }
+            >span{
                 font-size:14px;
                 color:#666666;
-                margin-right: 10px;
-            }
-            span:nth-of-type(n+2){
-                margin-left: 20px;
-            }
-            span:nth-of-type(6){
                 margin-left: 10px;
-                color: #999;
             }
             .search-btn{
                 margin-left: 40px;

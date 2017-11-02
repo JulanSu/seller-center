@@ -12,15 +12,15 @@
 			<category-bar :title="categoryBarTitle1"></category-bar>
 
 			<el-form-item prop="nameCn" label="品牌名称" label-width="200px">
-				<el-input v-model="ruleForm.nameCn" class="wid400" ></el-input>
+				<el-input :maxlength="20" v-model="ruleForm.nameCn" class="wid400" @blur="findName('china')"></el-input>
 			</el-form-item>	
 			<el-form-item  prop="nameEn" label="品牌英文名称"  label-width="200px">
-				<el-input v-model="ruleForm.nameEn" class="wid400"></el-input>
+				<el-input :maxlength="20" v-model="ruleForm.nameEn" class="wid400" @blur="findName('english')"></el-input>
 			</el-form-item>
 
 			<div v-if="isshow">
 				<el-form-item prop="orign" label="品牌发源地"  label-width="200px">
-					<el-input v-model="ruleForm.orign" class="wid400"></el-input>
+					<el-input :maxlength="50" v-model="ruleForm.orign" class="wid400" ></el-input>
 				</el-form-item>
 			</div>
 
@@ -38,11 +38,30 @@
 				    </el-radio-group>
 				    <p class="tishi">R：已获得《商标注册证》TM：未获得《商标注册证》，仅有《注册申请受理通知书》</p>
 				</el-form-item>
-				<el-form-item label="品牌注册所属行业" label-width="200px" >
-				    <el-checkbox-group v-model="ruleForm.industry">
-				      <el-checkbox label="行业1" name="industry"></el-checkbox>
-				      <el-checkbox label="行业2" name="industry"></el-checkbox>
-				    </el-checkbox-group>
+				<el-form-item prop="registerIndustry" label="品牌注册所属行业" label-width="200px">
+				    <el-select v-model="ruleForm.registerIndustry" placeholder="请选择活动区域">
+				      <el-option label="农、林、牧、渔业" value="农、林、牧、渔业"></el-option>
+				      <el-option label=" 采矿业" value=" 采矿业"></el-option>
+				      <el-option label=" 制造业" value=" 制造业"></el-option>
+				      <el-option label="  电力、热力、燃气及水的生产和供应业" value="  电力、热力、燃气及水的生产和供应业"></el-option>
+				      <el-option label=" 环境和公共设施管理业 " value=" 环境和公共设施管理业 "></el-option>
+				      <el-option label=" 建筑业" value=" 建筑业"></el-option>
+				      <el-option label=" 交通运输、仓储业和邮政业" value="交通运输、仓储业和邮政业"></el-option>
+				      <el-option label="信息传输、计算机服务和软件业" value="信息传输、计算机服务和软件业"></el-option>
+				      <el-option label=" 批发和零售业" value=" 批发和零售业"></el-option>
+				      <el-option label="住宿、餐饮业" value="住宿、餐饮业"></el-option>
+				      <el-option label="  金融、保险业" value="  金融、保险业"></el-option>
+				      <el-option label=" 房地产业" value=" 房地产业"></el-option>
+				      <el-option label=" 租赁和商务服务业" value=" 租赁和商务服务业"></el-option>
+				      <el-option label="科学研究、技术服务和地质勘查业" value="科学研究、技术服务和地质勘查业"></el-option>
+				      <el-option label="水利、环境和公共设施管理业" value="水利、环境和公共设施管理业"></el-option>	      
+				      <el-option label="居民服务和其他服务业" value="居民服务和其他服务业"></el-option>
+				      <el-option label=" 教育" value=" 教育"></el-option>
+				      <el-option label="卫生、社会保障和社会服务业" value="卫生、社会保障和社会服务业"></el-option>
+				      <el-option label="文化、体育、娱乐业" value="文化、体育、娱乐业"></el-option>
+				      <el-option label="综合（含投资类、主业不明显）" value="综合（含投资类、主业不明显）"></el-option>
+				      <el-option label="其他" value="其他"></el-option>
+				    </el-select>
 				</el-form-item>
 			</div>
 			
@@ -127,7 +146,7 @@
 <script>
 import CategoryBar from '@/components/CategoryBar.vue'/*标题组件*/
 import UploadPictures from '@/components/UploadPictures.vue'/*上传图片组件*/
-import { brandSavebrand } from '@/api/shopApi';
+import { brandSavebrand,brandCheckbrandname } from '@/api/shopApi';
 
 export default {
   	components: { 
@@ -153,7 +172,7 @@ export default {
 			trademarkNumber: '',
 			trademarkApplicant: "",
 			trademarkType:[],
-			industry: [],
+			registerIndustry: '',
 			identity: '',
 			ways:"",
 			logo:'',
@@ -190,8 +209,8 @@ export default {
           trademarkType: [
             { required: true, message: '请选择注册类型', trigger: 'change' }
           ],
-          industry: [
-            { type:'array', required: true, message: '请选择品牌注册所属行业', trigger: 'change' }
+          registerIndustry: [
+            { required: true, message: '请选择品牌注册所属行业', trigger: 'change' }
           ],
           ways: [
             { required: true, message: '请输入授权渠道', trigger: 'blur' },
@@ -229,9 +248,28 @@ export default {
     computed:{
     	isshow:function(){
     		return this.ruleForm.registerLocation==1?false:true;
-    	}
+    	}//测试品牌2 更新
     },
     methods: {
+    	/*查找品牌名车是否已存在品牌库*/
+    	findName(val){console.log(val)
+    		var names=this.ruleForm.nameCn;
+    		var tit='';
+    		if(val=='english'){
+    			names=this.ruleForm.nameEn;
+    			tit='英文';
+    		}
+
+	        brandCheckbrandname({"name":names}).then((res) => {
+	          	if((res.data.code==1)&&(res.data.message=='品牌名称重复')){
+
+	          		this.$message({
+			          message: '品牌'+tit+'名称重名，请重新输入',
+			          type: 'warning'
+			        });
+	          	}
+	        });
+    	},
     	/*提示消息*/
     	hint(tit,type,duration,fun){
     		this.$message({

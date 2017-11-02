@@ -30,7 +30,7 @@
     <el-col :span="24" class="tool-bar" style="margin-top:20px;">
       <el-pagination
       @current-change="handleCurrentChange"
-      :current-page="page"
+      :current-page="pageNum"
       :page-size="pageSize"
       layout="prev, pager, next, jumper,total"
       :total="total" style="float:right;">
@@ -73,8 +73,8 @@ import { pageStoreCateProduct,cateList,productListcate,productSave } from '@/api
         jurisdiction: [],
         roleAuthority:[],
         total: 0,
-        pageSize: 10,//每页显示多少条
-        page:1,//当前页数
+        pageSize: 1,//每页显示多少条
+        pageNum:1,//当前页数
         datas: [],
         listLoading: false
       }
@@ -82,7 +82,7 @@ import { pageStoreCateProduct,cateList,productListcate,productSave } from '@/api
     mounted() {
       this.getPageStoreCateProduct();
       let para = {
-        storeId:storeId,
+        storeId:storeId
       };
 
       cateList(para).then((res) => {
@@ -173,7 +173,7 @@ import { pageStoreCateProduct,cateList,productListcate,productSave } from '@/api
         };
         this.listLoading = true;
         pageStoreCateProduct(para).then((res) => {
-          this.total = res.data.data.total;
+          this.total = Number(res.data.data.total);
           this.datas = res.data.data.list;
           this.listLoading = false;
         }).catch((res)=> {
@@ -181,7 +181,7 @@ import { pageStoreCateProduct,cateList,productListcate,productSave } from '@/api
         });
       },
       handleCurrentChange(val) {
-        this.page = val;
+        this.pageNum = val;
         this.getPageStoreCateProduct();
       }
 

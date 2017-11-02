@@ -4,7 +4,7 @@
 		<div style="min-width:980px">
 	        <el-row>
 		      <el-col :span="8" style="width:240px;">
-		        <category-menu title="一级行业" v-if="categoryData.length" :categoryData="categoryData" @categoryClick="firstHandle">
+		        <category-menu title="一级行业" :categoryData="categoryData" @categoryClick="firstHandle">
 		        </category-menu>
 		      </el-col>
 		      <el-col :span="8" style="width:240px;" class="no-bor">

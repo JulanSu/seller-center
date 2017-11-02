@@ -53,9 +53,10 @@
             }
         },
         created(){
-            let actId = this.$route.query.actId;      
+            let actId = this.$route.query.actId; 
+            this.statusIsOk();     
             /*获取平台详情*/
-            platformActDetail({storeId: '1', marketingActivityId:actId }).then(res => {
+            platformActDetail({storeId: config.toolsStoreId, marketingActivityId:actId }).then(res => {
                 this.detail = res.data.data;
                 this.statusIsOk();
             })

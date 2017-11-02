@@ -10,13 +10,13 @@
 					<upload-pictures :note="uploadTishi"></upload-pictures>
 				</el-form-item>
 				<el-form-item label="组织机构代码（注册号）" label-width="200px" prop="orgCode">
-					<el-input v-model="ruleForm.orgCode" placeholder="请输入组织机构代码（注册号）" class="wid280"></el-input>
+					<el-input  :maxlength="18" v-model="ruleForm.orgCode" placeholder="请输入组织机构代码（注册号）" class="wid280"></el-input>
 				</el-form-item>
 				<el-form-item label="法人姓名" label-width="200px" prop="legalPerson">
-					<el-input v-model="ruleForm.legalPerson" placeholder="请输入法人姓名" class="wid280"></el-input>
+					<el-input :maxlength="30" v-model="ruleForm.legalPerson" placeholder="请输入法人姓名" class="wid280"></el-input>
 				</el-form-item>
 				<el-form-item label="法人身份证" label-width="200px" prop="identityNumber">
-					<el-input v-model="ruleForm.identityNumber" placeholder="请输入法人身份证" class="wid280"></el-input>
+					<el-input :maxlength="18" v-model="ruleForm.identityNumber" placeholder="请输入法人身份证" class="wid280"></el-input>
 				</el-form-item>
 				<el-form-item label="法人身份证正面" label-width="200px">
 					<upload-pictures :note="uploadTishi"></upload-pictures>
@@ -44,7 +44,7 @@
 			<category-bar :title="categoryBarTitle2"></category-bar>
 			<el-form :model="ruleForm" :rules="rules" ref="ruleForm">
 				<el-form-item label="店主姓名" label-width="160px" prop="contactName">
-					<el-input v-model="ruleForm.contactName" placeholder="请输入店主姓名" class="wid280"></el-input>
+					<el-input :maxlength="30" v-model="ruleForm.contactName" placeholder="请输入店主姓名" class="wid280"></el-input>
 				</el-form-item>
 				<el-form-item label="店主手机号" label-width="160px" prop="contactMobile">
 					<el-input v-model="ruleForm.contactMobile" placeholder="请输入店主手机号" class="wid280"></el-input>
@@ -78,6 +78,18 @@ export default {
 	},
 
 	data() {
+		var validatePhone = (rule, value, callback) => {
+	        if (value === '') {
+	          callback(new Error('请输入手机号'));
+	        } else {
+	        	var first=value.slice(0,1);
+		        if ((value.length!=11)||(first!=1)) {
+		          	callback(new Error('请输入正确的手机号'));
+		        }else{
+		        	callback();
+		        }
+	        }
+	    };
 		return {
 		  	shopStyle:shopType,
 		  	categoryBarTitle1: '企业店铺资质',
@@ -100,24 +112,23 @@ export default {
 		    rules: {
 		      	legalPerson: [
 			        { required: true, message: '请输入法人姓名', trigger: 'blur' },
-			        { min:2, max: 30, message: '长度在 2 到 30 位', trigger: 'blur' }
+			        { min:2, max: 30, message: '请输入正确的法人姓名', trigger: 'blur' }
 		      	],
 		      	contactName: [
-			        { required: true, message: '请输入店主姓名', trigger: 'blur' },
-			        { min:2, max: 30, message: '长度在 2 到 30 位', trigger: 'blur' }
+			        { required: true, message: '请输入法人姓名', trigger: 'blur' },
+			        { min:2, max: 30, message: '请输入正确的法人姓名', trigger: 'blur' }
 		      	],
 		      	orgCode: [
-			        { required: true, message: '组织机构代码/注册号', trigger: 'blur' },
-			        { min:18, max: 18, message: '长度为 18 位', trigger: 'blur' }
+			        { required: true, message: '请输入组织机构代码（注册码）', trigger: 'blur' },
+			        { min:18, max: 18, message: '请输入正确组织机构代码（注册码）', trigger: 'blur' }
 		      	],
 		      	identityNumber: [
-		        	{ required: true, message: '请输入法人身份证号码', trigger: 'blur' },
-		        	{ min:18, max: 18, message: '长度为 18 位', trigger: 'blur' }
+		        	{ required: true, message: '请输入法人身份证', trigger: 'blur' },
+		        	{ min:18, max: 18, message: '请输入正确身份证号', trigger: 'blur' }
 
 		      	],
 		      	contactMobile: [
-		        	{ required: true, message: '请输入店主手机号码', trigger: 'blue' },
-		        	{ min:11, max: 11, message: '长度为 11 位', trigger: 'blur' }
+		        	{ validator: validatePhone,trigger: 'blur' }
 
 		      	]
 		    }

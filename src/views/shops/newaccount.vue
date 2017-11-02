@@ -2,7 +2,7 @@
 	<section class="add-sub-account">
 		<el-form v-loading="listLoading" :model="ruleForm" label-width="80px" :rules="rules" ref="ruleForm">
 			<el-form-item label="帐号名" label-width="100px" prop="account">
-				<el-input v-model="ruleForm.account" placeholder="请输入帐号名" class="wid280"></el-input>
+				<el-input :maxlength="20" v-model="ruleForm.account" placeholder="请输入帐号名" class="wid280"></el-input>
 			</el-form-item>
 			<el-form-item label="密码"  label-width="100px" prop="password">
 				<el-input type="password" v-model="ruleForm.password" placeholder="请输入密码"  class="wid280" auto-complete="off"></el-input>
@@ -11,7 +11,7 @@
 				<el-input type="password" v-model="ruleForm.againpass" placeholder="再一次输入密码"  class="wid280" auto-complete="off"></el-input>
 			</el-form-item>		
 			<el-form-item label="姓名"  label-width="100px" prop="name">
-				<el-input v-model="ruleForm.name" placeholder="请输入姓名" class="wid280"></el-input>
+				<el-input :maxlength="30" v-model="ruleForm.name" placeholder="请输入姓名" class="wid280"></el-input>
 			</el-form-item>
 			<el-form-item label="性别" label-width="100px" prop="gender">
 			    <el-radio-group v-model="ruleForm.gender">
@@ -30,10 +30,10 @@
         </el-select>
       </el-form-item>
 			<el-form-item label="手机号码" label-width="100px" prop="mobile">
-				<el-input v-model="ruleForm.mobile" placeholder="请输入手机号码" class="wid280"></el-input>
+				<el-input :maxlength="11" v-model="ruleForm.mobile" placeholder="请输入手机号码" class="wid280"></el-input>
 			</el-form-item>
 			<el-form-item label="身份证号" label-width="100px" prop="identityNumber">
-				<el-input v-model="ruleForm.identityNumber" placeholder="请输入身份证号码" class="wid280"></el-input>
+				<el-input :maxlength="18" v-model="ruleForm.identityNumber" placeholder="请输入身份证号码" class="wid280"></el-input>
 			</el-form-item> 
 			<el-form-item label="" label-width="100px">
 				<el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
@@ -49,9 +49,21 @@ import {operatorGet,roleList,operatorUpdate,operatorSave} from '@/api/shopApi';
 
   export default {
     data() {
+      var validatePhone = (rule, value, callback) => {
+          if (value === '') {
+            callback(new Error('请输入手机号'));
+          } else {
+            var first=value.slice(0,1);
+            if ((value.length!=11)||(first!=1)) {
+                callback(new Error('请输入正确的手机号'));
+            }else{
+              callback();
+            }
+          }
+      };
       var validatePass = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入密码'));
+        if (value.length<6||value.length>20) {
+          callback(new Error('密码必须大于6位，小于20位'));
         } else {
           if (this.ruleForm.againpass !== '') {
             this.$refs.ruleForm.validateField('againpass');
@@ -60,10 +72,10 @@ import {operatorGet,roleList,operatorUpdate,operatorSave} from '@/api/shopApi';
         }
       };
       var validatePass2 = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请再次输入密码'));
+        if (value.length<6||value.length>20){
+          callback(new Error('确认密码必须大于6位，小于20位'));
         } else if (value !== this.ruleForm.password) {
-          callback(new Error('两次输入密码不一致!'));
+          callback(new Error('密码和确认密码不一致，请重新填写'));
         } else {
           callback();
         }
@@ -87,7 +99,7 @@ import {operatorGet,roleList,operatorUpdate,operatorSave} from '@/api/shopApi';
 
         rules: {
           account: [
-            { required: true, message: '请输入帐号名', trigger: 'blur' },
+            { required: true, message: '请输入账号名', trigger: 'blur' },
             { min: 1, max: 20, message: '长度在 1 到 20 位', trigger: 'blur' }
           ],
           password: [
@@ -98,14 +110,13 @@ import {operatorGet,roleList,operatorUpdate,operatorSave} from '@/api/shopApi';
           ],
           name: [
             { required: true, message: '请输入姓名', trigger: 'blur' },
-            { min:2, max: 30, message: '长度在 2 到 30 位', trigger: 'blur' }
+            { min:2, max: 30, message: '请输入正确的姓名', trigger: 'blur' }
           ],
           /*role: [
             {  required: true, message: '请选择角色', trigger: 'change' }
           ],*/
           mobile: [
-            { required: true, message: '请输入手机号码', trigger: 'blur' },
-            { min:11, max: 11, message: '手机号码有误', trigger: 'blur' }
+            { validator: validatePhone,trigger: 'blur' }
           ],
           identityNumber: [
             { required: true, message: '请输入身份证号码', trigger: 'blur' },

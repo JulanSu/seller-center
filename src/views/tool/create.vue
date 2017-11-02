@@ -15,7 +15,7 @@
             </el-form-item>
 
             <el-form-item label="现金券使用期限">
-                <el-radio-group v-model="userTime.type" style="padding-left:10px;">
+                <el-radio-group v-model="userTime.type" style="padding-left:10px;" :disabled='disabled'>
                     <el-radio label="有效时间段"></el-radio>
                     <el-radio label="领取后有效天数"></el-radio>
                 </el-radio-group>
@@ -31,7 +31,7 @@
             </el-form-item>
                 
             <el-form-item label="现金券面值与数量">
-                <el-radio-group v-model="cashType.type" style="padding-left:10px;">
+                <el-radio-group v-model="cashType.type" style="padding-left:10px;" :disabled='disabled'>
                     <el-radio label="会员等级券"></el-radio>
                     <el-radio label="固定金额券"></el-radio>
                     <el-radio label="满减券"></el-radio>
@@ -127,7 +127,7 @@
                 <el-row class="tips">
                    图片尺寸200px*200px以上，大小800k以内，格式要求jpg、jpeg、png
                 </el-row>
-                <el-upload class="img-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+                <el-upload class="img-uploader" action="http://gss.dmp.hzjiehun.bid/gss/upload" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
                     <div class="picture" v-if="imageUrl" @mouseenter='showAgainBtn=true' @mouseleave='showAgainBtn=false'>
                         <img :src="imageUrl" class="avatar">
                         <p v-if='showAgainBtn'>重新上传</p>
@@ -150,7 +150,7 @@
         <!-- 选择商品弹窗 -->
        <el-dialog title="添加商品" :visible.sync="dialogProduct" custom-class='pro-dialog' top="20%" :close-on-click-modal='false'>
             <div class="pro-container">
-                <div class="pro-item" v-for="item in allProduct" @click='checkProduct(item)' :key="item.productId">
+                <div class="pro-item" v-for="item in allProduct" @click='checkProduct(item)' >
                     <div class="img-con">
                         <img :src="item.productPicsUrl" alt="">
                         <div class="mask" v-if="item.checked"></div>
@@ -166,10 +166,11 @@
 
 <script>
     import qs from 'qs';
-    import { productList , createAct, attendAct} from '@/api/toolApi';
+    import { productList , createAct, attendAct, actLastData, changeAct, changeAttendAct} from '@/api/toolApi';
     export default {
         data() {
             return {
+                disabled: false,
                 status: false,
                 dialogProduct: false,
                 btnText: '立即创建',
@@ -187,18 +188,18 @@
                     }
                 },
                 form: {
-                    name: 'woshiojh',
+                    name: '',
                     getTime: [null,null],
                     tips: '先谈单再出示现金券，可直接抵扣订单合同金额',
-                    rule: 'asdasdkjas'
+                    rule: ''
                 },
                 cashType: {
                     type: '会员等级券',
                     huiYuan: [
-                        {name: '新会员', money: '1', count: '1'},
-                        {name: '老会员', money: '4', count: '5'},
-                        {name: 'VIP会员', money: '2', count: '2'},
-                        {name: '金卡会员', money: '3', count: '3'}
+                        {name: '新会员', money: '', count: ''},
+                        {name: '老会员', money: '', count: ''},
+                        {name: 'VIP会员', money: '', count: ''},
+                        {name: '金卡会员', money: '', count: ''}
                     ],
                     guDing:{money: '', count: ''},
                     manJian:[
@@ -207,14 +208,14 @@
                     zheKou: {percent: '', count: '', min: '', max: ''}
                 },
                 cashFree: {
-                    type: '付费',
-                    count: '33' 
+                    type: '免费',
+                    count: '' 
                 },
                 forProduct: {
                     type: '全部商品通用',
                     product: []
                 },
-                allProduct: [],
+                allProduct: null
             }
         }, 
         props:[
@@ -222,19 +223,11 @@
         ],
         created(){
             this.typeFrom()
-            // productList({'storeId':'1'}).then(res => {
-            //     self.allProduct = [...res.data.data]
-            // })
-            
-            this.allProduct = [
-                {productTitle: '死都飞机哦是的', productId: '4', productPicsUrl:'http://touxiang.qqzhi.com/uploads/2012-11/1111121721542.jpg'},
-                {productTitle: '死都飞机哦是的', productId: '5', productPicsUrl:'http://touxiang.qqzhi.com/uploads/2012-11/1111121721542.jpg'},
-                {productTitle: '死都飞机哦是的', productId: '6', productPicsUrl:'http://touxiang.qqzhi.com/uploads/2012-11/1111121721542.jpg'},
-                {productTitle: '死都飞机哦是的', productId: '7', productPicsUrl:'http://touxiang.qqzhi.com/uploads/2012-11/1111121721542.jpg'},
-                {productTitle: '死都飞机哦是的', productId: '8', productPicsUrl:'http://touxiang.qqzhi.com/uploads/2012-11/1111121721542.jpg'},
-                {productTitle: '死都飞机哦是的', productId: '9', productPicsUrl:'http://touxiang.qqzhi.com/uploads/2012-11/1111121721542.jpg'},
-                {productTitle: '死都飞机哦是的', productId: '10', productPicsUrl:'http://touxiang.qqzhi.com/uploads/2012-11/1111121721542.jpg'},
-            ]
+            productList({'storeId':config.toolsStoreId}).then(res => {
+                this.allProduct = res.data.data
+                console.log(this.allProduct)
+            })
+
         },
         watch:{
             form:{
@@ -271,19 +264,83 @@
             /*来自平台列表页*/
             fromPlatform(){
                 let self = this,
-                    auditStatus = this.$route.query.auditStatus;    //审核状态 0未审核，1通过，2不通过
-                if(auditStatus == '0' || auditStatus == '2'){
-                    let timesTamp = Date.parse(new Date());
-                    self.status = timesTamp < self.eTime ? false : true;
-                }else{
-                    self.status = true;
+                    auditStatus = this.$route.query.auditStatus,    //审核状态 0未审核，1通过，2不通过
+                    signStatus = this.$route.query.signStatus;    //报名状态 0未回应，1确认参与，2逾期未参与
+                if(signStatus == 1){
+                    self.getLastData();
+                    if(auditStatus == '0' || auditStatus == '2'){
+                        let timesTamp = Date.parse(new Date());
+                        self.status = timesTamp < self.eTime ? false : true;
+                    }else{
+                        self.status = true;
+                    }
                 }
-
             },
             /*获得曾经填的数据*/
             getLastData(){
-                let self = this;
-
+                let self = this,
+                    params = {
+                        storeId: 1,
+                        marketingActivityId: self.$route.query.actId
+                    }
+                self.disabled = true;
+                actLastData(params).then(res => {
+                    let cBase = res.data.data.marketingCoupon,
+                        cMoney = res.data.data.marketingCouponDeliveryTypeList,
+                        cRange = res.data.data.marketingCouponRangeList;
+                    self.form.name = cBase.marketingCouponName;
+                    self.form.tips = cBase.couponReceiveTips;
+                    self.form.rule = cBase.couponUseRule;
+                    self.imageUrl = cBase.couponDetailPic;
+                    self.form.getTime = [cBase.couponReceiveBeginTime,cBase.couponReceiveEndTime]
+                    if(cBase.couponUseTimeType == 0){
+                        self.userTime.type = '有效时间段';
+                        self.userTime.timeSection[0] = cBase.couponUseBeginTime;
+                        self.userTime. timeSection[1] = cBase.couponUseEndTime;
+                    }else{
+                        self.userTime.type = '领取后有效天数';
+                        self.userTime.timeNumber = cBase.couponUseDays;
+                    }
+                    if(cBase.couponUseType == 0){
+                        self.cashType.type = '会员等级券'
+                        for(let i=0; i<cMoney.length; i++){
+                            self.cashType.huiYuan[i].money = cMoney[i].couponUseMoney
+                            self.cashType.huiYuan[i].count = cMoney[i].couponDeliveryNum
+                        }
+                    }else if(cBase.couponUseType == 1){
+                        self.cashType.type = '固定金额券';
+                        self.cashType.guDing.count = cMoney[0].couponDeliveryNum;
+                        self.cashType.guDing.money = cMoney[0].couponUseMoney;
+                    }else if(cBase.couponUseType == 2){
+                        self.cashType.type = '满减券'
+                        self.cashType.manJian = [];
+                        for(let i=0; i<cMoney.length; i++){
+                            let prm = {
+                                smallPrice: cMoney[i].couponUseMoney, 
+                                largePrice: cMoney[i].couponMinMoney, 
+                                count: cMoney[i].couponDeliveryNum
+                            }
+                            self.cashType.manJian.push(prm)
+                        }
+                    }else{
+                        self.cashType.type = '折扣券'
+                        self.cashType.zheKou.count = cMoney[0].couponDeliveryNum
+                        self.cashType.zheKou.percent = cMoney[0].couponUseMoney
+                        self.cashType.zheKou.max = cMoney[0].couponMaxMoney
+                        self.cashType.zheKou.min = cMoney[0].couponMinMoney
+                    }
+                    if(cBase.couponAmount == 0){
+                        self.cashFree.type = '免费'
+                    }else{
+                        self.cashFree.type = '付费';
+                        self.cashFree.count = cBase.couponAmount;
+                    }
+                    if(cRange[0].couponRangeType == 0){
+                        self.forProduct.type = '全部商品通用';
+                    }else{
+                        self.forProduct.type = '部分商品可用'
+                    }
+                })
             },
             /*领取时间选择*/
             getTimeChange(val){
@@ -349,6 +406,7 @@
             /*上传图片规则*/
             handleAvatarSuccess(res, file) {
                 this.imageUrl = URL.createObjectURL(file.raw);
+                this.imgUrl = res.data;
             },
             beforeAvatarUpload(file) {
                 const isJPG = (file.type === 'image/jpeg' || file.type === 'image/png');
@@ -393,61 +451,61 @@
             /*提交表单数据*/
             onSubmit(){
                 let self = this;
-                if(self.form.name == '' || !self.form.getTime[0] || !self.form.getTime[1] || self.form.tips == '' || self.form.rule == ''){
-                    self.warn('请把内容输入完整')
-                    return false;
-                }
-                if(self.userTime.type == "有效时间段"){
-                    if(!self.userTime.timeSection[0] || !self.userTime.timeSection[1]){
-                        self.warn('请输入现金券使用期限')
-                        return false;
-                    }
-                }
-                if(self.userTime.type == "领取后有效天数"){
-                    if(self.userTime.timeNumber == ''){
-                        self.warn('请输入现金券使用期限')
-                        return false;
-                    }
-                }
-                if(self.cashType.type == "会员等级券"){
-                    for(let i=0; i<self.cashType.huiYuan.length; i++){
-                        let that = self.cashType.huiYuan[i];
-                        if(that.money == '' || that.count == ''){
-                            self.warn('请输入现金券面值')
-                            return false;
-                        }
-                    }
-                }
-                if(self.cashType.type == "固定金额券"){
-                   if(self.cashType.guDing.money == '' || self.cashType.guDing.count== ''){
-                        self.warn('请输入现金券面值')
-                        return false;
-                   }
-                }
-                if(self.cashType.type == "满减券"){
-                    if(self.cashType.manJian[0].smallPrice == '' || self.cashType.manJian[0].largePrice == '' || self.cashType.manJian[0].count == ''){
-                            self.warn('请输入现金券面值')
-                            return false;
-                    }
-                }
-                if(self.cashType.type == "折扣券"){
-                    if(self.cashType.zheKou.percent == '' || self.cashType.zheKou.count == '' || self.cashType.zheKou.min == '' || self.cashType.zheKou.max == '' ){
-                            self.warn('请输入现金券面值')
-                            return false;
-                    }
-                }
-                if(self.cashFree.type == '付费'){
-                    if(self.cashFree.count == ''){
-                        self.warn('请输入抵扣券价格')
-                        return false;
-                    }
-                }
-                if(self.forProduct.type == '部分商品可用'){
-                    if(self.forProduct.product.length == 0){
-                        self.warn('请选择商品')
-                        return false;
-                    }
-                }
+                // if(self.form.name == '' || !self.form.getTime[0] || !self.form.getTime[1] || self.form.tips == '' || self.form.rule == ''){
+                //     self.warn('请把内容输入完整')
+                //     return false;
+                // }
+                // if(self.userTime.type == "有效时间段"){
+                //     if(!self.userTime.timeSection[0] || !self.userTime.timeSection[1]){
+                //         self.warn('请输入现金券使用期限')
+                //         return false;
+                //     }
+                // }
+                // if(self.userTime.type == "领取后有效天数"){
+                //     if(self.userTime.timeNumber == ''){
+                //         self.warn('请输入现金券使用期限')
+                //         return false;
+                //     }
+                // }
+                // if(self.cashType.type == "会员等级券"){
+                //     for(let i=0; i<self.cashType.huiYuan.length; i++){
+                //         let that = self.cashType.huiYuan[i];
+                //         if(that.money == '' || that.count == ''){
+                //             self.warn('请输入现金券面值')
+                //             return false;
+                //         }
+                //     }
+                // }
+                // if(self.cashType.type == "固定金额券"){
+                //    if(self.cashType.guDing.money == '' || self.cashType.guDing.count== ''){
+                //         self.warn('请输入现金券面值')
+                //         return false;
+                //    }
+                // }
+                // if(self.cashType.type == "满减券"){
+                //     if(self.cashType.manJian[0].smallPrice == '' || self.cashType.manJian[0].largePrice == '' || self.cashType.manJian[0].count == ''){
+                //             self.warn('请输入现金券面值')
+                //             return false;
+                //     }
+                // }
+                // if(self.cashType.type == "折扣券"){
+                //     if(self.cashType.zheKou.percent == '' || self.cashType.zheKou.count == '' || self.cashType.zheKou.min == '' || self.cashType.zheKou.max == '' ){
+                //             self.warn('请输入现金券面值')
+                //             return false;
+                //     }
+                // }
+                // if(self.cashFree.type == '付费'){
+                //     if(self.cashFree.count == ''){
+                //         self.warn('请输入抵扣券价格')
+                //         return false;
+                //     }
+                // }
+                // if(self.forProduct.type == '部分商品可用'){
+                //     if(self.forProduct.product.length == 0){
+                //         self.warn('请选择商品')
+                //         return false;
+                //     }
+                // }
                 // if(self.imageUrl == ''){
                 //     self.warn('请选择现金券详情图')
                 //     return false;
@@ -456,8 +514,6 @@
             },
             postData(){
                 let self = this,params = {};  
-                var para = new URLSearchParams();
-                para.append('marketingCouponName','rowstoreOperatorId');         
                 params.marketingCouponName = self.form.name;    //现金券名称
                 params.storeId = 1,              //店铺ID
                 params.marketingToolsId = 1,     //营销工具ID
@@ -465,7 +521,7 @@
                 params.couponReceiveEndTime = self.timeFormat(self.form.getTime[1]); //领取结束时间
                 params.couponReceiveTips = self.form.tips;  //领取提示
                 params.couponUseRule = self.form.rule;      //领取规则
-                params.couponDetailPic = '' //self.imageUrl;     //现金券详情图片
+                params.couponDetailPic = self.imgUrl;     //现金券详情图片
                 params.marketingCouponDeliveryTypeList = []; //现金券面额
                 if(self.userTime.type == '有效时间段'){
                     params.couponUseTimeType = 0;   //优惠券使用期限 0:有效时间段，1:领取后有效天数
@@ -499,18 +555,18 @@
                         let that = self.cashType.manJian[i],
                         cash = {
                             couponDeliveryNum: that.count,
-                            couponMinMoney: that.smallPrice,
-                            couponMaxMoney: that.largePrice
+                            couponMinMoney: that.largePrice,
+                            couponUseMoney: that.smallPrice
                         }
                     params.marketingCouponDeliveryTypeList.push(cash);
                     }
                 }else{
                     params.couponUseType = 3;
                     let cash = {
-                        couponDeliveryNum: self.cashType.manJian.count,
-                        couponUseMoney: self.cashType.manJian.percent,
-                        couponMaxMoney: self.cashType.manJian.max,
-                        couponMinMoney: self.cashType.manJian.min
+                        couponDeliveryNum: self.cashType.zheKou.count,
+                        couponUseMoney: self.cashType.zheKou.percent,
+                        couponMaxMoney: self.cashType.zheKou.max,
+                        couponMinMoney: self.cashType.zheKou.min
                     }
                     params.marketingCouponDeliveryTypeList.push(cash);
                 }
@@ -526,9 +582,18 @@
                         params.marketingCouponRangeList.push(that.productId)
                     }
                 }
-                self.$route.query.signStatus == undefined ? self.createActive(params) : self.attendActive(params);
-                
+                if(self.$route.query.type){
+                    let fTy = self.$route.query.type;
+                    if(fTy == 'store'){
+                        self.changeStoreAct(params)
+                    }else{
+                       self.$route.query.signStatus == 1 ? self.changePlatAct(params) : attendActive(params)
+                    }
+                }else{
+                    self.createActive(params)
+                }
             },
+            /*创建活动*/
             createActive(a){
                 let self = this;
                 createAct(a).then(res => {
@@ -540,10 +605,27 @@
                             }
                         });
                     }else{
-                        self.warn('res.data.data')
+                        self.warn(res.data.message)
+                    }
+                })
+            }, 
+            /*修改店铺活动*/
+            changeStoreAct(a){
+                let self = this;
+                changeAct(a).then(res => {
+                    if(res.data.message === '成功'){
+                        this.$alert('创建活动成功', '成功', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                self.$router.push('/marketing-center/management');
+                            }
+                        });
+                    }else{
+                        self.warn(res.data.message)
                     }
                 })
             },
+            /*参加平台活动*/
             attendActive(a){
                 let self = this;
                 a.marketingActivityId = self.$route.query.actId;
@@ -556,11 +638,28 @@
                             }
                         });
                     }else{
-                        self.warn('res.data.data')
+                        self.warn(res.data.message)
+                    }
+                })
+            },
+            /*修改参加过的平台活动*/
+            changePlatAct(a){
+                let self = this;
+                changeAttendAct(a).then(res => {
+                    if(res.data.message === '成功'){
+                        this.$alert('创建活动成功', '成功', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                self.$router.push('/marketing-center/management');
+                            }
+                        });
+                    }else{
+                        self.warn(res.data.message)
                     }
                 })
             },
             timeFormat(time){
+                typeof time == 'number' ? time = new Date(time) : '';
                 let mou = (time.getMonth() + 1) > 9 ? time.getMonth() + 1 : '0' +  (time.getMonth() + 1),
                     d = time.getDate() > 9 ? time.getDate()  : '0' +  time.getDate(),
                     h = time.getHours() > 9 ? time.getHours()  : '0' +  time.getHours(),
@@ -581,8 +680,7 @@
     .create-act {
         width: 100%;
         float: left;
-    }
-    .name{
+         .name{
         margin-left: 10px;
         width: 280px;
     }
@@ -768,7 +866,6 @@
         margin-left: 10px;
         width: 100px;
         height: 34px;
-        background:#41cac0;
     }
     /*弹窗样式*/
     .pro-dialog{
@@ -785,7 +882,6 @@
                 color: #fff;
             }
             .el-dialog__headerbtn{
-                padding-top:15px;
                 font-size: 14px;
                 i{
                     color: #fff;
@@ -883,4 +979,6 @@
             box-sizing: content-box !important;
         }
     }
+    }
+   
 </style>

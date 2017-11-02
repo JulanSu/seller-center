@@ -4,7 +4,8 @@
       <el-col :span="24">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="wuliu-form">
           <el-form-item label="物流模板" prop="storeShippingTemplateId">
-            <el-select v-model="ruleForm.storeShippingTemplateId" placeholder="选择物流模板">
+            <el-select v-model.number="ruleForm.storeShippingTemplateId" placeholder="选择物流模板">
+              <el-option label="新建物流模板" :value="0"></el-option>
               <template v-if="initTemplateData.length">
                 <el-option v-for="item in initTemplateData" :label="item.name" :value="item.versionId"></el-option>
               </template>
@@ -14,19 +15,59 @@
           <el-form-item label="模板名称" prop="templateName">
             <el-input v-model="ruleForm.templateName" style="width: 398px;"></el-input>
           </el-form-item>
-          <el-form-item label="配送自提" prop="type">
+          <el-form-item label="配送自提" prop="templateType">
             <el-radio-group v-model.number="ruleForm.templateType" @change="peiSongHandle">
-              <el-radio :label="0">选择省</el-radio>
-              <el-radio :label="2">选全国</el-radio>
-              <el-radio :label="1">选自提</el-radio>
-
+              <el-radio :label="0">配送</el-radio>
+              <el-radio :label="1">自提</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="配送范围及运费" prop="title" v-if="ruleForm.templateType == 0">
             <p class="desc">请编辑可送达的地区，当用户选择下述地区以外的配送地址时，将提示用户无法下单。</p>
             <div class="area-list">
-              <template v-if="ruleForm.templateValueList.length" v-for="(item, index) in ruleForm.templateValueList">
+              <div class="area-list-wrap" v-for="(item, index) in ruleForm.templateValueList">
+                <div class="area-item" style="width:219px"><el-checkbox v-model="national">全国</el-checkbox></div>
+                <div class="area-item">+运费</div>
+                <div class="area-item"><el-input v-model="item.shippingCost" style="width:80px" placeholder=""></el-input></div>
+                <div class="area-item">元/件，满</div>
+                <div class="area-item"><el-input v-model="item.shippingLimitNum" style="width:80px" placeholder=""></el-input></div>
+                <div class="area-item">件</div>
+                <div class="area-item"><el-input v-model="item.shippingLimitCost" style="width:80px" placeholder=""></el-input></div>
+                <div class="area-item">元</div>
+                <div class="area-item">
+                  
+                </div>
+              </div>
+              <template v-for="(item, index) in ruleForm.templateValueList">
+                <div style="padding-left: 5px; color: #999">指定地区的运费：</div>
                 <div class="area-list-wrap">
+                  <div class="area-item"><el-input v-model="item.sysAreaNames.join(',')" style="width:208px" placeholder="浙江、江苏、上海" @focus="citySelectHandle(item, index)"></el-input></div>
+                  <div class="area-item">+运费</div>
+                  <div class="area-item">
+                    <el-input v-model="item.shippingCost" style="width:80px" placeholder=""></el-input>
+                  </div>
+                  <div class="area-item">元/件，满</div>
+                  <div class="area-item">
+                    <el-input v-model="item.shippingLimitNum" style="width:80px" placeholder=""></el-input>
+                  </div>
+                  <div class="area-item">件</div>
+                  <div class="area-item">
+                    <el-input v-model="item.shippingLimitCost" style="width:80px" placeholder=""></el-input>
+                  </div>
+                  <div class="area-item">元</div>
+                </div>
+              </template>
+<!--               <template v-else>
+                  <div class="area-list-wrap" v-for="(item, index) in ruleForm.templateValueList">
+                    <div class="area-item"><el-checkbox v-model="ruleForm.templateType">全国</el-checkbox></div>
+                    <div class="area-item">+运费</div>
+                    <div class="area-item"><el-input v-model="item.shippingCost" style="width:80px" placeholder=""></el-input></div>
+                    <div class="area-item">元/件，满</div>
+                    <div class="area-item"><el-input v-model="item.shippingLimitNum" style="width:80px" placeholder=""></el-input></div>
+                    <div class="area-item">件</div>
+                    <div class="area-item"><el-input v-model="item.shippingLimitCost" style="width:80px" placeholder=""></el-input></div>
+                    <div class="area-item">元</div>
+                  </div>              
+                <div class="area-list-wrap" v-for="(item, index) in ruleForm.templateValueList">
                   <div class="area-item"><el-input v-model="item.sysAreaNames.join(',')" style="width:208px" placeholder="浙江、江苏、上海" @focus="citySelectHandle(item, index)"></el-input></div>
                   <div class="area-item">+运费</div>
                   <div class="area-item"><el-input v-model="item.shippingCost" style="width:80px" placeholder=""></el-input></div>
@@ -36,7 +77,7 @@
                   <div class="area-item"><el-input v-model="item.shippingLimitCost" style="width:80px" placeholder=""></el-input></div>
                   <div class="area-item">元</div>
                 </div>
-              </template>
+              </template> -->
             </div>
           </el-form-item>
           <el-form-item label="自提描述" prop="title" v-if="ruleForm.templateType == 'ziti'">
@@ -66,7 +107,6 @@
         <el-form :model="dialogForm" :rules="dialogFormRules" ref="dialogForm" class="area-selection">
           <el-form-item label="" prop="checkedCities">
               <ul class="area-wrap">
-
                 <el-checkbox-group v-model="dialogForm.checkedCities">
                   <li v-for="(value, key, index) in citiesMap">
                     <template v-if="value.checked">
@@ -75,7 +115,6 @@
                     </template>
                     <el-checkbox :label="key" v-else :key="key"></el-checkbox>
                   </li>
-
                 </el-checkbox-group>
               </ul>
             </el-checkbox-group>  
@@ -101,6 +140,7 @@
     components: { CitySelection, AreaItem },
     data() {
       return {
+        national: false,
         storeId: '1',
         initTemplateData:{},
         citiesMap: {},
@@ -111,10 +151,16 @@
         isEditorStatus: false,
         dialogVisible: false,
         ruleForm: {
-          templateValueList: [],//运费模板列表
+          templateValueList: [{
+            sysAreaCodes: '',
+            shippingCost: '',
+            shippingLimitNum: '',
+            shippingLimitCost: '',
+            sysAreaNames: []
+          }],//运费模板列表
           storeId: '1',  //店铺ID
           templateName: '', //模板名称
-          storeShippingTemplateId: '',//运费模板ID
+          storeShippingTemplateId: 0,//运费模板ID
           templateType: 0
         },
         initForm: {

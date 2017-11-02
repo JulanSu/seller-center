@@ -59,12 +59,13 @@ import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 				}
 			}
 		},
-
+		
 	    mounted() {
-	      this.getBrandList();//获取品牌列表
+	        this.getBrandList();//获取品牌列表
 	    },
 
 		methods: {
+			
 			/*点击列表跳转详情*/
 			jump(id){
 				this.$router.push({ path: 'brand-management/compile-brand', query: { storeBrandId: id,compile:1}});

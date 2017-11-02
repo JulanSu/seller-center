@@ -14,14 +14,13 @@
           <el-dropdown trigger="hover">
             <span class="el-dropdown-link userinfo-inner">商户中心<i class="el-icon-caret-bottom el-icon--right"></i></span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>我的消息</el-dropdown-item>
               <el-dropdown-item>设置</el-dropdown-item>
               <el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>          
         </div>
         <i class="pipe"></i>
-        <div class="user-item">消息</div>
+        <div class="user-item"><router-link to="/person/message">消息<i>{{total}}</i></router-link></div>
         <i class="pipe"></i>
         <div class="user-item"><i class="el-icon-caret-bottom el-icon--right"></i>商户中心手机版</div>
       </div>
@@ -29,11 +28,24 @@
 </template>
 <script>
 
+import { msgList } from '@/api/toolApi';
 export default {
   name: 'app-header',
   data(){
     return {
+      total: null
     }
+  },
+  created(){
+    let params = {
+      uid: '920170325335867392',
+      page: 1,
+      size: 20
+    }
+    msgList(params).then( res => {
+      let tal = Number(res.data.data.total)
+      this.total = tal > 999 ? '999+' : tal;
+    })
   },
   props: {
     sysName: {
@@ -87,11 +99,20 @@ export default {
         .user-item {
           display: inline-block;
           padding: 0px 5px; 
+          a{
+            color: #666;
+            i{
+              font-style: normal;
+              display: inline-block;
+              color: #f00;
+              margin-left: 3px;
+            }
+          }
+          
         }
         .userinfo-inner {
           cursor: pointer;
           color:#666;
-
           img {
             width: 40px;
             height: 40px;

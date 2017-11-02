@@ -2,29 +2,29 @@
 	<section class="add-store">
 		<el-form :model="ruleForm" label-width="80px" :rules="rules" ref="ruleForm" style="width:60%;min-width:600px;">
 			<el-form-item label="门店名称" label-width="120px" prop="name">
-				<el-input v-model="ruleForm.name" placeholder="请输入门店名称" class="wid280"></el-input>
+				<el-input :maxlength="30" v-model="ruleForm.name" placeholder="请输入门店名称" class="wid280"></el-input>
 			</el-form-item>
 			<el-form-item label="门店联系人" label-width="120px" prop="contactPerson">
-				<el-input v-model="ruleForm.contactPerson" placeholder="请输入门店联系人" class="wid280"></el-input>
+				<el-input :maxlength="30" v-model="ruleForm.contactPerson" placeholder="请输入门店联系人" class="wid280"></el-input>
 			</el-form-item>
 			<el-form-item label="联系人手机号" label-width="120px" prop="contactMobile">
-				<el-input v-model="ruleForm.contactMobile" placeholder="请输入联系人手机号" class="wid280"></el-input>
+				<el-input :maxlength="11" v-model="ruleForm.contactMobile" placeholder="请输入联系人手机号" class="wid280"></el-input>
 			</el-form-item>
 			<el-form-item label="营业时间" label-width="120px" prop="workTime">
-				<el-input v-model="ruleForm.workTime" placeholder="请输入营业时间" class="wid280"></el-input>
+				<el-input :maxlength=30 v-model="ruleForm.workTime" placeholder="请输入营业时间" class="wid280"></el-input>
 			</el-form-item>
 			<el-form-item label="门店地址"  label-width="120px">
 				<v-distpicker :province="select.province" :city="select.city" :area="select.area" @province="onProvince" @city="onCity" @selected="onSelected"></v-distpicker>
 			</el-form-item>
 			<el-form-item label="" label-width="120px" prop="address">
-				<el-input v-model="ruleForm.address" placeholder="输入详细地址" class="wid280"></el-input>
+				<el-input v-model="ruleForm.address" placeholder="输入详细地址" class="wid280" @change="searchDetail" @focus="searchFocus"></el-input>
 				<el-button type="primary" class="mapbtn" @click="searchbtn">搜索地图</el-button>
 			</el-form-item>
 			<el-form-item label="经纬坐标" label-width="120px">
 				<p>{{ ruleForm.latitude+","+ruleForm.longitude}}</p>
 			</el-form-item>
 			<el-form-item label="" label-width="120px">
-				<map-view :height="height" :longitude="ruleForm.longitude" :latitude="ruleForm.latitude" @listenToChildEvent="showsite" ref="MapView">
+				<map-view :height="height" :longitude="ruleForm.longitude" :latitude="ruleForm.latitude" @listenToChildEvent="showsite"  @listenToSel="showKey" ref="MapView">
 				</map-view>
 			</el-form-item>
 			<el-form-item label="" label-width="120px">
@@ -66,6 +66,18 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
       	MapView
   	},
     data() {
+    	var validatePhone = (rule, value, callback) => {
+	        if (value === '') {
+	          callback(new Error('请输入手机号'));
+	        } else {
+	        	var first=value.slice(0,1);
+		        if ((value.length!=11)||(first!=1)) {
+		          	callback(new Error('请输入正确的手机号'));
+		        }else{
+		        	callback();
+		        }
+	        }
+	    };
       return {
       	dialogVisible1: false,
       	/*地图组件需要传递的数据*/
@@ -98,12 +110,11 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
             { min: 1, max: 30, message: '长度在 1 到 30 位', trigger: 'blur' }
           ],
           contactMobile:[
-          	{ required: true, message: '请输入联系人手机号', trigger: 'blur' },
-            { min:11, max: 11, message: '长度为 11 位', trigger: 'blur'}
+          	{ validator: validatePhone,trigger: 'blur' }
           ],
           contactPerson: [
             { required: true, message: '请输入门店联系人', trigger: 'blur' },
-            { min:1, max: 30, message: '长度在 1 到 30 位', trigger: 'blur'}
+            { min:2, max: 30, message: '请输入正确的门店联系人', trigger: 'blur'}
           ],
           address:[
            { required: true, message: '请输入详细地址', trigger: 'blur' }
@@ -125,8 +136,34 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 			//调用地图
 	        this.$refs.MapView.creatmap(this.ruleForm.longitude,this.ruleForm.latitude);
 		}
+		var that=this;
+	    window.document.onclick=function(){
+	    	that.$refs.MapView.clearKey();
+	    }
     },
     methods: {
+    	//搜索关键字后点击筛选下拉结果，点击的元素的值传给父元素的input输入框
+		showKey(key){
+			this.ruleForm.address=key;
+		},
+		searchFocus(){
+			var addr=this.selProvince+this.selCity+this.selArea+this.ruleForm.address;
+			if(!addr){
+				this.$message({
+		          message: '请先选择省市区',
+		          type: 'warning'
+		        });
+			}else{
+				this.$refs.MapView.againmap(this.ruleForm.longitude,this.ruleForm.latitude,addr,this.ruleForm.address);
+
+			}
+		},
+		//地图输入框输入时匹配地址
+		searchDetail(){
+			var addr=this.selProvince+this.selCity+this.selArea+this.ruleForm.address;
+			this.$refs.MapView.againmap(this.ruleForm.longitude,this.ruleForm.latitude,addr,this.ruleForm.address);
+
+		},
     	/*城市三级联动，选择城市后将数据存储起来，点击搜索地图按钮时，加在自己输入的地址之前*/
 		onProvince(data) {
 		    this.select.province=data.value;
@@ -211,13 +248,13 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 	    getBack(){
 	    	this.dialogVisible1 = false;
 	    	this.$router.push({ path: '/store/shop-management' });
-	    	location.reload();
+	    	
+	    	//location.reload();
 	    },
 		add(para){//添加门店提交接口
 			saveClassify(para).then((res) => {
-				this.dialogVisible1 = true;
 	        	if(res.data.code==0){
-	        		
+	        		this.dialogVisible1 = true;
 	        	}else{
 	        		this.$message.error(res.data.message);
 	        	}
@@ -263,8 +300,8 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 					para.append('contactMobile',this.ruleForm.contactMobile);	
 					para.append('workTime',this.ruleForm.workTime);
 					para.append('address',this.sel+'*'+this.ruleForm.address);
-					para.append('longitude',Number(this.ruleForm.latitude*1000000));
-					para.append('latitude',Number(this.ruleForm.longitude*1000000));
+					para.append('longitude',Number(this.ruleForm.longitude*1000000));
+					para.append('latitude',Number(this.ruleForm.latitude*1000000));
 					para.append('isHead',Number(this.ruleForm.isHead));
 
 
@@ -286,6 +323,11 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 
 <style lang="scss">
 .add-store{
+	ol,ul,li{
+    	padding:0;
+    	margin:0;
+    	list-style:none;
+    }
 	padding-top:20px;
 	/* 公共样式 */
 	p{

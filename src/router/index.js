@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Full from '@/components/Full.vue'
+
+import MerchantEnter from '@/views/shops//MerchantEnter.vue'
+
 //import mendian from '@/views/charts/mendian.vue'
 import PersonMessage from '@/views/message/PersonMessage.vue'
 
@@ -19,6 +22,7 @@ import marketingCenter from './marketingCenterRoutes.js'
 Vue.use(VueRouter)
 
 const routers = new VueRouter({
+
     // mode: 'history',
     routes:[
     // {
@@ -72,6 +76,14 @@ const routers = new VueRouter({
         path: '/store',
         component: Full,
         name: '店铺管理',
+        iconCls: 'iconfont icon-shangpinguanli',
+        children:shopsManagementRoutes 
+    },
+    {
+        path: '/merchant-enter',
+        component: MerchantEnter,
+        name: '',
+        hidden: true,
         iconCls: 'iconfont icon-shangpinguanli',
         children:shopsManagementRoutes 
     },

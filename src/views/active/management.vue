@@ -107,9 +107,9 @@
                 currentPageStore: 1,
                 pageSizeStore: 20,
                 totalStore: 0,
-                storeKeyword: '',
-                storeStatus: '',
-                toolCheck: '',
+                storeKeyword: null,
+                storeStatus: null,
+                toolCheck: null,
                 options1: [
                         {value: 0,label: '全部'}, 
                         {value: 3,label: '未开始'}, 
@@ -117,8 +117,8 @@
                         {value: 2,label: '已结束'}
                 ],
                 options2: [
-                        {value: '1',label: '全部'},
-                        {value: '1',label: '现金券'}
+                        {value: 0,label: '全部'},
+                        {value: 1,label: '现金券'}
                         ],  
                 storeTable: [],           
                 /*平台活动数据*/
@@ -153,7 +153,7 @@
         created(){
             /*获取店铺活动*/
             let params1 = {
-                storeId: 1,
+                storeId: config.toolsStoreId,
                 toolsId: 1,
                 activityStatus: 0,
                 page: 1,
@@ -162,7 +162,7 @@
             this.getStoreData(params1)
             /*获取平台活动*/
             let params2 = {
-                storeId: 1,
+                storeId: config.toolsStoreId,
                 activityStatus: 0,
                 signStatus: 0,
                 auditStatus: 0,
@@ -180,8 +180,8 @@
             getStoreParams(){
                 let self = this,
                     params = {
-                        storeId: 1,
-                        toolsId: self.toolCheck,
+                        storeId: config.toolsStoreId,
+                        toolsId: 1,
                         activityStatus: self.storeStatus,
                         page: self.currentPageStore,
                         size: self.pageSizeStore,
@@ -213,7 +213,7 @@
                         actStatus: row.activityShowStatus,  //店铺活动状态
                         actId: row.marketingActivityId      //活动Id
                     }
-                self.$router.push({path:'/marketing-center/tool/create',query: topParams});
+                self.$router.push({path:'/marketing-center/tool/create',query: topParams})
             },
             /*店铺活动状态转化*/
             switchStoreStatus(a){
@@ -231,7 +231,7 @@
             getPlatParams(){
                 let self = this,
                     params = {
-                        storeId: 1,
+                        storeId: config.toolsStoreId,
                         activityStatus: self.platStatus,
                         signStatus: self.signStatus,
                         auditStatus: self.auditStatus,
@@ -295,7 +295,7 @@
                  **/  
                 let self = this,
                     actId = row.marketingActivityId,
-                    signStatus = 0,//row.signStatus,
+                    signStatus = row.signStatus,
                     auditStatus = row.auditStatus
                 self.$router.push({path:'/marketing-center/management/attend',query: {
                     type: 'platform',actId: actId,signStatus: signStatus,auditStatus: auditStatus}});
