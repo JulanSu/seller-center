@@ -12,29 +12,29 @@
 			<category-bar :title="categoryBarTitle1"></category-bar>
 
 			<el-form-item prop="nameCn" label="品牌名称" label-width="200px">
-				<el-input :maxlength="20" v-model="ruleForm.nameCn" class="wid400" @blur="findName('china')"></el-input>
+				<el-input :maxlength="20" v-model="ruleForm.nameCn" class="wid400" @blur="findName('china')" placeholder="请输入品牌名称"></el-input>
 			</el-form-item>	
 			<el-form-item  prop="nameEn" label="品牌英文名称"  label-width="200px">
-				<el-input :maxlength="20" v-model="ruleForm.nameEn" class="wid400" @blur="findName('english')"></el-input>
+				<el-input :maxlength="20" v-model="ruleForm.nameEn" class="wid400" @blur="findName('english')" placeholder="请输入品牌英文名称"></el-input>
 			</el-form-item>
 
 			<div v-if="isshow">
 				<el-form-item prop="orign" label="品牌发源地"  label-width="200px">
-					<el-input :maxlength="50" v-model="ruleForm.orign" class="wid400" ></el-input>
+					<el-input :maxlength="50" v-model="ruleForm.orign" class="wid400" placeholder="请输入品牌发源地"></el-input>
 				</el-form-item>
 			</div>
 
 			<div v-if="!isshow">	
 				<el-form-item prop="trademarkNumber" label="商标注册号" label-width="200px">
-					<el-input v-model="ruleForm.trademarkNumber" class="wid400"></el-input>
+					<el-input :maxlength="8" v-model="ruleForm.trademarkNumber" class="wid400" placeholder="请输入商标注册号"></el-input>
 				</el-form-item>	
 				<el-form-item prop="trademarkApplicant" label="商标申请人"  label-width="200px">
-					<el-input v-model="ruleForm.trademarkApplicant" class="wid400"></el-input>
+					<el-input :maxlength="30" v-model="ruleForm.trademarkApplicant" class="wid400"  placeholder="请输入商标申请人"></el-input>
 				</el-form-item>
 				<el-form-item prop="trademarkType" label="注册类型" label-width="200px">
 				    <el-radio-group v-model="ruleForm.trademarkType">
-				        <el-radio label="R标"></el-radio>
-				        <el-radio label="TM标"></el-radio>
+				        <el-radio :label="1">R标</el-radio>
+				        <el-radio :label="0">TM标</el-radio>
 				    </el-radio-group>
 				    <p class="tishi">R：已获得《商标注册证》TM：未获得《商标注册证》，仅有《注册申请受理通知书》</p>
 				</el-form-item>
@@ -66,25 +66,19 @@
 			</div>
 			
 			<el-form-item prop="ways" label="授权渠道 " label-width="200px">
-				<el-input v-model="ruleForm.ways" class="wid400"></el-input>
+				<el-input v-model="ruleForm.ways" class="wid400" placeholder="请输入授权渠道"></el-input>
 			</el-form-item>	
 			<el-form-item prop="cityNames" label="授权城市"  label-width="200px">
-				<el-input v-model="ruleForm.cityNames" class="wid400"></el-input>
+				<el-input v-model="ruleForm.cityNames" class="wid400" placeholder="请输入授权城市"></el-input>
 			</el-form-item>
 			<el-form-item label="有效时间"  label-width="200px">
 			    <el-col style="width:190px;">
-			      <el-form-item prop="startValidTime">
-			        <el-date-picker type="date" v-model="ruleForm.startValidTime" style="width: 100%;"></el-date-picker>
-			      </el-form-item>
-			    </el-col>
-			    <el-col class="line" style="text-align:center;width:20px;">-</el-col>
-			    <el-col style="width:190px;">
 			      <el-form-item prop="endValidTime">
-			        <el-date-picker type="date" v-model="ruleForm.endValidTime" style="width: 100%;"></el-date-picker>
+			        <el-date-picker type="date" v-model="ruleForm.endValidTime" style="width: 100%;" placeholder="请选择有效截至时间"></el-date-picker>
 			      </el-form-item>
 			    </el-col>
 			</el-form-item>
-			<el-form-item label="品牌LOGO" label-width="200px">
+			<el-form-item label="品牌资质" label-width="200px">
 				<upload-pictures :note="uploadTishi1"></upload-pictures>
 			</el-form-item>
 			<el-form-item label="报关单" label-width="200px">
@@ -99,19 +93,19 @@
 			<div v-if="isshow">
 				<category-bar :title="categoryBarTitle2"></category-bar>
 				<el-form-item prop="domesticOperator" label="国内经营人姓名" label-width="200px">
-					<el-input v-model="ruleForm.domesticOperator" class="wid400"></el-input>
+					<el-input v-model="ruleForm.domesticOperator" class="wid400" placeholder="请输入国内经营人姓名"></el-input>
 				</el-form-item>	
 				<el-form-item prop="domesticOperatorIDCard" label="身份证号"  label-width="200px" >
-					<el-input v-model="ruleForm.domesticOperatorIDCard" class="wid400"></el-input>
+					<el-input v-model="ruleForm.domesticOperatorIDCard" class="wid400" placeholder="请输入身份证号"></el-input>
 				</el-form-item>
-				<el-form-item prop="domesticOperatorPhone" label="国内经营人手机号码"  label-width="200px">
-					<el-input v-model="ruleForm.domesticOperatorPhone" class="wid400"></el-input>
+				<el-form-item prop="domesticOperatorPhone" label="手机号码"  label-width="200px">
+					<el-input v-model="ruleForm.domesticOperatorPhone" class="wid400" placeholder="请输入手机号码"></el-input>
 				</el-form-item>
 				
 			</div>
 
 			<el-form-item prop="contactMobile" label="联系电话"  label-width="200px">
-				<el-input v-model="ruleForm.contactMobile" class="wid400"></el-input>
+				<el-input v-model="ruleForm.contactMobile" class="wid400" placeholder="请输入联系电话"></el-input>
 				<p class="tishi">审核同学有疑问时，会通过此联系方式联系您</p>
 			</el-form-item>
 			<el-form-item label="" label-width="200px">
@@ -171,8 +165,8 @@ export default {
 			orign: '',
 			trademarkNumber: '',
 			trademarkApplicant: "",
-			trademarkType:[],
-			registerIndustry: '',
+			trademarkType:1,
+			registerIndustry: '农、林、牧、渔业',
 			identity: '',
 			ways:"",
 			logo:'',
@@ -199,15 +193,12 @@ export default {
             { max: 50, message: '长度最多 50 位', trigger: 'blur' }
           ],
           trademarkNumber: [
-            { required: true, message: '请输入商标注册号', trigger: 'blur' },
-            { min: 8, max: 8, message: '长度为8位', trigger: 'blur' }
+            { required: true, message: '请输入商标申请号', trigger: 'blur' },
+            { min: 8, max: 8, message: '请输入正确的商标申请号', trigger: 'blur' }
           ],
           trademarkApplicant: [
             { required: true, message: '请输入商标申请人', trigger: 'blur' },
-            { min: 2, max: 30, message: '长度在 2 到 30 位', trigger: 'blur' }
-          ],
-          trademarkType: [
-            { required: true, message: '请选择注册类型', trigger: 'change' }
+            { min: 2, max: 30, message: '请输入正确的商标申请人', trigger: 'blur' }
           ],
           registerIndustry: [
             { required: true, message: '请选择品牌注册所属行业', trigger: 'change' }
@@ -219,9 +210,6 @@ export default {
           cityNames: [
             { required: true, message: '请输入授权城市', trigger: 'blur' },
             { max: 20, message: '长度最多 20 位', trigger: 'blur' }
-          ],
-          startValidTime: [
-            { type: 'date', required: true, message: '请选择有效起始时间', trigger: 'blur' }
           ],
           endValidTime: [
             { type: 'date', required: true, message: '请选择有效结束时间', trigger: 'blur' }
@@ -291,11 +279,11 @@ export default {
 	        this.$refs[formName].validate((valid) => {
 	            if (valid) {
 	          		var para = new URLSearchParams();  
-			        para.append('storeId',storeId);
+			        para.append('storeId',config.storeId);
 			        para.append('authorizationUrl',this.ruleForm.authorizationUrl);
 			        para.append('ways',this.ruleForm.ways);
 			        para.append('cityNames',this.ruleForm.cityNames);
-			        para.append('startValidTime',this.ruleForm.startValidTime);
+			        para.append('startValidTime','');
 			        para.append('endValidTime',this.ruleForm.endValidTime);
 			        para.append('contactMobile',this.ruleForm.contactMobile);
 			        para.append('registerLocation',this.ruleForm.registerLocation);

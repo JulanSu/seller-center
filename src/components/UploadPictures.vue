@@ -1,22 +1,4 @@
 <template>
-  <!-- <div class="uploadpic">
-    <div class="load_hezi">
-      <p>{{note}}</p>
-      <el-upload
-        action="http://gss.dmp.hzjiehun.bid/gss/upload/"
-        list-type="picture-card"
-        :before-upload="beforeAvatarUpload"
-        :on-preview="handlePictureCardPreview"
-        :on-remove="handleRemove"
-        limit='1'>
-        <i class="el-icon-plus"></i>
-        <p>添加上传图片</p>
-      </el-upload>
-      <el-dialog v-model="dialogVisible" size="tiny">
-        <img width="100%" :src="dialogImageUrl" alt="">
-      </el-dialog>
-    </div>
-  </div> -->
   <div class="uploadpic">
     <div class="load_hezi">
       <p>{{note}}</p>
@@ -73,23 +55,28 @@ export default {
 
   methods: {
     beforeAvatarUpload(file){
-        const isJPG = file.type === 'image/jpeg';
+        const isUpload =/(jpg|jpeg|png)$/.test(file.type);
         const isLt2M = file.size / 1024 / 1024 < 2;
-
-        if (!isJPG) {
-          this.$message.error('上传头像图片只能是 JPG 格式!');
+        if(!isUpload){
+          this.$message.error('上传头像图片只能是 JPG、JPEG、PNG 格式!');
         }
         if (!isLt2M) {
           this.$message.error('上传头像图片大小不能超过 2MB!');
         }
-        return isJPG && isLt2M;
+        return isUpload && isLt2M;
       },
 
     handleAvatarSuccess(res, file) {
-      console.log(res.data)
-      this.imageUrl = URL.createObjectURL(file.raw);
-      this.$emit(this.listen,res.data);//传递值给父组件
+      if(res.code==0){
+        this.imageUrl = URL.createObjectURL(file.raw);
+        this.$emit(this.listen,res.data);//传递值给父组件
+      }
+      
     },
+    revise(src){
+      this.imageUrl=src;
+    }
+
     
   }
 }
@@ -101,6 +88,9 @@ export default {
     margin:0;
     font-size: 12px;
     color: #999999;
+  }
+  .avatar-uploader{
+    height:100px;
   }
   .avatar-uploader-icon{
     padding-top:23px;

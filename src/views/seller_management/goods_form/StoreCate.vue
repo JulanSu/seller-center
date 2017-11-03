@@ -4,7 +4,7 @@
       v-model="storeCateArr">
       <ul class="">
         <li v-for="storeCate in storeCateList">
-          <el-checkbox :label="storeCate.cateName" :key="storeCate.cateName" @change="changeHandle(storeCate)">{{storeCate.cateName}}</el-checkbox>
+          <el-checkbox :label="storeCate.storeCateId" :key="storeCate.cateName" @change="changeHandle(storeCate)">{{storeCate.cateName}}</el-checkbox>
         </li>
       </ul>
     </el-checkbox-group>
@@ -16,7 +16,7 @@
   export default {
     data() {
       return {
-        storeCateArr: []
+        storeCateArr: this.value
       }
     },
     props: {
@@ -33,14 +33,13 @@
     },
     watch: {
       storeCateArr: function(newVal, oldVal){
-        var data = this.formartData(newVal)
-        this.$emit('input', data)
+        //var data = this.formartData(newVal)
+        this.$emit('input', newVal)
       }
     },
     
     created (){
-
-
+      // console.log('店铺中分类',this.storeCateArr)
     },
     methods: {
       formartData (newVal){

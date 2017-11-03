@@ -109,7 +109,7 @@
                 params.userMobile = self.form.userPhone;
                 params.userVoucherId = self.form.cashNumber;
                 params.voucherFromOrder = self.form.orderNumber;
-                params.voucherStatus = self.form.planCheck;
+                params.voucherStatus = self.form.planCheck ? self.form.planCheck : -1;
                 params.createBeginTime = self.form.startTime;
                 params.createEndTime = self.form.endTime;          
                 params.pageNum = self.currentPage;

@@ -37,4 +37,5 @@ export const changeAttendAct = params => { return axios.post(`${base}/marketing/
 export const msgList = params => { return axios.get(`${base}/msg/page`, {params:params}); }
 
 
-
+//退出接口
+export const userLogout = params => { return axios.get(`${pichost}/user/logout`, { params: params }); };

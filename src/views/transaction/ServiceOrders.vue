@@ -46,8 +46,8 @@
                 currentPage: 1,
                 form: {
                     userPhone: '',
-                    typeCheck: null,
-                    planCheck: null,
+                    typeCheck: '',
+                    planCheck: '',
                     orderType: [
                             {orderName: '全部', orderId: null},
                             {orderName: '全款订单', orderId: 1},
@@ -71,7 +71,6 @@
         },
         created(){
             this.getTableData({storeId:10,pageNum:1,pageSize:20})
-            console.log(config.toolsStoreId)
         },
         methods: {
             /*订单类型变化*/
@@ -137,7 +136,7 @@
                 let self = this,params = {};
                 params.storeId = 1;
                 params.infoTelephone = self.form.userPhone == '' ? null : self.form.userPhone;
-                params.orderStoreType = self.form.typeCheck;
+                params.orderStoreType = self.form.typeCheck == '' ? null : self.form.typeCheck
                 params.orderStoreStatus = [];
                 if(self.form.statusCheck == undefined){
                     params.orderStoreStatus = null

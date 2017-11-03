@@ -114,7 +114,7 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority} from '@/api/shopApi';
               });
             }else{
               console.log(this.ruleForm.selJurisdict)
-              para.append('storeId',storeId);
+              para.append('storeId',config.storeId);
               roleSave(para).then((res)=>{
                 this.sucFun(res);
               }).catch((res)=> {

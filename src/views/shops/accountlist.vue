@@ -30,9 +30,11 @@
     <el-col :span="24" class="tool-bar" style="margin-top:20px;">
       <el-pagination
       @current-change="handleCurrentChange"
+      @size-change="handleSizeChange"
+      :page-sizes="[25, 50, 100]"
       :current-page="page"
       :page-size="pageSize"
-      layout="prev, pager, next, jumper,total"
+      layout="sizes,prev, pager, next, jumper,total"
       :total="total" style="float:right;">
     </el-pagination>
     </el-col>
@@ -46,8 +48,8 @@ import {operatorList,operatorChangeStatus,operatorRemove} from '@/api/shopApi';
     data() {
       return {
         datas: [],
-        total: 20,
-        pageSize: 10,//每页显示多少条
+        total: '',
+        pageSize: 20,//每页显示多少条
         page:1,//当前页数
         listLoading: false,
         addLoading: false
@@ -61,7 +63,7 @@ import {operatorList,operatorChangeStatus,operatorRemove} from '@/api/shopApi';
       //获取用户列表
       getAccountList() {
         let para = {
-          storeId:storeId,
+          storeId:config.storeId,
           pageSize: this.pageSize,
           pageNum: this.page
         };
@@ -73,6 +75,11 @@ import {operatorList,operatorChangeStatus,operatorRemove} from '@/api/shopApi';
           this.datas = res.data.data.list;
 
         });
+      },
+      //当选择每页多少条时触发
+      handleSizeChange(val){
+        this.pageSize = val;
+        this.getAccountList();
       },
       //解冻或冻结子帐号
       handleOptation(row) {

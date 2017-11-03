@@ -53,8 +53,7 @@
             }
         },
         created(){
-            let actId = this.$route.query.actId; 
-            this.statusIsOk();     
+            let actId = this.$route.query.actId;    
             /*获取平台详情*/
             platformActDetail({storeId: config.toolsStoreId, marketingActivityId:actId }).then(res => {
                 this.detail = res.data.data;
@@ -70,7 +69,7 @@
                 if(signStatus == 2)  this.btnNotClick = true;
                 if(signStatus == 0){
                     let timesTamp = Date.parse(new Date());
-                    if(timesTamp > this.detail.signUpBeginTime && timesTamp < this.detail.signUpEndTime ){
+                    if(this.detail.signUpEndTime < timesTamp && timesTamp < this.detail.signUpEndTime ){
                         this.btnNotClick = false;
                     }else{
                         this.btnNotClick = true;
@@ -189,3 +188,6 @@
         }
     }
 </style>
+
+
+

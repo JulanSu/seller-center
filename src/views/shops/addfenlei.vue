@@ -5,7 +5,7 @@
         <el-input :maxlength="10" v-model="ruleForm.cateName" placeholder="请输入店铺名称" class="wid280"></el-input>
       </el-form-item>
       <el-form-item label="店铺LOGO" label-width="100px">
-        <upload-pictures :note="uploadLogo"></upload-pictures>
+        <upload-pictures :note="uploadLogo" :url="ruleForm.catePic" :listen="'listenToPic1'" @listenToPic1="sucpic1"></upload-pictures>
       </el-form-item>
       <el-form-item label="显示" label-width="100px" prop="isUsed">
           <el-radio-group v-model="ruleForm.isUsed">
@@ -60,9 +60,12 @@ export default {
     }
   },
   methods: {
+    //分类图片上传成功之后
+    sucpic1(url){
+      this.ruleForm.catePic=url;
+    },
     /*如果是编辑分类页面，需要取该分类的数据*/
     dataFetch(id){
-
       var para = new URLSearchParams();
       para.append('storeCateId',id);
 
@@ -73,6 +76,7 @@ export default {
       }).catch((res)=> {
         this.listLoading = false;
       });
+      
     },
     //新增或编辑成功后的回调
     sucFun(res){
@@ -105,7 +109,7 @@ export default {
               this.listLoading = false;
             });
           }else{
-            para.append('storeId',storeId);
+            para.append('storeId',config.storeId);
             cateSave(para).then((res)=> {
               this.sucFun(res);
             }).catch((res)=> {

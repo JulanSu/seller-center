@@ -55,7 +55,7 @@
                     </el-row>
                 </section>
                 <section class="cash" v-if="cashType.type=='满减券'">
-                    <el-row style='margin-top: 10px;padding-left: 10px' v-for='(item,index) in cashType.manJian' :key="item.smallPrice">
+                    <el-row style='margin-top: 10px;padding-left: 10px' v-for='(item,index) in cashType.manJian' :key="">
                         <el-input placeholder='现金券面值' style='width:210px' v-model='item.smallPrice' :maxlength="10" @blur='isNumber($event)'></el-input>
                         <span style="margin:0 8px">————</span>
                         <el-input placeholder='消费满足金额' style='width:210px' :maxlength="10" @blur='isNumber($event)'  v-model='item.largePrice'></el-input>
@@ -174,6 +174,7 @@
                 status: false,
                 dialogProduct: false,
                 btnText: '立即创建',
+                marketingCouponId: '',
                 imageUrl: '',
                 showAgainBtn: false,
                 beginTime: null,
@@ -225,9 +226,7 @@
             this.typeFrom()
             productList({'storeId':config.toolsStoreId}).then(res => {
                 this.allProduct = res.data.data
-                console.log(this.allProduct)
             })
-
         },
         watch:{
             form:{
@@ -258,7 +257,7 @@
             /*来自店铺活动页*/
             fromStore(){
                 let self = this;
-                self.$route.query.actStatus != '0' ? self.status = true : '';
+                self.$route.query.actStatus != 2 ? self.status = true : '';
                 self.getLastData();
             },
             /*来自平台列表页*/
@@ -266,7 +265,7 @@
                 let self = this,
                     auditStatus = this.$route.query.auditStatus,    //审核状态 0未审核，1通过，2不通过
                     signStatus = this.$route.query.signStatus;    //报名状态 0未回应，1确认参与，2逾期未参与
-                if(signStatus == 1){
+                if(signStatus == '1'){
                     self.getLastData();
                     if(auditStatus == '0' || auditStatus == '2'){
                         let timesTamp = Date.parse(new Date());
@@ -280,18 +279,20 @@
             getLastData(){
                 let self = this,
                     params = {
-                        storeId: 1,
+                        storeId: config.toolsStoreId,
                         marketingActivityId: self.$route.query.actId
                     }
                 self.disabled = true;
                 actLastData(params).then(res => {
-                    let cBase = res.data.data.marketingCoupon,
-                        cMoney = res.data.data.marketingCouponDeliveryTypeList,
-                        cRange = res.data.data.marketingCouponRangeList;
+                    let cBase = res.data.data,
+                        cMoney = res.data.data.couponDeliveryTypeList,
+                        cRange = res.data.data.rangeIdList;
                     self.form.name = cBase.marketingCouponName;
                     self.form.tips = cBase.couponReceiveTips;
                     self.form.rule = cBase.couponUseRule;
                     self.imageUrl = cBase.couponDetailPic;
+                    self.imgUrl = cBase.couponDetailPic;
+                    self.marketingCouponId = cBase.marketingCouponId;
                     self.form.getTime = [cBase.couponReceiveBeginTime,cBase.couponReceiveEndTime]
                     if(cBase.couponUseTimeType == 0){
                         self.userTime.type = '有效时间段';
@@ -335,12 +336,30 @@
                         self.cashFree.type = '付费';
                         self.cashFree.count = cBase.couponAmount;
                     }
-                    if(cRange[0].couponRangeType == 0){
+                    if(cRange.length == 1 && cRange[0] == cBase.storeId){
                         self.forProduct.type = '全部商品通用';
                     }else{
-                        self.forProduct.type = '部分商品可用'
+                        self.forProduct.type = '部分商品可用';
+                        self.getLastProduct(cRange);
                     }
                 })
+            },
+            /*获得曾经选择的商品*/
+            getLastProduct(arr){
+                let self = this;
+                for(let i=0; i<self.allProduct.length; i++){
+                    let that = self.allProduct[i];
+                        for(let j=0; j<arr.length; j++){
+                        if(arr[j] == that.productId){
+                            that.checked = true;
+                            self.forProduct.product.push(that);
+                        }
+                    }
+                }
+                for(let i=0; i<self.forProduct.product.length; i++){
+                    let that = self.forProduct.product[i];
+                    self.$set(that,'deleteBtn',false);
+                }
             },
             /*领取时间选择*/
             getTimeChange(val){
@@ -515,7 +534,7 @@
             postData(){
                 let self = this,params = {};  
                 params.marketingCouponName = self.form.name;    //现金券名称
-                params.storeId = 1,              //店铺ID
+                params.storeId = config.toolsStoreId,              //店铺ID
                 params.marketingToolsId = 1,     //营销工具ID
                 params.couponReceiveBeginTime = self.timeFormat(self.form.getTime[0]);  //领取开始时间
                 params.couponReceiveEndTime = self.timeFormat(self.form.getTime[1]); //领取结束时间
@@ -587,7 +606,7 @@
                     if(fTy == 'store'){
                         self.changeStoreAct(params)
                     }else{
-                       self.$route.query.signStatus == 1 ? self.changePlatAct(params) : attendActive(params)
+                       self.$route.query.signStatus == 1 ? self.changePlatAct(params) : self.attendActive(params)
                     }
                 }else{
                     self.createActive(params)
@@ -612,9 +631,11 @@
             /*修改店铺活动*/
             changeStoreAct(a){
                 let self = this;
+                a.marketingActivityId = self.$route.query.actId;
+                a.marketingCouponId = self.marketingCouponId;
                 changeAct(a).then(res => {
                     if(res.data.message === '成功'){
-                        this.$alert('创建活动成功', '成功', {
+                        this.$alert('修改活动成功', '成功', {
                             confirmButtonText: '确定',
                             callback: action => {
                                 self.$router.push('/marketing-center/management');
@@ -634,7 +655,7 @@
                         this.$alert('参加活动成功', '成功', {
                             confirmButtonText: '确定',
                             callback: action => {
-                                self.$router.push('/marketing-center/management');
+                                self.$router.push('/marketing-center/management?name=platformActive');
                             }
                         });
                     }else{
@@ -645,12 +666,15 @@
             /*修改参加过的平台活动*/
             changePlatAct(a){
                 let self = this;
+                a.marketingActivityId = self.$route.query.actId;
+                a.marketingCouponId = self.marketingCouponId;
+                console.log(self.marketingCouponId)
                 changeAttendAct(a).then(res => {
                     if(res.data.message === '成功'){
-                        this.$alert('创建活动成功', '成功', {
+                        this.$alert('修改活动成功', '成功', {
                             confirmButtonText: '确定',
                             callback: action => {
-                                self.$router.push('/marketing-center/management');
+                                self.$router.push('/marketing-center/management?name=platformActive');
                             }
                         });
                     }else{
@@ -883,6 +907,7 @@
             }
             .el-dialog__headerbtn{
                 font-size: 14px;
+                padding-top: 17px;
                 i{
                     color: #fff;
                 }

@@ -68,7 +68,7 @@ import { roleList,roleChangeStatus } from '@/api/shopApi';
       //获取角色列表
       getRoleList() {
         let para = {
-          storeId:storeId,
+          storeId:config.storeId,
           pageSize: this.pageSize,
           pageNum: this.pageNum
         };

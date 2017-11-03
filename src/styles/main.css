@@ -62,6 +62,10 @@
   background-color: #35404d;
 }
 
+.updata .el-input {
+  display: none;
+}
+
 label {
   font-weight: 400;
 }
@@ -202,6 +206,7 @@ div.address select:selected {
 /* 商家入驻 */
 .merchant-enter {
   position: relative;
+  width: 960px;
   /* 公共样式 */
   /* 选择行业弹框 */
   /* 成功弹框样式 */
@@ -214,6 +219,32 @@ div.address select:selected {
 
 .merchant-enter ol, .merchant-enter ul {
   list-style: none;
+}
+
+.merchant-enter .wid400 {
+  width: 400px !important;
+}
+
+.merchant-enter .wid280 {
+  width: 280px !important;
+}
+
+.merchant-enter form {
+  margin: 20px 0 0 40px;
+}
+
+.merchant-enter .search-hezi {
+  position: relative;
+}
+
+.merchant-enter .search-hezi .search-ol {
+  border: 1px solid #bfd8d9;
+  position: absolute;
+  top: 36px;
+  width: 280px;
+  background: #fff;
+  z-index: 999;
+  padding-left: 10px;
 }
 
 .merchant-enter .big-img {
@@ -261,10 +292,13 @@ div.address select:selected {
   overflow: hidden;
   line-height: 100px;
   text-align: center;
+  background: #d7d7d7;
+  text-align: center;
 }
 
 .merchant-enter .example div img {
   max-width: 100%;
+  vertical-align: middle;
 }
 
 .merchant-enter .selector-btn {
@@ -297,7 +331,7 @@ div.address select:selected {
 
 .merchant-enter .myIndustry h4 {
   background: #f5f7fa;
-  width: 398px;
+  width: 378px;
   height: 38px;
   line-height: 38px;
   padding-left: 20px;

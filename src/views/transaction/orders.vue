@@ -23,7 +23,7 @@
             <el-table-column prop="orderStoreStatus" label="状态" align='center'></el-table-column>
             <el-table-column label="操作" align='center'>
                 <template slot-scope="scope">
-                    <el-button @click="handleClick(scope.row)" type="text" size="small" style="color: #45cdb6" v-if="scope.row.orderStoreStatus == '待发货'">去发货</el-button>
+                    <el-button @click="handleClick(scope.row)" type="text" size="small" style="color: #45cdb6" v-if="scope.row.orderStoreStatus == '待发货' && scope.row.orderType == 1">去发货</el-button>
                     <el-button @click="handleClick(scope.row)" type="text" size="small">查看详情</el-button>
                   </template>
             </el-table-column>
@@ -46,8 +46,8 @@
                 currentPage: 1,
                 form: {
                     userPhone: '',
-                    typeCheck: null,
-                    statusCheck: null,
+                    typeCheck: '',
+                    statusCheck: '',
                     orderType: [
                         {orderId: null, orderName: '全部'}
                     ],
@@ -58,6 +58,8 @@
                             {label: '待用户支付', statusId: 1},
                             {label: '待发货', statusId: 2},
                             {label: '待收货', statusId: 3},
+                            {label: '待自提', statusId: 3.1},
+                            {label: '待核销', statusId: 3.2},
                             {label: '交易成功', statusId: 4}
                         ]},
                         {id: 1, status:[                        //全款
@@ -103,75 +105,10 @@
             /*获取订单类型和状态*/
             orderStatus().then(res => {
                 this.form.orderType = [...this.form.orderType,...res.data.data];
+                this.form.orderStatus = [...this.form.statusArr[0].status]
             })
             /*获取商家全部订单*/
-            // this.getTableData({storeId: '1', pageNum: 1, pageSize: 1})
-            let moc = {
-                "code":0,
-                "message":"成功",
-                "data":{
-                    "pageNum":1,
-                    "pageSize":1,
-                    "size":1,
-                    "orderBy":null,
-                    "startRow":0,
-                    "endRow":0,
-                    "total":200,
-                    "pages":1,
-                    "list":[
-                        {
-                            "serialNumber":"1644487478",
-                            "infoName":"awjasdkmakl",
-                            "infoTelephone":"17682309067",
-                            "orderStoreStatus":1,
-                            "orderTime":"2017/10/25 15:31:14",
-                            "productNames":[
-                                "三线","dfg","dfg","54",
-                            ]
-                        },
-                        {
-                            "serialNumber":"1479847984",
-                            "infoName":"阿的江屁哦",
-                            "infoTelephone":"13585623256",
-                            "orderStoreStatus":2,
-                            "orderTime":"2017/10/25 15:31:14",
-                            "productNames":[
-                                "1"
-                            ]
-                        },
-                        {
-                            "serialNumber":"1",
-                            "infoName":"1",
-                            "infoTelephone":"13739699042",
-                            "orderStoreStatus":3,
-                            "orderTime":"2017/10/25 15:31:14",
-                            "productNames":[
-                                "1"
-                            ]
-                        }
-                    ],
-                    "firstPage":1,
-                    "prePage":0,
-                    "nextPage":0,
-                    "lastPage":1,
-                    "isFirstPage":true,
-                    "isLastPage":true,
-                    "hasPreviousPage":false,
-                    "hasNextPage":false,
-                    "navigatePages":8,
-                    "navigatepageNums":[
-                        1
-                    ]
-                }
-            }
-            for(let i=0; i<moc.data.list.length; i++) {
-                let that = moc.data.list[i];
-                that.pName = that.productNames.join('')
-                that.orderStoreStatus = this.switchStatus(that.orderStoreStatus)
-            }
-            this.total = Number(moc.data.total);
-            this.tableData = moc.data.list;
-            this.form.orderStatus = this.form.statusArr[0].status;
+            this.getTableData({storeId: 10, pageNum: 1, pageSize: 20})
         },
         methods: {
             /*订单类型变化*/
@@ -243,8 +180,7 @@
                 let self = this,params = {};
                 params.storeId = 10;
                 params.infoTelephone = self.form.userPhone == '' ? null : self.form.userPhone;
-                params.orderStoreType = self.form.typeCheck;
-                params.orderStoreStatus = [];
+                params.orderStoreType = self.form.typeCheck == '' ? null : self.form.typeCheck
                 console.log(params.orderStoreStatus)
                 if(self.form.statusCheck == undefined){
                     params.orderStoreStatus = null
@@ -252,7 +188,12 @@
                     if(self.form.typeCheck == 3 && self.form.statusCheck == 34){
                         params.orderStoreStatus = [...[3,4]]
                     }else{
-                        params.orderStoreStatus.push(self.form.statusCheck)
+                        if(self.form.statusCheck != ''){
+                            params.orderStoreStatus = [];
+                            params.orderStoreStatus.push(parseInt(self.form.statusCheck))
+                        }else{
+                            params.orderStoreStatus = null; 
+                        }
                     }
                 }
                 params.orderNumber = self.form.orderNumber == '' ? null : self.form.orderNumber;
@@ -279,7 +220,6 @@
                     }
                     this.total = Number(moc.data.total);
                     this.tableData = moc.data.list
-                    console.log(this.tableData)
                 })
             },
             /*页面条数*/

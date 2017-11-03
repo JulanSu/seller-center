@@ -1,5 +1,5 @@
 <template>
-	<section class="shop-message">
+	<section class="shop-message" id='shop-message'>
 		<category-bar :title="categoryBarTitle"></category-bar>
 		<el-form :model="ruleForm" :rules="rules" ref="ruleForm">
 			<el-form-item label="入驻类型" prop="shopType" label-width="120px" class="lefttit">
@@ -14,8 +14,14 @@
 			<el-form-item label="店铺LOGO" label-width="120px">
 				<upload-pictures :url="ruleForm.logo" :note="uploadTishi1" :listen="'listenToPic1'" @listenToPic1="sucpic1"></upload-pictures>
 			</el-form-item>
+			<el-form-item label="" prop="logo"  label-width="120px" class='updata'>
+				<el-input v-model="ruleForm.logo" class="wid280"></el-input>
+			</el-form-item>
 			<el-form-item label="店铺主图" label-width="120px">
 				<upload-pictures :url="ruleForm.broadwiseLogo" :note="uploadTishi2" :listen="'listenToPic2'" @listenToPic2="sucpic2"></upload-pictures>
+			</el-form-item>
+			<el-form-item label="" prop="broadwiseLogo"  label-width="120px" class='updata'>
+				<el-input v-model="ruleForm.broadwiseLogo" class="wid280"></el-input>
 			</el-form-item>
 			<el-form-item label="门店地址"  label-width="120px">
 				<v-distpicker :province="select.province" :city="select.city" :area="select.area" @province="onProvince" @city="onCity" @selected="onSelected"></v-distpicker>
@@ -135,6 +141,12 @@ export default {
 				endValidTime:'',
 			},
 	        rules: {
+	        	logo:[
+	        		{ required: true, message: '请上传店铺LOGO', trigger: 'blur' },
+	        	],
+	        	broadwiseLogo:[
+	        		{ required: true, message: '请上传店铺主图', trigger: 'blur' },
+	        	],
 	          	name: [
 	            	{ required: true, message: '请输入店铺名称', trigger: 'blur' },
 	            	{ min: 1, max: 20, message: '长度在 1 到 20 位', trigger: 'blur' }
@@ -165,9 +177,11 @@ export default {
     mounted() {
       	this.getShop();
       	var that=this;
-    	window.document.onclick=function(){
-    		that.$refs.MapView.clearKey();
-    	}
+	    var o= document.getElementById("shop-message");
+	    o.onclick=function(){
+		    that.$refs.MapView.clearKey();
+	    };
+	    
     },
     computed: {
     	//将毫秒数转化为时间格式
@@ -213,13 +227,13 @@ export default {
 		//获取店铺信息
 	    getShop() {
 	        let para = {
-	          storeId: storeId
+	          storeId: config.storeId
 	        };
 	        getShopMessage(para).then((res) => {
 	        	this.ruleForm=res.data.data;
 	        	this.ruleForm.shopType=this.ruleForm.shopType==1?"个人店铺":"企业店铺";
 	        	let address="浙江省*杭州市*下城区*野风现代中心";
-
+	        	this.ruleForm.logo=''
         		this.switchover(this.ruleForm.address);
         		this.ruleForm.longitude/=1000000;
         		this.ruleForm.latitude/=1000000;
@@ -319,7 +333,7 @@ export default {
 					para.append('workTime',this.ruleForm.workTime);
 					para.append('contactName',this.ruleForm.contactName);
 					para.append('contactMobile',this.ruleForm.contactMobile);	
-console.log(this.ruleForm.logo,this.ruleForm.broadwiseLogo)
+
 			        updateShopMessage(para).then((res) => {
 			        	if(res.data.code==0){
 			        		this.$message({
@@ -369,6 +383,7 @@ console.log(this.ruleForm.logo,this.ruleForm.broadwiseLogo)
     	margin:0;
     	list-style:none;
     }
+    
 }
     
 </style>

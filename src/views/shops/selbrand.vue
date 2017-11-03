@@ -138,7 +138,7 @@ export default {
 
   	mounted:function(){
       let para = {
-        storeId:storeId
+        storeId:config.storeId
       };
       this.listLoading = true;
       listindustrybrand(para).then((res) => {

@@ -60,11 +60,11 @@
                               </td>
                             <td>
                               <div class="cell">
-                                <input class="" v-model="productSku.productPrice" @keyup="productSkuHandle(goodsForm.productSkuTable)" /></div>
+                                <input class="" v-model="productSku.productPrice" @keyup="initForm.productSkuQuantity = productSkuHandle(goodsForm.productSkuTable)" /></div>
                             </td>
                             <td>
                               <div class="cell">
-                                <input class="" v-model="productSku.productSkuQuantity" @keyup="productSkuHandle(goodsForm.productSkuTable)" />
+                                <input class="" v-model="productSku.productSkuQuantity" @keyup=" initForm.productSkuQuantity = productSkuHandle(goodsForm.productSkuTable)" />
                               </div>
                             </td>
                           </tr>
@@ -113,25 +113,28 @@
           </div> 
         </el-form-item>
         <el-form-item label="商品图片" prop="productPicUrlList" class="sellFormat-sku update-img">
-          <p class="desc">请编辑可送达的地区，当用户选择下述地区以外的配送地址时，将提示用户无法下单。</p>
-          <div>
-            <update-img v-model="goodsForm.productPicUrlList"></update-img>
-          </div>
+        <upload-pictures v-model="goodsForm.productPicUrlList" :note="initForm.uploadTishi1" :listen="'listenToPic1'" @listenToPic1="sucpic1"></upload-pictures>
         </el-form-item>
 
         <el-form-item label="商品描述" prop="detailsContent" class="sellFormat-sku">
-<!--           <summernote v-model="goodsForm.detailsContent"></summernote> -->
+          <el-input
+            type="textarea"
+            :rows="2"
+            placeholder="暂用文本域替代富文本（富文本编辑器存在问题，会影响流程）"
+            v-model="goodsForm.detailsContent">
+          </el-input>
+          <!-- <summernote v-model="goodsForm.detailsContent"></summernote> -->
         </el-form-item>
 
         <el-form-item label="服务范围" prop="serviceArea">
-          <city-site-list :citySiteList="initForm.citySiteList" @change="upSysAreaHandle"></city-site-list>
+          <city-site-list :citySiteList="initForm.citySiteList" v-model="goodsForm.serviceArea" @change="upSysAreaHandle"></city-site-list>
         </el-form-item>
 
         <el-form-item label="店铺中分类" prop="storeCateList">
-          <store-cate v-model="goodsForm.storeCateList" :storeCateList="initForm.storeCateList"></store-cate>
+          <store-cate v-model="goodsForm.storeCateProduct" :storeCateList="initForm.storeCateList"></store-cate>
         </el-form-item>
-
-        <div class="logistics-info wuliu" prop="shippingTemplateId">
+        
+        <div class="logistics-info wuliu" prop="shippingTemplateId" v-if="goodsForm.productType == 1">
           <category-bar title="宝贝物流服务"></category-bar>
           <logistics-services v-model="goodsForm.shippingTemplateId" :logisticsData="initForm.storeShippingTemplate"></logistics-services>
         </div>
@@ -148,8 +151,8 @@
           </el-form-item>
         </div>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('goodsForm')">保存</el-button>
-          <el-button type="primary" @click="">放入草稿箱</el-button>
+          <el-button type="primary" @click="submitForm('goodsForm', 1)" :loading="submitLoading">保存</el-button>
+          <el-button type="primary" @click="submitForm('goodsForm', 0)" :loading="draftboxLoading">放入草稿箱</el-button>
           <!-- <el-button @click="resetForm('goodsForm')">重置</el-button> -->
         </el-form-item>
       </el-form>
@@ -158,7 +161,6 @@
   </div>
 </template>
 <script>
-  import 'vue-easytable/libs/themes-base/index.css'
   import CategoryBar from '@/components/CategoryBar.vue'
   // import Summernote from './summernote/Summernote.vue'
   import UpdateImg from './goods_form/UpdateImg.vue'
@@ -171,6 +173,7 @@
   import LogisticsServices from './goods_form/LogisticsServices.vue'
   import VueQuillEditor from 'vue-quill-editor'
   import { getStrLength } from '@/util/validator'
+  import UploadPictures from './components/UploadPictures.vue'/*上传图片组件*/
   import { getGoodsFormData, saveGoodsFormData} from '@/api/seller'
   import merge from 'merge'
   const win = window;
@@ -180,7 +183,7 @@
     components: {
       CategoryBar, 
       VueQuillEditor, 
-      // Summernote, 
+      //Summernote, 
       UpdateImg, 
       CateProperty,
       LogisticsServices,
@@ -188,7 +191,8 @@
       CitySiteList,
       PublishTime,
       StoreCate,
-      BrandSelect
+      BrandSelect,
+      UploadPictures
     },
     data() {
       var validatorStrLength = (rule, value, callback, fn) => {
@@ -196,29 +200,34 @@
         fn(len)
       }
       return {
-
+        submitLoading: false,
+        draftboxLoading: false,
         //表单提交所需要的数据结构
         goodsForm: {
+          storeCateProduct: [],
           productId: null, //商品ID 10000061
+          //productCateName: '',
           productCateId: '', //类目ID
           brandId: '', //品牌ID
           storeId: storeId, //店铺ID
           productTitle: '', //商品标题
           sellingPoint: '', //商品卖点
-          storeCateList: [],//店铺中分类
-          catePropertyList: [], //类目属性
-          productPicUrlList: ['http://3.tthunbohui.cn/n/00400M0y003100iFPx00aH8-c300x225-1ab9ae.jpg','http://3.tthunbohui.cn/n/00400M0y003100iFPx00aH8-c300x225-1ab9ae.jpg','http://3.tthunbohui.cn/n/00400M0y003100iFPx00aH8-c300x225-1ab9ae.jpg'], //商品图片列表 链接LIST
+         //storeCateList: [],//店铺中分类
+          catePropertyList: [], //店铺中分类
+          productType: '', //商品类型
+          productPicUrlList: [], //商品图片列表 链接LIST
           productSkuTable: [], //商品销售规格
-          detailsContent: '这是在测试文本', //富文本
+          detailsContent: '', //富文本
           serviceArea: '', //服务范围 逗号隔开
           shippingTemplateId: 3333, //物流模板ID
-          publishTime: '2017-10-30 13:47:39', //上架时间
-          productRecommend: '', //是否推荐
+          publishTime: '', //上架时间
+          productRecommend: 0, //是否推荐
           productStatus: '', //提交状态
           productSellPrice: '', //展示价格及库存的价格
         },
         //初始化表单时数据结构
         initForm: {
+          uploadTishi1:"图片尺寸：190*48 ,最多9张，格式要求jpg,jpeg,png,不超过10MB",
           productCateName: '',
           publishTimeType: '',
           citySiteList:[], 
@@ -253,8 +262,8 @@
             { required: true, message: '请选择品牌', trigger: 'blur' }
           ],
           productTitle: [
-            { required: true, message: '请填写商品标题', trigger: 'blur' },
-            { max: 25, message: '商品标题最多不超过25个', trigger: 'blur' },
+            { required: true, message: '请填写商品标题', trigger: ['change', 'blur'] },
+            { max: 25, message: '商品标题最多不超过25个', trigger: ['change', 'blur'] },
             { validator: (rule, value, callback)=>{
               var productTitleRules = this.initForm.productTitleRules;
               validatorStrLength(rule, value, callback, function(len){
@@ -315,11 +324,23 @@
     },
 
     created() {
-      console.log(this.$route)
+
       this.initFormData()
       //this.initProductSkuProperty()
     },
     methods: {
+      sucpic1(url){
+        this.goodsForm.productPicUrlList = url;
+      },
+      /**
+       * getProductSkuQuantity 编辑时获取商品库存的数量并展示
+       * @param  { String } value 库存的值
+       * @return {[type]}       [description]
+       */
+      getProductSkuQuantity (value){
+        console.log('获取总库存', value)
+
+      },
       publishTimeHandle (value){
 
         this.goodsForm.publishTime = value
@@ -336,9 +357,9 @@
         let goodsForm = this.goodsForm
         let initForm = this.initForm
         //判断是否编辑页面，是否存在店铺ID，是否存在商品ID
-        if(route.name === '编辑' && storeId && route.query.productId) {
-          console.log('我在编辑中')
-          self.getEditorFormdata(storeId, route.query.productId)
+        if(route.name === '编辑' && storeId && route.query.productId && route.query.productStatus){
+
+          self.getEditorFormdata(storeId, route.query.productId, route.query.productStatus)
           goodsForm.productId = route.query.productId
           return 
 
@@ -356,27 +377,59 @@
        * getEditorFormdata 获取编辑商品的数据
        * @param  { String } storeId   店铺ID
        * @param  { String } productId 商品ID
+       * @param { String } productStatus 商品状态
        * @return {[type]}           [description]
        */
-      getEditorFormdata(storeId, productId){
+      getEditorFormdata(storeId, productId, productStatus){
+        let self = this
         getGoodsFormData({
           storeId: storeId,
-          productId: productId
+          productId: productId,
+          productStatus: productStatus
         }).then((res) => {
-          console.log(res)
+          let data = res.data.data
+          if(res.data.code === 0) {
+            self.initForm = merge(self.initForm, data)
+            self.formartEditorData(data)
+          }
+          console.log('获取编辑数据',data)
+          self.initForm.finished = true
         })
+      },
+      formartEditorData(data){
+        let self = this
+        let goodsForm = self.goodsForm
+        let initForm = self.initForm
+        goodsForm.productTitle = data.productTitle
+        goodsForm.brandId = data.brandId
+        goodsForm.productId = data.productId
+        goodsForm.sellingPoint = data.sellingPoint
+        goodsForm.productId = data.productId
+        goodsForm.productRecommend = data.productRecommend
+        goodsForm.serviceArea =  data.serviceArea
+        goodsForm.publishTime = data.publishTime
+        goodsForm.productSellPrice = data.productSellPrice
+        goodsForm.productType = data.productType
+        goodsForm.detailsContent = data.detailsContent
+        goodsForm.productSkuTable = data.productSkuTable
+        goodsForm.catePropertyList =data.catePropertyList
+        goodsForm.productCateId = data.productCateId
+        goodsForm.storeCateProduct = data.storeCateProduct
+        initForm.productSkuQuantity = self.productSkuHandle(data.productSkuTable)
+        console.log('编辑时表单内容', goodsForm)
+        //goodsForm.storeCateList = data.storeCateList  //店铺分类
       },
       getGoodsFormDataHandle (storeId, productCateId){
         let self = this
-        let initForm = this.initForm
+        let initForm = self.initForm
+        let goodsForm = self.goodsForm
         getGoodsFormData({
           storeId: storeId,
           productCateId: productCateId
         }).then((res)=>{
           let data = res.data.data
-          console.log('数据请求完成', res)
           if(res.data.code === 0) {
-
+            //initForm = merge(data, initForm)
             if(data.citySiteList && data.citySiteList.length) {
               initForm.citySiteList = data.citySiteList
             }
@@ -401,9 +454,10 @@
               initForm.brandDTOList = data.brandDTOList
             }
 
-            self.goodsForm.productId = data.productId
-            self.initForm.finished = true
-            console.log('请求成功后，数据格式化', self.goodsForm)
+            goodsForm.productType = data.productType
+            goodsForm.productId = data.productId
+            initForm.finished = true
+
           }
         })
       },
@@ -420,7 +474,7 @@
           }          
         }
 
-        this.initForm.productSkuQuantity = productSkuQuantity
+        return productSkuQuantity
       },
 
       /**
@@ -428,12 +482,33 @@
        * @param  { String } formName 表单名称
        * @return {[type]}          [description]
        */
-      submitForm(formName) {
+      submitForm(formName, statusVal) {
         var self = this
-        self.goodsForm.productStatus = 1
+        self.goodsForm.productStatus = statusVal
         console.log('提交数据',self.goodsForm)
+         if(statusVal == 1) {
+            self.saveLoading = true
+         }else if(statusVal == 0) {
+            self.draftboxLoading = true
+         }
+         //console.log(JSON.stringify(self.goodsForm))
         saveGoodsFormData(self.goodsForm).then((res)=> {
-           console.log(res)
+          var data = res.data.data
+           if(res.data.code == 0) {
+             if(statusVal == 1) {
+                self.saveLoading = true
+                self.$router.push({path: '/seller-management/underreview'})
+             }else if(statusVal == 0) {
+                self.draftboxLoading = true
+                self.$router.push({path: '/seller-management/draftbox'})
+             }
+           }else {
+              self.submitLoading = false
+              self.draftboxLoading = false            
+           }
+        }).catch((res)=>{
+          self.submitLoading = false
+          self.draftboxLoading = false
         })
         // self.$refs[formName].validate((valid) => {
         //   if (valid) {
@@ -444,13 +519,6 @@
         //   }
         // });
       },
-
-      brandChangeHandle (value){
-        console.log(value)
-
-        return 11111
-      },
-
       updateCatePropertyGroupList(value) {
 
         this.goodsForm.catePropertyList = value

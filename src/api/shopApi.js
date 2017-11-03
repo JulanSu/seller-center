@@ -77,3 +77,5 @@ export const brandCheckbrandname = params => { return axios.get(`${base}/store/b
 //上传图片接口
 export const gssUpload = params => { return axios.post(`${pichost}/gss/upload`, params); };
 
+//退出接口
+export const userLogout = params => { return axios.get(`${pichost}/user/logout`, { params: params }); };

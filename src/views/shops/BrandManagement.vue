@@ -6,7 +6,7 @@
 		    </router-link>
 	    </el-col>
 		<ul v-loading="listLoading">
-			<li  v-for="(myBrand,index) in myBrands" @click="jump(myBrand.storeBrandId)">
+			<li  v-for="(myBrand,index) in myBrands" @click="jump(myBrand)">
 				<div class="brandlogo">
 					<img :src="myBrand.authorizationUrl">
 				</div>
@@ -67,8 +67,19 @@ import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 		methods: {
 			
 			/*点击列表跳转详情*/
-			jump(id){
-				this.$router.push({ path: 'brand-management/compile-brand', query: { storeBrandId: id,compile:1}});
+			jump(row){
+				var parm={storeBrandId:row.storeBrandId,compile:1};
+				if(this.pastDue(row)){
+					parm.noClick=false;
+				}else{
+					if(row.isUsed==0){
+						parm.noClick=true;
+					}else{
+						parm.noClick=false;
+					}
+				}
+				
+				this.$router.push({ path: 'brand-management/compile-brand', query:parm });
 			},
 
 			/*取消按钮*/
@@ -104,7 +115,7 @@ import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 			//获取品牌列表
 		    getBrandList() {
 		        let para = {
-		          storeId:storeId
+		          storeId:config.storeId
 		        };
 
 		        this.listLoading = true;

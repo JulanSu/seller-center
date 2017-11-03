@@ -42,6 +42,7 @@ const routers = new VueRouter({
         path: '/',
         component: Full,
         name: '',
+        redirect: '/seller-management/goods',
         hidden: true
     },
     {

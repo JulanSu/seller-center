@@ -2,6 +2,7 @@
 import Vue from 'vue'
 import App from './App'
 // import VueSummernote from '@/components/editer/'
+
 import ElementUI from 'element-ui'
 import LoadingMask from '@/components/loading/'
 import VueResource from 'vue-resource'
@@ -9,15 +10,16 @@ import VueResource from 'vue-resource'
 import store from '@/vuex/store'
 import Vuex from 'vuex'
 import router from '@/router/'
-//import 'bootstrap'
-
-//import 'bootstrap/dist/css/bootstrap.min.css'
-//import 'summernote/dist/summernote.css'
-
+//import VueSummernote from 'vue-summernote'
+/*import 'bootstrap'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'summernote/dist/summernote.css'
+*/
 
 import '../theme/index.css'
 import './assets/iconfont/iconfont.css'
 import './styles/main.css'
+
 //import NProgress from 'nprogress'
 //import 'nprogress/nprogress.css'
 

@@ -28,7 +28,7 @@
 </template>
 <script>
 
-import { msgList } from '@/api/toolApi';
+import { msgList,userLogout } from '@/api/toolApi';
 export default {
   name: 'app-header',
   data(){
@@ -64,7 +64,14 @@ export default {
 
   },
   methods: {
+    logout:function(){
+        let para = {
+          storeId:storeId
+        };
+        userLogout(para).then((res) => {
 
+        });
+    }
   }
 }
 </script>

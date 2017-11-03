@@ -1,5 +1,5 @@
 <template>
-	<section class="merchant-enter">
+	<section class="merchant-enter" id="merchant-enter">
 		<el-form :model="ruleForm" :rules="rules" ref="ruleForm">
 			<el-button type="text" class="selector-btn" @click="selector('ruleForm')">{{shopHtml}}</el-button>
 			<div v-if="isShop==1">				
@@ -8,17 +8,22 @@
 					<el-input :maxlength="30" v-model="ruleForm.enterpriseName" placeholder="请输入企业名称"  class="wid400"></el-input>
 				</el-form-item>
 				<el-form-item label="组织机构代码证/营业执照" label-width="200px">
-					<upload-pictures :note="uploadTishi1"></upload-pictures>
+					<upload-pictures :note="uploadTishi1" :url="ruleForm.broadwiseLogo" :listen="'listenToPic1'" @listenToPic1="sucpic1"></upload-pictures>
+				</el-form-item>
+				<el-form-item label="" prop="broadwiseLogo"  label-width="200px" class='updata'>
+					<el-input v-model="ruleForm.broadwiseLogo" class="wid280"></el-input>
 				</el-form-item>
 				<el-form-item label="组织机构代码（注册号）" label-width="200px" prop="orgCode">
 					<el-input :maxlength="18" v-model="ruleForm.orgCode" placeholder="请输入组织机构代码（注册号）" class="wid400"></el-input>
 				</el-form-item>
-				<!-- <el-form-item label="组织机构代码（注册号）" label-width="200px" prop="orgCode">
-					<el-input :maxlength="30" v-model = 'ruleForm.searcBarCode' placeholder="请输入组织机构代码（注册号）"  class="wid400"></el-input>
-				</el-form-item> -->
 			</div>
 
-			<category-bar :title="categoryBarTitle2"></category-bar>
+			<div v-if="isShop==1">	
+				<category-bar :title="categoryBarTitle2"></category-bar>
+			</div>
+			<div v-else>	
+				<category-bar :title="categoryBarTitle5"></category-bar>
+			</div>
 			<div v-if="isShop==1">
 				<el-form-item label="法人姓名" label-width="200px" prop="legalPerson">
 					<el-input  :maxlength="30" v-model="ruleForm.legalPerson" placeholder="请输入法人姓名" class="wid400"></el-input>
@@ -28,31 +33,39 @@
 				</el-form-item>
 			</div>
 			<div v-else>
-				<el-form-item label="联系人手机号" prop="contactMobile" label-width="200px">
-					<el-input :maxlength="11" v-model="ruleForm.contactMobile" placeholder="请输入联系人手机号" class="wid400"></el-input>
-				</el-form-item>
 				<el-form-item label="联系人姓名" label-width="200px" prop="contactName">
 					<el-input :maxlength="30" v-model="ruleForm.contactName" placeholder="请输入联系人姓名" class="wid400"></el-input>
 				</el-form-item>
-
+				<el-form-item label="联系人手机号" prop="contactMobile" label-width="200px">
+					<el-input :maxlength="11" v-model="ruleForm.contactMobile" placeholder="请输入联系人手机号" class="wid400"></el-input>
+				</el-form-item>
 				
 				<el-form-item label="身份证号" label-width="200px" prop="identityNumber">
 					<el-input :maxlength="18" v-model="ruleForm.identityNumber"  placeholder="请输入身份证" class="wid400"></el-input>
 				</el-form-item>
 			</div>
-			<el-form-item label="法人身份证正面" label-width="200px">
-				<upload-pictures :note="uploadTishi2"></upload-pictures>
+			<el-form-item :label="ident1" label-width="200px">
+				<upload-pictures :note="uploadTishi2" :url="ruleForm.identityPic1" :listen="'listenToPic2'" @listenToPic2="sucpic2"></upload-pictures>
 				<div class="example">
-					<div @click="iconSimple(src1)"><img src="../../assets/logo.png"/></div>
+					<div @click="iconSimple(1)"><img :src='identPic1'/></div>
 					<span>参考示例</span>
 				</div>
+				
 			</el-form-item>
-			<el-form-item label="法人身份证反面" label-width="200px">
-				<upload-pictures :note="uploadTishi2"></upload-pictures>
+			<el-form-item label="" prop="identityPic1"  label-width="200px" class='updata'>
+				<el-input v-model="ruleForm.identityPic1" class="wid280"></el-input>
+			</el-form-item>
+			<el-form-item :label="ident2" label-width="200px">
+				<upload-pictures :note="uploadTishi2" :url="ruleForm.identityPic2" :listen="'listenToPic3'" @listenToPic3="sucpic3"></upload-pictures>
+
 				<div class="example">
-					<div @click="iconSimple(src1)"><img src="../../assets/logo.png" /></div>
+					<div @click="iconSimple(2)"><img :src='identPic2' /></div>
 					<span>参考示例</span>
 				</div>
+				
+			</el-form-item>
+			<el-form-item label="" prop="identityPic2"  label-width="200px" class='updata'>
+				<el-input v-model="ruleForm.identityPic2" class="wid280"></el-input>
 			</el-form-item>
 
 			<div v-if="isShop==1">
@@ -80,7 +93,6 @@
 						</li>
 					</ul>
 				</div>
-				
 			</el-form-item>
 			
 			<el-form-item label="门店地址"  label-width="200px">
@@ -107,8 +119,12 @@
 			 
 		</el-form>
 
-		<el-dialog title="" :visible.sync="dialogVisible" custom-class="big-img">
-		    <img :src="exampleSrc"/>
+		<el-dialog title="" :visible.sync="dialogVisible3" custom-class="big-img">
+		    <img :src="identPic1"/>
+		</el-dialog>
+
+		<el-dialog title="" :visible.sync="dialogVisible4" custom-class="big-img">
+		    <img :src="identPic2"/>
 		</el-dialog>
 
 		<el-dialog
@@ -205,16 +221,19 @@ export default {
 	        }
 	    };
 		return {
-			
+			identPic1:config.ident1,
+			identPic2:config.ident2,
 			//类目选择
 			curCateName:[],
 			stCateName:'',
 			categoryData: [],
 			industryCateId:[],
-			industryCateIdList:[],
+			ident1:'法人身份证正面',
+			ident2:"法人身份证反面",
+			
             secoundCategoryData:[],
-
-          	dialogVisible2:false,
+            dialogVisible4:false,
+          	dialogVisible3:false,
 
 			dialogVisible1:false,
 			height:300,
@@ -234,6 +253,7 @@ export default {
 			categoryBarTitle2: '企业法人信息',
 			categoryBarTitle3: '联系人信息',
 			categoryBarTitle4: '店铺信息',
+			categoryBarTitle5: '个人信息',
 			uploadTishi1:"请上传800*800px以上，格式要求jpg、jpeg、png,不超过5MB",
 			uploadTishi2:"",
 			exampleSrc:'',
@@ -246,6 +266,10 @@ export default {
 			searchKeyArr:[],
 
 			ruleForm: {
+				industryCateIdList:[],
+				identityPic1:'',
+				identityPic2:'',
+				broadwiseLogo:'',
 				searcBarCode:'',
 				enterpriseName:'',
 				orgCode: '',
@@ -264,6 +288,15 @@ export default {
 				
 			},
 	        rules: {
+	        	broadwiseLogo: [
+	            	{ required: true, message: '请上传组织结构代码证/营业执照', trigger: 'blur' }
+	          	],
+	          	identityPic1: [
+	            	{ required: true, message: '请上传法人身份证正面', trigger: 'blur' }
+	          	],
+	          	identityPic2: [
+	            	{ required: true, message: '请上传法人身份证反面', trigger: 'blur' }
+	          	],
 	          	enterpriseName: [
 	            	{ required: true, message: '请输入企业名称', trigger: 'blur' },
 	            	{ min: 1, max: 30, message: '长度为 1 到 30 位', trigger: 'blur' }
@@ -284,9 +317,6 @@ export default {
 	            	{ required: true, message: '请输入店铺名称', trigger: 'blur' },
 	            	{ min: 1, max: 20, message: '长度为 1 到 20 位', trigger: 'blur' }
 	          	],
-	          	/*selIndustry:[
-	          		{ required: true, message: '请选择主营行业', trigger: 'change' },
-	          	],*/
 	          	detailedAddress:[
 	          		{ required: true, message: '请输入详细地址', trigger: 'blur' },
 	          	],
@@ -334,12 +364,26 @@ export default {
 	    });
 
 	    var that=this;
-	    window.document.onclick=function(){
-	    	that.$refs.MapView.clearKey();
-	    }
+	    var o= document.getElementById("merchant-enter");
+	    o.onclick=function(){
+		    that.$refs.MapView.clearKey();
+	    };
+	    
 
     },
 	methods: {
+		//组织机构代码证／营业执照上传成功之后
+		sucpic1(url){
+			this.ruleForm.broadwiseLogo=url;
+		},
+		//法人身份证正面上传成功之后
+		sucpic2(url){
+			this.ruleForm.identityPic1=url;
+		},
+		//法人身份证反面上传成功之后
+		sucpic3(url){
+			this.ruleForm.identityPic2=url;
+		},
 		//搜索关键字后点击筛选下拉结果，点击的元素的值传给父元素的input输入框
 		showKey(key){
 			this.ruleForm.address=key;
@@ -401,8 +445,8 @@ export default {
         		return false;
         	}else{
         		this.ruleForm.selIndustry=this.ruleForm.selIndustry.concat(this.curCateName);
-        		this.industryCateIdList=this.industryCateIdList.concat(this.industryCateId);
-				
+        		this.ruleForm.industryCateIdList=this.ruleForm.industryCateIdList.concat(this.industryCateId);
+
         		this.dialogVisible2=false;
         	}
         },
@@ -414,12 +458,16 @@ export default {
 			  this.splice(dx,1); 
 			} 
         	this.ruleForm.selIndustry.baoremove(index);
-        	this.industryCateIdList.baoremove(index);
+        	this.ruleForm.industryCateIdList.baoremove(index);
         },
 		/*查看示例图*/
-		iconSimple(src){
-			this.exampleSrc=src;
-			this.dialogVisible=true;
+		iconSimple(v){
+			if(v==1){
+				this.dialogVisible3=true;
+			}else{
+				this.dialogVisible4=true;
+			}
+			
 		},
 
 		/*城市三级联动，选择城市后将数据存储起来，点击搜索地图按钮时，加在自己输入的地址之前*/
@@ -467,16 +515,33 @@ export default {
 			if(this.isShop==1){/*isShop为1是企业店铺*/
 				this.isShop=0;
 				this.shopHtml="企业身份入驻请点击这里";
+				this.ident1='身份证正面';
+				this.ident2="身份证反面";
 				
 			}else{
 				this.isShop=1;
 				this.shopHtml="个人身份入驻请点击这里";
+				this.ident1='法人身份证正面';
+				this.ident2="法人身份证反面";
 			}
+			this.select= { 
+				province: '省',
+			    city: '市',
+			    area: '区'
+			};
 		},
 		/*保存按钮*/
 		submitForm(formName) {
 		    this.$refs[formName].validate((valid) => {
 	            if (valid) {
+	            	if(!this.ruleForm.industryCateIdList.length){
+	            		this.$message({
+				          message: '请选择主营行业',
+				          type: 'warning'
+				        });
+				        return false;
+	            	}
+
 		      		if(!this.selProvince){//如果没有选择省，提示选择省市区
 						this.$message({
 				          message: '请选择省市区',
@@ -500,11 +565,11 @@ export default {
 		            para.append('orgCode',this.ruleForm.orgCode);
 		            para.append('legalPerson',this.ruleForm.legalPerson);
 		            para.append('identityNumber',this.ruleForm.identityNumber);
-		            para.append('identityPic',this.ruleForm.identityPic);		          
+		            para.append('identityPic',this.ruleForm.identityPic1+','+this.ruleForm.identityPic2);		          
 		            para.append('contactName',this.ruleForm.contactName);
 		            para.append('contactMobile',this.ruleForm.contactMobile);
 		            para.append('name',this.ruleForm.name);
-		            para.append('industryCateIdList',this.industryCateIdList);
+		            para.append('industryCateIdList',this.ruleForm.industryCateIdList);
 		            para.append('address',this.ruleForm.address);
 		            para.append('longitude',Number(this.ruleForm.longitude*1000000));
 					para.append('latitude',Number(this.ruleForm.latitude*1000000));
@@ -533,16 +598,4 @@ export default {
 }
 </script>
 <style lang="scss">
-.search-hezi{
-	position:relative;
-	.search-ol{
-		border:1px solid rgb(191, 216, 217);
-		position:absolute;
-		top:36px;
-		width:280px;
-		background:#fff;
-		z-index:999;
-		padding-left:10px;
-	}
-}
 </style>

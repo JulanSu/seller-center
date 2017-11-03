@@ -1,5 +1,5 @@
 <template>
-  <section class="shop-list" v-if='$route.name=="门店管理"'>
+  <section class="shop-list" v-if='$route.name=="门店管理"'  v-loading="listLoading">
     <!--工具条-->
     <el-col :span="24" class="tool-bar">
       <router-link to="/store/shop-management/add"  icon="plus">
@@ -8,7 +8,7 @@
     </el-col>
 
     <!--列表-->
-    <el-table :data="users" v-loading="listLoading" style="width: 100%;">
+    <el-table :data="users" style="width: 100%;">
       <el-table-column prop="name" label="门店名称" width="190" align="center">
       </el-table-column>
       <el-table-column prop="address" label="门店地址" min-width="190" align="center">
@@ -29,9 +29,11 @@
     <el-col :span="24" class="tool-bar">
       <el-pagination
       @current-change="handleCurrentChange"
+      @size-change="handleSizeChange"
+      :page-sizes="[20, 50, 100]"
       :current-page="page"
-      :page-size="20"
-      layout="prev, pager, next, jumper,total"
+      :page-size="pageSize"
+      layout="sizes,prev, pager, next, jumper,total"
       :total="total" style="float:right;">
     </el-pagination>
     </el-col>
@@ -52,7 +54,7 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
         users: [],
         total: 0,
         page: 1,
-        pageSize:10,
+        pageSize:20,
         listLoading: false,
       }
     },
@@ -68,7 +70,7 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
       //获取用户列表
       getUsers() {
         let para = {
-          storeId:storeId,
+          storeId:config.storeId,
           page: this.page,
           pageSize: this.pageSize
         };
@@ -81,6 +83,11 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
       },
       handleCurrentChange(val) {
         this.page = val;
+        this.getUsers();
+      },
+      //当选择每页多少条时触发
+      handleSizeChange(val){
+        this.pageSize = val;
         this.getUsers();
       },
       //禁用启用
@@ -104,6 +111,7 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
                 var para = new URLSearchParams();
                 para.append('storeBranchId',row.storeBranchId);
                 para.append('isHead',isHead);
+                para.append('contactMobile','');
                 updateClassify(para).then((res) => {
                   if(res.data.code==0){
                     this.getUsers();
@@ -143,6 +151,7 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
     width:100%;
     background:none;
     margin:20px 0;
+    position:relative;
   }
   .cell{
     a{

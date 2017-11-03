@@ -128,7 +128,7 @@ import {operatorGet,roleList,operatorUpdate,operatorSave} from '@/api/shopApi';
     mounted:function(){
        //先获取角色列表
       let para = {
-        storeId:storeId
+        storeId:config.storeId
       };
       roleList(para).then((res) => {
         this.roleList=res.data.data;
@@ -197,7 +197,7 @@ import {operatorGet,roleList,operatorUpdate,operatorSave} from '@/api/shopApi';
                 this.listLoading = false;
               });
             }else{
-              para.append('storeId',storeId);
+              para.append('storeId',config.storeId);
               operatorSave(para).then((res)=> {
                 this.sucFun(res);
               }).catch((res)=> {

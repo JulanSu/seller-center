@@ -1,5 +1,5 @@
 <template>
-  <section  class="find-good">
+  <section  class="find-good" v-loading="listLoading">
     <!--工具条-->
     <el-col :span="24" class="tool-bar" style="padding-bottom: 0px;">
       <router-link to="/store/classify-management/all-good">
@@ -8,7 +8,7 @@
     </el-col>
 
     <!--列表-->
-    <el-table :data="datas" v-loading="listLoading" style="width: 100%;">
+    <el-table :data="datas" style="width: 100%;">
       <el-table-column prop="productId" label="ID" min-width="200" align="center">
       </el-table-column>
       <el-table-column prop="productTitle" label="商品名称" min-width="200" align="center">
@@ -26,9 +26,11 @@
     <el-col :span="24" class="tool-bar" style="margin-top:20px;">
       <el-pagination
       @current-change="handleCurrentChange"
+      @size-change="handleSizeChange"
+      :page-sizes="[20, 50, 100]"
       :current-page="pageNum"
-      :page-size="20"
-      layout="prev, pager, next, jumper,total"
+      :page-size="pageSize"
+      layout="sizes,prev, pager, next, jumper,total"
       :total="total" style="float:right;">
     </el-pagination>
     </el-col>
@@ -41,7 +43,7 @@ import { productList,productRemove} from '@/api/shopApi';
   export default {
     data() {
       return {
-        pageSize:10,
+        pageSize:20,
         pageNum:1,
         datas: [],
         listLoading: false,
@@ -62,6 +64,11 @@ import { productList,productRemove} from '@/api/shopApi';
           case 5:state="回收站";break;
         }
         return state;
+      },
+      //当选择每页多少条时触发
+      handleSizeChange(val){
+        this.pageSize = val;
+        this.getProductList();
       },
       //获取用户列表
       getProductList() {

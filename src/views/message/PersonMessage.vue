@@ -13,7 +13,7 @@
             </div>
             <div class="message-item-detail" v-if="item.bottom">
                 <p v-html="item.content"></p>
-                <router-link :to="item.jumpLink">查看详情</router-link>
+                <router-link :to="item.jumpLink" v-if='item.jumpType != 0'>查看详情</router-link>
             </div>
         </div>
         <div class="block">
@@ -57,8 +57,21 @@
                     self.total = Number(res.data.data.total)
                     for(let i=0; i<self.message.length; i++){
                         self.$set(self.message[i],'bottom',false);
+                        self.message[i].jumpType != 2 ? self.message[i].jumpLink = self.message[i].jumpLink + self.switchUrl(self.message[i].jumpType) + '?id=' + self.message[i].jumpId : '';
                     }
+                    console.log(self.message)
                 })
+            },
+            /*跳转地址转化*/
+            switchUrl(a){
+                switch(a) {
+                    case 2: return '/marketing-center/tool'; break;     //现金券
+                    case 3: return '/transaction/orders/order-detail'; break;       //订单
+                    case 4: return '/marketing-center/management'; break;       //活动
+                    case 5: return '/seller-management/weitongguo'; break;       //商品
+                    case 6: return '/store/message'; break;       //店铺
+                    case 7: return '/store/brand-management';      //品牌
+                }
             },
             /*时间戳转化*/
             switchTime(val){

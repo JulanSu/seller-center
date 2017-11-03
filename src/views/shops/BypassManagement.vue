@@ -57,7 +57,7 @@ export default {
 		getNum(){
 			console.log(2)
 			let para = {
-				storeId:storeId
+				storeId:config.storeId
 			};
 			this.listLoading = true;
 			operatorGetNum(para).then((res) => {

@@ -1,5 +1,5 @@
 <template>
-	<section class="add-store">
+	<section class="add-store" id='add-store'>
 		<el-form :model="ruleForm" label-width="80px" :rules="rules" ref="ruleForm" style="width:60%;min-width:600px;">
 			<el-form-item label="门店名称" label-width="120px" prop="name">
 				<el-input :maxlength="30" v-model="ruleForm.name" placeholder="请输入门店名称" class="wid280"></el-input>
@@ -137,9 +137,10 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 	        this.$refs.MapView.creatmap(this.ruleForm.longitude,this.ruleForm.latitude);
 		}
 		var that=this;
-	    window.document.onclick=function(){
-	    	that.$refs.MapView.clearKey();
-	    }
+	    var o= document.getElementById("add-store");
+	    o.onclick=function(){
+		    that.$refs.MapView.clearKey();
+	    };
     },
     methods: {
     	//搜索关键字后点击筛选下拉结果，点击的元素的值传给父元素的input输入框
@@ -306,7 +307,7 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 
 
 		            if(this.isAdd==1){//添加
-		            	para.append('storeId',storeId);
+		            	para.append('storeId',config.storeId);
 						this.add(para);
 		            }else{//编辑
 		            	para.append('storeBranchId',Number(this.ruleForm.storeBranchId));

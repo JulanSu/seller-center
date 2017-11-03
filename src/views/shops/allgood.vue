@@ -1,7 +1,26 @@
 <template>
-  <section  class="all-good">
+  <section  class="all-good" v-loading="listLoading">
+    <el-row class='search-row'> 
+      <el-input v-model="form.name" class='w255' placeholder='请输入商品名称' :maxlength='11' @blur="numberIsRight(1)">
+      </el-input>
+      <el-input v-model="form.goodId" class='w255' placeholder='请输入商品ID' :maxlength='11' @blur="numberIsRight(1)">
+      </el-input>
+      <el-select v-model="form.fenleiId" placeholder="店铺中分类">
+        <el-option
+          v-for="item in form.fenlei"
+          :key="item.id"
+          :label="item.fenleiName"
+          :value="item.id">
+        </el-option>
+      </el-select>
+
+      <el-date-picker type="date" v-model="form.startTime" class='w255' placeholder='创建起始时间'></el-date-picker>
+      <span>—</span>
+      <el-date-picker type="date" v-model="form.endTime" class='w255' placeholder='创建结束时间'></el-date-picker>
+      <el-button type="primary" class='search-btn' @click="findGood">查询</el-button>
+  </el-row>
     <!--列表-->
-    <el-table :data="datas" v-loading="listLoading" style="width: 100%;">
+    <el-table :data="datas"  style="width: 100%;">
       <el-table-column prop="productId" label="ID" width="190" align="center">
       </el-table-column>
       <el-table-column prop="productTitle" label="商品名称" width="190" align="center">
@@ -30,9 +49,11 @@
     <el-col :span="24" class="tool-bar" style="margin-top:20px;">
       <el-pagination
       @current-change="handleCurrentChange"
+      @size-change="handleSizeChange"
+      :page-sizes="[20, 50, 100]"
       :current-page="pageNum"
       :page-size="pageSize"
-      layout="prev, pager, next, jumper,total"
+      layout="sizes,prev, pager, next, jumper,total"
       :total="total" style="float:right;">
     </el-pagination>
     </el-col>
@@ -68,12 +89,24 @@ import { pageStoreCateProduct,cateList,productListcate,productSave } from '@/api
   export default {
     data() {
       return {
+        form:{
+          name:'',
+          goodId:'',
+          startTime:'',
+          endTime:'',
+          fenlei:[
+            {fenleiName:"店内分类",id:1},
+            {fenleiName:"全部",id:2},
+            {fenleiName:"无",id:3}
+          ],
+          fenleiId:2
+        },
         productId:'',
         dialogVisible1:false,
         jurisdiction: [],
         roleAuthority:[],
         total: 0,
-        pageSize: 1,//每页显示多少条
+        pageSize: 20,//每页显示多少条
         pageNum:1,//当前页数
         datas: [],
         listLoading: false
@@ -82,7 +115,7 @@ import { pageStoreCateProduct,cateList,productListcate,productSave } from '@/api
     mounted() {
       this.getPageStoreCateProduct();
       let para = {
-        storeId:storeId
+        storeId:config.storeId
       };
 
       cateList(para).then((res) => {
@@ -94,6 +127,15 @@ import { pageStoreCateProduct,cateList,productListcate,productSave } from '@/api
       });
     },
     methods: {
+      //当选择每页多少条时触发
+      handleSizeChange(val){
+        this.pageSize = val;
+        this.getPageStoreCateProduct();
+      },
+      //查询商品
+      findGood(){
+
+      },
       //转换状态
       formatUsed(row){
         var state='';
@@ -164,10 +206,10 @@ import { pageStoreCateProduct,cateList,productListcate,productSave } from '@/api
           });
         });
       },
-      //获取用户列表
+      //获取列表
       getPageStoreCateProduct() {
         let para = {
-          storeId:storeId,
+          storeId:config.storeId,
           pageNum: this.pageNum,
           pageSize: this.pageSize
         };
@@ -192,6 +234,7 @@ import { pageStoreCateProduct,cateList,productListcate,productSave } from '@/api
 <style lang="scss">
 
 .all-good{
+
   padding:40px 0 0 40px;
   a{
     text-decoration:none;
@@ -200,6 +243,22 @@ import { pageStoreCateProduct,cateList,productListcate,productSave } from '@/api
     background:none;
     padding:0;
     margin:20px 0;
+  }
+  .search-row{
+    padding-bottom:40px;
+    .search-btn{
+        margin-left: 40px;
+        width: 60px;
+        span{
+            color: #fff;
+        }
+    }
+  }
+  .w180{
+    width:180px;
+  }
+  .w255{
+    width:255px;
   }
   .cell{
     a{
@@ -215,8 +274,11 @@ import { pageStoreCateProduct,cateList,productListcate,productSave } from '@/api
       width: 60px;
       height: 60px;
       overflow: hidden;
+      line-height:60px;
+      margin:10px auto;
       img {
         width: 100%;
+        vertical-align: middle;
       }
     }
   .el-dialog--tiny{

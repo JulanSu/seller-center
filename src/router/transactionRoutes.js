@@ -16,7 +16,7 @@ const routers = [
         },
         { path: '/transaction/service-orders', component: ServiceOrder, name: '售后订单查询',
             children: [
-                { path: '/transaction/service-orders/service-detail', component: OrderDetail, name: '售后订单详情' },
+                { path: '/transaction/service-orders/service-detail', component: ServiceDetail, name: '售后订单详情' },
             ]
         },
         { path: '/transaction/coupon', component: Coupon, name: '发出的点券' },

@@ -18,14 +18,14 @@
           </div>
         </div>        
         <template v-else-if="productCate.catePropertySelection == 2 && productCate.catePropertyParentId == '-1'">
-          <div class="cate-property-item" v-if="productCate.values.length" v-for="item in productCate.values">
-              <div class="text">{{item.name}}</div>
-              <div class="input">
-                  <el-input  v-model="item.value" :value="item.value" placeholder="自定义属性" @change="changeHandle"></el-input>
-              </div>
+          <div class="cate-property-item" v-if="productCate.values.length && productCate.catePropertyName != item.name" v-for="item in productCate.values">
+            <div class="text">{{item.name}}</div>
+            <div class="input">
+                <el-input  v-model="item.value" :value="item.value" placeholder="自定义属性" @change="changeHandle"></el-input>
+            </div>
           </div>
         </template>
-        <div class="cate-property-item" v-else-if="productCate.catePropertySelection == 2 && productCate.catePropertyParentId != '-1'">
+        <div class="cate-property-item" v-else-if="productCate.catePropertySelection == 2 && productCate.catePropertyParentId == '0'">
           <div class="text">{{productCate.catePropertyName}}</div>
           <div class="input">
               <el-input  v-model="productCate.values[0].value" :value="productCate.values[0].value" placeholder="自定义属性" @change="changeHandle"></el-input>
@@ -56,13 +56,14 @@
       
     },
     created (){
+      console.log('类目属性', this.catePropertyData)
       this.formartData(this.catePropertyData)
     },
     methods: {
       formartData: function(data){
         var saveData = this.formartSaveData(data)
         this.catePropertyGroupList = this.formartValues(saveData)
-
+        this.changeHandle()
       },
 
       formartValues: function(data){
@@ -93,36 +94,38 @@
             input.push(data[i])
           }else if(data[i]['catePropertySelection'] == 2 && data[i]['catePropertyParentId'] != 0) {
             
-            data[i]['values'] = [this.getGroupSaveValueDTO(data[i])]
+            // data[i]['values'] = [this.getGroupSaveValueDTO(data[i])]
             aaaa.push(data[i])
           }else if(data[i]['catePropertySelection'] == 2 && data[i]['catePropertyParentId'] == 0){
             
-            data[i]['values'] = [this.getGroupSaveValueDTO(data[i])]
+            //data[i]['values'] = [this.getGroupSaveValueDTO(data[i])]
             input.push(data[i])
           }else if(data[i]['catePropertySelection'] == 1){
             var arr = []
-            if(data[i]['options'].length) {
-              data[i]['values'] = this.formartOptions(data[i]['options'], data[i])
-            }
+            // if(data[i]['options'].length) {
+            //   data[i]['values'] = this.formartOptions(data[i]['options'], data[i])
+            // }
             
             input.push(data[i])
           }else if(data[i]['catePropertySelection'] == 0) {
             
-            data[i]['values'] = [this.getGroupSaveValueDTO(data[i])]
+            //data[i]['values'] = [this.getGroupSaveValueDTO(data[i])]
             input.push(data[i])           
           }
         }
         
+
         if(input.length) {
           for (var j=0; j<input.length;j++) {
             for(var k=0;k<aaaa.length;k++) {
               if(input[j]['productCatePropertyId'] == aaaa[k]['catePropertyParentId']) {
-                input[j]['values'].push(this.getGroupSaveValueDTO(aaaa[k]))
+                //input[j]['values'].push(this.getGroupSaveValueDTO(aaaa[k]))
+                input[j]['values'].push(aaaa[k].values[0])
               }
             }
           }
         }
-        
+        console.log('格式化后', input)
         return input;
       },
       getGroupSaveDTO(data){
@@ -141,6 +144,7 @@
         return obj
       },
       getGroupSaveValueDTO(data){
+        console.log(data)
         var obj = {}
         obj.id = data.productCatePropertyId
         obj.name = data.catePropertyName
@@ -148,7 +152,7 @@
         return obj;
       },
 
-      changeHandle(value){
+      changeHandle(){
         var jsonData = JSON.stringify(this.catePropertyGroupList)
         var saveData = this.getSaveData(jsonData)
         this.$emit('updateCatePropertyGroupList', saveData);

@@ -28,9 +28,11 @@
     <el-col :span="24" class="tool-bar" style="margin-top:20px;">
       <el-pagination
       @current-change="handleCurrentChange"
+      @size-change="handleSizeChange"
+      :page-sizes="[20, 50, 100]"
       :current-page="page"
       :page-size="pageSize"
-      layout="prev, pager, next, jumper,total"
+      layout="sizes,prev, pager, next, jumper,total"
       :total="total" style="float:right;">
     </el-pagination>
     </el-col>
@@ -50,17 +52,22 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
         roleAuthority:[1],
         datas: [],
         total: 0,
-        pageSize: 1,//每页显示多少条
+        pageSize: 20,//每页显示多少条
         page:1,//当前页数
         listLoading: false,
         addLoading: false
       }
     },
     methods: {
+      //当选择每页多少条时触发
+      handleSizeChange(val){
+        this.pageSize = val;
+        this.getCateList();
+      },
       //获取分类列表
       getCateList() {
         let para = {
-          storeId:storeId,
+          storeId:config.storeId,
           pageSize: this.pageSize,
           pageNum: this.page
         };
