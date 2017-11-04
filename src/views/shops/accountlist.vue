@@ -58,7 +58,7 @@ import {operatorList,operatorChangeStatus,operatorRemove} from '@/api/shopApi';
     methods: {
       //转换角色状态
       formatUsed(row){
-        return row.isUsed == 0 ? '禁用' : '启用';
+        return row.isUsed == 0 ? '已冻结' : '使用中';
       },
       //获取用户列表
       getAccountList() {

@@ -1,8 +1,8 @@
 <template>
     <section class="create-act">
-        <el-form ref="form" :model="form" label-width="130px" style='margin-top:30px'>
+        <el-form ref="form" :model="form" label-width="130px" style='margin-top:30px' :rules="rules">
            
-            <el-form-item label="现金券名称">
+            <el-form-item label="现金券名称" prop='name'>
                 <el-input v-model="form.name" class='name' :maxlength='20'></el-input>
             </el-form-item>
 
@@ -216,7 +216,30 @@
                     type: '全部商品通用',
                     product: []
                 },
-                allProduct: null
+                allProduct: null,
+                rules: {
+                    name: [
+                        { required: true, message: '请输入活动名称', trigger: 'blur' }
+                      ],
+                    region: [
+                        { required: true, message: '请选择活动区域', trigger: 'change' }
+                      ],
+                    date1: [
+                        { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
+                      ],
+                    date2: [
+                        { type: 'date', required: true, message: '请选择时间', trigger: 'change' }
+                      ],
+                    type: [
+                        { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
+                      ],
+                    resource: [
+                        { required: true, message: '请选择活动资源', trigger: 'change' }
+                      ],
+                    desc: [
+                        { required: true, message: '请填写活动形式', trigger: 'blur' }
+                  ]
+                }
             }
         }, 
         props:[
@@ -224,7 +247,7 @@
         ],
         created(){
             this.typeFrom()
-            productList({'storeId':config.toolsStoreId}).then(res => {
+            productList({'storeId':config.storeId}).then(res => {
                 this.allProduct = res.data.data
             })
         },
@@ -279,7 +302,7 @@
             getLastData(){
                 let self = this,
                     params = {
-                        storeId: config.toolsStoreId,
+                        storeId: config.storeId,
                         marketingActivityId: self.$route.query.actId
                     }
                 self.disabled = true;
@@ -534,7 +557,7 @@
             postData(){
                 let self = this,params = {};  
                 params.marketingCouponName = self.form.name;    //现金券名称
-                params.storeId = config.toolsStoreId,              //店铺ID
+                params.storeId = config.storeId,              //店铺ID
                 params.marketingToolsId = 1,     //营销工具ID
                 params.couponReceiveBeginTime = self.timeFormat(self.form.getTime[0]);  //领取开始时间
                 params.couponReceiveEndTime = self.timeFormat(self.form.getTime[1]); //领取结束时间

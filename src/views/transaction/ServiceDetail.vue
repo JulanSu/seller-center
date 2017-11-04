@@ -93,7 +93,7 @@
                 <div class='service-img'>
                     <div class="img-con" v-for='item in this.after.orderProductAfterProof'><img :src="item" alt="" ></div>
                 </div>
-            </div>    
+            </div>
         </div>
         <div class="total-message">
             <div><p>订单金额：</p><span>￥{{detail.orderAmount}}</span></div>
@@ -109,28 +109,6 @@
             </div>
             <el-button class='submit-btn gray' @click="postRight" :disabled='disabled'>提交审核</el-button>
         </div>
-        <!--发货弹窗 -->
-        <el-dialog title="发货" :visible.sync="dialogFormVisible" custom-class='addres-dialog' top="30%" :close-on-click-modal='false'>
-           <div class="send-type">
-               <div class="kuaidi" :class='{"click-on":onRight}' @click="changeType">快递配送</div>
-               <div class="zisong" :class='{"click-on":!onRight}' @click="changeType">商家自送</div>
-           </div>
-           <div class="input-row" v-if='onRight'>
-               <span>快递公司：</span>
-               <input type="text" v-model='gongSi'>
-           </div>
-           <div class="input-row" v-if='onRight'>
-               <span>快递单号：</span>
-               <input type="text" v-model='danHao'>
-           </div>
-           <div class="textarea-row" v-if='!onRight'>
-               <textarea v-model='beiZhu'></textarea>
-           </div>
-           <div class="btn-row">
-               <div class="send-sure">确认发货</div>
-               <div class="send-cancel" @click="dialogFormVisible = false">取消</div>
-           </div>
-        </el-dialog>
     </section>
 </template>
 

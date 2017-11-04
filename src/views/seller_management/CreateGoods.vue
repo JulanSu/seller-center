@@ -26,8 +26,8 @@
           </el-breadcrumb>
         </div>
         <div class="block">
-          <div style="text-align: center">
-            <el-button type="primary" @click="linkGoodsForm">我已阅读以下规则，现在创建商品</el-button>
+          <div style="text-align: center" class="create-rule">
+            <el-button type="primary" @click="linkGoodsForm" :class="{disabled: !hunbohuiRule || !cateSelected}">我已阅读以下规则，现在创建商品</el-button>
             <div class="block">
               <el-checkbox v-model="hunbohuiRule">中国婚博会规则</el-checkbox>
             </div>
@@ -71,6 +71,7 @@
           storeId: storeId,
           curCateGroup: [],
           curCateRow: [],
+          cateSelected: false,
           hunbohuiRule: true,
           categoryBarTitle: '商品类目选择',
           categoryData: [],
@@ -81,9 +82,7 @@
       mounted: function () {
         this.getGoodsCategory(this.storeId);
       },
-      created(){
-        //this.getGoodsCategory()
-      },
+
       methods: {
 
         linkGoodsForm (){
@@ -93,6 +92,7 @@
           }
           var curCate = this.curCateGroup
           if(!curCate[2]) {
+
             return;
           }else {
             this.$router.push({
@@ -110,7 +110,6 @@
           getGoodsCategoryList({
             storeId: storeId
           }).then((res) => {
-            console.log(res)
             if(res.data.code === 0) {
               self.categoryData = res.data.data
             }
@@ -124,14 +123,17 @@
           this.secoundCategoryData = []
           this.thirstCategoryData = []
           this.secoundCategoryData = row.child
+          this.cateSelected = false
         },
         secondHandle (row, index) {
           this.thirstCategoryData = []
           this.thirstCategoryData = row.child
           this.getcurCateGroup(1, row)
+          this.cateSelected = false
         },
         thirdHandle (row, index){
           this.getcurCateGroup(2, row)
+          this.cateSelected = true
         },
         getcurCateGroup (index, row){
           this.curCateRow = row
@@ -149,6 +151,12 @@
 
 <style lang="scss">
 @import '~scss_vars';
+  .create-rule {
+    .disabled {
+      background-color: #ccc;
+      border-color: #ccc
+    }
+  }
   .page-container {
     position: relative;
     min-height: 500px;

@@ -1,7 +1,7 @@
 // import babelpolyfill from 'babel-polyfill'
 import Vue from 'vue'
 import App from './App'
-// import VueSummernote from '@/components/editer/'
+import VueSummernote from '@/components/editer/'
 
 import ElementUI from 'element-ui'
 import LoadingMask from '@/components/loading/'
@@ -11,10 +11,10 @@ import store from '@/vuex/store'
 import Vuex from 'vuex'
 import router from '@/router/'
 //import VueSummernote from 'vue-summernote'
-/*import 'bootstrap'
+import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'summernote/dist/summernote.css'
-*/
+
 
 import '../theme/index.css'
 import './assets/iconfont/iconfont.css'
@@ -29,10 +29,10 @@ Vue.use(ElementUI)
 Vue.use(Vuex)
 Vue.use(LoadingMask)
 
-// Vue.use(VueSummernote, {
-//   dialogsFade: true,
-//   height: 350
-// })
+Vue.use(VueSummernote, {
+  dialogsFade: true,
+  height: 350
+})
 
 
 //NProgress.configure({ showSpinner: false });

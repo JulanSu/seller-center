@@ -1,11 +1,11 @@
 <template>
   <section  class="all-good" v-loading="listLoading">
-    <el-row class='search-row'> 
-      <el-input v-model="form.name" class='w255' placeholder='请输入商品名称' :maxlength='11' @blur="numberIsRight(1)">
+    <el-row class='search-row' stylle="min-width:960px"> 
+      <el-input v-model="form.productTitle" class='w160' placeholder='请输入商品名称' :maxlength='11' >
       </el-input>
-      <el-input v-model="form.goodId" class='w255' placeholder='请输入商品ID' :maxlength='11' @blur="numberIsRight(1)">
+      <el-input v-model="form.goodId" class='w160' placeholder='请输入商品ID' :maxlength='11'>
       </el-input>
-      <el-select v-model="form.fenleiId" placeholder="店铺中分类">
+      <el-select v-model="form.storeCateId" placeholder="店铺中分类" style="margin-right:10px;">
         <el-option
           v-for="item in form.fenlei"
           :key="item.id"
@@ -13,17 +13,16 @@
           :value="item.id">
         </el-option>
       </el-select>
-
-      <el-date-picker type="date" v-model="form.startTime" class='w255' placeholder='创建起始时间'></el-date-picker>
+      <el-date-picker type="date" v-model="form.searchStartTime" class='w160' placeholder='创建起始时间' atyle="margin-right;"></el-date-picker>
       <span>—</span>
-      <el-date-picker type="date" v-model="form.endTime" class='w255' placeholder='创建结束时间'></el-date-picker>
+      <el-date-picker type="date" v-model="form.searchEndTime" class='w160' placeholder='创建结束时间' style="margin-left:10px;"></el-date-picker>
       <el-button type="primary" class='search-btn' @click="findGood">查询</el-button>
   </el-row>
     <!--列表-->
     <el-table :data="datas"  style="width: 100%;">
-      <el-table-column prop="productId" label="ID" width="190" align="center">
+      <el-table-column prop="productId" label="ID" min-width="120" align="center">
       </el-table-column>
-      <el-table-column prop="productTitle" label="商品名称" width="190" align="center">
+      <el-table-column prop="productTitle" label="商品名称" min-width="120" align="center">
       </el-table-column>
       <el-table-column width="190" align="center"
             prop="productCoverUrl"
@@ -34,11 +33,11 @@
               </div>
             </template>
           </el-table-column>
-      <el-table-column prop="productStatus" :formatter="formatUsed" label="状态" width="190" align="center">
+      <el-table-column prop="productStatus" :formatter="formatUsed" label="状态" min-width="120" align="center">
       </el-table-column>
-      <el-table-column prop="storeCateNameList" label="当前所属分类" min-width="190" align="center">
+      <el-table-column prop="storeCateNameList" label="当前所属分类" min-width="120" align="center">
       </el-table-column>
-      <el-table-column label="操作" min-width="200" align="center">
+      <el-table-column label="操作" min-width="120" align="center">
         <template slot-scope="scope">
           <span style="padding:0;" @click="handleBangding(scope.row)">关联</span>
         </template>
@@ -84,24 +83,24 @@
 </template>
 
 <script>
-import { pageStoreCateProduct,cateList,productListcate,productSave } from '@/api/shopApi';
+import { cateList,productListcate,productSave,productPagetheshelves } from '@/api/shopApi';
 
   export default {
     data() {
       return {
         form:{
-          name:'',
-          goodId:'',
-          startTime:'',
-          endTime:'',
           fenlei:[
-            {fenleiName:"店内分类",id:1},
-            {fenleiName:"全部",id:2},
-            {fenleiName:"无",id:3}
+            {fenleiName:"店内分类",id:this.$route.query.storeCateId},
+            {fenleiName:"全部",id:""},
+            {fenleiName:"无",id:0}
           ],
-          fenleiId:2
+          storeCateId:'',
+          goodId:'',
+          productTitle:'',
+          searchStartTime:'',
+          searchEndTime:''
         },
-        productId:'',
+        
         dialogVisible1:false,
         jurisdiction: [],
         roleAuthority:[],
@@ -113,7 +112,7 @@ import { pageStoreCateProduct,cateList,productListcate,productSave } from '@/api
       }
     },
     mounted() {
-      this.getPageStoreCateProduct();
+      this.getProductPagetheshelves();
       let para = {
         storeId:config.storeId
       };
@@ -130,11 +129,11 @@ import { pageStoreCateProduct,cateList,productListcate,productSave } from '@/api
       //当选择每页多少条时触发
       handleSizeChange(val){
         this.pageSize = val;
-        this.getPageStoreCateProduct();
+        this.getProductPagetheshelves();
       },
       //查询商品
       findGood(){
-
+        this.getProductPagetheshelves();
       },
       //转换状态
       formatUsed(row){
@@ -187,7 +186,7 @@ import { pageStoreCateProduct,cateList,productListcate,productSave } from '@/api
               message: '关联成功',
               type: 'success',
               onClose:function(){
-                that.getPageStoreCateProduct();
+                that.getProductPagetheshelves();
                 that.dialogVisible1=false;
               }
             });
@@ -207,14 +206,19 @@ import { pageStoreCateProduct,cateList,productListcate,productSave } from '@/api
         });
       },
       //获取列表
-      getPageStoreCateProduct() {
+      getProductPagetheshelves() {
         let para = {
           storeId:config.storeId,
           pageNum: this.pageNum,
-          pageSize: this.pageSize
+          pageSize: this.pageSize,
+          productId:this.form.goodId,
+          productTitle:this.form.productTitle,
+          storeCateId:this.form.storeCateId,
+          searchStartTime:this.form.searchStartTime,
+          searchEndTime:this.form.searchEndTime
         };
         this.listLoading = true;
-        pageStoreCateProduct(para).then((res) => {
+        productPagetheshelves(para).then((res) => {
           this.total = Number(res.data.data.total);
           this.datas = res.data.data.list;
           this.listLoading = false;
@@ -224,7 +228,7 @@ import { pageStoreCateProduct,cateList,productListcate,productSave } from '@/api
       },
       handleCurrentChange(val) {
         this.pageNum = val;
-        this.getPageStoreCateProduct();
+        this.getproductPagetheshelves();
       }
 
     }
@@ -247,7 +251,6 @@ import { pageStoreCateProduct,cateList,productListcate,productSave } from '@/api
   .search-row{
     padding-bottom:40px;
     .search-btn{
-        margin-left: 40px;
         width: 60px;
         span{
             color: #fff;
@@ -255,10 +258,14 @@ import { pageStoreCateProduct,cateList,productListcate,productSave } from '@/api
     }
   }
   .w180{
-    width:180px;
+    width:180px ;
   }
-  .w255{
-    width:255px;
+  .w160{
+    width:160px !important;
+    margin-right:10px;
+  }
+  .el-select{
+    width:160px;
   }
   .cell{
     a{

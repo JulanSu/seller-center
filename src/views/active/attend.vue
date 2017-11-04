@@ -55,7 +55,7 @@
         created(){
             let actId = this.$route.query.actId;    
             /*获取平台详情*/
-            platformActDetail({storeId: config.toolsStoreId, marketingActivityId:actId }).then(res => {
+            platformActDetail({storeId: config.storeId, marketingActivityId:actId }).then(res => {
                 this.detail = res.data.data;
                 this.statusIsOk();
             })

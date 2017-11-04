@@ -2,38 +2,38 @@
   <div class="uploadpic">
     <div class="load_hezi">
       <p class="desc">{{note}}</p>
+
       <div class="picbox">
-      <ul class="el-upload-list el-upload-list--picture-card">
-        <template v-for="(item, index) in imageUrl">
-          <li :tabindex="index" class="el-upload-list__item is-success pic-item">
-            <img :src="item" alt="" class="el-upload-list__item-thumbnail">
-            <a class="el-upload-list__item-name"><i class="el-icon-document"></i>
-            </a>
-            <label class="el-upload-list__item-status-label">
-              <i class="el-icon-upload-success el-icon-check"></i>
-            </label>
-              <i class="el-icon-close"></i><i class="el-icon-close-tip" style="display:none">按delete键可删除</i><!----><span class="el-upload-list__item-actions"><span class="el-upload-list__item-preview"><i class="el-icon-zoom-in"></i></span><span class="el-upload-list__item-delete" @click="delPicHandel(imageUrl, index)"><i class="el-icon-delete"></i></span></span>
-            </li>
-          </template>
-        </ul>
+        <ul class="el-upload-list el-upload-list--picture-card">
+          <template v-if="imageUrl.length" v-for="(item, index) in imageUrl">
+            <li :tabindex="index" class="el-upload-list__item is-success pic-item">
+              <img :src="item" alt="" class="el-upload-list__item-thumbnail">
+              <a class="el-upload-list__item-name"><i class="el-icon-document"></i>
+              </a>
+              <label class="el-upload-list__item-status-label">
+                <i class="el-icon-upload-success el-icon-check"></i>
+              </label>
+                <i class="el-icon-close"></i><i class="el-icon-close-tip" style="display:none">按delete键可删除</i><!----><span class="el-upload-list__item-actions"><span class="el-upload-list__item-preview"><i class="el-icon-zoom-in"></i></span><span class="el-upload-list__item-delete" @click="delPicHandel(imageUrl, index)"><i class="el-icon-delete"></i></span></span>
+              </li>
+            </template>
+          </ul>
+          <el-upload
+            class="upload-pictrues"
+            action="http://gss.dmp.hzjiehun.bid/gss/upload/"
+            list-type="picture-card"
+            :before-upload="beforeAvatarUpload"
+            :on-success="handleAvatarSuccess"
+            :file-list="fileList"
+            :on-error="errorHandle"
+            :show-file-list="false">
+            <i class="el-icon-plus"></i>
+            <p class="desc">添加上传图片</p>
+          </el-upload>
+          <el-dialog v-model="dialogVisible" size="tiny">
+            <img width="100%" :src="dialogImageUrl" alt="">
+          </el-dialog>
       </div>
-      <el-upload
-        class="upload-pictrues"
-        action="http://gss.dmp.hzjiehun.bid/gss/upload/"
-        list-type="picture-card"
-        :before-upload="beforeAvatarUpload"
-        :on-success="handleAvatarSuccess"
-        :limit="picLimit"
-        :file-list="fileList"
-        :on-exceed="exceedHandle"
-        :on-error="errorHandle"
-        :show-file-list="false"
-        :on-remove="handleRemove">
-        <i class="el-icon-plus"></i>
-      </el-upload>
-      <el-dialog v-model="dialogVisible" size="tiny">
-        <img width="100%" :src="dialogImageUrl" alt="">
-      </el-dialog>
+
     </div>
   </div>
 </template>
@@ -69,29 +69,25 @@ export default {
   data () {
     return {
       fileList: [],
-      picLimit: 4,
+      picLimit: 9,
       imageUrl: this.value,
       dialogImageUrl: '',
       dialogVisible: false,
     }
   },
-
+  // mounted (){
+  //   console.log('图片组件',this.value, this.imageUrl)
+  // },
   methods: {
     delPicHandel (row, index) {
       row.splice(index, 1)
     },
     errorHandle(value){
-      console.log('上传失败', value)
-    },
-    exceedHandle (value) {
-      this.$message.warning(value,'图片最多只能上传9张!');
-    },
-    handleRemove(value) {
-      console.log(this.fileList, value)
+      this.$message.warning('上传商品图片失败！请重新尝试。');
     },
     beforeAvatarUpload(file){
       let isWarning = true
-        console.log('图片上传之前',file)
+
         const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
         const isLt2M = file.size / 1024 / 1024 < 10;
 
@@ -111,8 +107,9 @@ export default {
       },
 
     handleAvatarSuccess(res, file, fileList) {
+
       if(res.code === 0) {
-        this.imageUrl.push(URL.createObjectURL(file.raw));
+        this.imageUrl.push(res.data);
       }else {
         this.$message.warning('上传商品图片失败！请重新尝试。');
       }
@@ -133,6 +130,17 @@ export default {
 }
 
 .upload-pictrues{
+  position: relative;
+  .desc {
+    position: absolute;
+    left: 0;
+    bottom: 15px;
+    height: 14px;
+    font-size: 14px;
+    color: #666;
+    width: 100%;
+    line-height: 14px;
+  }
   .el-upload--picture-card,
    .el-upload-list__item {
     width: 98px;
@@ -142,6 +150,7 @@ export default {
 
 }
 .picbox {
+  overflow: hidden;
   .pic-item {
     width: 98px;
     height: 98px;
@@ -149,6 +158,18 @@ export default {
     img {
       width: 100%;
     }
+  }
+  .el-upload--picture-card {
+    line-height: 98px;
+    .el-icon-plus {
+      color: #41CAC0;
+    }
+  }
+  .el-upload-list {
+    float: left;
+  }
+  .upload-pictrues {
+    float: left;
   }
 }
 </style>

@@ -13,17 +13,10 @@
         </div>
         <el-menu default-active="" unique-opened class="category-menu" v-if="categoryData.length">
           <template  v-for="(item, index) in categoryData">
-            <el-menu-item :index="index+''" class="sub-title" @click="selectproductCateName(item, index)">
+            <el-menu-item :index="index+''" v-if="item.productCateName" class="sub-title" @click="selectproductCateName(item, index)">
               <span class="first-letter" v-if="showLetterIcon">A</span>{{item.productCateName}}
               <i class="el-icon-arrow-right" v-if="item.child && item.child.length"></i>
             </el-menu-item>
-<!--             <el-submenu :index="index+''" v-if="item.child && item.child.length && item.productCateName">
-              <template slot="title">{{item.productCateName}}</template>
-              <template v-if="item.child && item.child.length" v-for="(items, index) in item.child">
-                <el-menu-item :index="items.cateId" @click="selectproductCateName(items, index)">{{items.productCateName}}<i class="el-icon-arrow-right"></i></el-menu-item>
-              </template>
-            </el-submenu> -->
-<!--             <el-menu-item v-if="!item.child || !item.child.length && item.productCateName" :index="index+''" class="sub-title" @click="selectproductCateName(item, index)"><span class="first-letter" v-if="showLetterIcon">A</span>{{item.productCateName}}<i class="el-icon-arrow-right" v-if="item.category.length"></i></el-menu-item> -->
           </template>     
         </el-menu>
         <el-menu default-active="" unique-opened class="category-menu search-list" v-if="searchList.length">

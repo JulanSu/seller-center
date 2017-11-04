@@ -7,6 +7,7 @@
           action="http://gss.dmp.hzjiehun.bid/gss/upload/"
           :show-file-list="false"
           :on-success="handleAvatarSuccess"
+          :on-error='handleAvatarError'
           :before-upload="beforeAvatarUpload">
           <img v-if="imageUrl" :src="imageUrl" class="avatar">
           <img v-if="url" :src="url" class="avatar">
@@ -70,9 +71,16 @@ export default {
       if(res.code==0){
         this.imageUrl = URL.createObjectURL(file.raw);
         this.$emit(this.listen,res.data);//传递值给父组件
+      }else{
+        this.$message.error('图片上传失败');
       }
       
     },
+    //上传失败时的回调
+    handleAvatarError(){
+      this.$message.error('图片上传失败');
+    },
+
     revise(src){
       this.imageUrl=src;
     }

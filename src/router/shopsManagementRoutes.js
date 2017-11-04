@@ -73,7 +73,7 @@ const routers = [
                 component: bypassManagement, 
                 name: '子账号管理',
                 children: [
-                    { path: '/store/bypass-management/role-list', component: roleList, name: '岗位角色' }, 
+                    { path: '/store/bypass-management/role-list', component: roleList, name: '管理角色' }, 
                     { path: '/store/bypass-management/account-list', component: accountList, name: '子帐号列表' },
                     { path: '/store/bypass-management/new-account', component: newAccount, name: '新建子帐号' },
                     { path: '/store/bypass-management/compile-account', component: newAccount, name: '编辑子帐号' },

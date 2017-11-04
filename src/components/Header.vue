@@ -9,13 +9,13 @@
         </div>
       </div> -->
       <div class="userinfo">
-        <div class="user-item">欢迎你，{{sysUserName}}</div>
+        <div class="user-item">欢迎你，{{ueseName}}</div>
         <div class="user-item">
-          <el-dropdown trigger="hover">
+          <el-dropdown trigger="hover"  @command="handleCommand">
             <span class="el-dropdown-link userinfo-inner">商户中心<i class="el-icon-caret-bottom el-icon--right"></i></span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>设置</el-dropdown-item>
-              <el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
+              <el-dropdown-item  command="a">设置</el-dropdown-item>
+              <el-dropdown-item divided command="exit">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>          
         </div>
@@ -27,24 +27,28 @@
   </div>
 </template>
 <script>
-
-import { msgList,userLogout } from '@/api/toolApi';
+import { msgNumber,userLogout } from '@/api/toolApi';
 export default {
   name: 'app-header',
   data(){
     return {
-      total: null
+      total: null,
+      ueseName:''
     }
   },
   created(){
     let params = {
-      uid: '920170325335867392',
+      uid: config.uid,
       page: 1,
       size: 20
     }
-    msgList(params).then( res => {
-      let tal = Number(res.data.data.total)
-      this.total = tal > 999 ? '999+' : tal;
+    msgNumber(params).then( res => {
+      if(res.data.data){
+        let tal = Number(res.data.data)
+        this.total = tal > 999 ? '999+' : tal;
+      } 
+    }).catch(res => {
+      console.log(res)
     })
   },
   props: {
@@ -63,14 +67,17 @@ export default {
   computed: {
 
   },
+  mounted(){
+    this.ueseName=config.userName;
+  },
   methods: {
-    logout:function(){
-        let para = {
-          storeId:storeId
-        };
-        userLogout(para).then((res) => {
-
+    handleCommand(command) {
+     if(command=="exit"){
+        userLogout({}).then((res) => {
+          window.location.href=config.apiHost;
         });
+      }
+       
     }
   }
 }

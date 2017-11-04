@@ -154,7 +154,7 @@
             this.$route.query.name ? this.activeName = this.$route.query.name : '';
             /*获取店铺活动*/
             let params1 = {
-                storeId: config.toolsStoreId,
+                storeId: config.storeId,
                 toolsId: 1,
                 activityStatus: 0,
                 page: 1,
@@ -163,7 +163,7 @@
             this.getStoreData(params1)
             /*获取平台活动*/
             let params2 = {
-                storeId: config.toolsStoreId,
+                storeId: config.storeId,
                 activityStatus: 0,
                 signStatus: 0,
                 auditStatus: 0,
@@ -181,7 +181,7 @@
             getStoreParams(){
                 let self = this,
                     params = {
-                        storeId: config.toolsStoreId,
+                        storeId: config.storeId,
                         toolsId: 1,
                         activityStatus: self.storeStatus,
                         page: self.currentPageStore,
@@ -251,7 +251,7 @@
             getPlatParams(){
                 let self = this,
                     params = {
-                        storeId: config.toolsStoreId,
+                        storeId: config.storeId,
                         activityStatus: self.platStatus,
                         signStatus: self.signStatus,
                         auditStatus: self.auditStatus,

@@ -78,7 +78,7 @@
   import SearchNav from './components/SearchNav.vue'
   import Pagination from './components/Pagination.vue'
   import { getProductStatus } from '@/util/product_status'
-  import { getProductList, getStoreCate, onRecycleBinToSoldOut } from '@/api/seller'
+  import { getProductList, getStoreCate, onRecycleBinToDraftBox } from '@/api/seller'
   import merge from 'merge'
   const win = window;
   const storeId = win.config && win.config.storeId ? win.config.storeId : ''
@@ -204,7 +204,7 @@
               title: '恢复商品',
               content: '确定要恢复这个商品吗'
             }, function(){
-              onRecycleBinToSoldOut({
+              onRecycleBinToDraftBox({
                 productId: row.productId
               }).then((res)=>{
                 self.listLoading = false;

@@ -207,6 +207,7 @@
             getTableData(obj){
                 let self = this;
                 orderStore(obj).then(res => {
+                    console.log(res)
                     let moc = res.data
                     if(!moc.data){
                         this.tableData = [];

@@ -48,29 +48,46 @@
             getData() {
                 let self = this,
                     params = {
-                        uid: '920170325335867392',
+                        uid: config.uid,
                         page: self.currentPage,
                         size: self.pageSize
                     }
                 msgList(params).then( res => {
-                    self.message = res.data.data.list;
-                    self.total = Number(res.data.data.total)
-                    for(let i=0; i<self.message.length; i++){
-                        self.$set(self.message[i],'bottom',false);
-                        self.message[i].jumpType != 2 ? self.message[i].jumpLink = self.message[i].jumpLink + self.switchUrl(self.message[i].jumpType) + '?id=' + self.message[i].jumpId : '';
+                    if(res.data.data){
+                        self.message = res.data.data.list;
+                        self.total = Number(res.data.data.total)
+                        for(let i=0; i<self.message.length; i++){
+                            self.$set(self.message[i],'bottom',false);
+                            self.message[i].jumpType != 2 ? self.message[i].jumpLink = self.message[i].jumpLink + self.switchUrl(self.message[i].subType) + '?id=' + self.message[i].jumpId : '';
+                        }
                     }
-                    console.log(self.message)
                 })
             },
             /*跳转地址转化*/
             switchUrl(a){
                 switch(a) {
-                    case 2: return '/marketing-center/tool'; break;     //现金券
-                    case 3: return '/transaction/orders/order-detail'; break;       //订单
-                    case 4: return '/marketing-center/management'; break;       //活动
-                    case 5: return '/seller-management/weitongguo'; break;       //商品
-                    case 6: return '/store/message'; break;       //店铺
-                    case 7: return '/store/brand-management';      //品牌
+                    /*活动消息*/
+                    case 3011: return '/marketing-center/management'; break;     
+                    case 3021: return '/marketing-center/management'; break; 
+                    case 3022: return '/marketing-center/management'; break; 
+                    case 3031: return '/marketing-center/management'; break; 
+                    case 3041: return '/marketing-center/management'; break; 
+                    case 3042: return '/marketing-center/management'; break; 
+                    /*订单消息*/
+                    case 3021: return '/transaction/orders/order-detail'; break; 
+                    case 3022: return '/transaction/orders/order-detail'; break; 
+                    /*店铺消息*/
+                    case 6012: return '/store/brand-management'; break;
+                    case 6022: return '/store/shop-management'; break;
+                    case 6032: return '/store/shop-management'; break;
+                    case 6042: return '/seller-management/notpass'; break;
+                    case 6052: return '/seller-management/notpass'; break;
+                    case 7026: return '/seller-management/downshelve'; break;
+                    case 7032: return '/seller-management/downshelve'; break;
+                    case 7046: return '/store/message'; break;
+                    case 7051: return '/seller-management/downshelve'; break;
+                    case 7061: return '/store/message'; break;
+                    default: return '/';
                 }
             },
             /*时间戳转化*/

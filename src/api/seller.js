@@ -3,7 +3,7 @@ import axios from 'axios';
 //let base = 'http://192.168.88.212:8083';
 
 let base = ''
-
+// const base = window.config ? window.config.apiHost : '';
 //获取商品列表POST 
 export const getProductList = params => {
 	return axios.get(`${base}/product/list`, { params: params })
@@ -20,8 +20,8 @@ export const theShelvestoSoldOut = params => {
 }
 
 //商品恢复
-export const onRecycleBinToSoldOut = params => {
-	return axios.post(`${base}/product/recyclebintosoldout`, params )
+export const onRecycleBinToDraftBox = params => {
+	return axios.post(`${base}/product/recyclebintodraftbox`, params )
 }
 
 //商品删除成功

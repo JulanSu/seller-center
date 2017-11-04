@@ -13,9 +13,11 @@
       </el-table-column>
       <el-table-column prop="address" label="门店地址" min-width="190" align="center">
       </el-table-column>
-      <el-table-column prop="workTime" label="营业时间" width="190" align="center">
+      <el-table-column prop="workTime" label="营业时间" width="200" align="center">
       </el-table-column>
-      <el-table-column prop="contactPerson" label="联系人" width="190" align="center">
+      <el-table-column prop="contactPerson" label="联系人姓名" width="200" align="center">
+      </el-table-column>
+      <el-table-column prop="contactMobile" label="联系人号码" width="200" align="center">
       </el-table-column>
       <el-table-column label="操作" width="200" align="center">
         <template slot-scope="scope">

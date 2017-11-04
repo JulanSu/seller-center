@@ -232,8 +232,6 @@ export default {
 	        getShopMessage(para).then((res) => {
 	        	this.ruleForm=res.data.data;
 	        	this.ruleForm.shopType=this.ruleForm.shopType==1?"个人店铺":"企业店铺";
-	        	let address="浙江省*杭州市*下城区*野风现代中心";
-	        	this.ruleForm.logo=''
         		this.switchover(this.ruleForm.address);
         		this.ruleForm.longitude/=1000000;
         		this.ruleForm.latitude/=1000000;

@@ -61,6 +61,7 @@ export const productRemove = params => { return axios.post(`${base}/store/cate/p
 export const categoryAll = params => { return axios.get(`${base}/product/category/all`, { params: params }); };
 export const productListcate = params => { return axios.post(`${base}/store/cate/product/listcate`,params); };
 export const productSave = params => { return axios.post(`${base}/store/cate/product/save`,params); };
+export const productPagetheshelves = params => { return axios.get(`${base}/product/pagetheshelves`, { params: params }); };
 
 
 //我的品牌

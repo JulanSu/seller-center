@@ -559,7 +559,7 @@ export default {
 					}
 		        	this.listLoading = true;
 		            var para = new URLSearchParams();
-		            para.append('userId',userId);
+		            para.append('userId',config.uid);
 		            para.append('enterpriseName',this.ruleForm.enterpriseName);
 		            para.append('enterpriseLicence',this.ruleForm.enterpriseLicence);
 		            para.append('orgCode',this.ruleForm.orgCode);

@@ -1,6 +1,6 @@
-import $ from 'jquery'
 import 'summernote'
-import 'summernote/dist/lang/summernote-zh-CN.min.js'
+import $ from 'jquery'
+//import 'summernote/dist/lang/summernote-zh-CN.min.js'
 
 // var $ = require('jquery')
 // require('summernote')

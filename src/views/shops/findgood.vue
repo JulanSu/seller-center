@@ -2,9 +2,7 @@
   <section  class="find-good" v-loading="listLoading">
     <!--工具条-->
     <el-col :span="24" class="tool-bar" style="padding-bottom: 0px;">
-      <router-link to="/store/classify-management/all-good">
-         <el-button type="primary">关联其他商品</el-button>
-      </router-link>
+      <el-button type="primary" @click="relevance">关联其他商品</el-button>
     </el-col>
 
     <!--列表-->
@@ -51,6 +49,11 @@ import { productList,productRemove} from '@/api/shopApi';
       }
     },
     methods: {
+      //关联其他商品按钮
+      relevance(){
+        var parm={storeCateId:this.$route.params.id};
+        this.$router.push({ path: '/store/classify-management/all-good', query:parm });
+      },
       //转换状态
       formatUsed(row){
         var state='';
