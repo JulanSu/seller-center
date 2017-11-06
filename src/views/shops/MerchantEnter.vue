@@ -236,6 +236,7 @@ export default {
           	dialogVisible3:false,
 
 			dialogVisible1:false,
+			dialogVisible2:false,
 			height:300,
 			selCity:"",
 			selArea:'',
@@ -531,7 +532,7 @@ export default {
 			};
 		},
 		/*保存按钮*/
-		submitForm(formName) {
+		submitForm(formName) {console.log(this.ruleForm.industryCateIdList)
 		    this.$refs[formName].validate((valid) => {
 	            if (valid) {
 	            	if(!this.ruleForm.industryCateIdList.length){
@@ -557,9 +558,14 @@ export default {
 							this.sel+="*"+this.selArea;
 						}
 					}
+
+					var storeType=this.isShop==1?1:2;
 		        	this.listLoading = true;
+
+
 		            var para = new URLSearchParams();
 		            para.append('userId',config.uid);
+		            para.append('shopType',storeType);
 		            para.append('enterpriseName',this.ruleForm.enterpriseName);
 		            para.append('enterpriseLicence',this.ruleForm.enterpriseLicence);
 		            para.append('orgCode',this.ruleForm.orgCode);
@@ -570,7 +576,7 @@ export default {
 		            para.append('contactMobile',this.ruleForm.contactMobile);
 		            para.append('name',this.ruleForm.name);
 		            para.append('industryCateIdList',this.ruleForm.industryCateIdList);
-		            para.append('address',this.ruleForm.address);
+		            para.append('address',this.sel+'*'+this.ruleForm.address);
 		            para.append('longitude',Number(this.ruleForm.longitude*1000000));
 					para.append('latitude',Number(this.ruleForm.latitude*1000000));
 
@@ -578,10 +584,13 @@ export default {
 		            	this.listLoading = false;
 		            	if(res.data.code==0){
 		            		this.dialogVisible1=true;
+		            	}else{
+		            		this.$message({message:res.data.message,type: 'warning'});
 		            	}
 		                
 		            }).catch((res)=> {
 		                this.listLoading = false;
+		                this.$message({message:"接口建立连接失败",type: 'warning'});
 		            });
 		      	}else {
 		        	return false;
@@ -591,6 +600,8 @@ export default {
 		/*返回商户中心按钮*/
 	    getBack(){
 	    	this.dialogVisible1 = false;
+	    	//location.href=config.apiHost;
+	    	window.location.reload();//刷新页面
 	    	this.$router.push({ path: '/seller-management/goods' });
 	    }
 

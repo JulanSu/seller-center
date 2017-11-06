@@ -14,7 +14,7 @@
         <el-menu default-active="" unique-opened class="category-menu" v-if="categoryData.length">
           <template  v-for="(item, index) in categoryData">
             <el-menu-item :index="index+''" class="sub-title" @click="selectproductCateName(item, index)">
-              <span class="first-letter" v-if="showLetterIcon">A</span>
+
               {{item.industryCateName}}
               <i class="el-icon-arrow-right" v-if="item.secondIndustryList && item.secondIndustryList.length"></i>
             </el-menu-item>
@@ -23,7 +23,6 @@
         <el-menu default-active="" unique-opened class="category-menu search-list" v-if="searchList.length">
           <template  v-for="(item, index) in searchList">
             <el-menu-item v-if="item.industryCateName"  :index="index+''" class="sub-title" @click="selectproductCateName(item, index)">
-              <span class="first-letter" v-if="showLetterIcon">A</span>
               {{item.industryCateName}}
               <i class="el-icon-arrow-right" v-if="item.secondIndustryList"></i> 
             </el-menu-item>

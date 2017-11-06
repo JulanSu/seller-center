@@ -1,14 +1,12 @@
 <template>
-  
   <div class="goods-form">
-    
     <template v-if="initForm.finished">
       <el-form :model="goodsForm" :rules="goodsFormRules" ref="goodsForm" label-width="120px">
         <el-form-item label="当前类目" prop="cate">
           {{initForm.productCateName}}
         </el-form-item>
 
-        <el-form-item label="选择品牌" prop="brandId">
+        <el-form-item label="选择品牌" prop="brandId" v-if="storeType == 1">
           <brand-select v-model="goodsForm.brandId" :brandDTOList="initForm.brandDTOList"></brand-select>
         </el-form-item>
 
@@ -117,30 +115,37 @@
         </el-form-item>
 
         <el-form-item label="商品描述" prop="detailsContent" class="sellFormat-sku">
-          <el-input
+<!--           <el-input
             type="textarea"
             :rows="2"
             placeholder="暂用文本域替代富文本（富文本编辑器存在问题，会影响流程）"
             v-model="goodsForm.detailsContent">
-          </el-input>
-         <!--  <summernote v-model="goodsForm.detailsContent"></summernote> -->
+          </el-input> -->
+         <!-- <vue-summernote ref="editer" @onChange="onChange"></vue-summernote> -->
+         <goods-summernote v-model="goodsForm.detailsContent"></goods-summernote>
         </el-form-item>
 
         <el-form-item label="服务范围" prop="serviceArea">
           <city-site-list :citySiteList="initForm.citySiteList" v-model="goodsForm.serviceArea" @change="upSysAreaHandle"></city-site-list>
         </el-form-item>
 
-        <el-form-item label="店铺中分类" prop="storeCateList">
+        <el-form-item label="店铺中分类" prop="storeCateList" v-if="goodsForm.storeCateList.length">
           <store-cate v-model="goodsForm.storeCateProduct" :storeCateList="initForm.storeCateList"></store-cate>
         </el-form-item>
         
-        <div class="logistics-info wuliu" prop="shippingTemplateId" v-if="goodsForm.productType == 1">
+        <div class="logistics-info wuliu" prop="shippingTemplateId" v-if="goodsForm.productType == 2">
           <category-bar title="宝贝物流服务"></category-bar>
-          <logistics-services v-model="goodsForm.shippingTemplateId" :logisticsData="initForm.storeShippingTemplate"></logistics-services>
+          <el-form-item label="提取方式">
+            <el-checkbox checked="checked" disabled>电子交易凭证</el-checkbox>
+          </el-form-item>
         </div>
         <div class="logistics-info wuliu" prop="shippingTemplateId" v-if="goodsForm.productType == 1">
           <category-bar title="商品物流服务"></category-bar>
-          <logistics-services v-model="goodsForm.shippingTemplateId" :logisticsData="initForm.storeShippingTemplate"></logistics-services>
+          <logistics-services v-model="goodsForm.shippingTemplateId" :logisticsData="initForm.storeShippingTemplate.data"></logistics-services>
+<!--           <p class="desc" v-else>
+            你还未创建物流模板，请先创建物流模板后再选择噢。
+          </p> -->
+          
         </div>
         <div class="other-info">
           <category-bar title="其他信息"></category-bar> 
@@ -156,7 +161,9 @@
         </div>
         <el-form-item>
           <el-button type="primary" @click="submitForm('goodsForm', 1)" :loading="submitLoading">保存</el-button>
+          <template v-if="this.$route.query.productStatus && this.$route.query.productStatus == 1">
           <el-button type="primary" @click="submitForm('goodsForm', 0)" :loading="draftboxLoading">放入草稿箱</el-button>
+          </template>
           <!-- <el-button @click="resetForm('goodsForm')">重置</el-button> -->
         </el-form-item>
       </el-form>
@@ -166,7 +173,6 @@
 </template>
 <script>
   import CategoryBar from '@/components/CategoryBar.vue'
-  // import Summernote from './summernote/Summernote.vue'
   import UpdateImg from './goods_form/UpdateImg.vue'
   import CateProperty from './goods_form/CateProperty.vue'
   import ProductSku from './goods_form/ProductSku.vue'
@@ -178,16 +184,17 @@
   import VueQuillEditor from 'vue-quill-editor'
   import { getStrLength } from '@/util/validator'
   import UploadPictures from './components/UploadPictures.vue'/*上传图片组件*/
+  import GoodsSummernote from './components/summernote.vue'
   import { getGoodsFormData, saveGoodsFormData} from '@/api/seller'
   import merge from 'merge'
   const win = window;
   const storeId = win.config && win.config.storeId ? win.config.storeId : ''
-
+  const storeType = win.config && win.config.storeType ? win.config.storeType : ''
   export default {
     components: {
+      GoodsSummernote,
       CategoryBar, 
       VueQuillEditor, 
-      // Summernote, 
       UpdateImg, 
       CateProperty,
       LogisticsServices,
@@ -204,6 +211,8 @@
         fn(len)
       }
       return {
+        storeType: storeType,
+        editorProductStatus: '',
         submitLoading: false,
         draftboxLoading: false,
         //表单提交所需要的数据结构
@@ -222,9 +231,9 @@
           productType: '', //商品类型
           productPicUrlList: [], //商品图片列表 链接LIST
           productSkuTable: [], //商品销售规格
-          detailsContent: '', //富文本
+          detailsContent: 'dasdadasdadsadadasda', //富文本
           serviceArea: '', //服务范围 逗号隔开
-          shippingTemplateId: 3333, //物流模板ID
+          shippingTemplateId: '', //物流模板ID
           publishTime: '', //上架时间
           productRecommend: 0, //是否推荐
           productStatus: '', //提交状态
@@ -236,12 +245,7 @@
           productCateName: '',
           publishTimeType: '',
           citySiteList:[], 
-          storeShippingTemplate: {
-            peisongArea: [
-              {city: [], price: 12323, count: 222, cprice: 333},
-              {city: [], price: 12323, count: 222, cprice: 333}
-            ]
-          },
+          storeShippingTemplate: {},
           brandDTOList: [],
           productTitleRules: {
             max: 25,
@@ -333,9 +337,7 @@
 
     methods: {
       publishTimeHandle (value){
-
-        this.goodsForm.publishTime = value
-        
+        this.goodsForm.publishTime = value  
       },
       /**
        * initFormData 初始化表单数据（加载表单默认数据）
@@ -349,7 +351,7 @@
         let initForm = this.initForm
 
         //判断是否编辑页面，是否存在店铺ID，是否存在商品ID
-        if(route.name === '编辑' && storeId && route.query.productId && route.query.productStatus == 0 || route.query.productStatus == -1){
+        if(route.name === '编辑商品' && storeId && route.query.productId && route.query.productStatus == 0 || route.query.productStatus == -1){
 
           self.getEditorFormdata(storeId, route.query.productId, route.query.productStatus)
           goodsForm.productId = route.query.productId
@@ -358,7 +360,7 @@
         }
 
         //判断是否存在类目ID
-        if(route.name === '新建' && storeId && route.query.productCateId && route.query.productCateName) {
+        if(route.name === '新建商品' && storeId && route.query.productCateId && route.query.productCateName) {
           self.getGoodsFormDataHandle(storeId, route.query.productCateId)
           goodsForm.productCateId = route.query.productCateId
           initForm.productCateName = route.query.productCateName
@@ -409,6 +411,7 @@
         goodsForm.storeCateProduct = data.storeCateProduct
         goodsForm.productPicUrlList = data.productPicUrlList
         goodsForm.productVersionId = data.productVersionId
+        goodsForm.shippingTemplateId = data.shippingTemplateId
         initForm.productSkuQuantity = self.productSkuHandle(data.productSkuTable)
 
         console.log('编辑时表单内容', goodsForm)
@@ -445,10 +448,25 @@
               initForm.storeCateList = data.storeCateList
             }
 
-            if(data.brandDTOList && data.brandDTOList.length) {
-              initForm.brandDTOList = data.brandDTOList
+            // if(data.brandDTOList && data.brandDTOList.length) {
+            //   initForm.brandDTOList = data.brandDTOList
+            // }
+            if(storeType) {
+              if(!data.brandDTOList.length) {
+                initForm.brandDTOList = {
+                  storeId: '0',
+                  nameCn: '无'
+                }
+                goodsForm.brandId = 0
+              }
+            }else {
+                initForm.brandDTOList = {
+                  storeId: '0',
+                  nameCn: '无'
+                }
+              goodsForm.brandId = 0
             }
-
+            initForm.storeShippingTemplate = data.storeShippingTemplate
             goodsForm.productType = data.productType
             goodsForm.productId = data.productId
             initForm.finished = true
@@ -480,18 +498,18 @@
       submitForm(formName, statusVal) {
         var self = this
         self.goodsForm.productStatus = statusVal
-        console.log('提交数据',self.goodsForm)
+        console.log('提交数据',self.goodsForm, statusVal)
          if(statusVal == 1) {
-            self.saveLoading = true
+            self.submitLoading = true
          }else if(statusVal == 0) {
             self.draftboxLoading = true
          }
-         //console.log(JSON.stringify(self.goodsForm))
+
         // saveGoodsFormData(self.goodsForm).then((res)=> {
         //   var data = res.data.data
         //    if(res.data.code == 0) {
         //      if(statusVal == 1) {
-        //         self.saveLoading = true
+        //         self.submitLoading = true
         //         self.$router.push({path: '/seller-management/underreview'})
         //      }else if(statusVal == 0) {
         //         self.draftboxLoading = true
@@ -526,6 +544,9 @@
       },
       upSysAreaHandle (value) {
         this.goodsForm.serviceArea = value
+      },
+      onChange (value) {
+        console.log(value)
       }
     }
   }

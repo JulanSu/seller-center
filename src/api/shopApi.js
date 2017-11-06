@@ -2,8 +2,8 @@ import axios from 'axios';
 import Qs from 'qs';
 
 
-
-/*let base = 'http://192.168.88.42:8083';*/
+/*
+let base = 'http://192.168.88.42:8083';*/
 let base = 'http://shop.dmp.hzjiehun.bid';
 let pichost='http://gss.dmp.hzjiehun.bid';
 

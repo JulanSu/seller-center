@@ -2,7 +2,7 @@
 	<section class="brand" v-if='$route.name==="品牌管理"'>
 		<el-col :span="24" class="tool-bar" style="padding-bottom: 0px;">
 		    <router-link to="/store/brand-management/sel-brand" class="selbrand" icon="plus">
-		      	<el-button type="primary" icon="plus">创建商品</el-button>
+		      	<el-button type="primary" icon="plus">添加品牌</el-button>
 		    </router-link>
 	    </el-col>
 		<ul v-loading="listLoading">

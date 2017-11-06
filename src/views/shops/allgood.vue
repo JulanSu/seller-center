@@ -35,7 +35,7 @@
           </el-table-column>
       <el-table-column prop="productStatus" :formatter="formatUsed" label="状态" min-width="120" align="center">
       </el-table-column>
-      <el-table-column prop="storeCateNameList" label="当前所属分类" min-width="120" align="center">
+      <el-table-column prop="storeCateNameList" :formatter="formatFenlei" label="当前所属分类" min-width="120" align="center">
       </el-table-column>
       <el-table-column label="操作" min-width="120" align="center">
         <template slot-scope="scope">
@@ -148,6 +148,14 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
           case 5:state="回收站";break;
         }
         return state;
+      },
+      //转换分类
+      formatFenlei(row){
+        var fenlei=row.storeCateNameList;
+        if(!row.storeCateNameList){
+          fenlei='无';
+        }
+        return fenlei;
       },
       //关联按钮
       handleBangding(row){

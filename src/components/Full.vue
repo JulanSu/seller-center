@@ -18,9 +18,11 @@
         <div class="breadcrumb-container">
           <!-- <strong class="title">{{$route.path}}</strong> -->
           <el-breadcrumb separator="/" class="breadcrumb-router">
-            <el-breadcrumb-item v-for="item in $route.matched" :key="item.path" :to="{ path: item.path }">
-             {{ item.name }}
-            </el-breadcrumb-item>
+            <template v-for="item in $route.matched" >
+              <el-breadcrumb-item :key="item.path" :to="{ path: item.path }">
+               {{ item.name }}
+              </el-breadcrumb-item>              
+            </template>
           </el-breadcrumb>
         </div>
         <div :span="24" class="content-wrapper">

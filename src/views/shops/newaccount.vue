@@ -46,6 +46,7 @@
 
 <script>
 import {operatorGet,roleList,operatorUpdate,operatorSave} from '@/api/shopApi';
+import md5 from 'js-md5';
 
   export default {
     data() {
@@ -182,7 +183,7 @@ import {operatorGet,roleList,operatorUpdate,operatorSave} from '@/api/shopApi';
             this.listLoading = true;
             var para = new URLSearchParams();
             para.append('account',this.ruleForm.account);
-            para.append('password',this.ruleForm.password);
+            para.append('password',md5('this.ruleForm.password'));
             para.append('name',this.ruleForm.name);
             para.append('gender',this.ruleForm.gender);
             para.append('roleId',this.ruleForm.roleId);
@@ -192,16 +193,27 @@ import {operatorGet,roleList,operatorUpdate,operatorSave} from '@/api/shopApi';
             if(this.isAdd==2){//2是编辑
               para.append('storeOperatorId',this.ruleForm.storeOperatorId);
               operatorUpdate(para).then((res)=> {
-                this.sucFun(res);
+                if(res.data.code==0){
+                  this.sucFun(res);
+                }else{
+                  this.$message({message: res.data.message,type: 'warning'});
+                }
+                
               }).catch((res)=> {
                 this.listLoading = false;
+                this.$message({message: '接口建立连接失败',type: 'warning'});
               });
             }else{
               para.append('storeId',config.storeId);
               operatorSave(para).then((res)=> {
-                this.sucFun(res);
+                if(res.data.code==0){
+                  this.sucFun(res);
+                }else{
+                  this.$message({message: res.data.message,type: 'warning'});
+                }
               }).catch((res)=> {
                 this.listLoading = false;
+                 this.$message({message: '接口建立连接失败',type: 'warning'});
               });
             }
             

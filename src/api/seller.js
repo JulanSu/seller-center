@@ -2,8 +2,14 @@ import axios from 'axios';
 
 //let base = 'http://192.168.88.212:8083';
 
-let base = ''
-// const base = window.config ? window.config.apiHost : '';
+// let base = 'http://shop.dmp.hzjiehun.bid'
+const base = window.config ? window.config.apiHost : '';
+
+//获取商品列表POST 
+export const getStoreCategory = params => {
+	return axios.get(`${base}/product/category/store`, { params: params })
+}
+
 //获取商品列表POST 
 export const getProductList = params => {
 	return axios.get(`${base}/product/list`, { params: params })

@@ -3,7 +3,9 @@
 		<category-bar :title="categoryBarTitle"></category-bar>
 		<el-form :model="ruleForm" :rules="rules" ref="ruleForm">
 			<el-form-item label="入驻类型" prop="shopType" label-width="120px" class="lefttit">
-				<el-input v-model="ruleForm.shopType" :readonly="true" placeholder=""  class="wid280"></el-input>
+				<div class="exhibition">
+					<span>{{ruleForm.shopType}}</span>
+				</div>
 			</el-form-item>
 			<el-form-item label="店铺名称" prop="name"  label-width="120px">
 				<el-input :maxlength="20" v-model="ruleForm.name" placeholder="店铺名称"  class="wid280"></el-input>
@@ -231,7 +233,7 @@ export default {
 	        };
 	        getShopMessage(para).then((res) => {
 	        	this.ruleForm=res.data.data;
-	        	this.ruleForm.shopType=this.ruleForm.shopType==1?"个人店铺":"企业店铺";
+	        	this.ruleForm.shopType=this.ruleForm.shopType==1?"企业入驻":"个人入驻";
         		this.switchover(this.ruleForm.address);
         		this.ruleForm.longitude/=1000000;
         		this.ruleForm.latitude/=1000000;

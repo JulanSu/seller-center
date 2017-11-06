@@ -104,8 +104,10 @@
         created(){ 
             /*获取订单类型和状态*/
             orderStatus().then(res => {
-                this.form.orderType = [...this.form.orderType,...res.data.data];
-                this.form.orderStatus = [...this.form.statusArr[0].status]
+                if(res.data.data){
+                    this.form.orderType = [...this.form.orderType,...res.data.data];
+                    this.form.orderStatus = [...this.form.statusArr[0].status]
+                }
             })
             /*获取商家全部订单*/
             this.getTableData({storeId: 10, pageNum: 1, pageSize: 20})

@@ -51,7 +51,7 @@
           </div>
         </div>
       </template>
-    <router-view v-if="$route.name === '新建' || $route.name === '编辑'"></router-view>
+    <router-view v-if="$route.name === '新建商品' || $route.name === '编辑商品'"></router-view>
     </template>
   </div>
 </template>
@@ -62,8 +62,7 @@
     import CategoryBar from '@/components/CategoryBar'
     import LoadingMask from '@/components/LoadingMask'
     import CategoryMenu from './components/CategoryMenu'
-    
-    import { getGoodsCategoryList } from '@/api/seller'
+    import { getStoreCategory  } from '@/api/seller'
     export default {
       components: { CategoryMenu, CategoryBar, LoadingMask },
       data() {
@@ -80,7 +79,11 @@
         }
       },
       mounted: function () {
-        this.getGoodsCategory(this.storeId);
+        let route = this.$route
+        if(route.name === '创建商品') {
+          this.getGoodsCategory(this.storeId);
+        }
+        
       },
 
       methods: {
@@ -92,22 +95,20 @@
           }
           var curCate = this.curCateGroup
           if(!curCate[2]) {
-
             return;
           }else {
             this.$router.push({
-                name: '新建',
+                name: '新建商品',
                 query: {
                   productCateId: curCate[2]['productCateId'],
                   productCateName: curCate[2]['productCateName']
                 }
-              })
+            })
           }
-
         },
         getGoodsCategory(storeId){
           var self = this;
-          getGoodsCategoryList({
+          getStoreCategory({
             storeId: storeId
           }).then((res) => {
             if(res.data.code === 0) {
@@ -133,7 +134,7 @@
         },
         thirdHandle (row, index){
           this.getcurCateGroup(2, row)
-          this.cateSelected = true
+          this.cateSelected = true 
         },
         getcurCateGroup (index, row){
           this.curCateRow = row

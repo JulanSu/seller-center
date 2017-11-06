@@ -4,9 +4,9 @@
 			<h2>阶段一：填写品牌信息</h2>
 			<el-form-item label="注册地" label-width="200px" class="lefttit">
 			    <el-radio-group v-model="ruleForm.registerLocation" @change="resetForm('ruleForm')">
-			        <el-radio :label="1">中国大陆地区</el-radio>
-			        <el-radio :label="2">中国港澳台地区</el-radio>
-			        <el-radio :label="3">国外地区</el-radio>
+			        <el-radio label="中国大陆地区"></el-radio>
+			        <el-radio label="中国港澳台地区"></el-radio>
+			        <el-radio label="国外地区"></el-radio>
 			    </el-radio-group>
 			</el-form-item>
 			<category-bar :title="categoryBarTitle1"></category-bar>
@@ -66,10 +66,10 @@
 			</div>
 			
 			<el-form-item prop="ways" label="授权渠道 " label-width="200px">
-				<el-input v-model="ruleForm.ways" class="wid400" placeholder="请输入授权渠道"></el-input>
+				<el-input :maxlength="50" v-model="ruleForm.ways" class="wid400" placeholder="请输入授权渠道"></el-input>
 			</el-form-item>	
 			<el-form-item prop="cityNames" label="授权城市"  label-width="200px">
-				<el-input v-model="ruleForm.cityNames" class="wid400" placeholder="请输入授权城市"></el-input>
+				<el-input :maxlength="20" v-model="ruleForm.cityNames" class="wid400" placeholder="请输入授权城市"></el-input>
 			</el-form-item>
 			<el-form-item label="有效时间"  label-width="200px">
 			    <el-col style="width:190px;">
@@ -79,33 +79,44 @@
 			    </el-col>
 			</el-form-item>
 			<el-form-item label="品牌资质" label-width="200px">
-				<upload-pictures :note="uploadTishi1"></upload-pictures>
+				<upload-pictures :note="uploadTishi1" :url="moren" :listen="'listenToPic1'" @listenToPic1="sucpic1" ref="uploadPic1"></upload-pictures>
 			</el-form-item>
-			<el-form-item label="报关单" label-width="200px">
-				<upload-pictures :note="uploadTishi2"></upload-pictures>
-				<div class="example"  @click="iconSimple(src1)">
-					<div><img src="../../assets/logo.png"/></div>
-					<span>参考示例</span>
-				</div>
+			<el-form-item label="" prop="authorizationUrl"  label-width="200px" class='updata'>
+				<el-input v-model="ruleForm.authorizationUrl" class="wid280"></el-input>
+			</el-form-item>
+			<el-form-item v-if="!isshow" label="商标注册证/受理通知书" label-width="200px">
+				<upload-pictures :note="uploadTishi1" :url="moren" :listen="'listenToPic2'" @listenToPic2="sucpic2" ref="uploadPic2"></upload-pictures>
 			</el-form-item>	
+			<el-form-item label="" prop="trademarkCertificate"  label-width="200px" class='updata'>
+				<el-input v-model="ruleForm.trademarkCertificate" class="wid280"></el-input>
+			</el-form-item>
 			
-
 			<div v-if="isshow">
+				<el-form-item label="报关单" label-width="200px">
+					<upload-pictures :note="uploadTishi2" :url="moren" :listen="'listenToPic3'" @listenToPic3="sucpic3" ref="uploadPic3"></upload-pictures>
+					<div class="example"  @click="iconSimple(src1)">
+						<div><img src="../../assets/logo.png"/></div>
+						<span>参考示例</span>
+					</div>
+				</el-form-item>	
+				<el-form-item label="" prop="customsDeclaration"  label-width="200px" class='updata'>
+					<el-input v-model="ruleForm.customsDeclaration" class="wid280"></el-input>
+				</el-form-item>
 				<category-bar :title="categoryBarTitle2"></category-bar>
 				<el-form-item prop="domesticOperator" label="国内经营人姓名" label-width="200px">
-					<el-input v-model="ruleForm.domesticOperator" class="wid400" placeholder="请输入国内经营人姓名"></el-input>
+					<el-input :maxlength="30" v-model="ruleForm.domesticOperator" class="wid400" placeholder="请输入国内经营人姓名"></el-input>
 				</el-form-item>	
 				<el-form-item prop="domesticOperatorIDCard" label="身份证号"  label-width="200px" >
-					<el-input v-model="ruleForm.domesticOperatorIDCard" class="wid400" placeholder="请输入身份证号"></el-input>
+					<el-input :maxlength="18" v-model="ruleForm.domesticOperatorIDCard" class="wid400" placeholder="请输入身份证号"></el-input>
 				</el-form-item>
 				<el-form-item prop="domesticOperatorPhone" label="手机号码"  label-width="200px">
-					<el-input v-model="ruleForm.domesticOperatorPhone" class="wid400" placeholder="请输入手机号码"></el-input>
+					<el-input :maxlength="11" v-model="ruleForm.domesticOperatorPhone" class="wid400" placeholder="请输入手机号码"></el-input>
 				</el-form-item>
 				
 			</div>
 
 			<el-form-item prop="contactMobile" label="联系电话"  label-width="200px">
-				<el-input v-model="ruleForm.contactMobile" class="wid400" placeholder="请输入联系电话"></el-input>
+				<el-input :maxlength="11" v-model="ruleForm.contactMobile" class="wid400" placeholder="请输入联系电话"></el-input>
 				<p class="tishi">审核同学有疑问时，会通过此联系方式联系您</p>
 			</el-form-item>
 			<el-form-item label="" label-width="200px">
@@ -157,9 +168,10 @@ export default {
       	exampleSrc:'',
       	dialogVisible:false,
       	src1:"http://2.hapn.cc:20080/n/00802v_b009W1MMTZ0a02w8.jpg",
+      	moren:"",
 
         ruleForm: {
-			registerLocation:1,
+			registerLocation:'中国大陆地区',
 		 	nameCn: '',
 			nameEn: '',
 			orign: '',
@@ -177,65 +189,76 @@ export default {
 			domesticOperator: '',
 			domesticOperatorIDCard: '',
 			domesticOperatorPhone: "",
-			contactMobile:""
+			contactMobile:"",
+			authorizationUrl:'',
+			customsDeclaration:''
 		},
         rules: {
-          nameCn: [
-            { required: true, message: '请输入品牌名称', trigger: 'blur' },
-            { min: 1, max: 20, message: '长度在 1 到 20 位', trigger: 'blur' }
-          ],
-          nameEn: [
-            { required: true, message: '请输入品牌英文名称', trigger: 'blur' },
-            { min: 1, max: 50, message: '长度为 1 到 50 位', trigger: 'blur' }
-          ],
-          orign: [
-            { required: true, message: '请输入品牌发源地', trigger: 'blur' },
-            { max: 50, message: '长度最多 50 位', trigger: 'blur' }
-          ],
-          trademarkNumber: [
-            { required: true, message: '请输入商标申请号', trigger: 'blur' },
-            { min: 8, max: 8, message: '请输入正确的商标申请号', trigger: 'blur' }
-          ],
-          trademarkApplicant: [
-            { required: true, message: '请输入商标申请人', trigger: 'blur' },
-            { min: 2, max: 30, message: '请输入正确的商标申请人', trigger: 'blur' }
-          ],
-          registerIndustry: [
-            { required: true, message: '请选择品牌注册所属行业', trigger: 'change' }
-          ],
-          ways: [
-            { required: true, message: '请输入授权渠道', trigger: 'blur' },
-            { max: 50, message: '长度最多 50 位', trigger: 'blur' }
-          ],
-          cityNames: [
-            { required: true, message: '请输入授权城市', trigger: 'blur' },
-            { max: 20, message: '长度最多 20 位', trigger: 'blur' }
-          ],
-          endValidTime: [
-            { type: 'date', required: true, message: '请选择有效结束时间', trigger: 'blur' }
-          ],
-          domesticOperator: [
-            { required: true, message: '国内经营人姓名', trigger: 'blur' },
-            { min:2, max: 30, message: '长度为 2 到 30 位', trigger: 'blur' }
-          ],
-          domesticOperatorIDCard: [
-            { required: true, message: '请填写身份证号', trigger: 'blur' },
-            { min:18, max: 18, message: '长度为 18 位', trigger: 'blur' }
-          ],
-          domesticOperatorPhone: [
-            { required: true, message: '请填写手机号码', trigger: 'blur' },
-            { min: 11, max: 11, message: '长度为 11 位', trigger: 'blur' }
-          ],
-          contactMobile: [
-            {  message: '请填写联系电话', trigger: 'blur' },
-            { min: 11, max: 11, message: '长度为 11 位', trigger: 'blur' }
-          ]
+        	authorizationUrl: [
+	            { required: true, message: '请上传品牌资质', trigger: 'blur' }
+	        ],
+	        customsDeclaration: [
+	            { required: true, message: '请上传报关单', trigger: 'blur' }
+	        ],
+	        trademarkCertificate: [
+	            { required: true, message: '请上传商标注册证/受理通知书', trigger: 'blur' }
+	        ],
+	        nameCn: [
+	            { required: true, message: '请输入品牌名称', trigger: 'blur' },
+	            { min: 1, max: 20, message: '长度在 1 到 20 位', trigger: 'blur' }
+	        ],
+	        nameEn: [
+	            { required: true, message: '请输入品牌英文名称', trigger: 'blur' },
+	            { min: 1, max: 50, message: '长度为 1 到 50 位', trigger: 'blur' }
+	        ],
+	        orign: [
+	            { required: true, message: '请输入品牌发源地', trigger: 'blur' },
+	            { max: 50, message: '长度最多 50 位', trigger: 'blur' }
+	        ],
+	        trademarkNumber: [
+	            { required: true, message: '请输入商标申请号', trigger: 'blur' },
+	            { min: 8, max: 8, message: '请输入正确的商标申请号', trigger: 'blur' }
+	        ],
+	        trademarkApplicant: [
+	            { required: true, message: '请输入商标申请人', trigger: 'blur' },
+	            { min: 2, max: 30, message: '请输入正确的商标申请人', trigger: 'blur' }
+	        ],
+	        registerIndustry: [
+	            { required: true, message: '请选择品牌注册所属行业', trigger: 'change' }
+	        ],
+	        ways: [
+	            { required: true, message: '请输入授权渠道', trigger: 'blur' },
+	            { max: 50, message: '长度最多 50 位', trigger: 'blur' }
+	        ],
+	        cityNames: [
+	            { required: true, message: '请输入授权城市', trigger: 'blur' },
+	            { max: 20, message: '长度最多 20 位', trigger: 'blur' }
+	        ],
+	        endValidTime: [
+	            { type: 'date', required: true, message: '请选择有效结束时间', trigger: 'blur' }
+	        ],
+	        domesticOperator: [
+	            { required: true, message: '国内经营人姓名', trigger: 'blur' },
+	            { min:2, max: 30, message: '长度为 2 到 30 位', trigger: 'blur' }
+	        ],
+	        domesticOperatorIDCard: [
+	            { required: true, message: '请填写身份证号', trigger: 'blur' },
+	            { min:18, max: 18, message: '长度为 18 位', trigger: 'blur' }
+	        ],
+	        domesticOperatorPhone: [
+	            { required: true, message: '请填写手机号码', trigger: 'blur' },
+	            { min: 11, max: 11, message: '长度为 11 位', trigger: 'blur' }
+	        ],
+	        contactMobile: [
+	            {  message: '请填写联系电话', trigger: 'blur' },
+	            { min: 11, max: 11, message: '长度为 11 位', trigger: 'blur' }
+	        ]
         }
       };
     },
     computed:{
     	isshow:function(){
-    		return this.ruleForm.registerLocation==1?false:true;
+    		return this.ruleForm.registerLocation=="中国大陆地区"?false:true;
     	}//测试品牌2 更新
     },
     methods: {
@@ -325,13 +348,29 @@ export default {
 	    },
         /*切换注册地，清空表单选项*/
         resetForm(formName) {
+        	this.moren='';
         	this.$refs[formName].resetFields();
+        	this.$refs.uploadPic1.revise(this.moren);//修改图片的值
+        	this.$refs.uploadPic2.revise(this.moren);//修改图片的值
+        	this.$refs.uploadPic3.revise(this.moren);//修改图片的值
         },
 	    /*返回商户中心按钮*/
 	    getBack(){
 	    	this.dialogVisible1 = false;
 	    	this.$router.push({ path: '/store/brand-management' });
-	    }
+	    },
+	    //品牌资质图片上传成功之后
+		sucpic1(url){
+			this.ruleForm.authorizationUrl=url;
+		},
+		//商标注册证/受理通知书上传成功之后
+		sucpic2(url){
+			this.ruleForm.trademarkCertificate=url;
+		},
+		//报关单上传成功之后
+		sucpic3(url){
+			this.ruleForm.customsDeclaration=url;
+		}
     }
 }
 </script>

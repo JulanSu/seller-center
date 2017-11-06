@@ -37,8 +37,8 @@
 			<template>
 				<li  v-for="(brandTit,key,index) in brandTits" @click="switchover(index,key,brandTit)" :brand-id="key" :class="{on:index==nowIndex}">
 					<h6>{{brandTit}}</h6>
-					<div  v-for="(item,k,i) in tishi">
-						<p v-if="index==i">
+					<div>
+						<p v-if="index==i"  v-for="(item,k,i) in tishi">
 							<span v-if="item==false">(待填写)</span>
 							<span v-else style="color:#41cac0">(已填写完整)</span>
 						</p>
@@ -382,12 +382,11 @@ export default {
 	ul{
 		list-style: none;
 		width:195px;
-		margin-top:-601px;
+		margin-top:-620px;
 		border-top:1px solid #ddd;
 		border-right:1px solid #ddd;
-		min-height:570px;
+		min-height:650px;
 		background:#F5F7FA;
-		padding-bottom:30px;
 		li{
 			text-align:center;
 			font-size: 14px;
@@ -398,7 +397,6 @@ export default {
 			position:relative;
 			h6,p{
 				height:20px;
-				line-height:20px;
 			}
 			h6{
 				color: #666666;
@@ -435,7 +433,7 @@ export default {
 	}
 	form.el-form{
 		margin-left:195px;
-		height:570px;
+		height:620px;
 		min-width:600px;
 		padding-top:30px;
 		border-top:1px solid #ddd;

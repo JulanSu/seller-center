@@ -62,10 +62,9 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
     },
     watch: {
      '$route' (to, from) {
-      console.log(this.$route.path);
-      if(this.$route.path=="/store/shop-management"){
-        this.getUsers();
-      }
+        if(this.$route.path=="/store/shop-management"){
+          this.getUsers();
+        }
      }
    },
     methods: {

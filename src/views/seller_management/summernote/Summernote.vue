@@ -1,6 +1,7 @@
 <template>
   <div class="summernote-wrap">
-    <vue-summernote ref="editer"></vue-summernote>
+    ffff
+    <vue-summernote ref="editer" @onChange="onChange"></vue-summernote>
   </div>
 </template>
 
@@ -24,6 +25,9 @@ export default {
       this.$emit('input', val)
     }
   },
+  created(){
+    console.log('moren', this.value)
+  },
   mounted () {
     const self = this
     const editer = self.$refs.editer
@@ -37,10 +41,12 @@ export default {
       console.log('onChange:', contents)
       self.content = contents
     })
-
     self.setVal(this.value)
   },
   methods: {
+    onChange(value){
+      console.log('dddddfff')
+    },
     updateValue (value) {
       this.$emit('input', 'dadadadad')
     },
@@ -58,6 +64,5 @@ export default {
 
 <style lang="scss">
   .summernote-wrap {
-
   }
 </style>

@@ -98,6 +98,7 @@
 </template>
 
 <script>
+  console.log('这是一个jquery', $, jQuery)
   import CitySelection from './components/CitySelection.vue'
   import AreaItem from './logistics_template/AreaItem.vue'
   import { getNewestTemplate, saveStoreShippingTemplate } from '@/api/seller'
@@ -201,6 +202,13 @@
       },
       onDelHandle (value, index) {
         var self = this
+        console.log(value)
+        if(value.sysAreaNames && value.sysAreaNames.length) {
+          for(var i=0;i<value.sysAreaNames.length; i++) {
+            self.citiesMap[value.sysAreaNames[i]].checked=false
+          }          
+        }
+
         self.ruleForm.templateValueList.splice(index, 1)
       },
       /**

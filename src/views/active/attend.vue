@@ -69,7 +69,7 @@
                 if(signStatus == 2)  this.btnNotClick = true;
                 if(signStatus == 0){
                     let timesTamp = Date.parse(new Date());
-                    if(this.detail.signUpEndTime < timesTamp && timesTamp < this.detail.signUpEndTime ){
+                    if(this.detail.signUpBeginTime < timesTamp && timesTamp < this.detail.signUpEndTime ){
                         this.btnNotClick = false;
                     }else{
                         this.btnNotClick = true;

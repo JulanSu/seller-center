@@ -1,5 +1,5 @@
 <template>
-  <section  class="find-good" v-loading="listLoading">
+  <section  class="find-good" v-loading="listLoading" v-if='$route.name=="查看商品"'>
     <!--工具条-->
     <el-col :span="24" class="tool-bar" style="padding-bottom: 0px;">
       <el-button type="primary" @click="relevance">关联其他商品</el-button>
@@ -33,6 +33,7 @@
     </el-pagination>
     </el-col>
   </section>
+  <router-view  v-else></router-view>
 </template>
 
 <script>
@@ -52,7 +53,7 @@ import { productList,productRemove} from '@/api/shopApi';
       //关联其他商品按钮
       relevance(){
         var parm={storeCateId:this.$route.params.id};
-        this.$router.push({ path: '/store/classify-management/all-good', query:parm });
+        this.$router.push({ path: '/store/classify-management/find-good/all-good', query:parm });
       },
       //转换状态
       formatUsed(row){
@@ -77,7 +78,7 @@ import { productList,productRemove} from '@/api/shopApi';
       getProductList() {
         let para = {
           //storeCateId:this.$route.params.id,
-          storeCateId:1,
+          storeCateId:this.$route.params.id,
           pageNum: this.pageNum,
           pageSize: this.pageSize
         };

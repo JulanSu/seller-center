@@ -3,7 +3,7 @@
     <!--工具条-->
     <el-col :span="24" class="tool-bar" style="padding-bottom: 0px;">
       <router-link to="/store/classify-management/add-fen-lei">
-        <el-button type="primary" icon="plus">新建分类</el-button>
+        <el-button type="primary" icon="plus">新增分类</el-button>
       </router-link>
     </el-col>
     <!--列表-->

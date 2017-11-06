@@ -63,8 +63,14 @@ const routers = [
                 name: '分类管理' ,
                 children: [
                     { path: '/store/classify-management/add-fen-lei', component: addFenLei, name: '新增分类' },    
-                    { path: '/store/classify-management/find-good', component: findGood, name: '查看商品' },
-                    { path: '/store/classify-management/all-good', component: allGood, name: '全部分类商品列表' },
+                    { 
+                        path: '/store/classify-management/find-good',
+                        component: findGood,
+                        name: '查看商品',
+                        children:[
+                            { path: '/store/classify-management/find-good/all-good', component: allGood, name: '全部分类商品列表' }
+                        ]
+                    },
                     { path: '/store/classify-management/:id', component: addFenLei, name: '编辑分类' }
                 ]
             },

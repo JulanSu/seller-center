@@ -691,7 +691,6 @@
                 let self = this;
                 a.marketingActivityId = self.$route.query.actId;
                 a.marketingCouponId = self.marketingCouponId;
-                console.log(self.marketingCouponId)
                 changeAttendAct(a).then(res => {
                     if(res.data.message === '成功'){
                         this.$alert('修改活动成功', '成功', {
@@ -699,7 +698,7 @@
                             callback: action => {
                                 self.$router.push('/marketing-center/management?name=platformActive');
                             }
-                        });
+                        })
                     }else{
                         self.warn(res.data.message)
                     }

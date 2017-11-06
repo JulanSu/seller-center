@@ -14,18 +14,16 @@
         <el-menu default-active="" unique-opened class="category-menu" v-if="categoryData.length">
           <template  v-for="(item, index) in categoryData">
             <el-menu-item :index="index+''" class="sub-title" @click="selectproductCateName(item, index)">
-              <span class="first-letter" v-if="showLetterIcon">A</span>
               {{item.industryCateName}}
-              <i class="el-icon-arrow-right" v-if="item.secondIndustryList && item.secondIndustryList.length"></i>
+              <i class="el-icon-arrow-right" v-if="item[arrKey]&& item[arrKey].length"></i>
             </el-menu-item>
           </template>     
         </el-menu>
-        <el-menu default-active="" unique-opened class="category-menu search-list" v-if="searchList.length">
+        <el-menu default-active="" unique-opened class="category-menu search-list" v-if="searchList.length || keywords">
           <template  v-for="(item, index) in searchList">
             <el-menu-item v-if="item.industryCateName"  :index="index+''" class="sub-title" @click="selectproductCateName(item, index)">
-              <span class="first-letter" v-if="showLetterIcon">A</span>
               {{item.industryCateName}}
-              <i class="el-icon-arrow-right" v-if="item.secondIndustryList||item.brandList"></i> 
+              <i class="el-icon-arrow-right" v-if="item[arrKey].length"></i> 
             </el-menu-item>
           </template>     
         </el-menu>
@@ -75,6 +73,10 @@
           selectedPannel: {
             type: Boolean,
             default: true
+          },
+          arrKey: {
+            type: String,
+            default: ''
           }
         },
         watch: {
@@ -97,10 +99,15 @@
             }else {
               var _arr = [];
               for(var i in this.categoryData){
+                
                 if(this.categoryData[i].industryCateEname.match(reg) ||this.categoryData[i].industryCateName.match(reg)){
 
                   _arr.push(this.categoryData[i]);
                   this.searchList = _arr;
+                }else{
+                  if(this.searchList.length==1){
+                    this.searchList=[];
+                  }
                 }
               }
             }  
