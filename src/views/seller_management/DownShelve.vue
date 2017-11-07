@@ -159,12 +159,20 @@
               soldouttotheshelves({
                 productId: row.productId
               }).then((res)=>{
-                self.listLoading = false;
-                self.messageHandle('商品上架成功！', 'success')
+                var code = res.data.code
+                if(code === 0) {
+                  self.listLoading = false;
+                  self.messageHandle('商品上架成功！', 'success')               
+                }else if(code === 1) {
+                  self.$message({
+                    message: res.data.message,
+                    type: 'warning'
+                  });
+                }
                 self.getProductList({
                   pageNum: 1,
                   pageSize: 10
-                })
+                })   
               })
             })
           },

@@ -10,7 +10,7 @@ export const orderStore = params => { return axios.get(`${base}/order/pageorders
 /*订单详细*/
 export const orderDetail = params => { return axios.get(`${base}/order/getorderstoredetail`,  {params:params}); }
 /*订单发货*/
-export const sendProduct = params => { return axios.post(`http://192.168.88.139:8083/order/ship`,  params)}
+export const sendProduct = params => { return axios.post(`${base}/order/ship`,params)}
 
 /*售后订单列表*/
 export const orderStoreAfter = params => { return axios.get(`${base}/order/pageorderstoreafter`,  {params:params}); }
@@ -23,7 +23,6 @@ export const postAfter = params => { return axios.post(`${base}/orderafter/shoph
 export const accountList = params => { return axios.get(`${base}/order/listaccountstore`,  {params:params}); }
 /*结算明细*/
 export const accountDetail = params => { return axios.get(`${base}/order/getaccountproductdetail`,  {params:params}); }
-
 /*发出的点券*/
 export const cashList = params => { return axios.get(`${base}/marketing/voucher/list`,  {params:params}); }
 

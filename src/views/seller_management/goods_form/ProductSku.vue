@@ -63,6 +63,7 @@
       formartData (){
         var self = this
         var cateData = self.formartCateData(this.skuData)
+        console.log('获取类目数据', cateData)
         var genData = self.gen(cateData)
 
         self.productSkuTable = self.getProductSkuProperty(genData)

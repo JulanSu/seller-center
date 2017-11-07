@@ -110,7 +110,7 @@
                 }
             })
             /*获取商家全部订单*/
-            this.getTableData({storeId: 10, pageNum: 1, pageSize: 20})
+            this.getTableData({storeId: config.storeId, pageNum: 1, pageSize: 20})
         },
         methods: {
             /*订单类型变化*/
@@ -180,7 +180,7 @@
             /*获取参数*/
             getParams(){
                 let self = this,params = {};
-                params.storeId = 10;
+                params.storeId = config.storeId;
                 params.infoTelephone = self.form.userPhone == '' ? null : self.form.userPhone;
                 params.orderStoreType = self.form.typeCheck == '' ? null : self.form.typeCheck
                 console.log(params.orderStoreStatus)

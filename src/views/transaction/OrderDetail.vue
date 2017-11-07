@@ -17,7 +17,7 @@
                 <el-col :span="5">
                     配送方式：<span>{{detail.shippingWay}}</span>
                 </el-col>
-                <el-col :span="5" v-if="detail.shippingWay != '无需配送'">
+                <el-col :span="5" v-if="detail.shippingWay == '配送'">
                     备注：<span>{{detail.remark}}</span>
                 </el-col>
                 <el-col :span="5">
@@ -55,23 +55,23 @@
             <div v-for='item in detail.productList' :key="item.ProductName">
                 <el-row class='table-detail' >
                     <el-col :span="5">
-                        <div class="pro-name"><span v-if="item.orderStoreType==1">展会</span>{{item.ProductName}}</div>
+                        <div class="pro-name"><span v-if="item.orderStoreType==1">展会</span>{{item.productName}}</div>
                         <div class="pro-color">{{item.standard}}</div>
                         <div class="pro-item">类目：{{item.cate}}</div>
                     </el-col>
                     <el-col :span="3"><p>￥{{item.unitPrice}}</p></el-col>
                     <el-col :span="3">{{item.orderNum}}</el-col>
-                    <el-col :span="4">{{item.productType}}</el-col>
+                    <el-col :span="4">{{switchOrderType(item.orderType)}}</el-col>
                     <el-col :span="4">{{item.orderProductStatus}}</el-col>
                     <el-col :span="5">
                         <div class="order-price">￥{{item.unitPrice * item.orderNum}}</div>
                         <div class="youhui" v-for= 'li in item.proPri'>
                             <p>{{li.mes}}<span>-￥{{li.count}}</span></p>
                         </div>
-                        <div class="one-count">小计：￥{{item.orderProductTotal}}</div>
+                        <div class="one-count">小计：￥{{item.orderProductSubtotal}}</div>
                     </el-col>
                 </el-row>
-                <div class="service" v-if='item.orderProductAfterId != ""'>
+                <div class="service" v-if='item.orderProductAfterId'>
                     <el-row class='table-detail'>
                         <el-col :span="5">售后单编号：{{item.orderProductAfterId}}</el-col>
                         <el-col :span="3"></el-col>
@@ -91,7 +91,7 @@
                         <div class='service-img'>
                             <div class="img-con" v-for='cell in switchPic(item.orderProductAfterProof)'><img :src="cell" alt="" ></div>
                         </div>
-                    </div>    
+                    </div>
                 </div>
             </div>
         </div>
@@ -153,8 +153,7 @@
         beforeCreate(){
         },
         created(){
-            // let orderId = this.$route.query.orderId;
-            let orderId = 1;
+            let orderId = this.$route.query.orderId;
             orderDetail({orderStoreId: orderId}).then(res => {
                 this.detail = res.data.data;
                 for(let i=0; i<this.detail.productList.length; i++){
@@ -166,7 +165,7 @@
                         that.proPri.push(money)
                     }
                 }
-                this.detail.productList[1].orderProductStatus == '待发货' ? this.btnStatus = true : '';
+                this.detail.productList[0].orderProductStatus == '待发货' ? this.btnStatus = true : '';
             })
         },
         methods: {
@@ -197,6 +196,17 @@
                 }
                 return st;
             },
+            /*订单类型转换*/
+            switchOrderType(a){
+                let st = ''
+                switch(a) {
+                    case 0:st = '全款订单'; break;
+                    case 1:st = '定金订单';break;
+                    case 2:st = '点券订单';break;
+                    case 3:st = '现金券订单';break;
+                }
+                return st;
+            },
             /*发货方式转换*/
             changeType() {
                 var self = this;
@@ -204,7 +214,9 @@
             },
             /*图片转换*/
             switchPic(a){
-                return a.split(',')
+                if(a){
+                   return a.split(',') 
+                }      
             },
             /*控制字符长度*/
             textCount(){
@@ -225,9 +237,12 @@
                         trackNum: self.danHao,
                         remark: self.beiZhu
                     }
-                    console.log(params)
                     sendProduct(qs.stringify(params)).then( res => {
-                        console.log(res)
+                        if(res.data.data){
+                            self.btnStatus = false;
+                        }else{
+                            self.warn(res.data.message)
+                        }
                     })
                 }
             },

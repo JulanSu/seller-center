@@ -106,6 +106,9 @@ export default {
 		        }
 	        }
 	    };
+	    var validatePhone1 = (rule, value, callback) => {
+	       
+	    };
 		return {
 			categoryBarTitle: '店铺基本信息',
 			uploadTishi1:"请传160*160,格式要求jpg,jpeg,png,不超过10MB",
@@ -173,24 +176,34 @@ export default {
 	watch: {
           // 如果路由有变化，会再次执行该方法
         "$route": function(){
-            alert(222)
+            
         }
     },
     mounted() {
+    	var u = document.referrer;
+        if(u.indexOf('merchant-enter') >= 0){
+           window.location.reload();
+        }
       	this.getShop();
       	var that=this;
 	    var o= document.getElementById("shop-message");
 	    o.onclick=function(){
 		    that.$refs.MapView.clearKey();
 	    };
+
 	    
     },
     computed: {
     	//将毫秒数转化为时间格式
         time: function () {
-        	var startData=new Date(this.ruleForm.startValidTime);
-        	var endData=new Date(this.ruleForm.endValidTime);
-        	return startData.getFullYear()+" / "+(startData.getMonth()+1)+" / "+startData.getDate()+" - "+endData.getFullYear()+" / "+(endData.getMonth()+1)+" / "+endData.getDate();
+        	var flag='';
+        	if(!this.ruleForm.endValidTime){
+				var startData=new Date(this.ruleForm.startValidTime);
+	        	var endData=new Date(this.ruleForm.endValidTime);
+	        	flag=startData.getFullYear()+" / "+(startData.getMonth()+1)+" / "+startData.getDate()+" - "+endData.getFullYear()+" / "+(endData.getMonth()+1)+" / "+endData.getDate();
+	        	 
+        	}
+        	return flag;
         }
     },
 
@@ -204,7 +217,6 @@ export default {
 			this.ruleForm.broadwiseLogo=url;
 		},
 		fetchDate(){
-				alert(1)
 			},
 		//搜索关键字后点击筛选下拉结果，点击的元素的值传给父元素的input输入框
 		showKey(key){

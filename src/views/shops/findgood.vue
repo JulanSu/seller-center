@@ -125,7 +125,7 @@ import { productList,productRemove} from '@/api/shopApi';
 
 <style lang="scss">
 .find-good{
-  padding:40px 0 0 40px;
+  padding:40px 40px 0 20px;
   a{
     text-decoration:none;
   }

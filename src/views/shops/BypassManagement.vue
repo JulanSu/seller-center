@@ -17,19 +17,19 @@
 		</ul>
 		<ul class="use-style bapass-btn">
 			<li @click='jump'>
-				<i icon="el-icon-delete2"></i>
+				<i class="iconfont icon-zizhanghao"></i>
 				<span>新建子帐号</span>
 			</li>
 			<li style="border-left:1px solid #ddd;border-right:1px solid #ddd;">
 				<router-link to="/store/bypass-management/role-list">
-					<i icon="el-icon-delete2"></i>
+					<i class="iconfont icon-gangweijiaose"></i>
 					<span>岗位角色</span>
 				</router-link>
 			</li>
 			<li>
 
 				<router-link to="/store/bypass-management/account-list">
-					<i icon="el-icon-delete2"></i>
+					<i class="iconfont icon-zizhanghaoliebiao"></i>
 					<span>子帐号列表</span>
 				</router-link>
 			</li>
@@ -156,6 +156,14 @@ export default {
 			background:#fff;
 			span{
 				color:#41cac0 !important;
+			}
+		}
+		li{
+			i{
+				font-size: 24px;
+				color:#41cac0;
+				padding-right:10px;
+				vertical-align: middle;
 			}
 		}
 	}

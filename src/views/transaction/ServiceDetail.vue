@@ -52,54 +52,52 @@
                 <el-col :span="4">订单状态</el-col>
                 <el-col :span="5">订单金额</el-col>
             </el-row>
-            <el-row class='table-detail' v-for='item in detail.productList' :key="item.ProductName">
+            <el-row class='table-detail'>
                 <el-col :span="5">
-                    <div class="pro-name"><span v-if="item.orderStoreType==1">展会</span>{{item.ProductName}}</div>
-                    <div class="pro-color">{{item.standard}}</div>
-                    <div class="pro-item">类目：{{item.cate}}</div>
+                    <div class="pro-name"><span v-if="detail.orderStoreType==1">展会</span>{{detail.productName}}</div>
+                    <div class="pro-color">{{detail.standard}}</div>
+                    <div class="pro-item">类目：{{detail.cate}}</div>
                 </el-col>
-                <el-col :span="3"><p>￥{{item.unitPrice}}</p></el-col>
-                <el-col :span="3">{{item.orderNum}}</el-col>
-                <el-col :span="4">{{item.productType}}</el-col>
-                <el-col :span="4">{{item.orderProductStatus}}
-                    <div class="send-pro" v-if="item.send" @click='dialogFormVisible = true'>发货</div>
-                </el-col>
+                <el-col :span="3"><p>￥{{detail.unitPrice}}</p></el-col>
+                <el-col :span="3">{{detail.orderNum}}</el-col>
+                <el-col :span="4">{{detail.productType}}</el-col>
+                <el-col :span="4">{{switchStatus(detail.orderProductStatus)}}</el-col>
                 <el-col :span="5">
-                    <div class="order-price">￥{{item.unitPrice * item.orderNum}}</div>
-                    <div class="youhui" v-for= 'li in item.proPri'>
+                    <div class="order-price">￥{{detail.unitPrice * detail.orderNum}}</div>
+                    <div class="youhui" v-for= 'li in detail.proPri'>
                         <p>{{li.mes}}<span>-￥{{li.count}}</span></p>
                     </div>
-                    <div class="one-count">小计：￥{{item.orderProductTotal}}</div>
+                    <div class="one-count">小计：￥{{detail.orderProductTotal}}</div>
                 </el-col>
             </el-row>
         </div>
-        <div class="service" v-if='hasServiceOrder'>
+        <div class="service">
             <el-row class='table-detail'>
-                <el-col :span="5">售后单编号：{{after.orderProductAfterId}}</el-col>
+                <el-col :span="5">售后单编号：{{detail.orderProductAfterId}}</el-col>
                 <el-col :span="3"></el-col>
                 <el-col :span="3"></el-col>
                 <el-col :span="4">售后单</el-col>
-                <el-col :span="4">{{after.orderStatus}}</el-col>
+                <el-col :span="4">{{switchAfter(detail.orderProductAfterStatus)}}</el-col>
                 <el-col :span="5"></el-col>
             </el-row>
             <div class='service-user'>
                 <div class="service-user-detail">
-                    <div>售后时间：{{after.orderProductTime}}</div>
-                    <div>售后原因：{{after.orderProductAfterReason}}</div>
-                    <div>用户备注：{{after.orderProductAfterRemark}}</div>
-                    <div>商家备注：{{after.orderProductAfterStoreRemark}}</div>
-                    <div>平台备注：{{after.orderProductAfterPlatformRemark}}</div>
+                    <div>售后时间：{{detail.orderProductTime}}</div>
+                    <div>售后原因：{{detail.orderProductAfterReason}}</div>
+                    <div>用户备注：{{detail.orderProductAfterRemark}}</div>
+                    <div>商家备注：{{detail.orderProductAfterStoreRemark}}</div>
+                    <div>平台备注：{{detail.orderProductAfterPlatformRemark}}</div>
                 </div>
                 <div class='service-img'>
-                    <div class="img-con" v-for='item in this.after.orderProductAfterProof'><img :src="item" alt="" ></div>
+                    <div class="img-con" v-for='item in this.detail.orderProductAfterProof'><img :src="item" alt="" ></div>
                 </div>
             </div>
         </div>
         <div class="total-message">
-            <div><p>订单金额：</p><span>￥{{detail.orderAmount}}</span></div>
-            <div><p>优惠金额：</p><span>￥-{{detail.privilegeAmount}}</span></div>
-            <div><p>运费：</p><span>{{detail.orderStoreShipping}}</span></div>
-            <div><p>实付：</p><span>{{detail.userCost}}</span></div>
+            <div><p>订单金额：</p><span>￥{{detail.unitPrice * detail.orderNum}}</span></div>
+            <div><p>优惠金额：</p><span>￥-{{detail.priMoney}}</span></div>
+            <div><p>运费：</p><span>{{detail.orderProductShipping}}</span></div>
+            <div><p>实付：</p><span>{{detail.orderProductTotal}}</span></div>
         </div>
         <div class="beizhu" v-if="!serviceIsOk">
             <div class="font-count">{{textLength}}/200</div>
@@ -113,7 +111,7 @@
 </template>
 
 <script>
-    import {orderDetail, postAfter } from '@/api/ordersApi';
+    import {afterDetail, postAfter } from '@/api/ordersApi';
     import qs from 'qs';
     export default {
         data() {
@@ -124,40 +122,27 @@
                 serviceText: '',
                 detail:'',
                 after: {},
-                disabled: true,
-                /*弹窗数据*/
-                dialogFormVisible: false,
-                onRight: true,
-                gongSi: '',
-                danHao: '',
-                beiZhu: ''
+                disabled: true
 
             }
         },
         beforeCreate(){
         },
         created(){
-            // let orderId = this.$route.query.orderId;
-            let orderId = 1;
-            orderDetail({orderStoreId: orderId}).then(res => {
+            let orderId = this.$route.query.orderId,
+                productId = this.$route.query.productId;
+            afterDetail({orderStoreId: orderId, orderProductId:productId}).then(res => {
                 this.detail = res.data.data;
-                this.after = this.detail.productList[0]; 
-                for(let i=0; i<this.detail.productList.length; i++){
-                    let that = this.detail.productList[i];
-                    that.orderProductStatus = this.switchStatus(that.orderProductStatus)
-                    that.send = that.orderProductStatus === '待发货' ? true : false;
-                    that.proPri = [];
-                    for(let key in that.productPrivileges){
-                        let money = {mes: key,count: that.productPrivileges[key]}
-                        that.proPri.push(money)
-                    }
+                this.detail.proPri = [],this.detail.priMoney = 0;
+                for(let key in this.detail.productPrivileges){
+                    let money = {mes: key,count: that.productPrivileges[key]}
+                    this.detail.proPri.push(money)
                 }
-                if(this.after.orderProductAfterId){
-                    this.hasServiceOrder = true;
-                    this.after.orderStatus = this.switchStatus(this.after.orderProductAfterStatus)
-                    this.after.orderProductAfterProof = this.after.orderProductAfterProof.split(',')
-                    this.after.orderStatus == "待处理" ? this.serviceIsOk = false : '';
+                this.detail.orderProductAfterProof = this.detail.orderProductAfterProof.split(',')
+                for(let i=0; i<this.detail.proPri.length; i++) {
+                    this.detail.priMoney += this.detail.proPri[i].count
                 }
+                this.serviceIsOk = this.detail.orderProductAfterStatus == 1 ? false : true; 
             })
         },
         methods: {
@@ -173,7 +158,18 @@
                     case 6:st = '待平台审核';break;
                     case 7:st = '售后完成';break;
                     case 8:st = '取消售后';break;
-                    case 9:st = '订单关闭';break;
+                    default:st = '订单关闭';break;
+                }
+                return st;
+            },
+            /*售后订单转换*/
+             switchAfter(a) {
+                let st = ''
+                switch(a) {
+                    case 1:st = '待商家处理'; break;
+                    case 2:st = '待平台处理';break;
+                    case 3:st = '待收货';break;
+                    case 4:st = '交易成功';break;
                 }
                 return st;
             },
@@ -192,11 +188,27 @@
             postRight(){
                 let self = this,
                     params = {
-                        orderAfterId: self.after.orderProductAfterId,
+                        orderAfterId: self.detail.orderProductAfterId,
                         storeRemark: self.serviceText
                     }
                 postAfter(qs.stringify(params)).then(res => {
-                    console.log(res)
+                    if(res.data.message == '成功'){
+                        this.$message({
+                            message: '售后提交成功，请等待审核',
+                            type: 'success'
+                        });
+                        self.detail.orderProductAfterStatus = 2;
+                        self.detail.serviceIsOk = true;
+                    }else{
+                        self.warn(res.data.message)
+                    }
+                })
+            },
+            /*消息警告*/
+            warn(str){
+                this.$message({
+                    message: str,
+                    type: 'warning'
                 })
             }
         }
@@ -431,84 +443,6 @@
                 height: 40px;
                 text-align: center;
                 border-radius: 5px;
-            }
-        }
-        .addres-dialog{
-            width: 490px;
-            height: 370px;
-            .el-dialog__header{
-                padding: 0 20px;
-                height: 50px;
-                line-height: 50px;
-                box-shadow: inset 0 -1px 0 0 #DDDDDD;
-                .el-dialog__title{
-                    font-size: 14px;
-                    color: #333333;
-                    font-weight: 400;
-                }
-                .el-dialog__headerbtn{
-                    padding-top:15px;
-                    font-size: 14px;
-                }
-            }
-            .el-dialog__body{
-                padding: 0;
-                .send-type,.btn-row{
-                    margin-top: 30px;
-                    display: flex;
-                    align-items: center;
-                    justify-content:center;
-                    div{
-                        width: 90px;
-                        height: 34px;
-                        border: 1px solid #CCCCCC;
-                        font-size: 14px;
-                        color: #666666;
-                        text-align:center;
-                        line-height: 34px;
-                        cursor: pointer;
-                    }
-                    div:nth-of-type(2){
-                        margin-left:30px;
-                    }
-                    .click-on{
-                        border: 1px solid $color;
-                        color: $color;
-                    } 
-                }
-                .textarea-row{
-                    width:370px;
-                    height:100px;
-                    margin: 30px auto 0;
-                    textarea{
-                        width: 100%;
-                        height: 100%;
-                        resize: none
-                    }
-                }
-                .input-row{
-                    padding-left:55px;
-                    margin-top:30px;
-                    span{
-                        margin-right: 10px;
-                    }
-                    input{
-                        width: 290px;
-                        height: 40px;
-                        border: 1px solid #CCCCCC;
-                    }
-                }
-                .input-row:nth-of-type(3){
-                   margin-top: 20px;
-                }
-                .btn-row{
-                    margin-top: 40px;
-                    .send-sure{
-                        color:#fff;
-                        background: $color;
-                        border: none;
-                    }
-                }
             }
         }
     }

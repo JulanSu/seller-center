@@ -15,7 +15,7 @@
           <template  v-for="(item, index) in categoryData">
             <el-menu-item :index="index+''" class="sub-title" @click="selectproductCateName(item, index)">
               {{item.industryCateName}}
-              <i class="el-icon-arrow-right" v-if="item[arrKey]&& item[arrKey].length"></i>
+              <i class="el-icon-arrow-right" v-if="item[arrKey]&& item[arrKey].length&&isshow"></i>
             </el-menu-item>
           </template>     
         </el-menu>
@@ -23,7 +23,7 @@
           <template  v-for="(item, index) in searchList">
             <el-menu-item v-if="item.industryCateName"  :index="index+''" class="sub-title" @click="selectproductCateName(item, index)">
               {{item.industryCateName}}
-              <i class="el-icon-arrow-right" v-if="item[arrKey].length"></i> 
+              <i class="el-icon-arrow-right" v-if="item[arrKey].length&&isshow"></i> 
             </el-menu-item>
           </template>     
         </el-menu>
@@ -43,7 +43,8 @@
             curCateName: [],
             categoryNavIndex: 0,
             categoryDataCache: [],
-            secoundCategoryData: []
+            secoundCategoryData: [],
+            isshow:true
           }
         },
         props: {
@@ -90,24 +91,24 @@
         },
         mounted () {
           this.categoryDataCache = this.categoryData;
+          if(this.arrKey=="catePath"){
+            this.isshow=false;
+          }
         },
         methods: {
           searchHandle: function() {
             var reg = new RegExp(this.keywords);
+            this.searchList = [];
             if(!this.keywords) {
-              this.searchList = []
+              this.searchList = [];
             }else {
               var _arr = [];
               for(var i in this.categoryData){
-                
+                console.log(this.keywords)
                 if(this.categoryData[i].industryCateEname.match(reg) ||this.categoryData[i].industryCateName.match(reg)){
 
                   _arr.push(this.categoryData[i]);
                   this.searchList = _arr;
-                }else{
-                  if(this.searchList.length==1){
-                    this.searchList=[];
-                  }
                 }
               }
             }  

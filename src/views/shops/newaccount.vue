@@ -47,7 +47,7 @@
 <script>
 import {operatorGet,roleList,operatorUpdate,operatorSave} from '@/api/shopApi';
 import md5 from 'js-md5';
-
+import crypto from 'crypto'
   export default {
     data() {
       var validatePhone = (rule, value, callback) => {
@@ -178,12 +178,18 @@ import md5 from 'js-md5';
       },
 
       submitForm(formName) {
+         
         this.$refs[formName].validate((valid) => {
           if (valid) {
             this.listLoading = true;
+            //var a;
+            /*var md5 = crypto.createHash("md5");
+            //console.log(md5.update('aaa'));
+            var a = md5.digest('this.ruleForm.password');*/
+            
             var para = new URLSearchParams();
             para.append('account',this.ruleForm.account);
-            para.append('password',md5('this.ruleForm.password'));
+            para.append('password',md5(this.ruleForm.password));
             para.append('name',this.ruleForm.name);
             para.append('gender',this.ruleForm.gender);
             para.append('roleId',this.ruleForm.roleId);

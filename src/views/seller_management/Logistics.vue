@@ -14,7 +14,7 @@
             <el-button type="primary" @click="$router.push({path: '/seller-management/wuliu'})" v-if="isEditorStatus">新建物流模板</el-button>
           </el-form-item>
           <el-form-item label="模板名称" prop="templateName">
-            <el-input v-model="ruleForm.templateName" style="width: 398px;"></el-input>
+            <el-input v-model="ruleForm.templateName" :maxlength="20" style="width: 398px;"></el-input>
           </el-form-item>
           <el-form-item label="配送自提" prop="templateType">
             <el-radio-group v-model.number="ruleForm.templateType">
@@ -25,8 +25,34 @@
           <el-form-item label="配送范围及运费" prop="templateValueList" v-if="ruleForm.templateType == 0">
             <p class="desc">请编辑可送达的地区，当用户选择下述地区以外的配送地址时，将提示用户无法下单。</p>
             <div class="area-list">
-              <template v-for="(item, index) in ruleForm.templateValueList">
+              <template v-for="(item, key, index) in entireCountry">
 <!--                 <div style="padding-left: 5px; color: #999">指定地区的运费：</div> -->
+                <div class="area-list-wrap">
+                  <div class="area-item" style="width: 218px"> 
+                    <el-checkbox-group v-model="entireCountryChecked" @change="entireCountryChangeHandle">
+                    <el-checkbox  label="全国">全国</el-checkbox>
+                  </el-checkbox-group>
+                  </div>
+                  <div class="area-item">+运费</div>
+                  <div class="area-item">
+                    <el-input v-model="item.shippingCost" style="width:80px" placeholder=""></el-input>
+                  </div>
+                  <div class="area-item">元/件，满</div>
+                  <div class="area-item">
+                    <el-input v-model="item.shippingLimitNum" style="width:80px" placeholder=""></el-input>
+                  </div>
+                  <div class="area-item">件</div>
+                  <div class="area-item">
+                    <el-input v-model="item.shippingLimitCost" style="width:80px" placeholder=""></el-input>
+                  </div>
+                  <div class="area-item">元</div>
+                </div>
+              </template>
+            </div>            
+            <div class="area-list">
+              <div style="padding-left: 5px; color: #999">指定其它地区的运费：</div>
+              <template v-for="(item, index) in ruleForm.templateValueList"  v-if="item.sysAreaCodes != '000000'">
+                
                 <div class="area-list-wrap">
                   <div class="area-item"><el-input v-model="item.sysAreaNames.join(',')" style="width:208px" placeholder="浙江、江苏、上海" @focus="citySelectHandle(item, index)"></el-input></div>
                   <div class="area-item">+运费</div>
@@ -98,7 +124,7 @@
 </template>
 
 <script>
-  console.log('这是一个jquery', $, jQuery)
+
   import CitySelection from './components/CitySelection.vue'
   import AreaItem from './logistics_template/AreaItem.vue'
   import { getNewestTemplate, saveStoreShippingTemplate } from '@/api/seller'
@@ -123,6 +149,14 @@
         isEditorStatus: false,
         dialogVisible: false,
         curViewData: {},
+        entireCountryChecked: false,
+        entireCountry:[{
+          sysAreaCodes: '000000',
+          shippingCost: '',
+          shippingLimitNum: '',
+          shippingLimitCost: '',
+          sysAreaNames: ['全国']
+        }],
         ruleForm: {
           templateValueList: [{
             sysAreaCodes: '',
@@ -152,6 +186,12 @@
     computed: {
 
     },
+    watch: {
+        '$route' (to, from) {alert(1)
+          // 对路由变化作出响应...
+          deep:true
+        }
+      },
     created () {
       var self = this
 
@@ -167,6 +207,7 @@
           self.ruleForm = res.data[0]
           self.logisticsTemplateId = self.ruleForm.storeShippingTemplateId
           if(self.ruleForm.templateValueList && self.ruleForm.templateValueList.length) {
+            self.initEntireCountry(res.data[0])
             self.initSelectedArea(self.ruleForm.templateValueList, self.citiesMap)
           }else {
             self.ruleForm.templateValueList = [self.defaultTemplate()]
@@ -181,6 +222,64 @@
       //console.log(this.$route)
     },
     methods: {
+
+      entireCountryChangeHandle(value){
+        const self = this
+        const h = self.$createElement
+        
+        var VNode = h('div', null, [
+            h('div', null, '请确保你的商品可以配送到全国 '),
+            h('div',{style: 'margin-top: 10px'}, [
+              h('span', {style: 'color: #f60'}, '此运费将作为'),
+              h('span', null, '除指定地区外，其余地区的默认运费')
+              ]
+            )
+          ])
+        var content = '<div></div><div>此运费将作为<span>除指定地区外，其余地区的默认运费。</span></div>'
+        if(value){
+          self.$msgbox({
+            title: '温情提示',
+            message: VNode,
+            showCancelButton: true,
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            beforeClose: (action, instance, done) => {
+              if (action === 'confirm') {
+                self.entireCountryChecked = true
+              } else {
+                self.entireCountryChecked = false
+
+              }
+              done();
+            }
+          })
+        }
+      },
+      initEntireCountry(data){
+        var self = this
+        var entireCountryChecked = false
+        if(data.templateValueList && data.templateValueList.length) {
+          for(var i=0; i<data.templateValueList.length; i++) {
+
+            if(data.templateValueList[i].sysAreaCodes == '000000') {
+              self.entireCountry[0] = data.templateValueList[i]
+              entireCountryChecked = true
+              break
+            }
+          }
+        }
+
+        if(!entireCountryChecked) {
+          self.entireCountry[0] = {
+            sysAreaCodes: '000000',
+            shippingCost: '',
+            shippingLimitNum: '',
+            shippingLimitCost: '',
+            sysAreaNames: ['全国']
+          }
+        }
+        self.entireCountryChecked = entireCountryChecked
+      },
       createAreaMpas(){
         var newArea = this.areaArr.concat()
         var citiesMap = this.createCityMap(newArea) 
@@ -202,7 +301,7 @@
       },
       onDelHandle (value, index) {
         var self = this
-        console.log(value)
+
         if(value.sysAreaNames && value.sysAreaNames.length) {
           for(var i=0;i<value.sysAreaNames.length; i++) {
             self.citiesMap[value.sysAreaNames[i]].checked=false
@@ -216,6 +315,7 @@
        * @return {[type]} [description]
        */
       selectHandle (value) {
+
         this.citiesMap = this.createAreaMpas() 
         if(value == '-1') {
           this.ruleForm = {
@@ -231,6 +331,14 @@
             storeShippingTemplateId: '',//运费模板ID
             templateType: 0
           }
+          this.entireCountry[0] = {
+            sysAreaCodes: '000000',
+            shippingCost: '',
+            shippingLimitNum: '',
+            shippingLimitCost: '',
+            sysAreaNames: ['全国']
+          }
+          this.entireCountryChecked = false
         }else {
           this.setRuleForm(value)
         }
@@ -242,14 +350,18 @@
           if(id == templateData[i].storeShippingTemplateId) {
             //判断是否有模板列表
               self.ruleForm = templateData[i]
+
               if(self.ruleForm.templateValueList && self.ruleForm.templateValueList.length) {
                 self.initSelectedArea(self.ruleForm.templateValueList, self.citiesMap)
               }else {
                 self.ruleForm.templateValueList = [self.defaultTemplate()]
               }
+              self.initEntireCountry(self.ruleForm)
             }
             //this.ruleForm = templateData[i]
         }
+
+
       },
       /**
        * createCityMap 初始化area数据结构，用于记录用户所选择的area
@@ -392,7 +504,7 @@
           for(var i=0;i<checkedCities.length; i++) {
             self.addSelectArea(checkedCities[i], checkedCitiesIndex, citiesMap)
           }
-        }else {
+        } else {
           this.resetCitiesMap(citiesMap)
         }
       },
@@ -429,9 +541,10 @@
       saveTemplateData (){
         var self = this
         var submitData = self.getSumbitData()
-        console.log('提交表单', submitData)
+        var formartSubmitData = self.formartSubmitData(submitData)
+
         self.submitLoading = true
-        saveStoreShippingTemplate(submitData).then((res)=>{
+        saveStoreShippingTemplate(formartSubmitData).then((res)=>{
           if(res.data.code === 0) {
             self.submitLoading = false
             self.$message({
@@ -448,10 +561,19 @@
         })
  
       },
+      formartSubmitData (submitData){
+        var jsonSubmitData = JSON.stringify(submitData)
+        var newData = JSON.parse(jsonSubmitData)
+        var self = this
+        alert(self.entireCountryChecked)
+        if(newData.templateType == 0 && self.entireCountryChecked) {
+          newData.templateValueList.push(self.entireCountry[0])
+        }
+        return newData
+      },
       getSumbitData(){
         var self = this
         var ruleForm = self.ruleForm 
-        console.log('提交的数据',self.ruleForm)
         var obj = {
           storeId: ruleForm.storeId,
           storeShippingTemplateId: ruleForm.storeShippingTemplateId,

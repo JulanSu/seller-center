@@ -1,8 +1,8 @@
 <template>
   <div class="create-goods page-container">
-    <loading-mask v-if="!categoryData.length"></loading-mask>
+    <loading-mask v-if="isLoading"></loading-mask>
     <template v-else>
-    <category-bar :title="categoryBarTitle"></category-bar>
+      <category-bar :title="categoryBarTitle"></category-bar>
       <template v-if="$route.name === '创建商品'">
         <el-row>
           <el-col :span="8">
@@ -51,7 +51,7 @@
           </div>
         </div>
       </template>
-    <router-view v-if="$route.name === '新建商品' || $route.name === '编辑商品'"></router-view>
+      <router-view v-if="$route.name === '新建商品' || $route.name === '编辑商品'"></router-view>
     </template>
   </div>
 </template>
@@ -67,6 +67,7 @@
       components: { CategoryMenu, CategoryBar, LoadingMask },
       data() {
         return {
+          isLoading: true, 
           storeId: storeId,
           curCateGroup: [],
           curCateRow: [],
@@ -78,18 +79,26 @@
           thirstCategoryData:[]
         }
       },
+
+
+
       mounted: function () {
-        let route = this.$route
-        if(route.name === '创建商品') {
-          this.getGoodsCategory(this.storeId);
-        }
+        this.getGoodsCategory(this.storeId);
         
       },
 
+
+      created () {
+        let route = this.$route
+        if(route.name === '创建商品') {
+          this.getGoodsCategory(this.storeId);
+        }else {
+          this.isLoading = false
+        }
+      },
       methods: {
 
         linkGoodsForm (){
-          console.log(this.curCateRow)
           if(!this.hunbohuiRule) {
             return;
           }
@@ -98,11 +107,11 @@
             return;
           }else {
             this.$router.push({
-                name: '新建商品',
-                query: {
-                  productCateId: curCate[2]['productCateId'],
-                  productCateName: curCate[2]['productCateName']
-                }
+              name: '新建商品',
+              query: {
+                productCateId: curCate[2]['productCateId'],
+                productCateName: curCate[2]['productCateName']
+              }
             })
           }
         },
@@ -111,8 +120,9 @@
           getStoreCategory({
             storeId: storeId
           }).then((res) => {
-            if(res.data.code === 0) {
+            if(res.data.code === 0 && res.data.data && res.data.data.length) {
               self.categoryData = res.data.data
+              self.isLoading = false
             }
             //NProgress.done();
           });

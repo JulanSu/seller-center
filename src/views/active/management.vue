@@ -227,7 +227,7 @@
                     let timesTamp = Date.parse(new Date());
                     if(timesTamp < bTime){
                         return 2;
-                    }else if(bTime < timesTamp < eTime){
+                    }else if(bTime < timesTamp && timesTamp < eTime){
                         return 3;
                     }else{
                         return 4;

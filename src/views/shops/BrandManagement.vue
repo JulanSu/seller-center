@@ -1,7 +1,7 @@
 <template>
 	<section class="brand" v-if='$route.name==="品牌管理"'>
 		<el-col :span="24" class="tool-bar" style="padding-bottom: 0px;">
-		    <router-link to="/store/brand-management/sel-brand" class="selbrand" icon="plus">
+		    <router-link to="/store/brand-management/sel-brand" class="selbrand" icon="plus" >
 		      	<el-button type="primary" icon="plus">添加品牌</el-button>
 		    </router-link>
 	    </el-col>
@@ -35,7 +35,7 @@
 		</ul>
 		
 	</section>
-	<router-view  v-else></router-view>
+	<router-view  v-else :key="key"></router-view>
 </template>
 
 <script>
@@ -59,7 +59,11 @@ import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 				}
 			}
 		},
-		
+		computed: {
+		    key() {
+		        return this.$route.name !== undefined? this.$route.name +new Date(): this.$route +new Date();
+		    }
+		},
 	    mounted() {
 	        this.getBrandList();//获取品牌列表
 	    },
@@ -68,18 +72,37 @@ import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 			
 			/*点击列表跳转详情*/
 			jump(row){
-				var parm={storeBrandId:row.storeBrandId,compile:1};
-				if(this.pastDue(row)){
-					parm.noClick=false;
+				if((row.isVerified==0)||(isVerified==2)){//不是在品牌库添加的品牌
+					let para = {
+			          storeId:config.storeId
+			        };
+			        this.listLoading = true;
+
+			        /*brandList(para).then((res) => {
+			        	if(res.data.code==0){
+			        		this.myBrands = res.data.data;
+			        	}else{
+			        		this.$message({message: res.data.message, type: 'waring'});
+			        	}
+			          	this.listLoading = false;
+			        }).catch((res)=> {
+			          	this.listLoading = false;
+			          	this.$message({message: '接口建立连接失败', type: 'waring'});
+			        });*/
 				}else{
-					if(row.isUsed==0){
-						parm.noClick=true;
-					}else{
+					var parm={storeBrandId:row.storeBrandId,compile:1};
+					if(this.pastDue(row)){
 						parm.noClick=false;
+					}else{
+						if(row.isUsed==0){
+							parm.noClick=true;
+						}else{
+							parm.noClick=false;
+						}
 					}
+					
+					this.$router.push({ path: 'brand-management/compile-brand', query:parm });
 				}
-				
-				this.$router.push({ path: 'brand-management/compile-brand', query:parm });
 			},
 
 			/*取消按钮*/

@@ -47,7 +47,7 @@
 			<el-form-item :label="ident1" label-width="200px">
 				<upload-pictures :note="uploadTishi2" :url="ruleForm.identityPic1" :listen="'listenToPic2'" @listenToPic2="sucpic2"></upload-pictures>
 				<div class="example">
-					<div @click="iconSimple(1)"><img :src='identPic1'/></div>
+					<div @click="iconSimple(2)"><img :src='identPic2'/></div>
 					<span>参考示例</span>
 				</div>
 				
@@ -59,7 +59,7 @@
 				<upload-pictures :note="uploadTishi2" :url="ruleForm.identityPic2" :listen="'listenToPic3'" @listenToPic3="sucpic3"></upload-pictures>
 
 				<div class="example">
-					<div @click="iconSimple(2)"><img :src='identPic2' /></div>
+					<div @click="iconSimple(1)"><img :src='identPic1' /></div>
 					<span>参考示例</span>
 				</div>
 				
@@ -156,11 +156,11 @@
 	      <div class="">
 	        <el-row>
 		      <el-col :span="8">
-		        <category-menu title="一级行业" v-if="categoryData.length" :categoryData="categoryData" @categoryClick="firstHandle">
+		        <category-menu title="一级行业" v-if="categoryData.length" :categoryData="categoryData" @categoryClick="firstHandle" :arrKey="'secondIndustryList'">
 		        </category-menu>
 		      </el-col>
 		      <el-col :span="8">
-		        <category-menu title="二级行业" v-if="secoundCategoryData.length" :categoryData="secoundCategoryData" @categoryClick="secondHandle"></category-menu>
+		        <category-menu title="二级行业" v-if="secoundCategoryData.length" :categoryData="secoundCategoryData" @categoryClick="secondHandle" :arrKey="'catePath'"></category-menu>
 		      </el-col>
 		    </el-row>
 		    <div class="category-nav-breadcrumb">
@@ -190,7 +190,7 @@
 
 <script>
 import CategoryBar from '@/components/CategoryBar.vue'/*标题*/
-import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
+import CategoryMenu from '@/components/CategoryMenu2.vue'/*类目选择*/
 import UploadPictures from '@/components/UploadPictures.vue'/*上传图片组件*/
 import VDistpicker from 'v-distpicker';/*城市三级联动*/
 import MapView from '@/components/Map';/*地图组件*/
@@ -601,8 +601,7 @@ export default {
 	    getBack(){
 	    	this.dialogVisible1 = false;
 	    	//location.href=config.apiHost;
-	    	window.location.reload();//刷新页面
-	    	this.$router.push({ path: '/seller-management/goods' });
+	    	this.$router.push({ path: '/store/message'});
 	    }
 
 	}

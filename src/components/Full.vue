@@ -15,19 +15,9 @@
       </el-menu>
     <section class="content-container">
       <div class="grid-content bg-purple-light">
-        <div class="breadcrumb-container">
-          <!-- <strong class="title">{{$route.path}}</strong> -->
-          <el-breadcrumb separator="/" class="breadcrumb-router">
-            <template v-for="item in $route.matched" >
-              <el-breadcrumb-item :key="item.path" :to="{ path: item.path }">
-               {{ item.name }}
-              </el-breadcrumb-item>              
-            </template>
-          </el-breadcrumb>
-        </div>
         <div :span="24" class="content-wrapper">
           <transition name="fade" mode="out-in">
-            <router-view></router-view>
+            <router-view :key="key"></router-view>
           </transition>
         </div>
       </div>
@@ -49,6 +39,11 @@
     },
     created(){
 
+    },
+    computed: {
+        key() {
+            return this.$route.name !== undefined? this.$route.name +new Date(): this.$route +new Date();
+        }
     },
     methods: {
       //退出登录
@@ -95,7 +90,6 @@
   .breadcrumb-router {
     position: relative;
     padding-bottom: 20px;
-    border-bottom: 1px solid $color-primary;
     border-radius: 0
   }
   .app-container {
@@ -108,18 +102,17 @@
       width: 100%;
       display: flex;
       // background: #324057;
-      position: absolute;
-      top: 60px;
       bottom: 0px;
       overflow: hidden;
+      position:absolute;
+      top:60px;
       aside {
         flex:0 0 200px;
         width: 200px;
-        // position: absolute;
-        // top: 0px;
-        // bottom: 0px;
         .el-menu{
           height: 100%;
+       
+
         }
         .isCollapse{
           width:60px;
@@ -148,7 +141,6 @@
         // bottom: 0px;
         // left: 200px;
         overflow-y: scroll;
-        padding: 20px;
         .breadcrumb-container {
           //margin-bottom: 15px;
           .title {
@@ -163,6 +155,12 @@
         .content-wrapper {
           background-color: #fff;
           box-sizing: border-box;
+          padding-left:20px;
+          margin-top:10px;
+        }
+        .breadcrumb-router{
+          border:none;
+          padding-left:40px;
         }
       }
     }

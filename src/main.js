@@ -32,7 +32,7 @@ Vue.use(VueSummernote, {
 
 
 //NProgress.configure({ showSpinner: false });
-
+/*
 router.beforeEach((to, from, next) => {
   //NProgress.start();
   // if (to.path == '/login') {
@@ -45,6 +45,14 @@ router.beforeEach((to, from, next) => {
   //   next()
   // }
   next()
+})*/
+router.beforeEach((to, from, next) => {
+  /*console.log(to,from)
+  if(from.path == '/merchant-enter'){
+     window.location.reload();
+  }*/
+  next() // 确保一定要调用 next()
+
 })
 
 //router.afterEach(transition => {

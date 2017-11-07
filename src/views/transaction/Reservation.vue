@@ -52,7 +52,7 @@
             let params = {
                 pageNum: 1,
                 pageSize: 20,
-                storeId: 10
+                storeId: config.storeId
             }
             this.getData(params)
         },
@@ -81,7 +81,7 @@
             /*获取参数*/
             getParams(){
                 let self = this,params = {};
-                params.storeId = 10;
+                params.storeId = config.storeId;
                 params.orderNumber = self.form.orderNumber == '' ? null : self.form.orderNumber;
                 params.startDate = self.form.startTime == '' ? null : self.timeFormat(self.form.startTime);
                 params.endDate = self.form.endTime == '' ? null : self.timeFormat(self.form.endTime);

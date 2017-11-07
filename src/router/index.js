@@ -9,7 +9,7 @@ import PersonMessage from '@/views/message/PersonMessage.vue'
 
 //商品管理路由
 import goodsManagementRoutes from './goodsManagementRoutes.js'
-
+import ProductSku from '@/views/seller_management/ProductSku.vue'
 //店铺管理路由
 import shopsManagementRoutes from './shopsManagementRoutes.js'
 
@@ -37,7 +37,12 @@ const routers = new VueRouter({
     //     name: '',
     //     hidden: true
     // },
-
+    {
+        path: '/productsku',
+        component: ProductSku,
+        name: '',
+        hidden: true
+    },
     {
         path: '/',
         component: Full,
@@ -84,9 +89,7 @@ const routers = new VueRouter({
         path: '/merchant-enter',
         component: MerchantEnter,
         name: '',
-        hidden: true,
-        iconCls: 'iconfont icon-shangpinguanli',
-        children:shopsManagementRoutes 
+        hidden: true
     },
     {   path: '/marketing-center',
         component: Full,

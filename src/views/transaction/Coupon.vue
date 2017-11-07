@@ -65,7 +65,7 @@
         created(){
             let self = this,
                 params = {
-                    storeId: 1,
+                    storeId: config.storeId,
                     page: 1,
                     size: 20,
                     voucherStatus: -1
@@ -105,7 +105,7 @@
             /*获取参数*/
             getParams(){
                 let self = this,params = {};
-                params.storeId = 1;
+                params.storeId = config.storeId;
                 params.userMobile = self.form.userPhone;
                 params.userVoucherId = self.form.cashNumber;
                 params.voucherFromOrder = self.form.orderNumber;

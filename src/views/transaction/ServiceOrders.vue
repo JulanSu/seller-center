@@ -17,7 +17,7 @@
         <el-table :data="tableData" class='table-con' align='center' :row-style="{height:'100px'}">
             <el-table-column prop="serialNumber" label="订单号" align='center'></el-table-column>
             <el-table-column prop="orderTime" label="申请售后时间" align='center'></el-table-column>
-            <el-table-column prop="pNamee" label="商品名称" align='center'></el-table-column>
+            <el-table-column prop="productName" label="商品名称" align='center'></el-table-column>
             <el-table-column prop="infoName" label="买家昵称" align='center'></el-table-column>
             <el-table-column prop="infoTelephone" label="买家手机号" align='center'></el-table-column>
             <el-table-column prop="orderStoreStatus" label="售后进度" align='center'></el-table-column>
@@ -70,7 +70,7 @@
             }
         },
         created(){
-            this.getTableData({storeId:10,pageNum:1,pageSize:20})
+            this.getTableData({storeId:config.storeId,pageNum:1,pageSize:20})
         },
         methods: {
             /*订单类型变化*/
@@ -134,7 +134,7 @@
             /*获取参数*/
             getParams(){
                 let self = this,params = {};
-                params.storeId = 1;
+                params.storeId = config.storeId;
                 params.infoTelephone = self.form.userPhone == '' ? null : self.form.userPhone;
                 params.orderStoreType = self.form.typeCheck == '' ? null : self.form.typeCheck
                 params.orderStoreStatus = [];
@@ -167,7 +167,6 @@
                     console.log(moc)
                     for(let i=0; i<moc.data.list.length; i++) {
                         let that = moc.data.list[i];
-                        that.infoTelephone = that.infoTelephone.substr(0, 3) + '****' + that.infoTelephone.substr(7)
                         that.pName = that.productNames  //.join('')
                         that.orderStoreStatus = this.switchStatus(that.orderStoreStatus)
                     }
@@ -189,8 +188,9 @@
             },
             handleClick(row) {
                 let self = this,
-                    orderId = row.orderStoreId;
-                    self.$router.push(`/transaction/service-orders/service-detail?orderId=${orderId}` )
+                    orderId = row.orderStoreId,
+                    productId = row.orderProductId;
+                    self.$router.push(`/transaction/service-orders/service-detail?orderId=${orderId}&productId=${productId}` )
             },
             /*消息警告*/
             warn(str){

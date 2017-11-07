@@ -4,9 +4,9 @@
 			<h2>阶段一：填写品牌信息</h2>
 			<el-form-item label="注册地" label-width="200px" class="lefttit">
 			    <el-radio-group v-model="ruleForm.registerLocation" @change="resetForm('ruleForm')">
-			        <el-radio label="中国大陆地区"></el-radio>
-			        <el-radio label="中国港澳台地区"></el-radio>
-			        <el-radio label="国外地区"></el-radio>
+			        <el-radio label="中国大陆"></el-radio>
+			        <el-radio label="港澳台"></el-radio>
+			        <el-radio label="国外"></el-radio>
 			    </el-radio-group>
 			</el-form-item>
 			<category-bar :title="categoryBarTitle1"></category-bar>
@@ -78,15 +78,29 @@
 			      </el-form-item>
 			    </el-col>
 			</el-form-item>
+
+			<!-- <div v-if="isshow">	
+
+				<el-form-item label="品牌资质" label-width="200px">
+					<upload-pictures :note="uploadTishi1" :url="moren" :listen="'listenToPic1'" @listenToPic1="sucpic1" ref="uploadPic1"></upload-pictures>
+				</el-form-item>
+				<el-form-item label="" prop="authorizationUrl"  label-width="200px" class='updata'>
+					<el-input v-model="ruleForm.authorizationUrl" class="wid280"></el-input>
+				</el-form-item>
+			</div> -->
+
+
 			<el-form-item label="品牌资质" label-width="200px">
 				<upload-pictures :note="uploadTishi1" :url="moren" :listen="'listenToPic1'" @listenToPic1="sucpic1" ref="uploadPic1"></upload-pictures>
 			</el-form-item>
 			<el-form-item label="" prop="authorizationUrl"  label-width="200px" class='updata'>
 				<el-input v-model="ruleForm.authorizationUrl" class="wid280"></el-input>
 			</el-form-item>
+
 			<el-form-item v-if="!isshow" label="商标注册证/受理通知书" label-width="200px">
 				<upload-pictures :note="uploadTishi1" :url="moren" :listen="'listenToPic2'" @listenToPic2="sucpic2" ref="uploadPic2"></upload-pictures>
-			</el-form-item>	
+			</el-form-item>
+				
 			<el-form-item label="" prop="trademarkCertificate"  label-width="200px" class='updata'>
 				<el-input v-model="ruleForm.trademarkCertificate" class="wid280"></el-input>
 			</el-form-item>
@@ -171,7 +185,7 @@ export default {
       	moren:"",
 
         ruleForm: {
-			registerLocation:'中国大陆地区',
+			registerLocation:'中国大陆',
 		 	nameCn: '',
 			nameEn: '',
 			orign: '',
@@ -258,10 +272,17 @@ export default {
     },
     computed:{
     	isshow:function(){
-    		return this.ruleForm.registerLocation=="中国大陆地区"?false:true;
+    		return this.ruleForm.registerLocation=="中国大陆"?false:true;
     	}//测试品牌2 更新
     },
     methods: {
+    	/*时间转换为毫秒数*/
+    	transitionTime(t){
+    		if(t instanceof Date){
+    			t=t.getTime();
+    		}
+    		return t;
+    	},
     	/*查找品牌名车是否已存在品牌库*/
     	findName(val){console.log(val)
     		var names=this.ruleForm.nameCn;
@@ -307,7 +328,7 @@ export default {
 			        para.append('ways',this.ruleForm.ways);
 			        para.append('cityNames',this.ruleForm.cityNames);
 			        para.append('startValidTime','');
-			        para.append('endValidTime',this.ruleForm.endValidTime);
+			        para.append('endValidTime',this.transitionTime(this.ruleForm.endValidTime));
 			        para.append('contactMobile',this.ruleForm.contactMobile);
 			        para.append('registerLocation',this.ruleForm.registerLocation);
 			        para.append('trademarkNumber',this.ruleForm.trademarkNumber);
@@ -348,11 +369,16 @@ export default {
 	    },
         /*切换注册地，清空表单选项*/
         resetForm(formName) {
+        	console.log(this.ruleForm)
+        	if(this.ruleForm.registerLocation=="中国大陆"){
+        		/*this.$refs.uploadPic2.ser();//修改图片的值
+        		this.$refs.uploadPic1.ser();//修改图片的值*/
+        	}else{
+        		/*this.$refs.uploadPic3.ser();//修改图片的值
+        		this.$refs.uploadPic1.ser();//修改图片的值*/
+        	}
         	this.moren='';
-        	this.$refs[formName].resetFields();
-        	this.$refs.uploadPic1.revise(this.moren);//修改图片的值
-        	this.$refs.uploadPic2.revise(this.moren);//修改图片的值
-        	this.$refs.uploadPic3.revise(this.moren);//修改图片的值
+        	//this.$refs[formName].resetFields();
         },
 	    /*返回商户中心按钮*/
 	    getBack(){

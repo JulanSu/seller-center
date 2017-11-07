@@ -6,7 +6,7 @@
                     <i>•</i> <span>【{{switchType(item.majorType)}}】{{item.title}}</span>
                 </div>
                 <div class="message-time">
-                    {{switchTime(item.endTime)}}
+                    {{switchTime(item.createdAt)}}
                     <i class="el-icon-caret-bottom" v-if="!item.bottom"></i>
                     <i class="el-icon-caret-top" v-else></i>
                 </div>
@@ -74,8 +74,8 @@
                     case 3041: return '/marketing-center/management'; break; 
                     case 3042: return '/marketing-center/management'; break; 
                     /*订单消息*/
-                    case 3021: return '/transaction/orders/order-detail'; break; 
-                    case 3022: return '/transaction/orders/order-detail'; break; 
+                    case 2011: return '/transaction/orders/order-detail'; break; 
+                    case 2012: return '/transaction/orders/order-detail'; break; 
                     /*店铺消息*/
                     case 6012: return '/store/brand-management'; break;
                     case 6022: return '/store/shop-management'; break;

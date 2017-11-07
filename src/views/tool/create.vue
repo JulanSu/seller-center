@@ -108,7 +108,7 @@
                             <span>添加商品</span>
                         </div>
                         <div class="img-con" v-for="item in forProduct.product" @mouseenter="item.deleteBtn=true" @mouseleave="item.deleteBtn=false" :key="item.productId">
-                            <img :src="item.productPicsUrl" alt="">
+                            <img :src="item.productCoverUrl" alt="">
                             <i class="el-icon-circle-cross" v-if='item.deleteBtn' @click='deleteProduct(item)'></i>
                             <p>{{item.productTitle}}</p>
                         </div>
@@ -152,7 +152,7 @@
             <div class="pro-container">
                 <div class="pro-item" v-for="item in allProduct" @click='checkProduct(item)' >
                     <div class="img-con">
-                        <img :src="item.productPicsUrl" alt="">
+                        <img :src="item.productCoverUrl" alt="">
                         <div class="mask" v-if="item.checked"></div>
                         <i class="el-icon-circle-check" v-if="item.checked"></i>
                     </div>
@@ -248,7 +248,11 @@
         created(){
             this.typeFrom()
             productList({'storeId':config.storeId}).then(res => {
-                this.allProduct = res.data.data
+                this.allProduct = res.data.data;
+                for(let i=0; i<this.allProduct.length; i++){
+                    let that = this.allProduct[i];
+                    this.$set(that,'checked',false);
+                }
             })
         },
         watch:{
@@ -276,7 +280,6 @@
                     type == 'store' ? self.fromStore() : self.fromPlatform();
                 }
             },
-
             /*来自店铺活动页*/
             fromStore(){
                 let self = this;
@@ -423,7 +426,9 @@
             /*选取商品*/
             checkProduct(item){
                 let self = this;
+                console.log(item.checked)
                 item.checked = !item.checked;
+                console.log(55)
             },
             sureCheck(){
                 let self = this;
@@ -929,7 +934,6 @@
             }
             .el-dialog__headerbtn{
                 font-size: 14px;
-                padding-top: 17px;
                 i{
                     color: #fff;
                 }
@@ -945,8 +949,8 @@
                 overflow-x: hidden;
                 .pro-item{
                     width: 100px;
-                    float: left;
-                    display: flex;
+                    display: inline-block;
+                    vertical-align: top;
                     flex-direction: column;
                     align-items: center;
                     overflow: hidden;

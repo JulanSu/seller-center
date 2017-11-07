@@ -18,9 +18,10 @@ const routers = [{
         name: '创建商品',
         showChildrenName: true,
         children:[
-            { path: 'cate', component: CreateGoods, name: '类目选择' },
-            { path: 'form', component: GoodsForm, name: '新建商品' },
-            { path: 'editor', component: GoodsForm, name: '编辑商品' }
+
+            { path: '/seller-management/goods/create', component: CreateGoods, name: '选择类目' },
+            { path: '/seller-management/goods/form', component: GoodsForm, name: '新建商品' },
+            { path: '/seller-management/goods/editor', component: GoodsForm, name: '编辑商品' }
         ]
     },
     { 
@@ -28,8 +29,8 @@ const routers = [{
         component: Logistics, 
         name: '物流模板' ,
         children:[
-            { path: 'create', component: Logistics, name: '新建物流模板' },
-            { path: 'editor', component: Logistics, name: '编辑物流模板' }
+            { path: '/seller-management/logistics/create', component: Logistics, name: '新建物流模板' },
+            { path: '/seller-management/logistics/editor', component: Logistics, name: '编辑物流模板' }
         ]
     },
     { path: '/seller-management/underreview', component: UnderReview, name: '审核中列表' },

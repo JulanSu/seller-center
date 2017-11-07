@@ -7,7 +7,7 @@
         </el-form-item>
 
         <el-form-item label="选择品牌" prop="brandId" v-if="storeType == 1">
-          <brand-select v-model="goodsForm.brandId" :brandDTOList="initForm.brandDTOList"></brand-select>
+          <brand-select v-if="initForm.brandDTOList.length" v-model="goodsForm.brandId" :brandDTOList="initForm.brandDTOList"></brand-select>
         </el-form-item>
 
         <el-form-item label="商品标题" prop="productTitle">
@@ -129,11 +129,11 @@
           <city-site-list :citySiteList="initForm.citySiteList" v-model="goodsForm.serviceArea" @change="upSysAreaHandle"></city-site-list>
         </el-form-item>
 
-        <el-form-item label="店铺中分类" prop="storeCateList" v-if="goodsForm.storeCateList.length">
+        <el-form-item label="店铺中分类" prop="storeCateList" v-if="initForm.storeCateList && initForm.storeCateList.length">
           <store-cate v-model="goodsForm.storeCateProduct" :storeCateList="initForm.storeCateList"></store-cate>
         </el-form-item>
         
-        <div class="logistics-info wuliu" prop="shippingTemplateId" v-if="goodsForm.productType == 2">
+        <div class="logistics-info wuliu" prop="shippingTemplateId" v-if="goodsForm.productType == 2 || goodsForm.productType == 3">
           <category-bar title="宝贝物流服务"></category-bar>
           <el-form-item label="提取方式">
             <el-checkbox checked="checked" disabled>电子交易凭证</el-checkbox>
@@ -172,6 +172,7 @@
   </div>
 </template>
 <script>
+
   import CategoryBar from '@/components/CategoryBar.vue'
   import UpdateImg from './goods_form/UpdateImg.vue'
   import CateProperty from './goods_form/CateProperty.vue'
@@ -190,6 +191,7 @@
   const win = window;
   const storeId = win.config && win.config.storeId ? win.config.storeId : ''
   const storeType = win.config && win.config.storeType ? win.config.storeType : ''
+
   export default {
     components: {
       GoodsSummernote,
@@ -210,6 +212,7 @@
         var len = getStrLength(value)
         fn(len)
       }
+
       return {
         storeType: storeType,
         editorProductStatus: '',
@@ -328,10 +331,8 @@
         }
       }
     },
-    watch: {
-    
-    },
     created(){
+
       this.initFormData()
     },
 
@@ -344,14 +345,15 @@
        * @param  { Object } route 路由查询信息
        * @return {[type]}       [description]
        */
-      initFormData($route) {
+      initFormData() {
         let self = this
         let route = this.$route
         let goodsForm = this.goodsForm
         let initForm = this.initForm
 
+
         //判断是否编辑页面，是否存在店铺ID，是否存在商品ID
-        if(route.name === '编辑商品' && storeId && route.query.productId && route.query.productStatus == 0 || route.query.productStatus == -1){
+        if(route.name == '编辑商品' && storeId && route.query.productId &&route.query.productStatus || route.query.productStatus == 0 || route.query.productStatus == -1){
 
           self.getEditorFormdata(storeId, route.query.productId, route.query.productStatus)
           goodsForm.productId = route.query.productId
@@ -361,6 +363,7 @@
 
         //判断是否存在类目ID
         if(route.name === '新建商品' && storeId && route.query.productCateId && route.query.productCateName) {
+
           self.getGoodsFormDataHandle(storeId, route.query.productCateId)
           goodsForm.productCateId = route.query.productCateId
           initForm.productCateName = route.query.productCateName
@@ -432,8 +435,16 @@
               initForm.citySiteList = data.citySiteList
             }
             
-            if(data.brandDTOList && data.brandDTOList.length) {
-              initForm.brandDTOList = data.brandDTOList
+            if(data.brandDTOList) {
+              if(data.brandDTOList.length){
+                initForm.brandDTOList = data.brandDTOList
+              }else {
+                initForm.brandDTOList = [{
+                  storeId: '0',
+                  nameCn: '无'
+                }]
+              }
+
             }
 
             if(data.productCateProperty && data.productCateProperty.length) {
@@ -451,19 +462,7 @@
             // if(data.brandDTOList && data.brandDTOList.length) {
             //   initForm.brandDTOList = data.brandDTOList
             // }
-            if(storeType) {
-              if(!data.brandDTOList.length) {
-                initForm.brandDTOList = {
-                  storeId: '0',
-                  nameCn: '无'
-                }
-                goodsForm.brandId = 0
-              }
-            }else {
-                initForm.brandDTOList = {
-                  storeId: '0',
-                  nameCn: '无'
-                }
+            if(storeType != 1) {
               goodsForm.brandId = 0
             }
             initForm.storeShippingTemplate = data.storeShippingTemplate
@@ -504,7 +503,6 @@
          }else if(statusVal == 0) {
             self.draftboxLoading = true
          }
-
         // saveGoodsFormData(self.goodsForm).then((res)=> {
         //   var data = res.data.data
         //    if(res.data.code == 0) {

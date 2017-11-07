@@ -83,6 +83,9 @@ export default {
 
     revise(src){
       this.imageUrl=src;
+    },
+    ser(){
+      this.url='';
     }
 
     

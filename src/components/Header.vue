@@ -1,28 +1,30 @@
 <template>
   <div class="app-header app-navbar">
-      <div class="logo logo-width">
-        {{sysName}}
-      </div>
-<!--       <div :span="2">
-        <div class="tools" @click.prevent="collapse">
-          <i class="fa fa-align-justify"></i>
+      <div class="logo logo-width">{{sysName}}</div>
+      <div class="breadcrumb-container">
+          <!-- <strong class="title">{{$route.path}}</strong> -->
+          <el-breadcrumb separator="/" class="breadcrumb-router">
+            <el-breadcrumb-item v-for="item in $route.matched" :key="item.path" :to="{ path: item.path }">
+             {{ item.name }}
+            </el-breadcrumb-item>
+          </el-breadcrumb>
         </div>
-      </div> -->
       <div class="userinfo">
+
         <div class="user-item">欢迎你，{{ueseName}}</div>
-        <div class="user-item">
-          <el-dropdown trigger="hover"  @command="handleCommand">
-            <span class="el-dropdown-link userinfo-inner">商户中心<i class="el-icon-caret-bottom el-icon--right"></i></span>
+        <div class="user-item" style="padding:0 30px 0 10px;">
+          <el-dropdown trigger="click"  @command="handleCommand" @visible-change="triangle">
+            <span class="el-dropdown-link userinfo-inner">商户中心<i class="iconfont icon-xiala2" :class="{ 'el-xuanzhuan1': elXuanzhuan1 , 'el-xuanzhuan2': elXuanzhuan2}"></i></span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item  command="a">设置</el-dropdown-item>
-              <el-dropdown-item divided command="exit">退出登录</el-dropdown-item>
+              <el-dropdown-item command="exit">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>          
         </div>
         <i class="pipe"></i>
-        <div class="user-item"><router-link to="/person/message">消息<i>{{total}}</i></router-link></div>
+        <div class="user-item" style="width:90px;text-align:center;"><router-link to="/person/message">消息<i>{{total}}</i></router-link></div>
         <i class="pipe"></i>
-        <div class="user-item"><i class="el-icon-caret-bottom el-icon--right"></i>商户中心手机版</div>
+        <div class="user-item" style="cursor:pointer;"><i class="iconfont icon-shouji"></i>商户中心手机版</div>
       </div>
   </div>
 </template>
@@ -33,7 +35,9 @@ export default {
   data(){
     return {
       total: null,
-      ueseName:''
+      ueseName:'',
+      elXuanzhuan1:false,
+      elXuanzhuan2:false
     }
   },
   created(){
@@ -78,18 +82,37 @@ export default {
         });
       }
        
+    },
+    //下拉框出现/隐藏时触发
+    triangle(isShow){
+      if(isShow){
+        this.elXuanzhuan1=true;
+      }else{
+         this.elXuanzhuan2=true;
+      }
     }
   }
 }
 </script>
 <style lang="scss">
   @import '~scss_vars';
+  ul{
+    margin:0;
+    padding:0;
+  }
   .app-navbar {
       position: relative;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
+  }
+  .breadcrumb-container{
+    float:left;
+    height:60px;
+    padding-bottom:0px;
+    padding-left:40px;
+    .breadcrumb-router{
+      padding:0;
+      height:60px;
+      line-height:60px;
+    }
   }
     .app-header {
       box-shadow:0 2px 5px 0 rgba(204,204,204,0.50);
@@ -100,7 +123,7 @@ export default {
       flex-direction: row;
       .userinfo {
         text-align: right;
-        padding-right: 35px;
+        padding-right: 50px;
         float: right;
         color: #666;
         .pipe {
@@ -121,8 +144,15 @@ export default {
               color: #f00;
               margin-left: 3px;
             }
+
           }
           
+        }
+        i.icon-shouji{
+          color:#41cac0;
+          font-size:20px;
+          vertical-align: middle;
+          padding:0 8px 0 30px;
         }
         .userinfo-inner {
           cursor: pointer;
@@ -157,6 +187,7 @@ export default {
       }
       .logo-width{
         width:200px;
+        float:left;
       }
       .logo-collapse-width{
         width:60px
@@ -184,6 +215,37 @@ export default {
         border-left: 1px solid #eee;
       }
     }
+
+    
   }
+  .el-dropdown-menu{
+    background:#ffffff;
+    border:1px solid #dddddd;
+    box-shadow:0 1px 13px 0 rgba(204,204,204,0.47);
+    min-width:100px;
+    padding:0;
+    .el-dropdown-menu__item:not(.is-disabled):hover {
+      background-color: #41cac0 !important;
+      color: #fff !important;
+    }
+    li{
+      padding:0 26px;
+    }  
+  }
+  .el-xuanzhuan1{
+    transform:rotate(180deg);
+    -ms-transform:rotate(180deg);   /* IE 9 */
+    -moz-transform:rotate(180deg);  /* Firefox */
+    -webkit-transform:rotate(180deg); /* Safari 和 Chrome */
+    -o-transform:rotate(180deg);  /* Opera */
+  }
+  .el-xuanzhuan2{
+    transform:rotate(180deg);
+    -ms-transform:rotate(180deg);   /* IE 9 */
+    -moz-transform:rotate(180deg);  /* Firefox */
+    -webkit-transform:rotate(180deg); /* Safari 和 Chrome */
+    -o-transform:rotate(180deg);  /* Opera */
+  }
+  
 
 </style>

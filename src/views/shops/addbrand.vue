@@ -1,6 +1,19 @@
 <template>
 	<section class="add-account" v-loading="listLoading">
-		
+		<ul>
+			<template>
+				<li  v-for="(brandTit,key,index) in brandTits" @click="switchover(index,key,brandTit)" :brand-id="key" :class="{on:index==nowIndex}">
+					<h6>{{brandTit}}</h6>
+					<div>
+						<p v-if="index==i"  v-for="(item,k,i) in tishi">
+							<span v-if="item==false">(待填写)</span>
+							<span v-else style="color:#41cac0">(已填写完整)</span>
+						</p>
+					</div>
+					
+				</li>
+			</template>
+		</ul>
 		<el-form :model="ruleForm" :rules="rules" ref="ruleForm">
 			<el-form-item label="品牌名称" label-width="100px" prop="nameCn">
 				<div>{{ruleForm.nameCn}}</div>
@@ -33,20 +46,7 @@
 			</el-form-item>
 			
 		</el-form>
-		<ul>
-			<template>
-				<li  v-for="(brandTit,key,index) in brandTits" @click="switchover(index,key,brandTit)" :brand-id="key" :class="{on:index==nowIndex}">
-					<h6>{{brandTit}}</h6>
-					<div>
-						<p v-if="index==i"  v-for="(item,k,i) in tishi">
-							<span v-if="item==false">(待填写)</span>
-							<span v-else style="color:#41cac0">(已填写完整)</span>
-						</p>
-					</div>
-					
-				</li>
-			</template>
-		</ul>
+		
 	</section>
 	
 </template>
@@ -220,15 +220,14 @@ export default {
         	}else{
         		this.$set(this.database[keyId],"submit",false);
         		this.$set(this.tishi,"key"+this.prevKey,false);
-
         	}
     	},
 
     	/*切换品牌*/
     	switchover(index,key,brandTit){
-
     		this.$refs.ruleForm.clearValidate;//移除表单的校验结果
     		this.$set(this.database,"key"+this.prevKey,this.ruleForm);//切换品牌前保存当前品牌填写的信息
+    		console.log(this.ruleForm)
     		this.nowIndex=index; 
 			this.prevKey=key;
 
@@ -363,6 +362,7 @@ export default {
 .add-account{
 	padding-top:20px;
 	padding-bottom:30px;
+	overflow: hidden;
 	/* 公共样式 */
 	.wid400{
     	width:400px;
@@ -380,12 +380,12 @@ export default {
 		border-color:#ddd !important;
 	}
 	ul{
+		float:left;
 		list-style: none;
 		width:195px;
-		margin-top:-620px;
 		border-top:1px solid #ddd;
 		border-right:1px solid #ddd;
-		min-height:650px;
+		min-height:680px;
 		background:#F5F7FA;
 		li{
 			text-align:center;
@@ -432,7 +432,7 @@ export default {
 		
 	}
 	form.el-form{
-		margin-left:195px;
+		float:left;
 		height:620px;
 		min-width:600px;
 		padding-top:30px;

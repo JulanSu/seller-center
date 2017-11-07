@@ -24,7 +24,7 @@
       </el-table-column>
       <el-table-column prop="productTitle" label="商品名称" min-width="120" align="center">
       </el-table-column>
-      <el-table-column width="190" align="center"
+      <el-table-column min-width="190" align="center"
             prop="productCoverUrl"
             label="图片">
             <template slot-scope="scope">
@@ -94,7 +94,7 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
             {fenleiName:"全部",id:""},
             {fenleiName:"无",id:0}
           ],
-          storeCateId:'',
+          storeCateId:this.$route.query.storeCateId,
           goodId:'',
           productTitle:'',
           searchStartTime:'',
@@ -247,7 +247,7 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
 
 .all-good{
 
-  padding:40px 0 0 40px;
+  padding:40px 40px 0 20px;
   a{
     text-decoration:none;
   }
