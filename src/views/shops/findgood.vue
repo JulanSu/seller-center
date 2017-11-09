@@ -1,14 +1,12 @@
 <template>
-  <section  class="find-good">
+  <section  class="find-good" v-loading="listLoading" v-if='$route.name=="查看商品"'>
     <!--工具条-->
     <el-col :span="24" class="tool-bar" style="padding-bottom: 0px;">
-      <router-link to="/store/classify-management/all-good">
-         <el-button type="primary">关联其他商品</el-button>
-      </router-link>
+      <el-button type="primary" @click="relevance">关联其他商品</el-button>
     </el-col>
 
     <!--列表-->
-    <el-table :data="datas" v-loading="listLoading" style="width: 100%;">
+    <el-table :data="datas" style="width: 100%;">
       <el-table-column prop="productId" label="ID" min-width="200" align="center">
       </el-table-column>
       <el-table-column prop="productTitle" label="商品名称" min-width="200" align="center">
@@ -26,13 +24,16 @@
     <el-col :span="24" class="tool-bar" style="margin-top:20px;">
       <el-pagination
       @current-change="handleCurrentChange"
+      @size-change="handleSizeChange"
+      :page-sizes="[20, 50, 100]"
       :current-page="pageNum"
-      :page-size="20"
-      layout="prev, pager, next, jumper,total"
+      :page-size="pageSize"
+      layout="sizes,prev, pager, next, jumper,total"
       :total="total" style="float:right;">
     </el-pagination>
     </el-col>
   </section>
+  <router-view  v-else></router-view>
 </template>
 
 <script>
@@ -41,7 +42,7 @@ import { productList,productRemove} from '@/api/shopApi';
   export default {
     data() {
       return {
-        pageSize:10,
+        pageSize:20,
         pageNum:1,
         datas: [],
         listLoading: false,
@@ -49,6 +50,11 @@ import { productList,productRemove} from '@/api/shopApi';
       }
     },
     methods: {
+      //关联其他商品按钮
+      relevance(){
+        //var parm={storeCateId:this.$route.query.id};
+        this.$router.push({ path: '/store/classify-management/find-good/all-good'});
+      },
       //转换状态
       formatUsed(row){
         var state='';
@@ -63,11 +69,15 @@ import { productList,productRemove} from '@/api/shopApi';
         }
         return state;
       },
+      //当选择每页多少条时触发
+      handleSizeChange(val){
+        this.pageSize = val;
+        this.getProductList();
+      },
       //获取用户列表
       getProductList() {
         let para = {
-          //storeCateId:this.$route.params.id,
-          storeCateId:1,
+          storeCateId:this.$route.query.id,
           pageNum: this.pageNum,
           pageSize: this.pageSize
         };
@@ -114,7 +124,7 @@ import { productList,productRemove} from '@/api/shopApi';
 
 <style lang="scss">
 .find-good{
-  padding:40px 0 0 40px;
+  padding:40px 40px 0 20px;
   a{
     text-decoration:none;
   }

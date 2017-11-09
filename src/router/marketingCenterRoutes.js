@@ -15,7 +15,8 @@ const routers = [
     },
     { path: '/marketing-center/management', component: Management, name: '活动管理' ,
         children: [
-            { path: '/marketing-center/management/attend', component: Attend, name:'活动详情'},
+            { path: '/marketing-center/management/detail', component: Create, name:'活动明细'},
+            { path: '/marketing-center/management/attend', component: Attend, name:'活动详情'}
         ]
     }
 ]

@@ -1,37 +1,44 @@
 // import babelpolyfill from 'babel-polyfill'
 import Vue from 'vue'
 import App from './App'
+import VueSummernote from '@/components/editer'
 import ElementUI from 'element-ui'
-import VueSummernote from '@/components/editer/'
 import LoadingMask from '@/components/loading/'
 import VueResource from 'vue-resource'
 // import VueRouter from 'vue-router'
 import store from '@/vuex/store'
 import Vuex from 'vuex'
 import router from '@/router/'
-import 'bootstrap'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import 'summernote/dist/summernote.css'
-import 'font-awesome/css/font-awesome.min.css'
 import '../theme/index.css'
-import './styles/main.css'
 import './assets/iconfont/iconfont.css'
+import './styles/main.css'
+import './permission.js'  //权限
 //import NProgress from 'nprogress'
 //import 'nprogress/nprogress.css'
+// 载入bootstrap.js
+require('bootstrap')
+require('bootstrap/dist/css/bootstrap.min.css')
+require('summernote/dist/summernote.css')
 
 Vue.use(VueResource);
 Vue.use(ElementUI)
 // Vue.use(VueRouter)
 Vue.use(Vuex)
 Vue.use(LoadingMask)
+
 Vue.use(VueSummernote, {
-  dialogsFade: true,
-  height: 350
+  height: 300,
+  codemirror: {
+    mode: 'text/html',
+    htmlMode: true,
+    lineNumbers: true,
+    theme: 'monokai'
+  }
 })
 
 
 //NProgress.configure({ showSpinner: false });
-
+/*
 router.beforeEach((to, from, next) => {
   //NProgress.start();
   // if (to.path == '/login') {
@@ -44,6 +51,14 @@ router.beforeEach((to, from, next) => {
   //   next()
   // }
   next()
+})*/
+router.beforeEach((to, from, next) => {
+  if(localStorage.getItem('merchant')==1){//控制入驻成功后刷新页面
+    localStorage.setItem("merchant",0);
+    next({ path: '/store/message'}); // 确保一定要调用 next()
+  }
+
+  next() // 确保一定要调用 next()
 })
 
 //router.afterEach(transition => {

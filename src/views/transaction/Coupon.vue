@@ -1,98 +1,91 @@
 <template>
     <section class="coupon-con">
          <el-row class='search-row'>
-            <span>订单编号</span>
-            <el-input v-model="form.orderNumber" class='w180'></el-input>
-            <span>买家手机</span>
-            <el-input v-model="form.userPhone" class='w180' @blur='phoneIsRight'></el-input>
-            <span>核销进度</span>
-            <el-select v-model="form.planCheck" placeholder="活动状态" class='w180'>
+            <el-input v-model="form.orderNumber" class='w180' placeholder='订单编号'></el-input>
+            <el-input v-model="form.userPhone" class='w180 ml10' @blur='numberIsRight(1)' placeholder='买家手机号'></el-input>
+            <el-select v-model="form.planCheck" placeholder="核销进度" class='w180 ml10'>
                 <el-option v-for="item in form.orderPlan" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
-            <span>点券编号</span>
-            <el-input v-model="form.cashNumber" class='w180'></el-input>
-            <span>生成日期</span>
-            <el-date-picker type="date" v-model="form.startTime" class='w120' @change='chooseTime'></el-date-picker>
-            <span>—</span>
-            <el-date-picker type="date" v-model="form.endTime" class='w120' @change='chooseTime'></el-date-picker>
-            <el-button type="primary" class='search-btn'>查询</el-button>
+            <el-input v-model="form.cashNumber" class='w180 ml10' placeholder='点券编号' @blur='numberIsRight(2)'></el-input>
+            <el-date-picker type="date" v-model="form.startTime" class='w120 ml10' @change='chooseTime' placeholder='生成日期'></el-date-picker>
+            <span class="span-sty">—</span>
+            <el-date-picker type="date" v-model="form.endTime" class='w120' @change='chooseTime' placeholder='生成日期'></el-date-picker>
+            <el-button type="primary" class='search-btn' @click="searchParams">查询</el-button>
         </el-row>
         <el-table :data="tableData" class='table-con' align='center' :row-style="{height:'100px'}">
-            <el-table-column prop="id" label="订单编号" align='center'></el-table-column>
-            <el-table-column prop="time" label="点券编号" align='center'></el-table-column>
-            <el-table-column prop="storeName" label="生成时间" align='center'></el-table-column>
-            <el-table-column prop="proName" label="商品名称" align='center'></el-table-column>
-            <el-table-column prop="uesrName" label="用户手机号" align='center'></el-table-column>
-            <el-table-column prop="uesrPhone" label="已核销" align='center' >
+            <el-table-column prop="voucherFromOrder" label="订单编号" align='center'></el-table-column>
+            <el-table-column prop="userVoucherId" label="点券编号" align='center'></el-table-column>
+            <el-table-column prop="createdAt" label="生成时间" align='center'></el-table-column>
+            <el-table-column prop="voucherProductTitle" label="商品名称" align='center'></el-table-column>
+            <el-table-column prop="mobile" label="用户手机号" align='center'></el-table-column>
+            <el-table-column prop="useVoucherTimes" label="已核销" align='center' >
                 <template slot-scope="scope">
                     <el-popover trigger="hover" placement="bottom" popper-class='pop-time'>
-                        <p v-for="item in scope.row.xiao"><i class="el-icon-time"></i>{{ item }}</p>
+                        <p v-for="item in scope.row.voucherRecordList"><i class="el-icon-time"></i>{{ item }}</p>
                         <div slot="reference">
                             <el-tag>{{ scope.row.uesrPhone }}</el-tag>
                         </div>
                     </el-popover>
               </template>
             </el-table-column>
-            <el-table-column prop="status" label="总次数" align='center'></el-table-column>
+            <el-table-column prop="voucherTimes" label="总次数" align='center'></el-table-column>
         </el-table>
         <div class="block">
-            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="1" :page-sizes="[10, 20, 30, 40]" :page-size="100" layout="sizes, prev, pager, next, jumper,total" :total="100">
+            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[20, 50, 100]" :page-size="pageSize" layout="sizes, prev, pager, next, jumper,total" :total="total">
                 </el-pagination>
         </div>
     </section>
 </template>
 
 <script>
+    import { cashList } from '@/api/ordersApi';
     export default {
         data() {
             return {
-                tableData: [
-                {
-                    id: 'DD10171001SY00001',
-                    time: 'DQ10170930MY00001',
-                    storeName: '2017-09-11 12:22',
-                    proName: '周大福《乘风破浪》阿正同款18k金戒指3种商品',
-                    uesrName: '18668096609',
-                    uesrPhone: '5',
-                    status: '10',
-                    xiao: ['2017-10:-20 10:20' ,'2016-10:-20 10:20','2017-18:-20 10:20']
-                },
-                {
-                    id: 'DD10171001SY00001',
-                    time: 'DQ10170930MY00001',
-                    storeName: '2017-09-11 12:22',
-                    proName: '周大福《乘风破浪》阿正同款18k金戒指3种商品',
-                    uesrName: '18668096609',
-                    uesrPhone: '5',
-                    status: '10',
-                    xiao: ['3025-10:-20 10:20' ,'2016-10:-20 10:20']
-                }],
+                tableData: [],
+                currentPage: 1,
+                pageSize: 20,
+                total: null,
                 form: {
-                    orderNumber: '',
-                    userPhone: '',
-                    planCheck: 'quanBu',
+                    orderNumber: null,
+                    userPhone: null,
+                    planCheck: null,
                     orderPlan: [
-                            {label: '全部', value: 'quanBu'},
-                            {label: '未核销', value: 'weiHeXiao'},
-                            {label: '核销中', value: 'heXiaoZhogn'},
-                            {label: '核销完成', value: 'heXiaoWanCheng'}
+                            {label: '全部', value: -1},
+                            {label: '未核销', value: 0},
+                            {label: '核销中', value: 1},
+                            {label: '核销完成', value: 2}
                     ],
-                    cashNumber: '',
-                    startTime: '',
-                    endTime: ''
+                    cashNumber: null,
+                    startTime: null,
+                    endTime: null
                 }
             }
         },
         created(){
+            let self = this,
+                params = {
+                    storeId: config.storeId,
+                    page: 1,
+                    size: 20,
+                    voucherStatus: -1
+                };
+            self.getTableData(params)
         },
         methods: {
-             /*手机号校验*/
-            phoneIsRight(){
+            /*手机号和数字校验*/
+            numberIsRight(a){
                 let self = this;
                 let flag = /^1[0-9]{10}$/.test(self.form.userPhone);
-                if(!flag){
+                if(!flag && self.form.userPhone && a == 1){
                     self.form.userPhone = '';
                     self.warn('请输入正确的手机号')
+                    return false;
+                }
+                if(a != 1 && self.form.orderNumber){
+                    self.form.orderNumber = '';
+                    self.warn('请输入正确的订单号')
+                    return false;
                 }
             },
             /*日期选择限制*/
@@ -105,11 +98,43 @@
                     self.warn('不可小于查询起始时间')
                 }
             },
+            searchParams(){
+                let self = this;
+                self.getTableData(self.getParams())
+            },
+            /*获取参数*/
+            getParams(){
+                let self = this,params = {};
+                params.storeId = config.storeId;
+                params.userMobile = self.form.userPhone;
+                params.userVoucherId = self.form.cashNumber;
+                params.voucherFromOrder = self.form.orderNumber;
+                params.voucherStatus = self.form.planCheck ? self.form.planCheck : -1;
+                params.createBeginTime = self.form.startTime;
+                params.createEndTime = self.form.endTime;          
+                params.pageNum = self.currentPage;
+                params.pageSize = self.pageSize;
+                return params;
+            },
+            /*获取页面数据*/
+            getTableData(obj){
+                let self = this;
+                cashList(obj).then(res => {
+                    if(res.data.data.list){
+                        self.tableData = res.data.data.list;
+                        self.total = Number(res.data.data.total)
+                    }
+                })
+            },
             handleSizeChange(val) {
-                console.log(`每页 ${val} 条`);
+                let self = this;
+                self.pageSize = val
+                self.getTableData(self.getParams())
             },
             handleCurrentChange(val) {
-                console.log(`当前页: ${val}`);
+                let self = this;
+                self.currentPage = val
+                self.getTableData(self.getParams())
             },
             /*消息警告*/
             warn(str){
@@ -143,18 +168,14 @@
         .w120{
             width:120px;
         }
+        .ml10{
+            margin-left: 10px;
+        }
         .search-row{
-            span{
+            .span-sty{
                 font-size:14px;
                 color:#666666;
-                margin-right: 10px;
-            }
-            span:nth-of-type(n+2){
-                margin-left: 20px;
-            }
-            span:nth-of-type(6){
-                margin-left: 10px;
-                color: #999;
+                margin:0 10px;
             }
             .search-btn{
                 margin-left: 40px;

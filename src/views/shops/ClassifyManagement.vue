@@ -3,7 +3,7 @@
     <!--工具条-->
     <el-col :span="24" class="tool-bar" style="padding-bottom: 0px;">
       <router-link to="/store/classify-management/add-fen-lei">
-        <el-button type="primary" icon="plus">新建分类</el-button>
+        <el-button type="primary" icon="plus">新增分类</el-button>
       </router-link>
     </el-col>
     <!--列表-->
@@ -19,7 +19,7 @@
           <router-link :to="{ name: '编辑分类', params: { id: scope.row.storeCateId }}">编辑</router-link>
           <span @click="handleOptation(scope.row)">{{scope.row.isUsed==1?"隐藏":"显示"}}</span>
           <span @click="handleDel(scope.row)">删除</span>
-          <router-link :to="{ name: '查看商品', params: { id: scope.row.storeCateId }}">查看商品</router-link>
+          <span @click="handleSee(scope.row)">查看商品</span>
         </template>
       </el-table-column>
     </el-table>
@@ -28,9 +28,11 @@
     <el-col :span="24" class="tool-bar" style="margin-top:20px;">
       <el-pagination
       @current-change="handleCurrentChange"
+      @size-change="handleSizeChange"
+      :page-sizes="[20, 50, 100]"
       :current-page="page"
       :page-size="pageSize"
-      layout="prev, pager, next, jumper,total"
+      layout="sizes,prev, pager, next, jumper,total"
       :total="total" style="float:right;">
     </el-pagination>
     </el-col>
@@ -50,17 +52,22 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
         roleAuthority:[1],
         datas: [],
         total: 0,
-        pageSize: 1,//每页显示多少条
+        pageSize: 20,//每页显示多少条
         page:1,//当前页数
         listLoading: false,
         addLoading: false
       }
     },
     methods: {
+      //当选择每页多少条时触发
+      handleSizeChange(val){
+        this.pageSize = val;
+        this.getCateList();
+      },
       //获取分类列表
       getCateList() {
         let para = {
-          storeId:storeId,
+          storeId:config.storeId,
           pageSize: this.pageSize,
           pageNum: this.page
         };
@@ -119,6 +126,11 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
           });
         });
       },
+       //产看商品
+      handleSee: function (row) {
+        var parm={id:row.storeCateId};
+        this.$router.push({ path: '/store/classify-management/find-good/', query:parm });
+      },
       //分页
       handleCurrentChange:function(val){
         this.page=val;
@@ -134,7 +146,7 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
 
 <style lang="scss">
 .fenlei-list{
-  padding:40px 0 0 40px;
+  padding:40px 40px 0 20px;
   a{
   text-decoration:none;
   }

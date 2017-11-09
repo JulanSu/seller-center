@@ -2,9 +2,9 @@
 	<section class="new-role">
 		<el-form v-loading="listLoading" :model="ruleForm" label-width="80px" :rules="rules" ref="ruleForm" style="width:60%;min-width:600px;">
 			<el-form-item label="岗位名称" label-width="100px" prop="roleName">
-				<el-input v-model="ruleForm.roleName" placeholder="请输入岗位名称" class="wid270"></el-input>
+				<el-input :maxlength="20" v-model="ruleForm.roleName" placeholder="请输入岗位名称" class="wid270"></el-input>
 			</el-form-item>	
-			<el-form-item label="权限" label-width="100px" prop="jurisdiction">
+			<el-form-item label="权限" label-width="100px" prop="roleAuthority">
 			    <el-checkbox-group v-model="ruleForm.roleAuthority">
             <el-checkbox v-for="item in jurisdiction" :label="item.value" :key="item.value">
                 {{item.name}}
@@ -36,8 +36,11 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority} from '@/api/shopApi';
 
         rules: {
           roleName: [
-            { required: true, message: '请输入岗位名称', trigger: 'blur' },
-            { min: 1, max: 20, message: '长度在 1 到 20 位', trigger: 'blur' }
+            { required: true, message: '请输入角色名称', trigger: 'blur' },
+            { min: 1, max: 20, message: '请输入角色名称', trigger: 'blur' }
+          ],
+          roleAuthority: [
+            { type: 'array', required: true, message: '请至少选择一个权限', trigger: 'change' }
           ]
         }
       };
@@ -71,8 +74,11 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority} from '@/api/shopApi';
           this.ruleForm= res.data.data;
           if(!this.ruleForm.roleAuthority){
             this.ruleForm.roleAuthority=[];
+          
           }else{
+
             this.ruleForm.roleAuthority=JSON.parse(this.ruleForm.roleAuthority);
+
           }
           this.listLoading = false;
         }).catch((res)=> {
@@ -114,7 +120,7 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority} from '@/api/shopApi';
               });
             }else{
               console.log(this.ruleForm.selJurisdict)
-              para.append('storeId',storeId);
+              para.append('storeId',config.storeId);
               roleSave(para).then((res)=>{
                 this.sucFun(res);
               }).catch((res)=> {

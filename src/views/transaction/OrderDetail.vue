@@ -17,13 +17,10 @@
                 <el-col :span="5">
                     配送方式：<span>{{detail.shippingWay}}</span>
                 </el-col>
-                <el-col :span="5">
-                    快递公司：<span>{{detail.expressCompany}}</span>
+                <el-col :span="5" v-if="detail.shippingWay == '配送'">
+                    备注：<span>{{detail.remark}}</span>
                 </el-col>
                 <el-col :span="5">
-                    运单号：<span>{{detail.orderShippedTrack}}</span>
-                </el-col>
-                <el-col :span="4">
                     收货人：<span>{{detail.receiverName}}</span>
                 </el-col>
                 <el-col :span="5">
@@ -55,62 +52,55 @@
                 <el-col :span="4">订单状态</el-col>
                 <el-col :span="5">订单金额</el-col>
             </el-row>
-            <el-row class='table-detail' v-for='item in detail.productList' :key="item.ProductName">
-                <el-col :span="5">
-                    <div class="pro-name">{{item.ProductName}}</div>
-                    <div class="pro-color">{{item.standard}}</div>
-                    <div class="pro-item">类目：{{item.cate}}</div>
-                </el-col>
-                <el-col :span="3"><p>￥{{item.unitPrice}}</p></el-col>
-                <el-col :span="3">{{item.orderNum}}</el-col>
-                <el-col :span="4">{{item.productType}}</el-col>
-                <el-col :span="4">{{item.orderProductStatus}}
-                    <div class="send-pro" v-if="item.send" @click='dialogFormVisible = true'>发货</div>
-                </el-col>
-                <el-col :span="5">
-                    <div class="order-price">￥{{item.unitPrice * item.orderNum}}</div>
-                    <div class="youhui" v-for= 'li in item.proPri'>
-                        <p>{{li.mes}}<span>-￥{{li.count}}</span></p>
+            <div v-for='item in detail.productList' :key="item.ProductName">
+                <el-row class='table-detail' >
+                    <el-col :span="5">
+                        <div class="pro-name"><span v-if="item.orderStoreType==1">展会</span>{{item.productName}}</div>
+                        <div class="pro-color">{{item.standard}}</div>
+                        <div class="pro-item">类目：{{item.cate}}</div>
+                    </el-col>
+                    <el-col :span="3"><p>￥{{item.unitPrice}}</p></el-col>
+                    <el-col :span="3">{{item.orderNum}}</el-col>
+                    <el-col :span="4">{{switchOrderType(item.productType)}}</el-col>
+                    <el-col :span="4">{{item.orderProductStatus}}</el-col>
+                    <el-col :span="5">
+                        <div class="order-price">￥{{item.unitPrice * item.orderNum}}</div>
+                        <div class="youhui" v-for= 'li in item.proPri'>
+                            <p>{{li.mes}}<span>-￥{{li.count}}</span></p>
+                        </div>
+                        <div class="one-count">小计：￥{{item.orderProductSubtotal}}</div>
+                    </el-col>
+                </el-row>
+                <div class="service" v-if='item.orderProductAfterId'>
+                    <el-row class='table-detail'>
+                        <el-col :span="5">售后单编号：{{item.orderProductAfterId}}</el-col>
+                        <el-col :span="3"></el-col>
+                        <el-col :span="3"></el-col>
+                        <el-col :span="4">售后单</el-col>
+                        <el-col :span="4">{{switchAfter(item.orderProductAfterStatus)}}</el-col>
+                        <el-col :span="5"></el-col>
+                    </el-row>
+                    <div class='service-user'>
+                        <div class="service-user-detail">
+                            <div>售后时间：{{item.orderProductTime}}</div>
+                            <div>售后原因：{{item.orderProductAfterReason}}</div>
+                            <div>用户备注：{{item.orderProductAfterRemark}}</div>
+                            <div>商家备注：{{item.orderProductAfterStoreRemark}}</div>
+                            <div>平台备注：{{item.orderProductAfterPlatformRemark}}</div>
+                        </div>
+                        <div class='service-img'>
+                            <div class="img-con" v-for='cell in switchPic(item.orderProductAfterProof)'><img :src="cell" alt="" ></div>
+                        </div>
                     </div>
-                    <div class="one-count">小计：￥{{item.orderProductTotal}}</div>
-                </el-col>
-            </el-row>
-        </div>
-        <div class="service" v-if='hasServiceOrder'>
-            <el-row class='table-detail'>
-                <el-col :span="5">售后单编号：{{after.orderProductAfterId}}</el-col>
-                <el-col :span="3"></el-col>
-                <el-col :span="3"></el-col>
-                <el-col :span="4">售后单</el-col>
-                <el-col :span="4">{{after.orderStatus}}</el-col>
-                <el-col :span="5"></el-col>
-            </el-row>
-            <div class='service-user'>
-                <div class="service-user-detail">
-                    <div>售后时间：{{after.orderProductTime}}</div>
-                    <div>售后原因：{{after.orderProductAfterReason}}</div>
-                    <div>用户备注：{{after.orderProductAfterRemark}}</div>
-                    <div>商家备注：{{after.orderProductAfterStoreRemark}}</div>
-                    <div>平台备注：{{after.orderProductAfterPlatformRemark}}</div>
                 </div>
-                <div class='service-img'>
-                    <div class="img-con" v-for='item in this.after.orderProductAfterProof'><img :src="item" alt="" ></div>
-                </div>
-            </div>    
+            </div>
         </div>
+        <div class="send-pro" @click='dialogFormVisible=true' v-if='btnStatus'>发货</div>
         <div class="total-message">
             <div><p>订单金额：</p><span>￥{{detail.orderAmount}}</span></div>
             <div><p>优惠金额：</p><span>￥-{{detail.privilegeAmount}}</span></div>
             <div><p>运费：</p><span>{{detail.orderStoreShipping}}</span></div>
             <div><p>实付：</p><span>{{detail.userCost}}</span></div>
-        </div>
-        <div class="beizhu" v-if="!serviceIsOk">
-            <div class="font-count">{{textLength}}/200</div>
-            <div class="font-content">
-                <p>备注信息：</p>
-                <textarea :maxlength="200" @input='textCount' v-model='serviceText'></textarea>
-            </div>
-            <el-button class='submit-btn gray' @click="postRight" :disabled='disabled'>提交审核</el-button>
         </div>
         <!--发货弹窗 -->
         <el-dialog title="发货" :visible.sync="dialogFormVisible" custom-class='addres-dialog' top="30%" :close-on-click-modal='false'>
@@ -127,10 +117,11 @@
                <input type="text" v-model='danHao'>
            </div>
            <div class="textarea-row" v-if='!onRight'>
-               <textarea v-model='beiZhu'></textarea>
+                <p>备注：</p>
+                <textarea v-model='beiZhu'></textarea>
            </div>
            <div class="btn-row">
-               <div class="send-sure">确认发货</div>
+               <div class="send-sure" @click='sureSend'>确认发货</div>
                <div class="send-cancel" @click="dialogFormVisible = false">取消</div>
            </div>
         </el-dialog>
@@ -138,11 +129,12 @@
 </template>
 
 <script>
-    import {orderDetail, postAfter } from '@/api/ordersApi';
+    import {orderDetail, sendProduct} from '@/api/ordersApi';
     import qs from 'qs';
     export default {
         data() {
             return {
+                btnStatus: false,
                 hasServiceOrder: false,
                 serviceIsOk: false,
                 textLength: 0,
@@ -156,33 +148,24 @@
                 gongSi: '',
                 danHao: '',
                 beiZhu: ''
-
             }
         },
         beforeCreate(){
         },
         created(){
-            // let orderId = this.$route.query.orderId;
-            let orderId = 1;
+            let orderId = this.$route.query.orderId;
             orderDetail({orderStoreId: orderId}).then(res => {
                 this.detail = res.data.data;
-                this.after = this.detail.productList[0]; 
                 for(let i=0; i<this.detail.productList.length; i++){
                     let that = this.detail.productList[i];
                     that.orderProductStatus = this.switchStatus(that.orderProductStatus)
-                    that.send = that.orderProductStatus === '待发货' ? true : false;
                     that.proPri = [];
                     for(let key in that.productPrivileges){
                         let money = {mes: key,count: that.productPrivileges[key]}
                         that.proPri.push(money)
                     }
                 }
-                if(this.after.orderProductAfterId){
-                    this.hasServiceOrder = true;
-                    this.after.orderStatus = this.switchStatus(this.after.orderProductAfterStatus)
-                    this.after.orderProductAfterProof = this.after.orderProductAfterProof.split(',')
-                    this.after.orderStatus == "待处理" ? this.serviceIsOk = false : '';
-                }
+                this.detail.productList[0].orderProductStatus == '待发货' ? this.btnStatus = true : '';
             })
         },
         methods: {
@@ -202,10 +185,38 @@
                 }
                 return st;
             },
+            /*售后订单转换*/
+            switchAfter(a){
+                let st = '';
+                switch(a) {
+                    case 1:st = '待处理'; break;
+                    case 2:st = '待平台审核';break;
+                    case 3:st = '售后完成';break;
+                    case 4:st = '已取消';break;
+                }
+                return st;
+            },
+            /*订单类型转换*/
+            switchOrderType(a){
+                let st = ''
+                switch(a) {
+                    case 1:st = '全款订单'; break;
+                    case 2:st = '定金订单';break;
+                    case 3:st = '点券订单';break;
+                    case 4:st = '现金券订单';break;
+                }
+                return st;
+            },
             /*发货方式转换*/
             changeType() {
                 var self = this;
                 self.onRight = !self.onRight;
+            },
+            /*图片转换*/
+            switchPic(a){
+                if(a){
+                   return a.split(',') 
+                }      
             },
             /*控制字符长度*/
             textCount(){
@@ -213,18 +224,36 @@
                 self.textLength = self.serviceText.length;
                 self.disabled = self.textLength === 0 ? true : false;
             },
-            /*提交审核*/
-            postRight(){
-                let self = this,
-                    params = {
-                        orderAfterId: self.after.orderProductAfterId,
-                        storeRemark: self.serviceText
+            /*发货*/
+            sureSend(){
+                let self = this;
+                if(self.onRight){     //true为快递配送，fasle为自送
+                    if(self.gongSi == ''){self.warn('快递公司不能为空');return false}
+                    if(self.danHao == ''){self.warn('快递单号不能为空');return false};
+                }
+                let params = {
+                    orderStoreId: self.detail.orderStoreId,
+                    shippedBy: self.gongSi,
+                    trackNum: self.danHao,
+                    remark: self.beiZhu
+                }
+                sendProduct(qs.stringify(params)).then( res => {
+                    if(res.data.data){
+                        self.btnStatus = false;
+                        
+                    }else{
+                        self.warn(res.data.message)
                     }
-                postAfter(qs.stringify(params)).then(res => {
-                    console.log(res)
+                })
+            },
+            /*消息警告*/
+            warn(str){
+                this.$message({
+                    message: str,
+                    type: 'warning'
                 })
             }
-        }   
+        }
     }
 
 </script>
@@ -312,11 +341,17 @@
                 color: #333333;
                 text-align: center;
                 position: relative;
+                .pro-name{
+                    span{
+                        color: #f00;
+                        border: 1px solid #f00;
+                    }
+                }
                 div{
                     line-height: 150%;
                     text-align: left;
                 }
-                 .send-pro{
+                .send-pro{
                     text-align: center;
                     margin-top: 3px;
                     cursor: pointer;
@@ -354,6 +389,19 @@
                     color:$color;
                 }
             }
+        }
+        .send-pro{
+            float: right;
+            width: 60px;
+            height: 30px;
+            background: $color;
+            line-height: 30px;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            margin-top: 10px;
+            margin-right: 3px;
+            cursor: pointer;
         }
         .service{
             .table-detail{
@@ -397,6 +445,8 @@
         }
         .total-message{
             float:right;
+            padding: 10px 0;
+            clear: both;
             div{
                 margin-top: 10px;
                 font-size: 12px;
@@ -419,39 +469,6 @@
                 }
             }
         }
-        .beizhu{
-            clear: both;
-            padding:15px 20px;
-            color: #666; 
-            border-top: 1px solid #eee;
-            margin-top:20px;
-            .font-count{
-                float: right;
-            }
-            .font-content{
-                padding-top: 10px;
-                clear: both;
-                display: flex;
-                p{
-                    width: 5%;
-                }
-                textarea{
-                    width: 95%;
-                    height:150px;
-                    resize: none;
-                }
-            }
-            .submit-btn{
-                margin-top: 20px;
-                float: right;
-                background: $color;
-                color: #fff;
-                width: 80px;
-                height: 40px;
-                text-align: center;
-                border-radius: 5px;
-            }
-        }
         .addres-dialog{
             width: 490px;
             height: 370px;
@@ -466,7 +483,6 @@
                     font-weight: 400;
                 }
                 .el-dialog__headerbtn{
-                    padding-top:15px;
                     font-size: 14px;
                 }
             }
@@ -497,12 +513,15 @@
                 }
                 .textarea-row{
                     width:370px;
-                    height:100px;
-                    margin: 30px auto 0;
+                    height:110px;
+                    margin: 20px auto 0;
                     textarea{
                         width: 100%;
-                        height: 100%;
+                        height: 100px;
                         resize: none
+                    }
+                    p{
+                        margin-bottom: 10px;
                     }
                 }
                 .input-row{

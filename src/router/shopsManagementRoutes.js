@@ -29,14 +29,17 @@ const accountList = resolve => require(['@/views/shops/AccountList.vue'],resolve
 /*门店管理*/
 const shopManagement = resolve => require(['@/views/shops/ShopManagement.vue'],resolve);
 const addShop = resolve => require(['@/views/shops/AddShop.vue'],resolve);
+
+/*商品测试*/
+const ProductSku1 = resolve => require(['@/views/seller_management/ProductSku1.vue'],resolve) 
 /*店铺管理 =E */
 const routers = [
             { 
-                path: '/store/merchant-enter', 
-                component: merchantEnter, 
-                name: '阶段一：提交企业资质' 
+                path: '/store/ProductSku1',  
+                component: ProductSku1, 
+                name: '商品' 
             },
-             { 
+            { 
                 path: '/store/message',  
                 component: message, 
                 name: '店铺信息' 
@@ -63,8 +66,14 @@ const routers = [
                 name: '分类管理' ,
                 children: [
                     { path: '/store/classify-management/add-fen-lei', component: addFenLei, name: '新增分类' },    
-                    { path: '/store/classify-management/find-good', component: findGood, name: '查看商品' },
-                    { path: '/store/classify-management/all-good', component: allGood, name: '全部分类商品列表' },
+                    { 
+                        path: '/store/classify-management/find-good',
+                        component: findGood,
+                        name: '查看商品',
+                        children:[
+                            { path: '/store/classify-management/find-good/all-good', component: allGood, name: '全部分类商品列表' }
+                        ]
+                    },
                     { path: '/store/classify-management/:id', component: addFenLei, name: '编辑分类' }
                 ]
             },
@@ -73,7 +82,7 @@ const routers = [
                 component: bypassManagement, 
                 name: '子账号管理',
                 children: [
-                    { path: '/store/bypass-management/role-list', component: roleList, name: '岗位角色' }, 
+                    { path: '/store/bypass-management/role-list', component: roleList, name: '管理角色' }, 
                     { path: '/store/bypass-management/account-list', component: accountList, name: '子帐号列表' },
                     { path: '/store/bypass-management/new-account', component: newAccount, name: '新建子帐号' },
                     { path: '/store/bypass-management/compile-account', component: newAccount, name: '编辑子帐号' },
@@ -90,7 +99,7 @@ const routers = [
                     { path: '/store/shop-management/add', component: addShop, name: '添加门店' },
                     { path: '/store/shop-management/:id', component: addShop, name: '编辑门店' }
                 ]
-            }, 
+            }
         ];
 
 export default routers;

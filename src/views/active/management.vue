@@ -25,12 +25,12 @@
                     </el-table-column>
                     <el-table-column label="创建时间" align='center'>
                          <template slot-scope="scope">
-                            <div>{{switchTime(scope.row.createAt)}}</div>
+                            <div>{{switchTime(scope.row.createdAt)}}</div>
                         </template>
                     </el-table-column>
                     <el-table-column label="活动状态" align='center'>
                         <template slot-scope="scope">
-                            <div>{{switchStoreStatus(scope.row.activityShowStatus)}}</div>
+                            <div>{{switchStoreStatus(scope.row.activityStatus)}}</div>
                         </template>
                     </el-table-column>
                     <el-table-column label="操作" align='center'>
@@ -80,7 +80,7 @@
                     </el-table-column>
                     <el-table-column label="活动状态" align='center'>
                         <template slot-scope="scope">
-                            <div>{{switchStatus(scope.row.activityShowStatus).plat}}</div>
+                            <div>{{switchStatus(scope.row.activityStatus).plat}}</div>
                         </template>
                     </el-table-column>
                     <el-table-column label="操作" align='center'>
@@ -107,9 +107,9 @@
                 currentPageStore: 1,
                 pageSizeStore: 20,
                 totalStore: 0,
-                storeKeyword: '',
-                storeStatus: '',
-                toolCheck: '',
+                storeKeyword: null,
+                storeStatus: null,
+                toolCheck: null,
                 options1: [
                         {value: 0,label: '全部'}, 
                         {value: 3,label: '未开始'}, 
@@ -117,8 +117,8 @@
                         {value: 2,label: '已结束'}
                 ],
                 options2: [
-                        {value: '1',label: '全部'},
-                        {value: '1',label: '现金券'}
+                        {value: 0,label: '全部'},
+                        {value: 1,label: '现金券'}
                         ],  
                 storeTable: [],           
                 /*平台活动数据*/
@@ -151,9 +151,10 @@
             }
         },
         created(){
+            this.$route.query.name ? this.activeName = this.$route.query.name : '';
             /*获取店铺活动*/
             let params1 = {
-                storeId: 1,
+                storeId: config.storeId,
                 toolsId: 1,
                 activityStatus: 0,
                 page: 1,
@@ -162,7 +163,7 @@
             this.getStoreData(params1)
             /*获取平台活动*/
             let params2 = {
-                storeId: 1,
+                storeId: config.storeId,
                 activityStatus: 0,
                 signStatus: 0,
                 auditStatus: 0,
@@ -180,8 +181,8 @@
             getStoreParams(){
                 let self = this,
                     params = {
-                        storeId: 1,
-                        toolsId: self.toolCheck,
+                        storeId: config.storeId,
+                        toolsId: 1,
                         activityStatus: self.storeStatus,
                         page: self.currentPageStore,
                         size: self.pageSizeStore,
@@ -194,6 +195,9 @@
                 storeActList(obj).then(res => {
                     self.storeTable = res.data.data.list;
                     self.totalStore = Number(res.data.data.total)
+                    for (let i = 0; i < self.storeTable.length; i++) {
+                        self.storeTable[i].activityStatus = self.storeStatusIsOk(self.storeTable[i].activityStatus, self.storeTable[i].activityBeginTime, self.storeTable[i].activityEndTime)
+                    }
                 })
             },
             storeSizeChange(val) {
@@ -210,16 +214,32 @@
                 let self = this,
                     topParams = {
                         type: 'store',                      //表示店铺活动
-                        actStatus: row.activityShowStatus,  //店铺活动状态
+                        actStatus: row.activityStatus,      //店铺活动状态
                         actId: row.marketingActivityId      //活动Id
                     }
-                self.$router.push({path:'/marketing-center/tool/create',query: topParams});
+                self.$router.push({path:'/marketing-center/management/detail',query: topParams})
+            },
+            /*店铺活动判断*/
+            storeStatusIsOk(a, bTime, eTime){
+                if(a == 1){
+                    return 1;
+                }else{
+                    let timesTamp = Date.parse(new Date());
+                    if(timesTamp < bTime){
+                        return 2;
+                    }else if(bTime < timesTamp && timesTamp < eTime){
+                        return 3;
+                    }else{
+                        return 4;
+                    }
+                }
             },
             /*店铺活动状态转化*/
             switchStoreStatus(a){
                 switch(a) {
-                    case 0: return '未开始'; break;
-                    case 1: return '进行中'; break;
+                    case 1: return '已关闭'; break;
+                    case 2: return '未开始'; break;
+                    case 3: return '进行中'; break;
                     default: return '已结束'; 
                 }
             },
@@ -231,7 +251,7 @@
             getPlatParams(){
                 let self = this,
                     params = {
-                        storeId: 1,
+                        storeId: config.storeId,
                         activityStatus: self.platStatus,
                         signStatus: self.signStatus,
                         auditStatus: self.auditStatus,
@@ -246,6 +266,9 @@
                 platformActList(obj).then(res => {
                     self.platTable = res.data.data.list;
                     self.totalPlat = Number(res.data.data.total)
+                    for (let i = 0; i < self.platTable.length; i++) {
+                        self.platTable[i].activityStatus = self.storeStatusIsOk(self.platTable[i].activityStatus, self.platTable[i].activityBeginTime, self.platTable[i].activityEndTime)
+                    }
                 })
             },
             /*平台活动转换*/
@@ -253,13 +276,19 @@
                 let st = {};
                 switch(a) {
                     case 0:
-                        st = {plat: '未开始', sign: '未回应', audit: '未审核'}
+                        st = {sign: '未回应', audit: '未审核'}
                         break;
                     case 1:
-                        st = {plat: '进行中', sign: '确定参加', audit: '审核通过'}
+                        st = {plat: '已关闭', sign: '确定参加', audit: '审核通过'}
                         break;
                     case 2:
-                        st = {plat: '已结束', sign: '逾期未回应', audit: '审核不通过'}
+                        st = {plat: '未开始', sign: '逾期未回应', audit: '审核不通过'}
+                        break;
+                    case 3:
+                        st = {plat: '进行中'}
+                        break;
+                    case 4:
+                        st = {plat: '已结束'}
                         break;
                 }
                 return st
@@ -295,7 +324,7 @@
                  **/  
                 let self = this,
                     actId = row.marketingActivityId,
-                    signStatus = 0,//row.signStatus,
+                    signStatus = row.signStatus,
                     auditStatus = row.auditStatus
                 self.$router.push({path:'/marketing-center/management/attend',query: {
                     type: 'platform',actId: actId,signStatus: signStatus,auditStatus: auditStatus}});

@@ -7,25 +7,23 @@
       <div class="category-main">
         <div class="category-search" v-if="isSearch">
           <el-input
-            placeholder="输入名称/拼音"
+            placeholder="请输入关键字搜索"
             v-model="keywords">
           </el-input>
         </div>
         <el-menu default-active="" unique-opened class="category-menu" v-if="categoryData.length">
           <template  v-for="(item, index) in categoryData">
             <el-menu-item :index="index+''" class="sub-title" @click="selectproductCateName(item, index)">
-              <span class="first-letter" v-if="showLetterIcon">A</span>
               {{item.industryCateName}}
-              <i class="el-icon-arrow-right" v-if="item.secondIndustryList && item.secondIndustryList.length"></i>
+              <i class="el-icon-arrow-right" v-if="item[arrKey]&& item[arrKey].length&&isshow"></i>
             </el-menu-item>
           </template>     
         </el-menu>
-        <el-menu default-active="" unique-opened class="category-menu search-list" v-if="searchList.length">
+        <el-menu default-active="" unique-opened class="category-menu search-list" v-if="searchList.length || keywords">
           <template  v-for="(item, index) in searchList">
             <el-menu-item v-if="item.industryCateName"  :index="index+''" class="sub-title" @click="selectproductCateName(item, index)">
-              <span class="first-letter" v-if="showLetterIcon">A</span>
               {{item.industryCateName}}
-              <i class="el-icon-arrow-right" v-if="item.secondIndustryList||item.brandList"></i> 
+              <i class="el-icon-arrow-right" v-if="item[arrKey].length&&isshow"></i> 
             </el-menu-item>
           </template>     
         </el-menu>
@@ -45,7 +43,8 @@
             curCateName: [],
             categoryNavIndex: 0,
             categoryDataCache: [],
-            secoundCategoryData: []
+            secoundCategoryData: [],
+            isshow:true
           }
         },
         props: {
@@ -75,6 +74,10 @@
           selectedPannel: {
             type: Boolean,
             default: true
+          },
+          arrKey: {
+            type: String,
+            default: ''
           }
         },
         watch: {
@@ -88,15 +91,20 @@
         },
         mounted () {
           this.categoryDataCache = this.categoryData;
+          if(this.arrKey=="catePath"){
+            this.isshow=false;
+          }
         },
         methods: {
           searchHandle: function() {
             var reg = new RegExp(this.keywords);
+            this.searchList = [];
             if(!this.keywords) {
-              this.searchList = []
+              this.searchList = [];
             }else {
               var _arr = [];
               for(var i in this.categoryData){
+                console.log(this.keywords)
                 if(this.categoryData[i].industryCateEname.match(reg) ||this.categoryData[i].industryCateName.match(reg)){
 
                   _arr.push(this.categoryData[i]);

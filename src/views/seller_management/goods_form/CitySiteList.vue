@@ -12,11 +12,14 @@
   export default {
     data() {
       return {
-        citySite: []
+        citySite: [] 
       }
     },
     props: {
-      value:{},
+      value: {
+        type: [String, Array],
+        default: ''
+      },
       citySiteList: {
         type: Array,
         default: function(){
@@ -24,19 +27,19 @@
         }
       }
     },
-    computed: {
-      
-    },
     created (){
-      console.log()
+      console.log('dadad', this.value)
+      if(this.value) {
+        this.citySite = this.value.split(',')
+      }
+      
     },
     methods: {
       citySiteHandel (value){
         const citySiteStr = this.updateSysArea(value)
-        this.$emit('change', citySiteStr)
+        this.$emit('input', citySiteStr)
       },
       updateSysArea (value){
-
         if(value.length) {
           return value.join(',')
         }

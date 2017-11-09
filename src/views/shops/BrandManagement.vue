@@ -2,11 +2,11 @@
 	<section class="brand" v-if='$route.name==="品牌管理"'>
 		<el-col :span="24" class="tool-bar" style="padding-bottom: 0px;">
 		    <router-link to="/store/brand-management/sel-brand" class="selbrand" icon="plus">
-		      	<el-button type="primary" icon="plus">创建商品</el-button>
+		      	<el-button type="primary" icon="plus">添加品牌</el-button>
 		    </router-link>
 	    </el-col>
 		<ul v-loading="listLoading">
-			<li  v-for="(myBrand,index) in myBrands" @click="jump(myBrand.storeBrandId)">
+			<li  v-for="(myBrand,index) in myBrands" @click="jump(myBrand)">
 				<div class="brandlogo">
 					<img :src="myBrand.authorizationUrl">
 				</div>
@@ -35,11 +35,11 @@
 		</ul>
 		
 	</section>
-	<router-view  v-else></router-view>
+	<router-view  v-else :key="key"></router-view>
 </template>
 
 <script>
-import { brandList,brandChangeStatus,brandCancelverify } from '@/api/shopApi';
+import { brandList,brandChangeStatus,brandCancelverify,baseBrandGet } from '@/api/shopApi';
 import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 
 	export default {
@@ -59,22 +59,44 @@ import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 				}
 			}
 		},
-
+		computed: {
+		    key() {
+		        return this.$route.name !== undefined? this.$route.name +new Date(): this.$route +new Date();
+		    }
+		},
 	    mounted() {
-	      this.getBrandList();//获取品牌列表
+	        this.getBrandList();//获取品牌列表
 	    },
 
 		methods: {
+			
 			/*点击列表跳转详情*/
-			jump(id){
-				this.$router.push({ path: 'brand-management/compile-brand', query: { storeBrandId: id,compile:1}});
+			//在品牌列表页点击品牌进入详情页，还是创建品牌（品牌库没有）的页面前判断
+			jump(row){
+				if(row.isNewVerified!=1){//不是在品牌库添加的品牌
+					this.$router.push({ path: '/store/brand-management/create-brand', query:{ brandId:row.brandId}});
+
+
+				}else{
+					var parm={storeBrandId:row.storeBrandId,compile:1};
+					if(this.pastDue(row)){
+						parm.noClick=false;
+					}else{
+						if(row.isUsed==0){
+							parm.noClick=true;
+						}else{
+							parm.noClick=false;
+						}
+					}
+					
+					this.$router.push({ path: 'brand-management/compile-brand', query:parm });
+				}
 			},
 
 			/*取消按钮*/
 			cancel(id){		
-		    	let para = {
-			          storeBrandId:id
-			        };
+			    var para = new URLSearchParams();  
+			        para.append('storeBrandId',id);
 		        this.listLoading = true;
 		        brandCancelverify(para).then((res) => {
 		        	if(res.data.code==0){
@@ -103,7 +125,7 @@ import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 			//获取品牌列表
 		    getBrandList() {
 		        let para = {
-		          storeId:storeId
+		          storeId:config.storeId
 		        };
 
 		        this.listLoading = true;

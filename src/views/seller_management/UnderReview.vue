@@ -42,27 +42,23 @@
         <el-table-column
           prop="productStatus"
           label="上架状态">
+          <template slot-scope="scope">
+            <span>{{getProductStatusValue(scope.row.productStatus)}}</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="operational"
           label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="onEditorHandle(scope.row)">编辑</el-button>
-            <el-button type="text" @click="onDelHandle(scope.row)">删除</el-button>
-            <el-button type="text" @click="onSubmitHandle(scope.row)">提交</el-button>
+            <el-button type="text" @click="onCancelHandle(scope.row)">取消审核</el-button>
           </template>
         </el-table-column>
       </el-table>
       <div class="block" v-if="pagination.total > pagination.pageSize">
-        <el-pagination class="pagination-wrap"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="pagination.curPage"
-          :page-sizes="[10, 20, 30, 40]"
-          :page-size="pagination.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="pagination.total">
-        </el-pagination>
+        <pagination 
+          :paginationConfig="pagination"
+          @handleSizeChange="handleSizeChange"
+          @handleCurrentChange="handleCurrentChange"></pagination>
       </div>
 
     <el-dialog
@@ -80,15 +76,30 @@
 
 <script>
   import SearchNav from './components/SearchNav.vue'
-  import { getInreviewList, getStoreCate } from '@/api/seller'
+  import Pagination from './components/Pagination.vue'
+  import { getProductStatus } from '@/util/product_status'
+  import { getProductList, getStoreCate, onCancelReview } from '@/api/seller'
+  import merge from 'merge'
   const win = window;
   const storeId = win.config && win.config.storeId ? win.config.storeId : ''
     export default {
-      components: {
-        SearchNav
-      },
+        components: {
+          SearchNav,
+          Pagination
+        },
         data() {
             return {
+              searchData:{
+                storeId: storeId,
+                productId: null,
+                productTitle: null,
+                storeCateId: null,
+                searchStartTime: null,
+                searchEndTime: null,
+                pageNum: 1,
+                pageSize: 10,
+                productStatus: 1
+              },
               pagination: {
                 total: '',
                 pageSize: 10,
@@ -96,26 +107,12 @@
               },
               listLoading: true,
               tableRow: null,
-              formInline: {
-                user: '',
-                region: '',
-                goodsId: '',
-                goodsName: '',
-                storeCateNameList: '',
-                createDate: '',
-                createBegin: '',
-                createEnd: ''
-
-              },
-              initData: {
-              },
               dialogConfig: {
                 title: '',
                 content: '',
                 message: ''
               },
               dialogVisible: false,
-              currentPage: 4,
               tableData: []
             }
         },
@@ -123,12 +120,20 @@
 
         },
         created(){
-
-          this.getInreviewList(storeId, 1, 10)
+          this.getProductList({
+            pageNum: 1,
+            pageSize: 10
+          })
         },
         methods: {
+          getProductStatusValue(statusNumber){
+            var statusValue = getProductStatus(statusNumber)
+            if(statusValue) {
+              return statusValue
+            }
+          },
           /**
-           * getInreviewList 获取商品列表
+           * getProductList 获取商品列表
            * @param  { String } storeId         店铺ID
            * @param  { Number } pageNum         当前页面
            * @param  { Number } pageSize        当前页面显示条目
@@ -139,49 +144,32 @@
            * @param  { String } searchEndTime   搜索结束时间
            * @return {[type]}                 [description]
            */
-          getInreviewList (
-              storeId, 
-              pageNum,
-              pageSize,
-              productId, 
-              productName, 
-              storeCateId, 
-              searchStartTime, 
-              searchEndTime
-            ){
+          getProductList (params){
             var self = this
-            getInreviewList({
-              storeId: storeId,
-              productId: productId || '',
-              productName: productName || '',
-              storeCateId: storeCateId || '',
-              searchStartTime: searchStartTime || '',
-              searchEndTime: searchEndTime || '',
-              pageNum: pageNum,
-              pageSize: pageSize
-            }).then((res)=>{
+            var formartData = merge(self.searchData, params)
+            getProductList(formartData).then((res)=>{
               var data = res.data.data
               if(res.data.code === 0) {
                 self.tableData = data.list
                 self.pagination.total = parseInt(data.total)
-                self.pagination.pageSize = pageSize
+                self.pagination.pageSize = formartData.pageSize
                 self.listLoading = false
               }
               console.log('获取商品列表', res)
             })
           },
-          onSubmit() {
-            console.log('submit!');
-          },
-          handleClick(row){
-            this.dialogVisible = true
-          },
           handleSizeChange(pageSize) {
-            this.getInreviewList(storeId, 1, pageSize)
+            this.getProductList({
+              pageNum:1, 
+              pageSize: pageSize
+            })
             console.log(`每页 ${pageSize} 条`);
           },
           handleCurrentChange(pageNum) {
-            this.getInreviewList(storeId, pageNum, 10)
+            this.getProductList({
+              pageNum: pageNum, 
+              pageSize: 10              
+            })
             console.log(`当前页: ${pageNum}`);
           },
 
@@ -194,59 +182,38 @@
               type: 'success'
             });
           },
-          submitHandle (row){
-
-          },
-          dropdownHandle (event, index, row){
-            if(event === 'delete') {
-              this.onDelHandle(index, row)
-            }else if(event === 'submit') {
-              this.submitHandle(row)
-            }
-          },
-          deleteHandle (row){
-            this.dialogConfig.title = '删除'
-            this.dialogConfig.content = '确定要删除这个商品吗？'
-            this.dialogConfig.message = '商品删除成功'
-            this.tableRow = row
-            this.dialogVisible = true
-          },
-          onEditorHandle() {
-
-          },
-          onSubmitHandle(){
-            let self = this
-            self.confirmHandle({
-              title: '提交',
-              content: '确定要提交这个商品吗？',
-              message: '商品提成功！',
-              type: 'success'
-            }, function(){
-              let para = { id: row.id };
-              removeUser(para).then((res) => {
-                self.listLoading = false;
-                //NProgress.done();
-                self.messageHandle('商品提交成功！', 'success')
-              });
-            })
-          },
           searchSubmitHandle (value){
+            console.log(value)
+            if(!value) {
+              return 
+            }
+            this.getProductList(value)
             console.log('商品查询后的', value)
           },
-          onDelHandle (index, row) {
+          /**
+           * onCancelHandle 取消审核
+           * @param  {[type]} row [description]
+           * @return {[type]}     [description]
+           */
+          onCancelHandle (row) {
             let self = this
             self.confirmHandle({
-              title: '删除',
-              content: '确定要删除这个商品吗？',
-              message: '商品删除成功！',
-              type: 'success'
+              title: '取消审核',
+              content: '确定要取消审核这个商品吗?'
             }, function(){
-              let para = { id: row.id };
-              removeUser(para).then((res) => {
-                self.listLoading = false;
-                //NProgress.done();
-                self.messageHandle('商品删除成功！', 'success')
-              });
+              onCancelReview({
+                productId: row.productId
+              }).then((res)=>{
+                var data = res.data.data
+                if(res.data.code == 0) {
+                  self.listLoading = false;
+                  self.messageHandle('商品删除成功！', 'success')
+                  self.getProductList({
+                    pageNum: 1,
+                    pageSize: 10
+                  })                    
+                }
+              })
             })
           },
           messageHandle (message, type){
@@ -268,7 +235,8 @@
             }).catch(() => {
 
             });
-          }
+          },
+
         }
 
     }

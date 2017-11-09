@@ -1,65 +1,66 @@
 <template>
 	<section class="qualification">
-		<div v-if='shopStyle==1'>
-			<category-bar :title="categoryBarTitle1"></category-bar>
-			<el-form :model="ruleForm" :rules="rules" ref="ruleForm">
+		<el-form :model="ruleForm" :rules="rules" ref="ruleForm">
+			<div v-if='shopStyle==1'>
+				<category-bar :title="categoryBarTitle1"></category-bar>
 				<el-form-item label="企业名称" label-width="200px" prop="enterpriseName">
 					<div class="only-ready">{{ruleForm.enterpriseName}}</div>
 				</el-form-item>
 				<el-form-item label="组织机构代码证/营业执照" label-width="200px">
-					<upload-pictures :note="uploadTishi"></upload-pictures>
+					<upload-pictures :note="uploadTishi" :url="ruleForm.enterpriseLicence" :listen="'listenToPic1'" @listenToPic1="sucpic1"></upload-pictures>
+				</el-form-item>
+				<el-form-item label="" prop="enterpriseLicence"  label-width="120px" class='updata'>
+					<el-input v-model="ruleForm.enterpriseLicence" class="wid280"></el-input>
 				</el-form-item>
 				<el-form-item label="组织机构代码（注册号）" label-width="200px" prop="orgCode">
-					<el-input v-model="ruleForm.orgCode" placeholder="请输入组织机构代码（注册号）" class="wid280"></el-input>
+					<el-input  :maxlength="18" v-model="ruleForm.orgCode" placeholder="请输入组织机构代码（注册号）" class="wid280"></el-input>
 				</el-form-item>
 				<el-form-item label="法人姓名" label-width="200px" prop="legalPerson">
-					<el-input v-model="ruleForm.legalPerson" placeholder="请输入法人姓名" class="wid280"></el-input>
+					<el-input :maxlength="30" v-model="ruleForm.legalPerson" placeholder="请输入法人姓名" class="wid280"></el-input>
 				</el-form-item>
 				<el-form-item label="法人身份证" label-width="200px" prop="identityNumber">
-					<el-input v-model="ruleForm.identityNumber" placeholder="请输入法人身份证" class="wid280"></el-input>
+					<el-input :maxlength="18" v-model="ruleForm.identityNumber" placeholder="请输入法人身份证" class="wid280"></el-input>
 				</el-form-item>
-				<el-form-item label="法人身份证正面" label-width="200px">
-					<upload-pictures :note="uploadTishi"></upload-pictures>
+			</div>
+
+			<div v-else>		
+				<category-bar :title="categoryBarTitle2"></category-bar>
+				<el-form-item label="店主姓名" label-width="200px" prop="contactName">
+					<el-input :maxlength="30" v-model="ruleForm.contactName" placeholder="请输入店主姓名" class="wid280"></el-input>
 				</el-form-item>
-				<el-form-item label="法人身份证反面" label-width="200px">
-					<upload-pictures :note="uploadTishi"></upload-pictures>
+				<el-form-item label="店主手机号" label-width="200px" prop="contactMobile">
+					<el-input :maxlength="11" v-model="ruleForm.contactMobile" placeholder="请输入店主手机号" class="wid280"></el-input>
 				</el-form-item>
-				<div v-for="(item, index) in ruleForm.storeBrands">
-					<el-form-item label="经营品牌" label-width="200px" prop="brand">
-						<div class="only-ready">{{item.nameCn}}</div>
-					</el-form-item>
-					<el-form-item label="品牌证书" label-width="200px">
-						<div class="unchangeable">
-							<img :src="item.authorizationUrl">
-						</div>
-					</el-form-item>
-				</div>
-				
-				<el-form-item label="" label-width="200px">
-					<el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
+			</div>
+
+			<el-form-item :label="ident1" label-width="200px">
+				<upload-pictures :note="uploadTishi" :url="ruleForm.identityPic1" :listen="'listenToPic2'" @listenToPic2="sucpic2"></upload-pictures>
+			</el-form-item>
+			<el-form-item label="" prop="identityPic1"  label-width="200px" class='updata'>
+				<el-input v-model="ruleForm.identityPic1" class="wid280"></el-input>
+			</el-form-item>
+			<el-form-item :label="ident2" label-width="200px">
+				<upload-pictures :note="uploadTishi" :url="ruleForm.identityPic2" :listen="'listenToPic3'" @listenToPic3="sucpic3"></upload-pictures>
+			</el-form-item>
+			<el-form-item label="" prop="identityPic2"  label-width="200px" class='updata'>
+				<el-input v-model="ruleForm.identityPic2" class="wid280"></el-input>
+			</el-form-item>
+
+			<div v-for="(item, index) in ruleForm.storeBrands" v-if='shopStyle==1'>
+				<el-form-item label="经营品牌" label-width="200px" prop="brand">
+					<div class="only-ready">{{item.nameCn}}</div>
 				</el-form-item>
-			</el-form>
-		</div>
-		<div v-else>		
-			<category-bar :title="categoryBarTitle2"></category-bar>
-			<el-form :model="ruleForm" :rules="rules" ref="ruleForm">
-				<el-form-item label="店主姓名" label-width="160px" prop="contactName">
-					<el-input v-model="ruleForm.contactName" placeholder="请输入店主姓名" class="wid280"></el-input>
+				<el-form-item label="品牌证书" label-width="200px">
+					<div class="unchangeable">
+						<img :src="item.authorizationUrl">
+					</div>
 				</el-form-item>
-				<el-form-item label="店主手机号" label-width="160px" prop="contactMobile">
-					<el-input v-model="ruleForm.contactMobile" placeholder="请输入店主手机号" class="wid280"></el-input>
-				</el-form-item>
-				<el-form-item label="法人身份证正面" label-width="160px">
-					<upload-pictures :note="uploadTishi"></upload-pictures>
-				</el-form-item>
-				<el-form-item label="法人身份证反面" label-width="160px">
-					<upload-pictures :note="uploadTishi"></upload-pictures>
-				</el-form-item>
-				<el-form-item label="" label-width="160px">
-					<el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
-				</el-form-item>
-			</el-form>
-		</div>	
+			</div>
+			<el-form-item label="" label-width="200px">
+				<el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
+			</el-form-item>		
+		</el-form>
+		
 			
 		
 	</section>
@@ -78,11 +79,25 @@ export default {
 	},
 
 	data() {
+		var validatePhone = (rule, value, callback) => {
+	        if (!value) {
+	          callback(new Error('请输入手机号'));
+	        } else {
+	        	var first=value.slice(0,1);
+		        if ((value.length!=11)||(first!=1)) {
+		          	callback(new Error('请输入正确的手机号'));
+		        }else{
+		        	callback();
+		        }
+	        }
+	    };
 		return {
-		  	shopStyle:shopType,
+		  	shopStyle:config.storeType,
 		  	categoryBarTitle1: '企业店铺资质',
 		  	categoryBarTitle2: '个人店铺资质',
-		  	uploadTishi:"不超过5mb",
+		  	ident1:'法人身份证正面',
+		  	ident2:'法人身份证反面',
+		  	uploadTishi:"请上传800px*800px以上，格式要求jpg、jpeg、png，不超过800k",
 
 		    ruleForm: {
 		      	enterpriseName: '',
@@ -92,32 +107,42 @@ export default {
 		      	storeBrands: '',
 		      	phone: '',
 		      	enterpriseLicence:'',
+		      	identityPic1:'',
+		      	identityPic2:'',
 		      	identityPic:'',
 		      	contactName:'',
 		      	contactMobile:''
 		    },
 
 		    rules: {
+		    	enterpriseLicence:[
+		    		{ required: true, message: '请上传组织机构代码证／营业执照', trigger: 'blur' }
+		    	],
+		    	identityPic1:[
+		    		{ required: true, message: '请上传法人身份证正面', trigger: 'blur' }
+		    	],
+		    	identityPic2:[
+		    		{ required: true, message: '请上传法人身份证反面', trigger: 'blur' }
+		    	],
 		      	legalPerson: [
 			        { required: true, message: '请输入法人姓名', trigger: 'blur' },
-			        { min:2, max: 30, message: '长度在 2 到 30 位', trigger: 'blur' }
+			        { min:2, max: 30, message: '请输入正确的法人姓名', trigger: 'blur' }
 		      	],
 		      	contactName: [
-			        { required: true, message: '请输入店主姓名', trigger: 'blur' },
-			        { min:2, max: 30, message: '长度在 2 到 30 位', trigger: 'blur' }
+			        { required: true, message: '请输入法人姓名', trigger: 'blur' },
+			        { min:2, max: 30, message: '请输入正确的法人姓名', trigger: 'blur' }
 		      	],
 		      	orgCode: [
-			        { required: true, message: '组织机构代码/注册号', trigger: 'blur' },
-			        { min:18, max: 18, message: '长度为 18 位', trigger: 'blur' }
+			        { required: true, message: '请输入组织机构代码（注册码）', trigger: 'blur' },
+			        { min:18, max: 18, message: '请输入正确组织机构代码（注册码）', trigger: 'blur' }
 		      	],
 		      	identityNumber: [
-		        	{ required: true, message: '请输入法人身份证号码', trigger: 'blur' },
-		        	{ min:18, max: 18, message: '长度为 18 位', trigger: 'blur' }
+		        	{ required: true, message: '请输入法人身份证', trigger: 'blur' },
+		        	{ min:18, max: 18, message: '请输入正确身份证号', trigger: 'blur' }
 
 		      	],
 		      	contactMobile: [
-		        	{ required: true, message: '请输入店主手机号码', trigger: 'blue' },
-		        	{ min:11, max: 11, message: '长度为 11 位', trigger: 'blur' }
+		        	{ validator: validatePhone,trigger: 'blur' }
 
 		      	]
 		    }
@@ -126,52 +151,76 @@ export default {
 	mounted:function(){
         //获取店铺资质信息
         let para = {
-          storeId:storeId
+          storeId:config.storeId
         };
         this.listLoading = true;
         storeGetMerchant(para).then((res) => {
-          this.ruleForm = res.data.data;
-          this.listLoading = false;
-        });
+        	if(res.data.code==0){
 
+        		this.ruleForm = res.data.data;
+        		var identitys=res.data.data.identityPic.split(",");
+        		this.ruleForm.identityPic1=identitys[0];
+        		this.ruleForm.identityPic2=identitys[1];
+
+        	}
+          	this.listLoading = false;
+        }).catch((res)=> {
+	        this.listLoading = false;
+	    });
+        if(config.storeType!=1){
+        	this.ident1="身份证正面";
+        	this.ident2="身份证反面";
+        }
     },
 	methods: {
-	  submitForm(formName) {
-	    this.$refs[formName].validate((valid) => {
-	      if (valid) {
-			var para = new URLSearchParams();
-			
-			para.append('storeId',storeId);
-			para.append('enterpriseLicence',this.ruleForm.enterpriseLicence);
-			para.append('orgCode',this.ruleForm.orgCode);
-			para.append('legalPerson',this.ruleForm.legalPerson);
-			para.append('identityPic',this.ruleForm.identityPic);
-			para.append('identityNumber',this.ruleForm.identityNumber);
-			
+		//组织机构代码证／营业执照上传成功之后
+		sucpic1(url){
+			this.ruleForm.enterpriseLicence=url;
+		},
+		//组织机构代码证／营业执照上传成功之后
+		sucpic2(url){
+			this.ruleForm.logo=identityPic1;
+		},
+		//组织机构代码证／营业执照上传成功之后
+		sucpic3(url){
+			this.ruleForm.logo=identityPic2;
+		},
+		submitForm(formName) {
+		    this.$refs[formName].validate((valid) => {
+		      if (valid) {
+				var para = new URLSearchParams();
+				var identityPics=this.ruleForm.identityPic1+','+this.ruleForm.identityPic2;
+				para.append('storeId',config.storeId);
+				para.append('enterpriseLicence',this.ruleForm.enterpriseLicence);
+				para.append('orgCode',this.ruleForm.orgCode);
+				para.append('legalPerson',this.ruleForm.legalPerson);
+				para.append('identityPic',this.ruleForm.identityPic);
+				para.append('identityNumber',this.ruleForm.identityNumber);
+				
 
-			if(this.shopStyle!=1){//个人店铺
-				para.append('contactName',this.ruleForm.contactName);
-				para.append('contactMobile',this.ruleForm.contactMobile);
-			}
+				if(this.shopStyle!=1){//个人店铺
+					para.append('contactName',this.ruleForm.contactName);
+					para.append('contactMobile',this.ruleForm.contactMobile);
+				}
 
-            merchantUpdate(para).then((res) => {
-            	this.dialogVisible1 = true;
-	        	if(res.data.code==0){	
-	        		this.$message({
-			           message: '提交成功',
-			           type: 'success'
-			        });
-	        	}else{
-	        		this.$message.error(res.data.message);
-	        	}
-	        }).catch((res)=> {
-		        this.listLoading = false;
+	            merchantUpdate(para).then((res) => {
+	            	this.dialogVisible1 = true;
+		        	if(res.data.code==0){	
+		        		this.$message({
+				           message: '提交成功',
+				           type: 'success'
+				        });
+		        	}else{
+		        		this.$message.error(res.data.message);
+		        	}
+		        }).catch((res)=> {
+			        this.listLoading = false;
+			    });
+		      } else {
+		        return false;
+		      }
 		    });
-	      } else {
-	        return false;
-	      }
-	    });
-	}
+		}
 }
 }
 </script>

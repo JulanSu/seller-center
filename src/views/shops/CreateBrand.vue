@@ -1,98 +1,124 @@
 <template>
-	<section class="create-brand">
-		<el-form :model="ruleForm" :rules="rules" ref="ruleForm">
+	<section class="create-brand" >
+		<el-form :model="ruleForm" :rules="rules" ref="ruleForm" v-loading="listLoading">
 			<h2>阶段一：填写品牌信息</h2>
 			<el-form-item label="注册地" label-width="200px" class="lefttit">
 			    <el-radio-group v-model="ruleForm.registerLocation" @change="resetForm('ruleForm')">
-			        <el-radio :label="1">中国大陆地区</el-radio>
-			        <el-radio :label="2">中国港澳台地区</el-radio>
-			        <el-radio :label="3">国外地区</el-radio>
+			        <el-radio label="中国大陆"></el-radio>
+			        <el-radio label="港澳台"></el-radio>
+			        <el-radio label="国外"></el-radio>
 			    </el-radio-group>
 			</el-form-item>
 			<category-bar :title="categoryBarTitle1"></category-bar>
 
 			<el-form-item prop="nameCn" label="品牌名称" label-width="200px">
-				<el-input v-model="ruleForm.nameCn" class="wid400" ></el-input>
+				<el-input :maxlength="20" v-model="ruleForm.nameCn" class="wid400" @blur="findName('china')" placeholder="请输入品牌名称"></el-input>
 			</el-form-item>	
 			<el-form-item  prop="nameEn" label="品牌英文名称"  label-width="200px">
-				<el-input v-model="ruleForm.nameEn" class="wid400"></el-input>
+				<el-input :maxlength="20" v-model="ruleForm.nameEn" class="wid400" @blur="findName('english')" placeholder="请输入品牌英文名称"></el-input>
 			</el-form-item>
 
 			<div v-if="isshow">
 				<el-form-item prop="orign" label="品牌发源地"  label-width="200px">
-					<el-input v-model="ruleForm.orign" class="wid400"></el-input>
+					<el-input :maxlength="50" v-model="ruleForm.orign" class="wid400" placeholder="请输入品牌发源地"></el-input>
 				</el-form-item>
 			</div>
 
 			<div v-if="!isshow">	
 				<el-form-item prop="trademarkNumber" label="商标注册号" label-width="200px">
-					<el-input v-model="ruleForm.trademarkNumber" class="wid400"></el-input>
+					<el-input :maxlength="8" v-model="ruleForm.trademarkNumber" class="wid400" placeholder="请输入商标注册号"></el-input>
 				</el-form-item>	
 				<el-form-item prop="trademarkApplicant" label="商标申请人"  label-width="200px">
-					<el-input v-model="ruleForm.trademarkApplicant" class="wid400"></el-input>
+					<el-input :maxlength="30" v-model="ruleForm.trademarkApplicant" class="wid400"  placeholder="请输入商标申请人"></el-input>
 				</el-form-item>
 				<el-form-item prop="trademarkType" label="注册类型" label-width="200px">
 				    <el-radio-group v-model="ruleForm.trademarkType">
-				        <el-radio label="R标"></el-radio>
-				        <el-radio label="TM标"></el-radio>
+				        <el-radio :label="1">R标</el-radio>
+				        <el-radio :label="0">TM标</el-radio>
 				    </el-radio-group>
 				    <p class="tishi">R：已获得《商标注册证》TM：未获得《商标注册证》，仅有《注册申请受理通知书》</p>
 				</el-form-item>
-				<el-form-item label="品牌注册所属行业" label-width="200px" >
-				    <el-checkbox-group v-model="ruleForm.industry">
-				      <el-checkbox label="行业1" name="industry"></el-checkbox>
-				      <el-checkbox label="行业2" name="industry"></el-checkbox>
-				    </el-checkbox-group>
+				<el-form-item prop="registerIndustry" label="品牌注册所属行业" label-width="200px">
+				    <el-select v-model="ruleForm.registerIndustry" placeholder="请选择活动区域">
+				      <el-option label="农、林、牧、渔业" value="农、林、牧、渔业"></el-option>
+				      <el-option label=" 采矿业" value=" 采矿业"></el-option>
+				      <el-option label=" 制造业" value=" 制造业"></el-option>
+				      <el-option label="  电力、热力、燃气及水的生产和供应业" value="  电力、热力、燃气及水的生产和供应业"></el-option>
+				      <el-option label=" 环境和公共设施管理业 " value=" 环境和公共设施管理业 "></el-option>
+				      <el-option label=" 建筑业" value=" 建筑业"></el-option>
+				      <el-option label=" 交通运输、仓储业和邮政业" value="交通运输、仓储业和邮政业"></el-option>
+				      <el-option label="信息传输、计算机服务和软件业" value="信息传输、计算机服务和软件业"></el-option>
+				      <el-option label=" 批发和零售业" value=" 批发和零售业"></el-option>
+				      <el-option label="住宿、餐饮业" value="住宿、餐饮业"></el-option>
+				      <el-option label="  金融、保险业" value="  金融、保险业"></el-option>
+				      <el-option label=" 房地产业" value=" 房地产业"></el-option>
+				      <el-option label=" 租赁和商务服务业" value=" 租赁和商务服务业"></el-option>
+				      <el-option label="科学研究、技术服务和地质勘查业" value="科学研究、技术服务和地质勘查业"></el-option>
+				      <el-option label="水利、环境和公共设施管理业" value="水利、环境和公共设施管理业"></el-option>	      
+				      <el-option label="居民服务和其他服务业" value="居民服务和其他服务业"></el-option>
+				      <el-option label=" 教育" value=" 教育"></el-option>
+				      <el-option label="卫生、社会保障和社会服务业" value="卫生、社会保障和社会服务业"></el-option>
+				      <el-option label="文化、体育、娱乐业" value="文化、体育、娱乐业"></el-option>
+				      <el-option label="综合（含投资类、主业不明显）" value="综合（含投资类、主业不明显）"></el-option>
+				      <el-option label="其他" value="其他"></el-option>
+				    </el-select>
 				</el-form-item>
 			</div>
 			
 			<el-form-item prop="ways" label="授权渠道 " label-width="200px">
-				<el-input v-model="ruleForm.ways" class="wid400"></el-input>
+				<el-input :maxlength="50" v-model="ruleForm.ways" class="wid400" placeholder="请输入授权渠道"></el-input>
 			</el-form-item>	
 			<el-form-item prop="cityNames" label="授权城市"  label-width="200px">
-				<el-input v-model="ruleForm.cityNames" class="wid400"></el-input>
+				<el-input :maxlength="20" v-model="ruleForm.cityNames" class="wid400" placeholder="请输入授权城市"></el-input>
 			</el-form-item>
 			<el-form-item label="有效时间"  label-width="200px">
 			    <el-col style="width:190px;">
-			      <el-form-item prop="startValidTime">
-			        <el-date-picker type="date" v-model="ruleForm.startValidTime" style="width: 100%;"></el-date-picker>
-			      </el-form-item>
-			    </el-col>
-			    <el-col class="line" style="text-align:center;width:20px;">-</el-col>
-			    <el-col style="width:190px;">
 			      <el-form-item prop="endValidTime">
-			        <el-date-picker type="date" v-model="ruleForm.endValidTime" style="width: 100%;"></el-date-picker>
+			        <el-date-picker type="date" v-model="ruleForm.endValidTime" style="width: 100%;" placeholder="请选择有效截至时间"></el-date-picker>
 			      </el-form-item>
 			    </el-col>
 			</el-form-item>
 			<el-form-item label="品牌LOGO" label-width="200px">
-				<upload-pictures :note="uploadTishi1"></upload-pictures>
+				<upload-pictures :note="uploadTishi1" :url="ruleForm.logo" :listen="'listenToPic4'" @listenToPic4="sucpic4" ref="uploadPic4"></upload-pictures>
 			</el-form-item>
-			<el-form-item label="报关单" label-width="200px">
-				<upload-pictures :note="uploadTishi2"></upload-pictures>
-				<div class="example"  @click="iconSimple(src1)">
-					<div><img src="../../assets/logo.png"/></div>
-					<span>参考示例</span>
-				</div>
-			</el-form-item>	
+			<el-form-item label="" prop="logo"  label-width="200px" class='updata'>
+				<el-input v-model="ruleForm.logo" class="wid280"></el-input>
+			</el-form-item>
+			<div v-if="!isshow" >
+				<el-form-item label="品牌资质" label-width="200px">
+					<upload-pictures2 :note="uploadTishi1" :url="ruleForm.authorizationUrl" :listen="'listenToPic1'" @listenToPic1="sucpic1" ref="uploadPic1" class="h"></upload-pictures2>
+				</el-form-item>
+				<el-form-item label="" prop="authorizationUrl"  label-width="200px" class='updata'>
+					<el-input v-model="ruleForm.authorizationUrl" class="wid280"></el-input>
+				</el-form-item>
+			</div>
 			
-
 			<div v-if="isshow">
+				<el-form-item label="报关单" label-width="200px">
+					<upload-pictures :note="uploadTishi2" :url="ruleForm.customsDeclaration" :listen="'listenToPic3'" @listenToPic3="sucpic3" ref="uploadPic3" class="rr"></upload-pictures>
+					<div class="example"  @click="iconSimple(src1)">
+						<div><img :src='customsDeclarationPic'/></div>
+						<span>参考示例</span>
+					</div>
+				</el-form-item>	
+				<el-form-item label="" prop="customsDeclaration"  label-width="200px" class='updata'>
+					<el-input v-model="ruleForm.customsDeclaration" class="wid280"></el-input>
+				</el-form-item>
 				<category-bar :title="categoryBarTitle2"></category-bar>
 				<el-form-item prop="domesticOperator" label="国内经营人姓名" label-width="200px">
-					<el-input v-model="ruleForm.domesticOperator" class="wid400"></el-input>
+					<el-input :maxlength="30" v-model="ruleForm.domesticOperator" class="wid400" placeholder="请输入国内经营人姓名"></el-input>
 				</el-form-item>	
-				<el-form-item prop="domesticOperatorIDCard" label="身份证号"  label-width="200px" >
-					<el-input v-model="ruleForm.domesticOperatorIDCard" class="wid400"></el-input>
+				<el-form-item prop="domesticOperatorIdCard" label="身份证号"  label-width="200px" >
+					<el-input :maxlength="18" v-model="ruleForm.domesticOperatorIdCard" class="wid400" placeholder="请输入身份证号"></el-input>
 				</el-form-item>
-				<el-form-item prop="domesticOperatorPhone" label="国内经营人手机号码"  label-width="200px">
-					<el-input v-model="ruleForm.domesticOperatorPhone" class="wid400"></el-input>
+				<el-form-item prop="domesticOperatorPhone" label="手机号码"  label-width="200px">
+					<el-input :maxlength="11" v-model="ruleForm.domesticOperatorPhone" class="wid400" placeholder="请输入手机号码"></el-input>
 				</el-form-item>
 				
 			</div>
 
 			<el-form-item prop="contactMobile" label="联系电话"  label-width="200px">
-				<el-input v-model="ruleForm.contactMobile" class="wid400"></el-input>
+				<el-input :maxlength="11" v-model="ruleForm.contactMobile" class="wid400" placeholder="请输入联系电话"></el-input>
 				<p class="tishi">审核同学有疑问时，会通过此联系方式联系您</p>
 			</el-form-item>
 			<el-form-item label="" label-width="200px">
@@ -117,7 +143,7 @@
 			</el-dialog>
 
 			<el-dialog title="" :visible.sync="dialogVisible" custom-class="big-img">
-			    <img :src="exampleSrc"/>
+			    <img :src="customsDeclarationPic"/>
 			</el-dialog>
 		</el-form>
 	</section>
@@ -127,15 +153,19 @@
 <script>
 import CategoryBar from '@/components/CategoryBar.vue'/*标题组件*/
 import UploadPictures from '@/components/UploadPictures.vue'/*上传图片组件*/
-import { brandSavebrand } from '@/api/shopApi';
+import UploadPictures2 from '@/components/UploadPictures2.vue'/*上传图片组件*/
+import { brandSavebrand,brandCheckbrandname,baseBrandGet } from '@/api/shopApi';
 
 export default {
   	components: { 
   		CategoryBar,
-  		UploadPictures
+  		UploadPictures,
+  		UploadPictures2
   	},
 	data() {
       return {
+      	customsDeclarationPic:config.customsDeclaration,
+      	listLoading:false,
       	uploadTishi1:"图片尺寸200px*200px以上，大小800k以内，格式png/jpg/jpeg，格式要求jpg、jpeg、png，不超过10MB",
       	uploadTishi2:"图片尺寸800px*800px以上，大小800k以内，格式png/jpg/jpeg，格式要求jpg、jpeg、png，不超过10MB",
       	categoryBarTitle1: '品牌信息',
@@ -144,16 +174,17 @@ export default {
       	exampleSrc:'',
       	dialogVisible:false,
       	src1:"http://2.hapn.cc:20080/n/00802v_b009W1MMTZ0a02w8.jpg",
+      	moren:"",
 
         ruleForm: {
-			registerLocation:1,
+			registerLocation:'中国大陆',
 		 	nameCn: '',
 			nameEn: '',
 			orign: '',
 			trademarkNumber: '',
 			trademarkApplicant: "",
-			trademarkType:[],
-			industry: [],
+			trademarkType:1,
+			registerIndustry: '农、林、牧、渔业',
 			identity: '',
 			ways:"",
 			logo:'',
@@ -162,76 +193,139 @@ export default {
 			startValidTime: '',
 			endValidTime: '',
 			domesticOperator: '',
-			domesticOperatorIDCard: '',
+			domesticOperatorIdCard: '',
 			domesticOperatorPhone: "",
-			contactMobile:""
+			contactMobile:"",
+			authorizationUrl:''
 		},
         rules: {
-          nameCn: [
-            { required: true, message: '请输入品牌名称', trigger: 'blur' },
-            { min: 1, max: 20, message: '长度在 1 到 20 位', trigger: 'blur' }
-          ],
-          nameEn: [
-            { required: true, message: '请输入品牌英文名称', trigger: 'blur' },
-            { min: 1, max: 50, message: '长度为 1 到 50 位', trigger: 'blur' }
-          ],
-          orign: [
-            { required: true, message: '请输入品牌发源地', trigger: 'blur' },
-            { max: 50, message: '长度最多 50 位', trigger: 'blur' }
-          ],
-          trademarkNumber: [
-            { required: true, message: '请输入商标注册号', trigger: 'blur' },
-            { min: 8, max: 8, message: '长度为8位', trigger: 'blur' }
-          ],
-          trademarkApplicant: [
-            { required: true, message: '请输入商标申请人', trigger: 'blur' },
-            { min: 2, max: 30, message: '长度在 2 到 30 位', trigger: 'blur' }
-          ],
-          trademarkType: [
-            { required: true, message: '请选择注册类型', trigger: 'change' }
-          ],
-          industry: [
-            { type:'array', required: true, message: '请选择品牌注册所属行业', trigger: 'change' }
-          ],
-          ways: [
-            { required: true, message: '请输入授权渠道', trigger: 'blur' },
-            { max: 50, message: '长度最多 50 位', trigger: 'blur' }
-          ],
-          cityNames: [
-            { required: true, message: '请输入授权城市', trigger: 'blur' },
-            { max: 20, message: '长度最多 20 位', trigger: 'blur' }
-          ],
-          startValidTime: [
-            { type: 'date', required: true, message: '请选择有效起始时间', trigger: 'blur' }
-          ],
-          endValidTime: [
-            { type: 'date', required: true, message: '请选择有效结束时间', trigger: 'blur' }
-          ],
-          domesticOperator: [
-            { required: true, message: '国内经营人姓名', trigger: 'blur' },
-            { min:2, max: 30, message: '长度为 2 到 30 位', trigger: 'blur' }
-          ],
-          domesticOperatorIDCard: [
-            { required: true, message: '请填写身份证号', trigger: 'blur' },
-            { min:18, max: 18, message: '长度为 18 位', trigger: 'blur' }
-          ],
-          domesticOperatorPhone: [
-            { required: true, message: '请填写手机号码', trigger: 'blur' },
-            { min: 11, max: 11, message: '长度为 11 位', trigger: 'blur' }
-          ],
-          contactMobile: [
-            {  message: '请填写联系电话', trigger: 'blur' },
-            { min: 11, max: 11, message: '长度为 11 位', trigger: 'blur' }
-          ]
+        	logo: [
+	            { required: true, message: '请上传品牌LOGO', trigger: 'blur' }
+	        ],
+        	authorizationUrl: [
+	            { required: true, message: '请上传品牌资质', trigger: 'blur' }
+	        ],
+	        customsDeclaration: [
+	            { required: true, message: '请上传报关单', trigger: 'blur' }
+	        ],
+	        nameCn: [
+	            { required: true, message: '请输入品牌名称', trigger: 'blur' },
+	            { min: 1, max: 20, message: '长度在 1 到 20 位', trigger: 'blur' }
+	        ],
+	        nameEn: [
+	            { required: true, message: '请输入品牌英文名称', trigger: 'blur' },
+	            { min: 1, max: 50, message: '长度为 1 到 50 位', trigger: 'blur' }
+	        ],
+	        orign: [
+	            { required: true, message: '请输入品牌发源地', trigger: 'blur' },
+	            { max: 50, message: '长度最多 50 位', trigger: 'blur' }
+	        ],
+	        trademarkNumber: [
+	            { required: true, message: '请输入商标申请号', trigger: 'blur' },
+	            { min: 8, max: 8, message: '请输入正确的商标申请号', trigger: 'blur' }
+	        ],
+	        trademarkApplicant: [
+	            { required: true, message: '请输入商标申请人', trigger: 'blur' },
+	            { min: 2, max: 30, message: '请输入正确的商标申请人', trigger: 'blur' }
+	        ],
+	        registerIndustry: [
+	            { required: true, message: '请选择品牌注册所属行业', trigger: 'change' }
+	        ],
+	        ways: [
+	            { required: true, message: '请输入授权渠道', trigger: 'blur' },
+	            { max: 50, message: '长度最多 50 位', trigger: 'blur' }
+	        ],
+	        cityNames: [
+	            { required: true, message: '请输入授权城市', trigger: 'blur' },
+	            { max: 20, message: '长度最多 20 位', trigger: 'blur' }
+	        ],
+	        endValidTime: [
+	            { type: 'date', required: true, message: '请选择有效结束时间', trigger: 'blur' }
+	        ],
+	        domesticOperator: [
+	            { required: true, message: '国内经营人姓名', trigger: 'blur' },
+	            { min:2, max: 30, message: '长度为 2 到 30 位', trigger: 'blur' }
+	        ],
+	        domesticOperatorIdCard: [
+	            { required: true, message: '请填写身份证号', trigger: 'blur' },
+	            { min:18, max: 18, message: '长度为 18 位', trigger: 'blur' }
+	        ],
+	        domesticOperatorPhone: [
+	            { required: true, message: '请填写手机号码', trigger: 'blur' },
+	            { min: 11, max: 11, message: '长度为 11 位', trigger: 'blur' }
+	        ],
+	        contactMobile: [
+	            {  message: '请填写联系电话', trigger: 'blur' },
+	            { min: 11, max: 11, message: '长度为 11 位', trigger: 'blur' }
+	        ]
         }
       };
     },
-    computed:{
-    	isshow:function(){
-    		return this.ruleForm.registerLocation==1?false:true;
+    computed: {
+		isshow:function(){
+    		return this.ruleForm.registerLocation=="中国大陆"?false:true;
     	}
     },
+   	mounted(){
+    	//测试品牌2 更新
+    	if(this.$route.query.brandId){
+    		var parm={
+	    		brandId:this.$route.query.brandId,
+	    		storeId:config.storeId
+	    	};
+			this.listLoading = true;
+	        baseBrandGet(parm).then((res) => {
+	        	if(res.data.code==0){
+	        		this.ruleForm= res.data.data;
+	        		if(!this.ruleForm.registerIndustry){
+	        			this.ruleForm.registerIndustry="农、林、牧、渔业";
+	        		}
+	        		this.ruleForm.endValidTime=new Date(this.ruleForm.endValidTime);
+	        		this.ruleForm.trademarkType=Number(this.ruleForm.trademarkType);;
+	        	}else{
+	        		this.$message({message: res.data.message,type: 'warning'});
+	        	}
+	          	this.listLoading = false;
+	        }).catch((res)=> {
+	          	this.listLoading = false;
+	          	this.$message({message: '接口建立连接失败',type: 'warning'});
+	        });
+    	}
+    	
+    },
     methods: {
+    	
+    	/*时间转换为毫秒数*/
+    	transitionTime(t){
+
+    		if(t instanceof Date){
+    			console.log(t)
+    			t=t.getTime();
+    		}
+    		return t;
+    	},
+    	/*查找品牌名车是否已存在品牌库*/
+    	findName(val){
+    		
+    		var names=this.ruleForm.nameCn;
+    		var tit='';
+    		if(val=='english'){
+    			names=this.ruleForm.nameEn;
+    			tit='英文';
+    		}
+    		if(!names){
+    			return false;
+    		}
+	        brandCheckbrandname({"name":names}).then((res) => {
+	          	if((res.data.code==1)&&(res.data.message=='品牌名称重复')){
+
+	          		this.$message({
+			          message: '品牌'+tit+'名称重名，请重新输入',
+			          type: 'warning'
+			        });
+	          	}
+	        });
+    	},
     	/*提示消息*/
     	hint(tit,type,duration,fun){
     		this.$message({
@@ -245,20 +339,19 @@ export default {
     	},
     	/*查看示例图*/
 		iconSimple(src){
-			this.exampleSrc=src;
 			this.dialogVisible=true;
 		},
     	/*提交按钮*/
-	    submitForm(formName) {
+	    submitForm(formName) {//this.transitionTime(
 	        this.$refs[formName].validate((valid) => {
 	            if (valid) {
 	          		var para = new URLSearchParams();  
-			        para.append('storeId',storeId);
+			        para.append('storeId',config.storeId);
 			        para.append('authorizationUrl',this.ruleForm.authorizationUrl);
 			        para.append('ways',this.ruleForm.ways);
 			        para.append('cityNames',this.ruleForm.cityNames);
-			        para.append('startValidTime',this.ruleForm.startValidTime);
-			        para.append('endValidTime',this.ruleForm.endValidTime);
+			        para.append('startValidTime','');
+			        para.append('endValidTime',this.transitionTime(this.ruleForm.endValidTime));
 			        para.append('contactMobile',this.ruleForm.contactMobile);
 			        para.append('registerLocation',this.ruleForm.registerLocation);
 			        para.append('trademarkNumber',this.ruleForm.trademarkNumber);
@@ -272,7 +365,7 @@ export default {
 			        para.append('orign',this.ruleForm.orign);
 			        para.append('customsDeclaration',this.ruleForm.customsDeclaration);
 			        para.append('domesticOperator',this.ruleForm.domesticOperator);
-			        para.append('domesticOperatorIDCard',this.ruleForm.domesticOperatorIDCard);
+			        para.append('domesticOperatorIdCard',this.ruleForm.domesticOperatorIdCard);
 			        para.append('domesticOperatorPhone',this.ruleForm.domesticOperatorPhone);
 
 			        this.listLoading = true;
@@ -299,13 +392,30 @@ export default {
 	    },
         /*切换注册地，清空表单选项*/
         resetForm(formName) {
-        	this.$refs[formName].resetFields();
+        	console.log(this.ruleForm)
+        	/*if(this.ruleForm.registerLocation=="中国大陆"){
+        		this.$refs.uploadPic1.revise(this.ruleForm.authorizationUrl);//修改图片的值
+        	}else{
+        		this.$refs.uploadPic3.revise(this.ruleForm.customsDeclaration);//修改图片的值
+        	}*/
         },
 	    /*返回商户中心按钮*/
 	    getBack(){
 	    	this.dialogVisible1 = false;
 	    	this.$router.push({ path: '/store/brand-management' });
-	    }
+	    },
+	    //品牌资质图片上传成功之后
+		sucpic1(url){
+			this.ruleForm.authorizationUrl=url;
+		},
+		//报关单上传成功之后
+		sucpic3(url){
+			this.ruleForm.customsDeclaration=url;
+		},
+		//品牌LOGO上传成功之后
+		sucpic4(url){
+			this.ruleForm.logo=url;
+		}
     }
 }
 </script>
@@ -424,6 +534,7 @@ export default {
 			text-align:center;
 			img{
 				max-width:100%;
+				max-height:100%;
 			}
 		}
 	}

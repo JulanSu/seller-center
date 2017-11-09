@@ -1,5 +1,6 @@
 <template>
   <el-select v-model="brandId" placeholder="选择品牌" @change="changeHandle">
+    <el-option label="无" value="0"  key="无"></el-option>
     <template v-for="brand in brandDTOList">
       <el-option :label="brand.nameCn" :value="brand.brandId"  :key="brand.nameCn"></el-option>
     </template>
@@ -16,7 +17,7 @@
     },
     props: {
       value: {
-        type: '',
+        type: [String, Number],
         default: ''
       },
       brandDTOList: {

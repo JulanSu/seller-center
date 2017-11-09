@@ -1,14 +1,12 @@
-import $ from 'jquery'
+
 import 'summernote'
+import $ from 'jquery'
 import 'summernote/dist/lang/summernote-zh-CN.min.js'
 
-// var $ = require('jquery')
-// require('summernote')
-// require('summernote/dist/lang/summernote-zh-CN.min.js')
-// 
-
 export default {
+
   install: function (Vue, options) {
+
     Vue.component('vue-summernote', {
       render: function (createElement) {
         return createElement('div')

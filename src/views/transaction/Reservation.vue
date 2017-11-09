@@ -1,12 +1,10 @@
 <template>
     <section class="coupon-con" v-if="$route.name=='结算管理'">
          <el-row class='search-row'>
-            <span>订单编号</span>
-            <el-input v-model="form.orderNumber" class='w180'></el-input>
-            <span>创建时间</span>
-            <el-date-picker type="date" v-model="form.startTime" class='w120' @change='chooseTime'></el-date-picker>
+            <el-input v-model="form.orderNumber" class='w180' placeholder='订单编号'></el-input>
+            <el-date-picker type="date" v-model="form.startTime" class='w120' @change='chooseTime' placeholder='创建时间'></el-date-picker>
             <span>—</span>
-            <el-date-picker type="date" v-model="form.endTime" class='w120' @change='chooseTime'></el-date-picker>
+            <el-date-picker type="date" v-model="form.endTime" class='w120' @change='chooseTime' placeholder='创建时间'></el-date-picker>
             <el-button type="primary" class='search-btn' @click="searchParams">查询</el-button>
         </el-row>
         <el-table :data="tableData" class='table-con' align='center' :row-style="{height:'100px'}">
@@ -54,7 +52,7 @@
             let params = {
                 pageNum: 1,
                 pageSize: 20,
-                storeId: 10
+                storeId: config.storeId
             }
             this.getData(params)
         },
@@ -83,7 +81,7 @@
             /*获取参数*/
             getParams(){
                 let self = this,params = {};
-                params.storeId = 10;
+                params.storeId = config.storeId;
                 params.orderNumber = self.form.orderNumber == '' ? null : self.form.orderNumber;
                 params.startDate = self.form.startTime == '' ? null : self.timeFormat(self.form.startTime);
                 params.endDate = self.form.endTime == '' ? null : self.timeFormat(self.form.endTime);
@@ -155,17 +153,13 @@
             width:120px;
         }
         .search-row{
-            span{
+            >div:nth-of-type(2){
+                margin-left:20px;
+            }
+            >span{
                 font-size:14px;
                 color:#666666;
-                margin-right: 10px;
-            }
-            span:nth-of-type(n+2){
-                margin-left: 20px;
-            }
-            span:nth-of-type(6){
-                margin-left: 10px;
-                color: #999;
+                margin: 0 10px;
             }
             .search-btn{
                 margin-left: 40px;

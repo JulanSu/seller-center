@@ -1,28 +1,23 @@
 <template>
     <section class="search" v-if="$route.name=='售后订单查询'">
         <el-row class='search-row1'>
-            <span>买家手机</span>
-            <el-input v-model="form.userPhone" class='w180' placeholder='请输入手机号码' @blur="numberIsRight(1)" :maxlength='11'></el-input>
-            <span>订单类型</span>
-            <el-select v-model="form.typeCheck" class='w180' @change="changeOrder">
+            <el-input v-model="form.userPhone" class='w180' placeholder='请输入买家手机号码' @blur="numberIsRight(1)" :maxlength='11'></el-input>
+            <el-select v-model="form.typeCheck" class='w180' @change="changeOrder" placeholder='订单类型'>
                 <el-option v-for="item in form.orderType" :key="item.orderId" :label="item.orderName" :value="item.orderId"></el-option>
             </el-select>
-            <span>售后进度</span>
-            <el-select v-model="form.planCheck" placeholder="活动状态" class='w180'>
+            <el-select v-model="form.planCheck" placeholder="售后进度" class='w180'>
                 <el-option v-for="item in form.orderPlan" :key="item.statusId" :label="item.label" :value="item.statusId"></el-option>
             </el-select>
-            <span>订单编号</span>
             <el-input v-model="form.orderNumber" class='w180' placeholder='请输入订单号' @blur="numberIsRight(2)"></el-input >
-            <span>申请售后时间</span>
-            <el-date-picker type="date" v-model="form.startTime" class='w120' @change="chooseTime"></el-date-picker>
+            <el-date-picker type="date" v-model="form.startTime" class='w120' @change="chooseTime" placeholder='售后时间'></el-date-picker>
             <span>—</span>
-            <el-date-picker type="date" v-model="form.endTime" class='w120' @change="chooseTime"></el-date-picker>
+            <el-date-picker type="date" v-model="form.endTime" class='w120' @change="chooseTime" placeholder='售后时间'></el-date-picker>
             <el-button type="primary" class='search-btn' @click="searchParams">查询</el-button>
         </el-row>
         <el-table :data="tableData" class='table-con' align='center' :row-style="{height:'100px'}">
             <el-table-column prop="serialNumber" label="订单号" align='center'></el-table-column>
             <el-table-column prop="orderTime" label="申请售后时间" align='center'></el-table-column>
-            <el-table-column prop="pNamee" label="商品名称" align='center'></el-table-column>
+            <el-table-column prop="productName" label="商品名称" align='center'></el-table-column>
             <el-table-column prop="infoName" label="买家昵称" align='center'></el-table-column>
             <el-table-column prop="infoTelephone" label="买家手机号" align='center'></el-table-column>
             <el-table-column prop="orderStoreStatus" label="售后进度" align='center'></el-table-column>
@@ -51,8 +46,8 @@
                 currentPage: 1,
                 form: {
                     userPhone: '',
-                    typeCheck: null,
-                    planCheck: null,
+                    typeCheck: '',
+                    planCheck: '',
                     orderType: [
                             {orderName: '全部', orderId: null},
                             {orderName: '全款订单', orderId: 1},
@@ -75,7 +70,7 @@
             }
         },
         created(){
-            this.getTableData({storeId:10,pageNum:1,pageSize:20})
+            this.getTableData({storeId:config.storeId,pageNum:1,pageSize:20})
         },
         methods: {
             /*订单类型变化*/
@@ -139,9 +134,9 @@
             /*获取参数*/
             getParams(){
                 let self = this,params = {};
-                params.storeId = 1;
+                params.storeId = config.storeId;
                 params.infoTelephone = self.form.userPhone == '' ? null : self.form.userPhone;
-                params.orderStoreType = self.form.typeCheck;
+                params.orderStoreType = self.form.typeCheck == '' ? null : self.form.typeCheck
                 params.orderStoreStatus = [];
                 if(self.form.statusCheck == undefined){
                     params.orderStoreStatus = null
@@ -169,12 +164,12 @@
                         this.total = 0;
                         return false;
                     }
-                    console.log(moc)
-                    for(let i=0; i<moc.data.list.length; i++) {
-                        let that = moc.data.list[i];
-                        that.infoTelephone = that.infoTelephone.substr(0, 3) + '****' + that.infoTelephone.substr(7)
-                        that.pName = that.productNames  //.join('')
-                        that.orderStoreStatus = this.switchStatus(that.orderStoreStatus)
+                    if(moc.data.list){
+                        for(let i=0; i<moc.data.list.length; i++) {
+                            let that = moc.data.list[i];
+                            that.pName = that.productNames  //.join('')
+                            that.orderStoreStatus = this.switchStatus(that.orderStoreStatus)
+                        }
                     }
                     this.total = Number(moc.data.total);
                     this.tableData = moc.data.list
@@ -194,8 +189,9 @@
             },
             handleClick(row) {
                 let self = this,
-                    orderId = row.orderStoreId;
-                    self.$router.push(`/transaction/service-orders/service-detail?orderId=${orderId}` )
+                    orderId = row.orderStoreId,
+                    productId = row.orderProductId;
+                    self.$router.push(`/transaction/service-orders/service-detail?orderId=${orderId}&productId=${productId}` )
             },
             /*消息警告*/
             warn(str){
@@ -229,17 +225,13 @@
             width:120px;
         }
         .search-row1{
-            span{
+            >div:nth-of-type(n+2){
+                margin-left:10px;
+            }
+            >span{
                 font-size:14px;
                 color:#666666;
-                margin-right: 10px;
-            }
-            span:nth-of-type(n+2){
-                margin-left: 20px;
-            }
-            span:nth-of-type(6){
                 margin-left: 10px;
-                color: #999;
             }
             .search-btn{
                 margin-left: 40px;

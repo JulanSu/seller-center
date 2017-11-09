@@ -1,8 +1,8 @@
 <template>
   <div class="create-goods page-container">
-    <loading-mask v-if="!categoryData.length"></loading-mask>
+    <loading-mask v-if="isLoading"></loading-mask>
     <template v-else>
-    <category-bar :title="categoryBarTitle"></category-bar>
+      <category-bar :title="categoryBarTitle"></category-bar>
       <template v-if="$route.name === '创建商品'">
         <el-row>
           <el-col :span="8">
@@ -26,8 +26,8 @@
           </el-breadcrumb>
         </div>
         <div class="block">
-          <div style="text-align: center">
-            <el-button type="primary" @click="linkGoodsForm">我已阅读以下规则，现在创建商品</el-button>
+          <div style="text-align: center" class="create-rule">
+            <el-button type="primary" @click="linkGoodsForm" :class="{disabled: !hunbohuiRule || !cateSelected}">我已阅读以下规则，现在创建商品</el-button>
             <div class="block">
               <el-checkbox v-model="hunbohuiRule">中国婚博会规则</el-checkbox>
             </div>
@@ -51,7 +51,7 @@
           </div>
         </div>
       </template>
-    <router-view v-if="$route.name === '新建' || $route.name === '编辑'"></router-view>
+      <router-view v-if="$route.name === '新建商品' || $route.name === '编辑商品'"></router-view>
     </template>
   </div>
 </template>
@@ -62,15 +62,16 @@
     import CategoryBar from '@/components/CategoryBar'
     import LoadingMask from '@/components/LoadingMask'
     import CategoryMenu from './components/CategoryMenu'
-    
-    import { getGoodsCategoryList } from '@/api/seller'
+    import { getStoreCategory  } from '@/api/seller'
     export default {
       components: { CategoryMenu, CategoryBar, LoadingMask },
       data() {
         return {
+          isLoading: true, 
           storeId: storeId,
           curCateGroup: [],
           curCateRow: [],
+          cateSelected: false,
           hunbohuiRule: true,
           categoryBarTitle: '商品类目选择',
           categoryData: [],
@@ -78,16 +79,17 @@
           thirstCategoryData:[]
         }
       },
-      mounted: function () {
-        this.getGoodsCategory(this.storeId);
-      },
-      created(){
-        //this.getGoodsCategory()
+      created () {
+        let route = this.$route
+        if(route.name === '创建商品') {
+          this.getGoodsCategory(this.storeId);
+        }else {
+          this.isLoading = false
+        }
       },
       methods: {
 
         linkGoodsForm (){
-          console.log(this.curCateRow)
           if(!this.hunbohuiRule) {
             return;
           }
@@ -96,23 +98,22 @@
             return;
           }else {
             this.$router.push({
-                name: '新建',
-                query: {
-                  productCateId: curCate[2]['productCateId'],
-                  productCateName: curCate[2]['productCateName']
-                }
-              })
+              name: '新建商品',
+              query: {
+                productCateId: curCate[2]['productCateId'],
+                productCateName: curCate[2]['productCateName']
+              }
+            })
           }
-
         },
         getGoodsCategory(storeId){
           var self = this;
-          getGoodsCategoryList({
+          getStoreCategory({
             storeId: storeId
           }).then((res) => {
-            console.log(res)
-            if(res.data.code === 0) {
+            if(res.data.code === 0 && res.data.data && res.data.data.length) {
               self.categoryData = res.data.data
+              self.isLoading = false
             }
             //NProgress.done();
           });
@@ -124,14 +125,17 @@
           this.secoundCategoryData = []
           this.thirstCategoryData = []
           this.secoundCategoryData = row.child
+          this.cateSelected = false
         },
         secondHandle (row, index) {
           this.thirstCategoryData = []
           this.thirstCategoryData = row.child
           this.getcurCateGroup(1, row)
+          this.cateSelected = false
         },
         thirdHandle (row, index){
           this.getcurCateGroup(2, row)
+          this.cateSelected = true 
         },
         getcurCateGroup (index, row){
           this.curCateRow = row
@@ -149,6 +153,12 @@
 
 <style lang="scss">
 @import '~scss_vars';
+  .create-rule {
+    .disabled {
+      background-color: #ccc;
+      border-color: #ccc
+    }
+  }
   .page-container {
     position: relative;
     min-height: 500px;

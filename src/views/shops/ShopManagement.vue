@@ -1,5 +1,5 @@
 <template>
-  <section class="shop-list" v-if='$route.name=="门店管理"'>
+  <section class="shop-list" v-if='$route.name=="门店管理"'  v-loading="listLoading">
     <!--工具条-->
     <el-col :span="24" class="tool-bar">
       <router-link to="/store/shop-management/add"  icon="plus">
@@ -8,14 +8,16 @@
     </el-col>
 
     <!--列表-->
-    <el-table :data="users" v-loading="listLoading" style="width: 100%;">
-      <el-table-column prop="name" label="门店名称" width="190" align="center">
+    <el-table :data="users" style="width: 100%;">
+      <el-table-column prop="name" label="门店名称" min-width="150" align="center">
       </el-table-column>
-      <el-table-column prop="address" label="门店地址" min-width="190" align="center">
+      <el-table-column prop="address" label="门店地址" min-width="150" align="center">
       </el-table-column>
-      <el-table-column prop="workTime" label="营业时间" width="190" align="center">
+      <el-table-column prop="workTime" label="营业时间" min-width="150" align="center">
       </el-table-column>
-      <el-table-column prop="contactPerson" label="联系人" width="190" align="center">
+      <el-table-column prop="contactPerson" label="联系人姓名" min-width="150" align="center">
+      </el-table-column>
+      <el-table-column prop="contactMobile" label="联系人号码" min-width="150" align="center">
       </el-table-column>
       <el-table-column label="操作" width="200" align="center">
         <template slot-scope="scope">
@@ -29,9 +31,11 @@
     <el-col :span="24" class="tool-bar">
       <el-pagination
       @current-change="handleCurrentChange"
+      @size-change="handleSizeChange"
+      :page-sizes="[20, 50, 100]"
       :current-page="page"
-      :page-size="20"
-      layout="prev, pager, next, jumper,total"
+      :page-size="pageSize"
+      layout="sizes,prev, pager, next, jumper,total"
       :total="total" style="float:right;">
     </el-pagination>
     </el-col>
@@ -52,15 +56,22 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
         users: [],
         total: 0,
         page: 1,
-        pageSize:10,
+        pageSize:20,
         listLoading: false,
       }
     },
+    watch: {
+     '$route' (to, from) {
+        if(this.$route.path=="/store/shop-management"){
+          this.getUsers();
+        }
+     }
+   },
     methods: {
       //获取用户列表
       getUsers() {
         let para = {
-          storeId:storeId,
+          storeId:config.storeId,
           page: this.page,
           pageSize: this.pageSize
         };
@@ -73,6 +84,11 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
       },
       handleCurrentChange(val) {
         this.page = val;
+        this.getUsers();
+      },
+      //当选择每页多少条时触发
+      handleSizeChange(val){
+        this.pageSize = val;
         this.getUsers();
       },
       //禁用启用
@@ -90,8 +106,8 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
             cancelButtonText: '取消',
             beforeClose: (action, instance, done) => {
               if (action === 'confirm') {
-                instance.confirmButtonLoading = true;
-                instance.confirmButtonText = '执行中...';
+                //instance.confirmButtonLoading = true;
+                //instance.confirmButtonText = '执行中...';
                 //编辑门店提交接口
                 var para = new URLSearchParams();
                 para.append('storeBranchId',row.storeBranchId);
@@ -99,15 +115,17 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
                 updateClassify(para).then((res) => {
                   if(res.data.code==0){
                     this.getUsers();
-                    instance.confirmButtonLoading = false;
+                    //instance.confirmButtonLoading = false;
                     done();
 
                   }else{
+                    done();
                     this.$message.error(res.data.message);
+
                   }
                   
                 }).catch((res)=> {
-                  this.listLoading = false;
+                  //this.listLoading = false;
                 });
               }else {
                 done();
@@ -126,6 +144,7 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
 <style lang="scss">
 
 .shop-list{
+  padding:0 40px 0 20px;
   a{
     text-decoration:none;
   }
@@ -133,6 +152,7 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
     width:100%;
     background:none;
     margin:20px 0;
+    position:relative;
   }
   .cell{
     a{

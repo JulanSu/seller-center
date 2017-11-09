@@ -20,12 +20,12 @@
             </el-select>
           </el-form-item>
           <el-form-item label="">
-                <el-date-picker
-                  v-model="createDate"
-                  type="daterange"
-                  @change="datePickerHandle"
-                  placeholder="选择日期范围">
-                </el-date-picker>
+            <el-date-picker
+              v-model="createDate"
+              type="datetimerange"
+              @change="datePickerHandle"
+              placeholder="选择日期范围">
+            </el-date-picker>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit">查询</el-button>
@@ -59,7 +59,7 @@
 
     },
     created(){
-      this.getStoreCateHandel(10)
+      this.getStoreCateHandel(storeId)
 
     },
     methods: {
@@ -144,8 +144,6 @@
         }
         return finished
       }
-
-
     }
   }
 

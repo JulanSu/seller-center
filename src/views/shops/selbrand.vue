@@ -1,21 +1,33 @@
+<!-- <template>
+　　<div>
+　　　　<ul>
+　　　　　　<li v-for="(item,$index) in items" @click="selectStyle (item, $index) " :class="{'active':item.active,'unactive':!item.active}" >
+　　　　　　{{item.select}} 
+　　　　　　<span class="icon" v-show="item.active">当我是图标</span>
+　　　　　　</li>
+　　　　</ul>
+　　</div>
+</template> -->
+
+
 <template>
 	<section class="sel-brand">
 		<category-bar :title="categoryBarTitle"></category-bar>
 		<div style="min-width:980px">
 	        <el-row>
 		      <el-col :span="8" style="width:240px;">
-		        <category-menu title="一级行业" v-if="categoryData.length" :categoryData="categoryData" @categoryClick="firstHandle">
+		        <category-menu title="一级行业" :categoryData="categoryData" @categoryClick="firstHandle" :arrKey="secondIndustryList">
 		        </category-menu>
 		      </el-col>
 		      <el-col :span="8" style="width:240px;" class="no-bor">
-		        <category-menu title="二级行业" v-if="secoundCategoryData.length" :categoryData="secoundCategoryData" @categoryClick="secondHandle"></category-menu>
+		        <category-menu title="二级行业" v-if="secoundCategoryData.length" :categoryData="secoundCategoryData" @categoryClick="secondHandle" :arrKey="brandList"></category-menu>
 		      </el-col>
           <el-col v-if="logos.length||allBrand.length" :span="8" style="min-width:240px;" class="all-logo">
             <ul>
               <li v-for="(item,index) in logosBtn"  :class="{ sel:index==thisIndex }" @click="searchBrand(item,index)">{{item}}</li>
             </ul>
             <ol>
-              <li v-for="(item,index) in logos" @click="thirdHandle(item)">{{item.nameCn}}</li>
+              <li v-for="(item,index) in logos" @click="thirdHandle(item,index)" :class="{'on':item.active}">{{item.nameCn}}</li>
             </ol>
           </el-col>
 		    </el-row>
@@ -60,6 +72,8 @@ export default {
     data() {
       return {
         categoryBarTitle: '选择品牌',
+        secondIndustryList:'secondIndustryList',
+        brandList:'brandList',
 
         //类目选择
   			curCateName:{},
@@ -100,12 +114,33 @@ export default {
       },
       //三级类目选择事件
       thirdHandle(row){
-        this.$set(this.curCateName,row.brandId,row.nameCn);
+        var isOn=row.active;
+        if(!isOn){
+          this.$set(row,'active',true);
+          this.$set(this.curCateName,row.brandId,row.nameCn);
+        }else{
+          this.$set(row,'active',false);
+          this.$delete(this.curCateName,row.brandId);
+        }
+
+
+        
+
 
       },
       //删除品牌
-      delBrand(val,key){
+      delBrand(val,key){console.log(val,key)
+        var that=this;
         this.$delete(this.curCateName,key);
+        this.logos.forEach(function (item) {
+          if(item.brandId==key){
+            that.$set(item,'active',false);
+            return false;
+          }
+　　　　　　
+　　　　});
+
+
       },
       //添加品牌的确定按钮
       addBrandBtn(){
@@ -138,7 +173,7 @@ export default {
 
   	mounted:function(){
       let para = {
-        storeId:storeId
+        storeId:config.storeId
       };
       this.listLoading = true;
       listindustrybrand(para).then((res) => {
@@ -233,6 +268,7 @@ export default {
         display:inline;
         padding:0 4px;
       }
+      
       li.all{
 
       }
@@ -244,11 +280,16 @@ export default {
       padding:8px 0;
       li{
         display:inline-block;
-        width:125px;
+        width:112px;
         text-align:center;
         height:34px;
         line-height:34px;
         cursor:pointer;
+        margin:0 0 10px 10px;
+      }
+      li.on{
+        color:#fff;
+        background:#41cac0;
       }
     }
 

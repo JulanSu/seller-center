@@ -1,22 +1,17 @@
 <template>
     <section class="search" v-if="$route.name=='订单查询'">
         <el-row class='search-row'>
-            <span>用户手机号</span>
             <el-input v-model="form.userPhone" class='w180' placeholder='请输入手机号码' :maxlength='11' @blur="numberIsRight(1)"></el-input>
-            <span>订单类型</span>
             <el-select v-model="form.typeCheck" placeholder="订单类型" class='w180' @change="changeOrder">
                 <el-option v-for="item in form.orderType" :key="item.orderId" :label="item.orderName" :value="item.orderId"></el-option>
             </el-select>
-            <span>订单状态</span>
             <el-select v-model="form.statusCheck" placeholder="订单状态" class='w180'>
                 <el-option v-for="item in form.orderStatus" :key="item.statusId" :label="item.label" :value="item.statusId"></el-option>
             </el-select>
-            <span>订单号</span>
             <el-input v-model="form.orderNumber" class='w180' placeholder='请输入订单号' :maxlength='15' @blur="numberIsRight(2)"></el-input>
-            <span>下单时间</span>
-            <el-date-picker type="date" v-model="form.startTime" class='w120' @change='chooseTime'></el-date-picker>
+            <el-date-picker type="date" v-model="form.startTime" class='w120' @change='chooseTime' placeholder='订单时间'></el-date-picker>
             <span>—</span>
-            <el-date-picker type="date" v-model="form.endTime" class='w120' @change='chooseTime'></el-date-picker>
+            <el-date-picker type="date" v-model="form.endTime" class='w120' @change='chooseTime' placeholder='订单时间'></el-date-picker>
             <el-button type="primary" class='search-btn' @click='searchParams'>查询</el-button>
         </el-row>
         <el-table :data="tableData" class='table-con' align='center' :row-style="{height:'100px'}">
@@ -28,7 +23,7 @@
             <el-table-column prop="orderStoreStatus" label="状态" align='center'></el-table-column>
             <el-table-column label="操作" align='center'>
                 <template slot-scope="scope">
-                    <el-button @click="handleClick(scope.row)" type="text" size="small" style="color: #45cdb6" v-if="scope.row.orderStoreStatus == '待发货'">去发货</el-button>
+                    <el-button @click="handleClick(scope.row)" type="text" size="small" style="color: #45cdb6" v-if="scope.row.orderStoreStatus == '待发货' && scope.row.orderType == 1">去发货</el-button>
                     <el-button @click="handleClick(scope.row)" type="text" size="small">查看详情</el-button>
                   </template>
             </el-table-column>
@@ -51,8 +46,8 @@
                 currentPage: 1,
                 form: {
                     userPhone: '',
-                    typeCheck: null,
-                    statusCheck: null,
+                    typeCheck: '',
+                    statusCheck: '',
                     orderType: [
                         {orderId: null, orderName: '全部'}
                     ],
@@ -63,6 +58,8 @@
                             {label: '待用户支付', statusId: 1},
                             {label: '待发货', statusId: 2},
                             {label: '待收货', statusId: 3},
+                            {label: '待自提', statusId: 3.1},
+                            {label: '待核销', statusId: 3.2},
                             {label: '交易成功', statusId: 4}
                         ]},
                         {id: 1, status:[                        //全款
@@ -107,76 +104,13 @@
         created(){ 
             /*获取订单类型和状态*/
             orderStatus().then(res => {
-                this.form.orderType = [...this.form.orderType,...res.data.data];
+                if(res.data.data){
+                    this.form.orderType = [...this.form.orderType,...res.data.data];
+                    this.form.orderStatus = [...this.form.statusArr[0].status]
+                }
             })
             /*获取商家全部订单*/
-            // this.getTableData({storeId: '1', pageNum: 1, pageSize: 1})
-            let moc = {
-                "code":0,
-                "message":"成功",
-                "data":{
-                    "pageNum":1,
-                    "pageSize":1,
-                    "size":1,
-                    "orderBy":null,
-                    "startRow":0,
-                    "endRow":0,
-                    "total":200,
-                    "pages":1,
-                    "list":[
-                        {
-                            "serialNumber":"1644487478",
-                            "infoName":"awjasdkmakl",
-                            "infoTelephone":"17682309067",
-                            "orderStoreStatus":1,
-                            "orderTime":"2017/10/25 15:31:14",
-                            "productNames":[
-                                "三线","dfg","dfg","54",
-                            ]
-                        },
-                        {
-                            "serialNumber":"1479847984",
-                            "infoName":"阿的江屁哦",
-                            "infoTelephone":"13585623256",
-                            "orderStoreStatus":2,
-                            "orderTime":"2017/10/25 15:31:14",
-                            "productNames":[
-                                "1"
-                            ]
-                        },
-                        {
-                            "serialNumber":"1",
-                            "infoName":"1",
-                            "infoTelephone":"13739699042",
-                            "orderStoreStatus":3,
-                            "orderTime":"2017/10/25 15:31:14",
-                            "productNames":[
-                                "1"
-                            ]
-                        }
-                    ],
-                    "firstPage":1,
-                    "prePage":0,
-                    "nextPage":0,
-                    "lastPage":1,
-                    "isFirstPage":true,
-                    "isLastPage":true,
-                    "hasPreviousPage":false,
-                    "hasNextPage":false,
-                    "navigatePages":8,
-                    "navigatepageNums":[
-                        1
-                    ]
-                }
-            }
-            for(let i=0; i<moc.data.list.length; i++) {
-                let that = moc.data.list[i];
-                that.pName = that.productNames.join('')
-                that.orderStoreStatus = this.switchStatus(that.orderStoreStatus)
-            }
-            this.total = Number(moc.data.total);
-            this.tableData = moc.data.list;
-            this.form.orderStatus = this.form.statusArr[0].status;
+            this.getTableData({storeId: config.storeId, pageNum: 1, pageSize: 20})
         },
         methods: {
             /*订单类型变化*/
@@ -246,18 +180,21 @@
             /*获取参数*/
             getParams(){
                 let self = this,params = {};
-                params.storeId = 10;
+                params.storeId = config.storeId;
                 params.infoTelephone = self.form.userPhone == '' ? null : self.form.userPhone;
-                params.orderStoreType = self.form.typeCheck;
-                params.orderStoreStatus = [];
-                console.log(params.orderStoreStatus)
+                params.orderStoreType = self.form.typeCheck == '' ? null : self.form.typeCheck
                 if(self.form.statusCheck == undefined){
                     params.orderStoreStatus = null
                 }else{
                     if(self.form.typeCheck == 3 && self.form.statusCheck == 34){
                         params.orderStoreStatus = [...[3,4]]
                     }else{
-                        params.orderStoreStatus.push(self.form.statusCheck)
+                        if(self.form.statusCheck != ''){
+                            params.orderStoreStatus = [];
+                            params.orderStoreStatus.push(parseInt(self.form.statusCheck))
+                        }else{
+                            params.orderStoreStatus = null; 
+                        }
                     }
                 }
                 params.orderNumber = self.form.orderNumber == '' ? null : self.form.orderNumber;
@@ -271,6 +208,7 @@
             getTableData(obj){
                 let self = this;
                 orderStore(obj).then(res => {
+                    console.log(res)
                     let moc = res.data
                     if(!moc.data){
                         this.tableData = [];
@@ -284,7 +222,6 @@
                     }
                     this.total = Number(moc.data.total);
                     this.tableData = moc.data.list
-                    console.log(this.tableData)
                 })
             },
             /*页面条数*/
@@ -337,17 +274,13 @@
             width:120px;
         }
         .search-row{
-            span{
+            >div:nth-of-type(n+2){
+                margin-left: 10px;
+            }
+            >span{
                 font-size:14px;
                 color:#666666;
-                margin-right: 10px;
-            }
-            span:nth-of-type(n+2){
-                margin-left: 20px;
-            }
-            span:nth-of-type(6){
                 margin-left: 10px;
-                color: #999;
             }
             .search-btn{
                 margin-left: 40px;

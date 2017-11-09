@@ -4,13 +4,10 @@
             <div class="title">买家信息</div>
             <el-row class="user-detail">
                 <el-col :span="5">
-                    用户昵称：<span>芙兰朵露</span>
+                    用户昵称：<span>{{detail.buyerName}}</span>
                 </el-col>
                 <el-col :span="5">
-                    真实姓名：<span>芙兰朵露</span>
-                </el-col>
-                <el-col :span="5">
-                    手机号：<span>15138569862</span>
+                    手机号：<span>{{detail.buyerPhone}}</span>
                 </el-col>
             </el-row>
         </div>
@@ -18,36 +15,33 @@
             <div class="title">配送信息</div>
             <el-row class="send-detail">
                 <el-col :span="5">
-                    配送方式：<span>快递</span>
+                    配送方式：<span>{{detail.shippingWay}}</span>
+                </el-col>
+                <el-col :span="5" v-if="detail.shippingWay != '无需配送'">
+                    备注：<span>{{detail.remark}}</span>
                 </el-col>
                 <el-col :span="5">
-                    快递公司：<span>顺风快递</span>
+                    收货人：<span>{{detail.receiverName}}</span>
                 </el-col>
                 <el-col :span="5">
-                    运单号：<span>8008080808</span>
-                </el-col>
-                <el-col :span="4">
-                    收货人：<span>芙兰朵露</span>
-                </el-col>
-                <el-col :span="5">
-                    收货人手机号：<span>15138569862</span>
+                    收货人手机号：<span>{{detail.receiverPhone}}</span>
                 </el-col>
             </el-row>
             <el-row class='send-addres'>
-                收货地址：<span>15138569862</span>
+                收货地址：<span>{{detail.receiverAddr}}</span>
             </el-row>
         </div>
         <div class="order-message">
             <div class="title">订单信息</div>
             <el-row class="order-detail">
                 <el-col :span="5">
-                    订单号：<span>DD10170911SY00001</span>
+                    订单号：<span>{{detail.serialNumber}}</span>
                 </el-col>
                 <el-col :span="5">
-                    下单时间：<span>2017-09-11 16:58:27</span>
+                    下单时间：<span>{{detail.orderTime}}</span>
                 </el-col>
                 <el-col :span="5">
-                    交易号：<span>2017091210011002565</span>
+                    交易号：<span>{{detail.tradeId}}</span>
                 </el-col>
             </el-row>
             <el-row class='table-head'>
@@ -60,105 +54,170 @@
             </el-row>
             <el-row class='table-detail'>
                 <el-col :span="5">
-                    <div class="pro-name">周大福《乘风破浪》阿正同款18K金戒指钻戒U159096</div>
-                    <div class="pro-color">颜色分类：黑色</div>
-                    <div class="pro-item">类目：美装饰品>珠宝/钻石/翡翠/黄金>K金饰品</div>
+                    <div class="pro-name"><span v-if="detail.orderStoreType==1">展会</span>{{detail.productName}}</div>
+                    <div class="pro-color">{{detail.standard}}</div>
+                    <div class="pro-item">类目：{{detail.cate}}</div>
                 </el-col>
-                <el-col :span="3"><p>￥4959</p></el-col>
-                <el-col :span="3">1</el-col>
-                <el-col :span="4">全款订单</el-col>
-                <el-col :span="4">订单已支付</el-col>
+                <el-col :span="3"><p>￥{{detail.unitPrice}}</p></el-col>
+                <el-col :span="3">{{detail.orderNum}}</el-col>
+                <el-col :span="4">{{detail.productType}}</el-col>
+                <el-col :span="4">{{switchStatus(detail.orderProductStatus)}}</el-col>
                 <el-col :span="5">
-                    <div class="order-price">￥4962</div>
-                    <div class="youhui">
-                        <p>会员节优惠<span>-￥2000</span></p>
-                        <p>商家优惠券<span>-￥3000</span></p>
+                    <div class="order-price">￥{{detail.unitPrice * detail.orderNum}}</div>
+                    <div class="youhui" v-for= 'li in detail.proPri'>
+                        <p>{{li.mes}}<span>-￥{{li.count}}</span></p>
                     </div>
-                    <div class="one-count">小计：￥-25</div>
+                    <div class="one-count">小计：￥{{detail.orderProductTotal}}</div>
                 </el-col>
             </el-row>
+        </div>
+        <div class="service">
             <el-row class='table-detail'>
-                <el-col :span="5">
-                    <div class="pro-name">周大福《乘风破浪》阿正同款18K金戒指钻戒U159096</div>
-                    <div class="pro-color">颜色分类：黑色</div>
-                    <div class="pro-item">类目：美装饰品>珠宝/钻石/翡翠/黄金>K金饰品</div>
-                </el-col>
-                <el-col :span="3"><p>￥4959</p></el-col>
-                <el-col :span="3">1</el-col>
-                <el-col :span="4">全款订单</el-col>
-                <el-col :span="4">订单已支付</el-col>
-                <el-col :span="5">
-                    <div class="order-price">￥4962</div>
-                    <div class="youhui">
-                        <p>会员节优惠<span>-￥2000</span></p>
-                        <p>商家优惠券<span>-￥3000</span></p>
-                    </div>
-                    <div class="one-count">小计：￥-25</div>
-                </el-col>
+                <el-col :span="5">售后单编号：{{detail.orderProductAfterId}}</el-col>
+                <el-col :span="3"></el-col>
+                <el-col :span="3"></el-col>
+                <el-col :span="4">售后单</el-col>
+                <el-col :span="4">{{switchAfter(detail.orderProductAfterStatus)}}</el-col>
+                <el-col :span="5"></el-col>
             </el-row>
-            <div class="service" v-if='service'>
-                <el-row class='table-detail'>
-                    <el-col :span="5">售后单编号：24164684648</el-col>
-                    <el-col :span="3"></el-col>
-                    <el-col :span="3"></el-col>
-                    <el-col :span="4">售后单</el-col>
-                    <el-col :span="4">售后已完成</el-col>
-                    <el-col :span="5"></el-col>
-                </el-row>
-                <div class='service-user'>
-                    <div class="service-user-detail">
-                        <div>售后时间：2017/9/20 17:02:25</div>
-                        <div>售后原因：不想买了</div>
-                        <div>用户备注：就是不想买了不想</div>
-                        <div>商家备注：</div>
-                        <div>平台备注：</div>
-                    </div>
-                    <div class='service-img'>
-                        <div class="img-con" v-for='item in [1,2,3]'><img src="http://pic34.photophoto.cn/20150126/0005018481455638_b.jpg" alt="" ></div>
-                    </div>
-                </div>    
+            <div class='service-user'>
+                <div class="service-user-detail">
+                    <div>售后时间：{{detail.orderProductTime}}</div>
+                    <div>售后原因：{{detail.orderProductAfterReason}}</div>
+                    <div>用户备注：{{detail.orderProductAfterRemark}}</div>
+                    <div>商家备注：{{detail.orderProductAfterStoreRemark}}</div>
+                    <div>平台备注：{{detail.orderProductAfterPlatformRemark}}</div>
+                </div>
+                <div class='service-img'>
+                    <div class="img-con" v-for='item in this.detail.orderProductAfterProof'><img :src="item" alt="" ></div>
+                </div>
             </div>
         </div>
         <div class="total-message">
-            <div><p>订单金额：</p><span>￥4950.00</span></div>
-            <div><p>优惠金额：</p><span>￥-5000</span></div>
-            <div><p>运费：</p><span>0</span></div>
-            <div><p>实付：</p><span>-500</span></div>
+            <div><p>订单金额：</p><span>￥{{detail.unitPrice * detail.orderNum}}</span></div>
+            <div><p>优惠金额：</p><span>￥-{{detail.priMoney}}</span></div>
+            <div><p>运费：</p><span>{{detail.orderProductShipping}}</span></div>
+            <div><p>实付：</p><span>{{detail.orderProductTotal}}</span></div>
         </div>
-        <div class="beizhu">
-            <div class="font-count">0/200</div>
+        <div class="beizhu" v-if="!serviceIsOk">
+            <div class="font-count">{{textLength}}/200</div>
             <div class="font-content">
                 <p>备注信息：</p>
-                <textarea></textarea>
+                <textarea :maxlength="200" @input='textCount' v-model='serviceText'></textarea>
             </div>
-            <div class='submit-btn gray'>提交审核</div>
+            <el-button class='submit-btn gray' @click="postRight" :disabled='disabled'>提交审核</el-button>
         </div>
     </section>
 </template>
 
 <script>
+    import {afterDetail, postAfter } from '@/api/ordersApi';
+    import qs from 'qs';
     export default {
         data() {
             return {
-                service: true,
-                status: true
+                hasServiceOrder: false,
+                serviceIsOk: false,
+                textLength: 0,
+                serviceText: '',
+                detail:'',
+                after: {},
+                disabled: true
+
             }
         },
+        beforeCreate(){
+        },
         created(){
+            let orderId = this.$route.query.orderId,
+                productId = this.$route.query.productId;
+            afterDetail({orderStoreId: orderId, orderProductId:productId}).then(res => {
+                this.detail = res.data.data;
+                this.detail.proPri = [],this.detail.priMoney = 0;
+                for(let key in this.detail.productPrivileges){
+                    let money = {mes: key,count: that.productPrivileges[key]}
+                    this.detail.proPri.push(money)
+                }
+                this.detail.orderProductAfterProof = this.detail.orderProductAfterProof.split(',')
+                for(let i=0; i<this.detail.proPri.length; i++) {
+                    this.detail.priMoney += this.detail.proPri[i].count
+                }
+                this.serviceIsOk = this.detail.orderProductAfterStatus == 1 ? false : true; 
+            })
         },
         methods: {
-        }   
+            /*订单状态转换*/
+            switchStatus(a) {
+                let st = ''
+                switch(a) {
+                    case 1:st = '待用户支付'; break;
+                    case 2:st = '待发货';break;
+                    case 3:st = '待收货';break;
+                    case 4:st = '交易成功';break;
+                    case 5:st = '待处理';break;
+                    case 6:st = '待平台审核';break;
+                    case 7:st = '售后完成';break;
+                    case 8:st = '取消售后';break;
+                    default:st = '订单关闭';break;
+                }
+                return st;
+            },
+            /*售后订单转换*/
+             switchAfter(a) {
+                let st = ''
+                switch(a) {
+                    case 1:st = '待商家处理'; break;
+                    case 2:st = '待平台处理';break;
+                    case 3:st = '待收货';break;
+                    case 4:st = '交易成功';break;
+                }
+                return st;
+            },
+            /*发货方式转换*/
+            changeType() {
+                var self = this;
+                self.onRight = !self.onRight;
+            },
+            /*控制字符长度*/
+            textCount(){
+                let self = this;
+                self.textLength = self.serviceText.length;
+                self.disabled = self.textLength === 0 ? true : false;
+            },
+            /*提交审核*/
+            postRight(){
+                let self = this,
+                    params = {
+                        orderAfterId: self.detail.orderProductAfterId,
+                        storeRemark: self.serviceText
+                    }
+                postAfter(qs.stringify(params)).then(res => {
+                    if(res.data.message == '成功'){
+                        this.$message({
+                            message: '售后提交成功，请等待审核',
+                            type: 'success'
+                        });
+                        self.detail.orderProductAfterStatus = 2;
+                        self.detail.serviceIsOk = true;
+                    }else{
+                        self.warn(res.data.message)
+                    }
+                })
+            },
+            /*消息警告*/
+            warn(str){
+                this.$message({
+                    message: str,
+                    type: 'warning'
+                })
+            }
+        }
     }
 
 </script>
 
 <style lang='scss'>
     .detail-con {
-        width: 100%;
-        padding: 40px;
-        float: left;
-        overflow: hidden;
-        box-sizing: border-box !important;
         *{
             box-sizing: border-box !important;
             p{
@@ -167,6 +226,10 @@
             }
         }
         $color: #45cdb6;
+        box-sizing: border-box !important;
+        width: 100%;
+        padding: 40px;
+        float: left;
         .title{
             font-size: 16px;
             color: #333333;
@@ -202,7 +265,7 @@
         }
         .order-message{
             margin-top: 15px;
-            padding: 20px 5px;
+            padding: 20px 5px 0 !important;
             border-top: 1px solid #eee;
             .order-detail{
                 padding-top: 20px;
@@ -236,9 +299,21 @@
                 color: #333333;
                 text-align: center;
                 position: relative;
+                .pro-name{
+                    span{
+                        color: #f00;
+                        border: 1px solid #f00;
+                    }
+                }
                 div{
                     line-height: 150%;
                     text-align: left;
+                }
+                .send-pro{
+                    text-align: center;
+                    margin-top: 3px;
+                    cursor: pointer;
+                    color : $color;
                 }
                 .pro-color,.pro-item{
                     color: #666666;
@@ -315,7 +390,7 @@
         }
         .total-message{
             float:right;
-            padding-bottom: 20px;
+            padding: 10px 0;
             div{
                 margin-top: 10px;
                 font-size: 12px;
@@ -365,13 +440,9 @@
                 float: right;
                 background: $color;
                 color: #fff;
-                width: 80px;
                 height: 40px;
                 text-align: center;
                 border-radius: 5px;
-            }
-            .gray{
-                background: #999;
             }
         }
     }

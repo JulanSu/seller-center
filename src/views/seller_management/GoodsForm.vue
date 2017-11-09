@@ -1,14 +1,12 @@
 <template>
-  
   <div class="goods-form">
-    
     <template v-if="initForm.finished">
       <el-form :model="goodsForm" :rules="goodsFormRules" ref="goodsForm" label-width="120px">
         <el-form-item label="当前类目" prop="cate">
           {{initForm.productCateName}}
         </el-form-item>
 
-        <el-form-item label="选择品牌" prop="brandId">
+        <el-form-item label="选择品牌" prop="brandId" v-if="storeType == 1">
           <brand-select v-model="goodsForm.brandId" :brandDTOList="initForm.brandDTOList"></brand-select>
         </el-form-item>
 
@@ -60,11 +58,11 @@
                               </td>
                             <td>
                               <div class="cell">
-                                <input class="" v-model="productSku.productPrice" @keyup="productSkuHandle(goodsForm.productSkuTable)" /></div>
+                                <input class="" v-model="productSku.productPrice" @keyup="initForm.productSkuQuantity = productSkuHandle(goodsForm.productSkuTable)" /></div>
                             </td>
                             <td>
                               <div class="cell">
-                                <input class="" v-model="productSku.productSkuQuantity" @keyup="productSkuHandle(goodsForm.productSkuTable)" />
+                                <input class="" v-model="productSku.productSkuQuantity" @keyup=" initForm.productSkuQuantity = productSkuHandle(goodsForm.productSkuTable)" />
                               </div>
                             </td>
                           </tr>
@@ -113,27 +111,42 @@
           </div> 
         </el-form-item>
         <el-form-item label="商品图片" prop="productPicUrlList" class="sellFormat-sku update-img">
-          <p class="desc">请编辑可送达的地区，当用户选择下述地区以外的配送地址时，将提示用户无法下单。</p>
-          <div>
-            <update-img v-model="goodsForm.productPicUrlList"></update-img>
-          </div>
+        <upload-pictures v-model="goodsForm.productPicUrlList" :note="initForm.uploadTishi1"></upload-pictures>
         </el-form-item>
 
         <el-form-item label="商品描述" prop="detailsContent" class="sellFormat-sku">
-          <summernote v-model="goodsForm.detailsContent"></summernote>
+<!--           <el-input
+            type="textarea"
+            :rows="2"
+            placeholder="暂用文本域替代富文本（富文本编辑器存在问题，会影响流程）"
+            v-model="goodsForm.detailsContent">
+          </el-input> -->
+         <!-- <vue-summernote ref="editer" @onChange="onChange"></vue-summernote> -->
+         <goods-summernote v-model="goodsForm.detailsContent"></goods-summernote>
         </el-form-item>
 
         <el-form-item label="服务范围" prop="serviceArea">
-          <city-site-list :citySiteList="initForm.citySiteList" @change="upSysAreaHandle"></city-site-list>
+          <city-site-list :citySiteList="initForm.citySiteList" v-model="goodsForm.serviceArea" @change="upSysAreaHandle"></city-site-list>
         </el-form-item>
 
-        <el-form-item label="店铺中分类" prop="storeCateList">
-          <store-cate v-model="goodsForm.storeCateList" :storeCateList="initForm.storeCateList"></store-cate>
+        <el-form-item label="店铺中分类" prop="storeCateList" v-if="initForm.storeCateList && initForm.storeCateList.length">
+          <store-cate v-model="goodsForm.storeCateProduct" :storeCateList="initForm.storeCateList"></store-cate>
         </el-form-item>
-
-        <div class="logistics-info wuliu" prop="shippingTemplateId">
+        
+        <div class="logistics-info wuliu" prop="shippingTemplateId" v-if="goodsForm.productType == 2 || goodsForm.productType == 3">
           <category-bar title="宝贝物流服务"></category-bar>
-          <logistics-services v-model="goodsForm.shippingTemplateId" :logisticsData="initForm.storeShippingTemplate"></logistics-services>
+          <el-form-item label="提取方式">
+            <el-checkbox checked="checked" disabled>电子交易凭证</el-checkbox>
+            <div></div>
+          </el-form-item>
+        </div>
+        <div class="logistics-info wuliu" prop="shippingTemplateId" v-if="goodsForm.productType == 1">
+          <category-bar title="商品物流服务"></category-bar>
+          <logistics-services v-model="goodsForm.shippingTemplateId" :logisticsData="initForm.storeShippingTemplate.data"></logistics-services>
+<!--           <p class="desc" v-else>
+            你还未创建物流模板，请先创建物流模板后再选择噢。
+          </p> -->
+          
         </div>
         <div class="other-info">
           <category-bar title="其他信息"></category-bar> 
@@ -148,8 +161,10 @@
           </el-form-item>
         </div>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('goodsForm')">保存</el-button>
-          <el-button type="primary" @click="">放入草稿箱</el-button>
+          <el-button type="primary" @click="submitForm('goodsForm', 1)" :loading="submitLoading">保存</el-button>
+          <template v-if="!$route.query.productStatus || $route.query.productStatus != 1">
+            <el-button type="primary" @click="submitForm('goodsForm', 0)" :loading="draftboxLoading">放入草稿箱</el-button>
+          </template>
           <!-- <el-button @click="resetForm('goodsForm')">重置</el-button> -->
         </el-form-item>
       </el-form>
@@ -158,9 +173,8 @@
   </div>
 </template>
 <script>
-  import 'vue-easytable/libs/themes-base/index.css'
+
   import CategoryBar from '@/components/CategoryBar.vue'
-  import Summernote from './summernote/Summernote.vue'
   import UpdateImg from './goods_form/UpdateImg.vue'
   import CateProperty from './goods_form/CateProperty.vue'
   import ProductSku from './goods_form/ProductSku.vue'
@@ -171,16 +185,19 @@
   import LogisticsServices from './goods_form/LogisticsServices.vue'
   import VueQuillEditor from 'vue-quill-editor'
   import { getStrLength } from '@/util/validator'
+  import UploadPictures from './components/UploadPictures.vue'/*上传图片组件*/
+  import GoodsSummernote from './components/summernote.vue'
   import { getGoodsFormData, saveGoodsFormData} from '@/api/seller'
   import merge from 'merge'
   const win = window;
   const storeId = win.config && win.config.storeId ? win.config.storeId : ''
+  const storeType = win.config && win.config.storeType ? win.config.storeType : ''
 
   export default {
     components: {
+      GoodsSummernote,
       CategoryBar, 
       VueQuillEditor, 
-      Summernote, 
       UpdateImg, 
       CateProperty,
       LogisticsServices,
@@ -188,46 +205,52 @@
       CitySiteList,
       PublishTime,
       StoreCate,
-      BrandSelect
+      BrandSelect,
+      UploadPictures
     },
     data() {
       var validatorStrLength = (rule, value, callback, fn) => {
         var len = getStrLength(value)
         fn(len)
       }
-      return {
 
+      return {
+        storeType: storeType,
+        editorProductStatus: '',
+        submitLoading: false,
+        draftboxLoading: false,
         //表单提交所需要的数据结构
         goodsForm: {
+          storeCateProduct: [],
+          applicableShop: '',
           productId: null, //商品ID 10000061
+          //productCateName: '',
           productCateId: '', //类目ID
           brandId: '', //品牌ID
           storeId: storeId, //店铺ID
           productTitle: '', //商品标题
           sellingPoint: '', //商品卖点
-          storeCateList: [],//店铺中分类
-          catePropertyList: [], //类目属性
-          productPicUrlList: ['http://3.tthunbohui.cn/n/00400M0y003100iFPx00aH8-c300x225-1ab9ae.jpg','http://3.tthunbohui.cn/n/00400M0y003100iFPx00aH8-c300x225-1ab9ae.jpg','http://3.tthunbohui.cn/n/00400M0y003100iFPx00aH8-c300x225-1ab9ae.jpg'], //商品图片列表 链接LIST
+         //storeCateList: [],//店铺中分类
+          productVersionId: null,
+          catePropertyList: [], //店铺中分类
+          productType: '', //商品类型
+          productPicUrlList: [], //商品图片列表 链接LIST
           productSkuTable: [], //商品销售规格
-          detailsContent: '这是在测试文本', //富文本
+          detailsContent: '', //富文本
           serviceArea: '', //服务范围 逗号隔开
-          shippingTemplateId: 3333, //物流模板ID
-          publishTime: '2017-10-30 13:47:39', //上架时间
-          productRecommend: '', //是否推荐
+          shippingTemplateId: '', //物流模板ID
+          publishTime: '', //上架时间
+          productRecommend: 0, //是否推荐
           productStatus: '', //提交状态
           productSellPrice: '', //展示价格及库存的价格
         },
         //初始化表单时数据结构
         initForm: {
+          uploadTishi1:"图片尺寸：190*48 ,最多9张，格式要求jpg,jpeg,png,不超过10MB",
           productCateName: '',
           publishTimeType: '',
           citySiteList:[], 
-          storeShippingTemplate: {
-            peisongArea: [
-              {city: [], price: 12323, count: 222, cprice: 333},
-              {city: [], price: 12323, count: 222, cprice: 333}
-            ]
-          },
+          storeShippingTemplate: {},
           brandDTOList: [],
           productTitleRules: {
             max: 25,
@@ -249,12 +272,11 @@
         },
         //表单校验
         goodsFormRules: {
-          brandName: [
-            { required: true, message: '请选择品牌', trigger: 'blur' }
-          ],
+
+          //商品标题
           productTitle: [
-            { required: true, message: '请填写商品标题', trigger: 'blur' },
-            { max: 25, message: '商品标题最多不超过25个', trigger: 'blur' },
+            { required: true, message: '请填写商品标题', trigger: ['change', 'blur']},
+            { max: 25, message: '商品标题最多不超过25个', trigger: ['change', 'blur']},
             { validator: (rule, value, callback)=>{
               var productTitleRules = this.initForm.productTitleRules;
               validatorStrLength(rule, value, callback, function(len){
@@ -263,6 +285,15 @@
             }, message: '商品标题最多不超过25个', trigger: 'change' 
             },
           ],
+          //品牌名称
+          // brandName: [
+          //   { required: true, message: '请选择品牌', trigger: 'blur' }
+          // ],
+          // 商品描述
+          detailsContent: [
+            { required: true, message: '请输入商品描述', trigger: 'blur' }
+          ],
+          //商品卖点
           sellingPoint: [
             { max: 50, message: '商品卖点最多不超过50个', trigger: 'blur' },
             { validator: (rule, value, callback)=>{
@@ -273,20 +304,25 @@
             }, message: '商品卖点最多不超过50个', trigger: 'change' 
             },
           ],
+          //商品图片列表
+          productPicUrlList: [
+            { required: true, message: '请上传是商品图片', trigger: 'blur' }
+          ],
           // productCateProperty: [
           //   { required: true, message: '请选择类目属性', trigger: 'blur' }
           // ],
-          productSkuTable: [
-            {required: true, message: '请先选择商品销售规格', trigger: 'blur'}
-          ],
+          
+          // productSkuTable: [
+          //   {required: true, message: '请先选择商品销售规格', trigger: 'blur'}
+          // ],
           // 上架时间
           publishTimeType: [
-            {required: true, message: '请先选择商品销售规格', trigger: 'blur'}
+            {required: true, message: '请选择商品上架时间', trigger: 'blur'}
           ],
           // 服务范围
-          citySiteList: [  
-            {required: true, message: '请先选择服务范围', trigger: 'blur'}
-          ]
+          // citySiteList: [  
+          //   {required: true, message: '请先选择服务范围', trigger: 'blur'}
+          // ]
         }
       }
     },
@@ -310,45 +346,40 @@
         }
       }
     },
-    watch: {
-    
+    created(){
+
+      this.initFormData()
     },
 
-    created() {
-      console.log(this.$route)
-      this.initFormData()
-      //this.initProductSkuProperty()
-    },
     methods: {
       publishTimeHandle (value){
-
-        this.goodsForm.publishTime = value
-        
+        this.goodsForm.publishTime = value  
       },
       /**
        * initFormData 初始化表单数据（加载表单默认数据）
        * @param  { Object } route 路由查询信息
        * @return {[type]}       [description]
        */
-      initFormData($route) {
+      initFormData() {
         let self = this
         let route = this.$route
         let goodsForm = this.goodsForm
         let initForm = this.initForm
+
+
         //判断是否编辑页面，是否存在店铺ID，是否存在商品ID
-        if(route.name === '编辑' && storeId && route.query.productId) {
-        
-          self.getEditorFormdata(storeId, goodsForm.productId)
+        if(route.name == '编辑商品' && storeId && route.query.productId &&route.query.productStatus || route.query.productStatus == 0 || route.query.productStatus == -1){
+
+          self.getEditorFormdata(storeId, route.query.productId, route.query.productStatus)
           goodsForm.productId = route.query.productId
           return 
 
         }
 
         //判断是否存在类目ID
-        if(route.name === '新建' && storeId && route.query.productCateId && route.query.productCateName) {
+        if(route.name === '新建商品' && storeId && route.query.productCateId && route.query.productCateName) {
           self.getGoodsFormDataHandle(storeId, route.query.productCateId)
-          goodsForm.productCateId = route.query.productCateId
-          initForm.productCateName = route.query.productCateName
+
         }
 
       },
@@ -356,71 +387,83 @@
        * getEditorFormdata 获取编辑商品的数据
        * @param  { String } storeId   店铺ID
        * @param  { String } productId 商品ID
+       * @param { String } productStatus 商品状态
        * @return {[type]}           [description]
        */
-      getEditorFormdata(storeId, productId){
+      getEditorFormdata(storeId, productId, productStatus){
+        let self = this
         getGoodsFormData({
           storeId: storeId,
-          productId: productId
+          productId: productId,
+          productStatus: productStatus
         }).then((res) => {
-          console.log(res)
+          let data = res.data.data
+          if(res.data.code === 0) {
+            self.initForm = merge(self.initForm, data)
+            self.formartEditorData(data)
+          }
+          console.log('获取编辑数据',data)
+          self.initForm.finished = true
         })
+      },
+      formartEditorData(data){
+        let self = this
+        let goodsForm = self.goodsForm
+        let initForm = self.initForm
+        goodsForm.productTitle = data.productTitle
+        goodsForm.brandId = data.brandId
+        goodsForm.productId = data.productId
+        goodsForm.sellingPoint = data.sellingPoint
+        goodsForm.productId = data.productId
+        goodsForm.productRecommend = data.productRecommend
+        goodsForm.serviceArea =  data.serviceArea
+        goodsForm.publishTime = data.publishTime
+        goodsForm.productSellPrice = data.productSellPrice
+        goodsForm.productType = data.productType
+        goodsForm.detailsContent = data.detailsContent
+        goodsForm.productSkuTable = data.productSkuTable
+        goodsForm.catePropertyList =data.catePropertyList
+        goodsForm.productCateId = data.productCateId
+        goodsForm.storeCateProduct = data.storeCateProduct
+        goodsForm.productPicUrlList = data.productPicUrlList
+        goodsForm.productVersionId = data.productVersionId
+        goodsForm.shippingTemplateId = data.shippingTemplateId
+        initForm.productSkuQuantity = self.productSkuHandle(data.productSkuTable)
+        //goodsForm.storeCateList = data.storeCateList  //店铺分类
       },
       getGoodsFormDataHandle (storeId, productCateId){
         let self = this
-        let initForm = this.initForm
+        let initForm = self.initForm
+        let goodsForm = self.goodsForm
         getGoodsFormData({
           storeId: storeId,
           productCateId: productCateId
         }).then((res)=>{
           let data = res.data.data
-          console.log('数据请求完成', res)
           if(res.data.code === 0) {
-
-            if(data.citySiteList && data.citySiteList.length) {
-              initForm.citySiteList = data.citySiteList
+            initForm = merge(initForm, data)
+            goodsForm.productType = data.productType
+            goodsForm.productId = data.productId
+            goodsForm.productCateId = self.$route.query.productCateId
+            initForm.productCateName = self.$route.query.productCateName
+            if(storeType != 1) {
+              goodsForm.brandId = 0
             }
-            
-            if(data.brandDTOList && data.brandDTOList.length) {
-              initForm.brandDTOList = data.brandDTOList
-            }
-
-            if(data.productCateProperty && data.productCateProperty.length) {
-              initForm.productCateProperty = data.productCateProperty
-            }
-
-            if(data.productSkuProperty && data.productSkuProperty.length) {
-              initForm.productSkuProperty = data.productSkuProperty
-            }
-
-            if(data.storeCateList && data.storeCateList.length) {
-              initForm.storeCateList = data.storeCateList
-            }
-
-            if(data.brandDTOList && data.brandDTOList.length) {
-              initForm.brandDTOList = data.brandDTOList
-            }
-
-            self.goodsForm.productId = data.productId
-            self.initForm.finished = true
-            console.log('请求成功后，数据格式化', self.goodsForm)
+            initForm.finished = true
           }
         })
       },
       productSkuHandle (data){
         var productSkuQuantity = 0
-
         if(data.length) {
           for(var i= 0; i<data.length; i++) {
             var number = parseInt(data[i].productSkuQuantity);
             if(number) {
               productSkuQuantity += number
             }
-
           }          
         }
-
-        this.initForm.productSkuQuantity = productSkuQuantity
+        return productSkuQuantity
       },
 
       /**
@@ -428,15 +471,14 @@
        * @param  { String } formName 表单名称
        * @return {[type]}          [description]
        */
-      submitForm(formName) {
+      submitForm(formName, statusVal) {
         var self = this
-        self.goodsForm.productStatus = 1
-        console.log('提交数据',self.goodsForm)
-        saveGoodsFormData(self.goodsForm).then((res)=> {
-           console.log(res)
-        })
+        self.goodsForm.productStatus = statusVal
+        console.log('提交数据',self.goodsForm, statusVal)
+        self.submitProductFormData(statusVal)
         // self.$refs[formName].validate((valid) => {
         //   if (valid) {
+        //     self.submitProductFormData(statusVal)
         //     console.log(self.goodsForm)
         //   } else {
         //     console.log('error submit!!');
@@ -444,13 +486,38 @@
         //   }
         // });
       },
-
-      brandChangeHandle (value){
-        console.log(value)
-
-        return 11111
+      submitProductFormData(statusVal){
+        var self = this;
+        if(statusVal == 1) {
+          self.submitLoading = true
+        }else if(statusVal == 0) {
+          self.draftboxLoading = true
+        }
+        console.log(JSON.stringify(self.goodsForm))
+        //表单提交
+        saveGoodsFormData(self.goodsForm).then((res)=> {
+          var data = res.data.data
+           if(res.data.code == 0) {
+             if(statusVal == 1) {
+                self.submitLoading = true
+                self.$router.push({path: '/seller-management/underreview'})
+             }else if(statusVal == 0) {
+                self.draftboxLoading = true
+                self.$router.push({path: '/seller-management/draftbox'})
+             }
+           }else {
+              self.$message({
+                message: '商品提交失败，请重新尝试！',
+                type: 'warning'
+              });
+              self.submitLoading = false
+              self.draftboxLoading = false            
+           }
+        }).catch((res)=>{
+          self.submitLoading = false
+          self.draftboxLoading = false
+        })
       },
-
       updateCatePropertyGroupList(value) {
 
         this.goodsForm.catePropertyList = value
@@ -463,12 +530,17 @@
       },
       upSysAreaHandle (value) {
         this.goodsForm.serviceArea = value
+      },
+      onChange (value) {
+        console.log(value)
       }
     }
   }
 </script>
 <style lang="scss">
-
+  .content-wrapper {
+    padding-right: 20px;
+  }
   .block-form {
     background:#f5f7fa;
     border:1px solid #eeeeee;

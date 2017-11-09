@@ -16,21 +16,20 @@
 			</li>
 		</ul>
 		<ul class="use-style bapass-btn">
-			<li>
-				<router-link to="/store/bypass-management/new-account">
-					<i icon="el-icon-delete2"></i>
-					<span>新建子帐号</span>
-				</router-link>
+			<li @click='jump'>
+				<i class="iconfont icon-zizhanghao"></i>
+				<span>新建子帐号</span>
 			</li>
 			<li style="border-left:1px solid #ddd;border-right:1px solid #ddd;">
 				<router-link to="/store/bypass-management/role-list">
-					<i icon="el-icon-delete2"></i>
+					<i class="iconfont icon-gangweijiaose"></i>
 					<span>岗位角色</span>
 				</router-link>
 			</li>
 			<li>
+
 				<router-link to="/store/bypass-management/account-list">
-					<i icon="el-icon-delete2"></i>
+					<i class="iconfont icon-zizhanghaoliebiao"></i>
 					<span>子帐号列表</span>
 				</router-link>
 			</li>
@@ -53,11 +52,27 @@ export default {
       		}	
 		}
 	},
+	watch: {
+       '$route' (to, from) {
+	        if(this.$route.path=="/store/bypass-management"){
+	          this.getNum();
+	        }
+        }
+    },
 	methods:{
+		//新建子帐号按钮
+		jump(){
+			this.getNum();
+			if(this.formList.usedNum>=5){
+				this.$message({message: '子账号使用数量已满，先去冻结子账号',type: 'warning'});
+				return false;
+			}
+			this.$router.push({ path: '/store/bypass-management/new-account'});
+		},
+		//获取子帐号使用数量
 		getNum(){
-			console.log(2)
 			let para = {
-				storeId:storeId
+				storeId:config.storeId
 			};
 			this.listLoading = true;
 			operatorGetNum(para).then((res) => {
@@ -71,7 +86,6 @@ export default {
 		        this.listLoading = false;
 		    });
 		}
-		
     },
     mounted() {
       this.getNum();
@@ -124,6 +138,9 @@ export default {
 				font-size:30px;
 				color:#ff6c60;
 			}
+			a{
+				display:block;
+			}
 		}
 		li:nth-of-type(1) b{
 			color:#6bcac9;;
@@ -139,6 +156,14 @@ export default {
 			background:#fff;
 			span{
 				color:#41cac0 !important;
+			}
+		}
+		li{
+			i{
+				font-size: 24px;
+				color:#41cac0;
+				padding-right:10px;
+				vertical-align: middle;
 			}
 		}
 	}

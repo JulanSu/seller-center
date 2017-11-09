@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <style>
+            input{
+                width: 50px;
+                height: 35px;        
+            }
+            .checked{
+                background: orange;
+            }
+        </style>
+<script type=text/javascript src="https://s6.tthunbohui.cn/expo/public/js/jquery.js?v=20171103"></script>
+    </head>
+    <body>
+        <div class="container">
+              <div class="row">
+                <input type="button" value="红" />
+                <input type="button" value="黄" />
+                <input type="button" value="蓝"/>
+                <input type="button" value="白"/>
+                <input type="button" value="军绿"/>
+                
+            </div>
+        
+            <div class="row">
+                <input type="button" value="xl"/>
+                <input type="button" value="xxl"/>
+                <input type="button" value="xxxl"/>
+            </div>
+        
+            <div class="row">
+                <input type="button" value="纯棉"/>
+                <input type="button" value="牛仔"/>
+                <input type="button" value="针织"/>
+            </div>
+            
+            <div class="row">
+                <input type="button" value="A"/>
+                <input type="button" value="B"/>
+                <input type="button" value="C"/>
+                <input type="button" value="D"/>
+                <input type="button" value="E"/>
+                <input type="button" value="F"/>
+                <input type="button" value="H"/>
+            </div>
+          </div>    
+    
+        <div class="box">
+            
+        </div>
+        <script type="text/javascript">
+            (function(){  
+                //两个数组的笛卡尔积
+                var Dicar = function(a,b){  
+                    var ret=[];  
+                    for(var i=0;i<a.length;i++){  
+                        for(var j=0;j<b.length;j++){  
+                        ret.push(multi(a[i],b[j]));  
+                        }  
+                    }  
+                    return ret;  
+                }  
+                var multi = function(a,b){  
+                    if(!(a instanceof Array))  
+                        a = [a];  
+                    var ret = Array.call(null,a);  
+                    ret.push(b);  
+                    return ret;  
+                }  
+                //递归求笛卡尔最后结果  
+                multiDicar = function(data){  
+                    var len = data.length;  
+                    if(len == 0) {
+                        return []; 
+                    }else if(len == 1){
+                        return data[0];    
+                    }else{  
+                        var r=data[0];  
+                        for(var i=1;i<len;i++){
+                            var s = Dicar(r,data[i])
+                            if(s.length>0){
+                                r=s;
+                            }
+                        }  
+                        return r;  
+                    }  
+                }  
+            })();  
+        
+        
+            //给按钮添加选中取消标志
+            $(".container .row input").on("click",function(){
+                $(this).toggleClass("checked");
+            });
+            
+            
+            (function(){    
+                //获取矩阵按钮
+                function getBtn(ele){
+                    var arr=[];
+                    var contain = $(ele);
+                    for(let i=0;i<contain.length;i++){
+                        arr.push($.makeArray(contain[i].children));
+                    }
+                    return arr;
+                }
+                //生成二维数组
+                var data = getBtn(".container .row"); 
+    
+                //判断点击的元素是否在二维数组中
+                function getIndex(ele,map){
+                    var res=[];
+                    for(let i=0;i<map.length;i++){
+                        for(let j=0;j<map[i].length;j++){
+                            if(map[i][j] == ele){
+                                res = [i,j];
+                            }
+                        }
+                    }
+                    return res;            
+                }
+               
+               //生成结果二维数组
+                var checked=[];
+                for(let i = 0;i<data.length;i++){
+                    checked[i] = []; 
+                } 
+                
+                //处理结果二维数组中的断层
+                //如果有中间一行没数据，就截断阵列
+                function deal(checked){
+                    if(checked[0].length == 0){
+                        return [[]]
+                    }
+                    for(let i=0;i<checked.length;i++){         
+                        if(checked[i].length == 0){
+                            return checked.slice(0,i);
+                        }
+                    }
+                    return checked;    
+                }
+                
+                //删除数组的元素
+                function removeByValue(arr, val) {
+                  for(var i=0; i<arr.length; i++) {
+                    if(arr[i] == val) {
+                      arr.splice(i, 1);
+                      break;
+                    }
+                  }
+                }
+    
+                //绑定点击事件
+                $(".container .row input").on("click",function(){
+                	console.log('这是一个点击事件')
+                    $(".box").empty();
+                    var _this=$(this);
+                    //判断在哪行那列
+                    var res = getIndex(_this[0],data);
+                    
+                    //判断是否是取消
+                    //如果数据已经存在，就把它删除 ，bug在于按钮的文字不能重复
+                    if(($.inArray(_this.val(),checked[res[0]])) !==-1){
+                        removeByValue(checked[res[0]],_this.val());
+                    }else{
+                        checked[res[0]].push(_this.val());
+                    }
+                    //做笛卡尔积的结果
+                    var r = multiDicar(deal(checked));
+                    for(var i=0;i<r.length;i++){  
+                        $(".box").append("("+r[i]+")"+"<br>")
+                    }  
+                })
+            })();
+
+var aa=[1,2,3],bb=[1,2,3],cc=[1,2,3],dd=[1,2,3];
+var zz=[aa,bb];//此处数组个数任意
+
+var result=new Array();//结果保存到这个数组
+function toResult(arrIndex,aresult){
+
+	//判断循环是否结束，结束后跳出递归
+  if(arrIndex >= zz.length) {
+  	result.push(aresult);
+  	return;
+  };
+
+
+  //获取当前集合的元素,从0开始
+  var aArr=zz[arrIndex];
+
+  //判断递归参数是否存在，不存在创建
+  if(!aresult) aresult=new Array();
+
+  for(var i=0;i<aArr.length;i++){
+    var theResult = aresult.slice(0,aresult.length);
+    theResult.push(aArr[i]);
+    console.log(aresult.length)
+    toResult(arrIndex+1,theResult);
+  }
+}
+toResult(0);//函数执行后result数组就是所需结果
+console.log(result)
+        </script>
+    </body>
+</html>
