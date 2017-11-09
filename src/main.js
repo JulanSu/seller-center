@@ -12,6 +12,7 @@ import router from '@/router/'
 import '../theme/index.css'
 import './assets/iconfont/iconfont.css'
 import './styles/main.css'
+import './permission.js'  //权限
 //import NProgress from 'nprogress'
 //import 'nprogress/nprogress.css'
 // 载入bootstrap.js
@@ -26,8 +27,13 @@ Vue.use(Vuex)
 Vue.use(LoadingMask)
 
 Vue.use(VueSummernote, {
-  dialogsFade: true,
-  height: 350
+  height: 300,
+  codemirror: {
+    mode: 'text/html',
+    htmlMode: true,
+    lineNumbers: true,
+    theme: 'monokai'
+  }
 })
 
 
@@ -47,12 +53,12 @@ router.beforeEach((to, from, next) => {
   next()
 })*/
 router.beforeEach((to, from, next) => {
-  /*console.log(to,from)
-  if(from.path == '/merchant-enter'){
-     window.location.reload();
-  }*/
-  next() // 确保一定要调用 next()
+  if(localStorage.getItem('merchant')==1){//控制入驻成功后刷新页面
+    localStorage.setItem("merchant",0);
+    next({ path: '/store/message'}); // 确保一定要调用 next()
+  }
 
+  next() // 确保一定要调用 next()
 })
 
 //router.afterEach(transition => {

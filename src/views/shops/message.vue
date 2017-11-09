@@ -180,10 +180,6 @@ export default {
         }
     },
     mounted() {
-    	var u = document.referrer;
-        if(u.indexOf('merchant-enter') >= 0){
-           window.location.reload();
-        }
       	this.getShop();
       	var that=this;
 	    var o= document.getElementById("shop-message");
@@ -197,7 +193,7 @@ export default {
     	//将毫秒数转化为时间格式
         time: function () {
         	var flag='';
-        	if(!this.ruleForm.endValidTime){
+        	if(this.ruleForm.endValidTime){
 				var startData=new Date(this.ruleForm.startValidTime);
 	        	var endData=new Date(this.ruleForm.endValidTime);
 	        	flag=startData.getFullYear()+" / "+(startData.getMonth()+1)+" / "+startData.getDate()+" - "+endData.getFullYear()+" / "+(endData.getMonth()+1)+" / "+endData.getDate();

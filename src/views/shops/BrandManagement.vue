@@ -1,7 +1,7 @@
 <template>
 	<section class="brand" v-if='$route.name==="品牌管理"'>
 		<el-col :span="24" class="tool-bar" style="padding-bottom: 0px;">
-		    <router-link to="/store/brand-management/sel-brand" class="selbrand" icon="plus" >
+		    <router-link to="/store/brand-management/sel-brand" class="selbrand" icon="plus">
 		      	<el-button type="primary" icon="plus">添加品牌</el-button>
 		    </router-link>
 	    </el-col>
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { brandList,brandChangeStatus,brandCancelverify } from '@/api/shopApi';
+import { brandList,brandChangeStatus,brandCancelverify,baseBrandGet } from '@/api/shopApi';
 import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 
 	export default {
@@ -71,24 +71,12 @@ import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 		methods: {
 			
 			/*点击列表跳转详情*/
+			//在品牌列表页点击品牌进入详情页，还是创建品牌（品牌库没有）的页面前判断
 			jump(row){
-				if((row.isVerified==0)||(isVerified==2)){//不是在品牌库添加的品牌
-					let para = {
-			          storeId:config.storeId
-			        };
-			        this.listLoading = true;
+				if(row.isNewVerified!=1){//不是在品牌库添加的品牌
+					this.$router.push({ path: '/store/brand-management/create-brand', query:{ brandId:row.brandId}});
 
-			        /*brandList(para).then((res) => {
-			        	if(res.data.code==0){
-			        		this.myBrands = res.data.data;
-			        	}else{
-			        		this.$message({message: res.data.message, type: 'waring'});
-			        	}
-			          	this.listLoading = false;
-			        }).catch((res)=> {
-			          	this.listLoading = false;
-			          	this.$message({message: '接口建立连接失败', type: 'waring'});
-			        });*/
+
 				}else{
 					var parm={storeBrandId:row.storeBrandId,compile:1};
 					if(this.pastDue(row)){
@@ -107,9 +95,8 @@ import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 
 			/*取消按钮*/
 			cancel(id){		
-		    	let para = {
-			          storeBrandId:id
-			        };
+			    var para = new URLSearchParams();  
+			        para.append('storeBrandId',id);
 		        this.listLoading = true;
 		        brandCancelverify(para).then((res) => {
 		        	if(res.data.code==0){

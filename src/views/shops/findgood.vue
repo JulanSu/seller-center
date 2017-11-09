@@ -52,8 +52,8 @@ import { productList,productRemove} from '@/api/shopApi';
     methods: {
       //关联其他商品按钮
       relevance(){
-        var parm={storeCateId:this.$route.params.id};
-        this.$router.push({ path: '/store/classify-management/find-good/all-good', query:parm });
+        //var parm={storeCateId:this.$route.query.id};
+        this.$router.push({ path: '/store/classify-management/find-good/all-good'});
       },
       //转换状态
       formatUsed(row){
@@ -77,8 +77,7 @@ import { productList,productRemove} from '@/api/shopApi';
       //获取用户列表
       getProductList() {
         let para = {
-          //storeCateId:this.$route.params.id,
-          storeCateId:this.$route.params.id,
+          storeCateId:this.$route.query.id,
           pageNum: this.pageNum,
           pageSize: this.pageSize
         };

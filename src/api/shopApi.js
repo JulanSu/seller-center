@@ -6,6 +6,7 @@ import Qs from 'qs';
 /*let base = 'http://192.168.88.42:8083';*/
 let base = 'http://shop.dmp.hzjiehun.bid';
 let pichost='http://gss.dmp.hzjiehun.bid';
+let brandHost='http://admin.dmp.hzjiehun.bid';//郭星提供的在品牌列表页点击品牌进入详情页，还是创建品牌（品牌库没有）的页面前判断
 
 let host = '';
 var rootIP = process.env.API_ROOT;
@@ -71,9 +72,12 @@ export const brandList = params => { return axios.get(`${base}/store/brand/list`
 export const storeBrandUpdate = params => { return axios.post(`${base}/store/brand/update`, params); };
 export const brandVerify = params => { return axios.post(`${base}/store/brand/verify`,  params); };
 export const listindustrybrand = params => { return axios.get(`${base}/store/brand/listindustrybrand`,{ params: params }); };
-export const brandCancelverify = params => { return axios.get(`${base}/store/brand/cancelverify`,{ params: params }); };
+export const brandCancelverify = params => { return axios.post(`${base}/store/brand/cancelverify`,params); };
 export const brandSavebrand = params => { return axios.post(`${base}/store/brand/savebrand`,  params); };
 export const brandCheckbrandname = params => { return axios.get(`${base}/store/brand/checkbrandname`, { params: params }); };
+
+export const baseBrandGet = params => { return axios.get(`${base}/brand/get`,{ params: params }); };
+
 
 //上传图片接口
 export const gssUpload = params => { return axios.post(`${pichost}/gss/upload`, params); };

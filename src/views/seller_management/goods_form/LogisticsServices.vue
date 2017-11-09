@@ -10,7 +10,13 @@
     </el-form-item>
     <el-form-item label="配送自提">
       <span v-if="template.templateType == 0">配送</span>
-      <span v-else-if="template.templateType == 1">自提</span>
+      <div v-else-if="template.templateType == 1">
+        <div>自提</div>
+<!--         <div class="">
+          <div>适用店铺</div>
+          <div></div>
+        </div> -->
+      </div>
     </el-form-item>
     <el-form-item label="配送范围及运费" v-if="template.templateType == 0">
       <div class="area-list">

@@ -8,9 +8,9 @@
       <el-select v-model="form.storeCateId" placeholder="店铺中分类" style="margin-right:10px;">
         <el-option
           v-for="item in form.fenlei"
-          :key="item.id"
-          :label="item.fenleiName"
-          :value="item.id">
+          :key="item.storeCateId"
+          :label="item.cateName"
+          :value="item.storeCateId">
         </el-option>
       </el-select>
       <el-date-picker type="date" v-model="form.searchStartTime" class='w160' placeholder='创建起始时间' atyle="margin-right;"></el-date-picker>
@@ -73,7 +73,6 @@
           </el-checkbox> -->
         </el-checkbox-group> 
       </div>
-        
         <span slot="footer" class="dialog-footer">
           <el-button type="primary" @click="addRelevanceBtn">确定</el-button>
           <el-button @click="cancelBtn">取消</el-button>
@@ -90,11 +89,10 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
       return {
         form:{
           fenlei:[
-            {fenleiName:"店内分类",id:this.$route.query.storeCateId},
-            {fenleiName:"全部",id:""},
-            {fenleiName:"无",id:0}
+            {cateName:"全部",storeCateId:""},
+            {cateName:"无",storeCateId:0}
           ],
-          storeCateId:this.$route.query.storeCateId,
+          storeCateId:"",
           goodId:'',
           productTitle:'',
           searchStartTime:'',
@@ -119,8 +117,14 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
 
       cateList(para).then((res) => {
         this.jurisdiction = res.data.data.list;
-        console.log(this.jurisdiction)
         this.listLoading = false;
+
+        //将取到的店铺分类插入页面的选择框里面
+        for(var i=0;i<this.jurisdiction.length;i++){
+          
+          this.$set(this.form.fenlei, this.form.fenlei.length,this.jurisdiction[i]);
+        }
+       console.log(this.form.fenlei)
       }).catch((res)=> {
         this.listLoading = false;
       });

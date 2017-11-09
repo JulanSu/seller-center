@@ -19,7 +19,7 @@
           <router-link :to="{ name: '编辑分类', params: { id: scope.row.storeCateId }}">编辑</router-link>
           <span @click="handleOptation(scope.row)">{{scope.row.isUsed==1?"隐藏":"显示"}}</span>
           <span @click="handleDel(scope.row)">删除</span>
-          <router-link :to="{ name: '查看商品', params: { id: scope.row.storeCateId }}">查看商品</router-link>
+          <span @click="handleSee(scope.row)">查看商品</span>
         </template>
       </el-table-column>
     </el-table>
@@ -125,6 +125,11 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
             this.listLoading = false;
           });
         });
+      },
+       //产看商品
+      handleSee: function (row) {
+        var parm={id:row.storeCateId};
+        this.$router.push({ path: '/store/classify-management/find-good/', query:parm });
       },
       //分页
       handleCurrentChange:function(val){

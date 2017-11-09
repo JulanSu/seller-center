@@ -50,15 +50,15 @@ const routers = new VueRouter({
         redirect: '/seller-management/goods',
         hidden: true
     },
-    {
+    // {
 
-        path: '/seller-management',
-        component: Full,
-        redirect: '/seller-management/goods',
-        name: '商品管理',
-        iconCls: 'iconfont icon-shangpu',//图标样式class
-        children: goodsManagementRoutes
-    },
+    //     path: '/seller-management',
+    //     component: Full,
+    //     redirect: '/seller-management/goods',
+    //     name: '商品管理',
+    //     iconCls: 'iconfont icon-shangpu',//图标样式class
+    //     children: goodsManagementRoutes
+    // },
     /*消息中心*/
     {
         path: '/person',
@@ -71,33 +71,34 @@ const routers = new VueRouter({
             name: '消息中心' 
         }]
     },
-    {
-        path: '/transaction',
-        component: Full,
-        name: '交易管理',
-        iconCls: 'iconfont icon-jiaoyiguanli',//图标样式class
-        children: transaction
-    },
-    {
-        path: '/store',
-        component: Full,
-        name: '店铺管理',
-        iconCls: 'iconfont icon-shangpinguanli',
-        children:shopsManagementRoutes 
-    },
+    // {
+    //     path: '/transaction',
+    //     component: Full,
+    //     name: '交易管理',
+    //     iconCls: 'iconfont icon-jiaoyiguanli',//图标样式class
+    //     children: transaction
+    // },
+    // {
+    //     path: '/store',
+    //     component: Full,
+    //     name: '店铺管理',
+    //     iconCls: 'iconfont icon-shangpinguanli',
+    //     children:shopsManagementRoutes 
+    // },
     {
         path: '/merchant-enter',
         component: MerchantEnter,
         name: '',
         hidden: true
-    },
-    {   path: '/marketing-center',
-        component: Full,
-        name: '营销中心',
-        iconCls: 'iconfont icon-yingxiaozhongxin',
-        children:marketingCenter 
     }
+    // {   path: '/marketing-center',
+    //     component: Full,
+    //     name: '营销中心',
+    //     iconCls: 'iconfont icon-yingxiaozhongxin',
+    //     children:marketingCenter 
+    // }
   ]
 })
 
 export default routers;
+

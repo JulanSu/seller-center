@@ -79,15 +79,6 @@
           thirstCategoryData:[]
         }
       },
-
-
-
-      mounted: function () {
-        this.getGoodsCategory(this.storeId);
-        
-      },
-
-
       created () {
         let route = this.$route
         if(route.name === '创建商品') {

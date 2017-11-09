@@ -61,7 +61,7 @@
                     </el-col>
                     <el-col :span="3"><p>￥{{item.unitPrice}}</p></el-col>
                     <el-col :span="3">{{item.orderNum}}</el-col>
-                    <el-col :span="4">{{switchOrderType(item.orderType)}}</el-col>
+                    <el-col :span="4">{{switchOrderType(item.productType)}}</el-col>
                     <el-col :span="4">{{item.orderProductStatus}}</el-col>
                     <el-col :span="5">
                         <div class="order-price">￥{{item.unitPrice * item.orderNum}}</div>
@@ -187,7 +187,7 @@
             },
             /*售后订单转换*/
             switchAfter(a){
-                let st = ''
+                let st = '';
                 switch(a) {
                     case 1:st = '待处理'; break;
                     case 2:st = '待平台审核';break;
@@ -200,10 +200,10 @@
             switchOrderType(a){
                 let st = ''
                 switch(a) {
-                    case 0:st = '全款订单'; break;
-                    case 1:st = '定金订单';break;
-                    case 2:st = '点券订单';break;
-                    case 3:st = '现金券订单';break;
+                    case 1:st = '全款订单'; break;
+                    case 2:st = '定金订单';break;
+                    case 3:st = '点券订单';break;
+                    case 4:st = '现金券订单';break;
                 }
                 return st;
             },
@@ -228,23 +228,23 @@
             sureSend(){
                 let self = this;
                 if(self.onRight){     //true为快递配送，fasle为自送
-                    self.gongSi == '' ? self.warn('快递公司不能为空') : '';
-                    self.danHao == '' ? self.warn('快递单号不能为空') : '';
-                }else{
-                    let params = {
-                        orderStoreId: '926354472421031936', //self.detail.orderStoreId,
-                        shippedBy: self.gongSi,
-                        trackNum: self.danHao,
-                        remark: self.beiZhu
-                    }
-                    sendProduct(qs.stringify(params)).then( res => {
-                        if(res.data.data){
-                            self.btnStatus = false;
-                        }else{
-                            self.warn(res.data.message)
-                        }
-                    })
+                    if(self.gongSi == ''){self.warn('快递公司不能为空');return false}
+                    if(self.danHao == ''){self.warn('快递单号不能为空');return false};
                 }
+                let params = {
+                    orderStoreId: self.detail.orderStoreId,
+                    shippedBy: self.gongSi,
+                    trackNum: self.danHao,
+                    remark: self.beiZhu
+                }
+                sendProduct(qs.stringify(params)).then( res => {
+                    if(res.data.data){
+                        self.btnStatus = false;
+                        
+                    }else{
+                        self.warn(res.data.message)
+                    }
+                })
             },
             /*消息警告*/
             warn(str){
@@ -483,7 +483,6 @@
                     font-weight: 400;
                 }
                 .el-dialog__headerbtn{
-                    padding-top:15px;
                     font-size: 14px;
                 }
             }

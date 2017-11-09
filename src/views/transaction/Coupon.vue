@@ -120,8 +120,10 @@
             getTableData(obj){
                 let self = this;
                 cashList(obj).then(res => {
-                    self.tableData = res.data.data.list;
-                    self.total = Number(res.data.data.total)
+                    if(res.data.data.list){
+                        self.tableData = res.data.data.list;
+                        self.total = Number(res.data.data.total)
+                    }
                 })
             },
             handleSizeChange(val) {

@@ -19,7 +19,7 @@
         <template slot-scope="scope">
           <router-link :to="{name:'编辑子帐号', params: { id: scope.row.storeOperatorId}}">编辑</router-link>
           <span @click="handleOptation(scope.row)">{{scope.row.isUsed==1?"冻结":"解结"}}</span>
-          <span @click="handleDel(scope.row)">删除</span>
+          <!-- <span @click="handleDel(scope.row)">删除</span> -->
         </template>
       </el-table-column>
     </el-table>
@@ -176,7 +176,7 @@ import {operatorList,operatorChangeStatus,operatorRemove,operatorGetNum} from '@
 
 <style lang="scss">
 .account-list{
-  padding:40px 0 0 40px;
+  padding:40px 40px 0 20px;
   a{
     text-decoration:none;
   }

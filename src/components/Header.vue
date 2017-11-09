@@ -14,7 +14,7 @@
         <div class="user-item">欢迎你，{{ueseName}}</div>
         <div class="user-item" style="padding:0 30px 0 10px;">
           <el-dropdown trigger="click"  @command="handleCommand" @visible-change="triangle">
-            <span class="el-dropdown-link userinfo-inner">商户中心<i class="iconfont icon-xiala2" :class="{ 'el-xuanzhuan1': elXuanzhuan1 , 'el-xuanzhuan2': elXuanzhuan2}"></i></span>
+            <span class="el-dropdown-link userinfo-inner">商户中心<i class="iconfont icon-xiala2 el-xuanzhuan1"></i></span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item  command="a">设置</el-dropdown-item>
               <el-dropdown-item command="exit">退出登录</el-dropdown-item>
@@ -52,7 +52,7 @@ export default {
         this.total = tal > 999 ? '999+' : tal;
       } 
     }).catch(res => {
-      console.log(res)
+
     })
   },
   props: {
@@ -73,6 +73,7 @@ export default {
   },
   mounted(){
     this.ueseName=config.userName;
+    
   },
   methods: {
     handleCommand(command) {
@@ -85,11 +86,7 @@ export default {
     },
     //下拉框出现/隐藏时触发
     triangle(isShow){
-      if(isShow){
-        this.elXuanzhuan1=true;
-      }else{
-         this.elXuanzhuan2=true;
-      }
+
     }
   }
 }
@@ -233,19 +230,14 @@ export default {
     }  
   }
   .el-xuanzhuan1{
+    display:inline-block;
     transform:rotate(180deg);
     -ms-transform:rotate(180deg);   /* IE 9 */
     -moz-transform:rotate(180deg);  /* Firefox */
     -webkit-transform:rotate(180deg); /* Safari 和 Chrome */
     -o-transform:rotate(180deg);  /* Opera */
   }
-  .el-xuanzhuan2{
-    transform:rotate(180deg);
-    -ms-transform:rotate(180deg);   /* IE 9 */
-    -moz-transform:rotate(180deg);  /* Firefox */
-    -webkit-transform:rotate(180deg); /* Safari 和 Chrome */
-    -o-transform:rotate(180deg);  /* Opera */
-  }
+
   
 
 </style>

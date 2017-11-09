@@ -186,15 +186,18 @@
     computed: {
 
     },
-    watch: {
-        '$route' (to, from) {alert(1)
-          // 对路由变化作出响应...
-          deep:true
-        }
-      },
+    // watch: {
+    //   '$route' (to, from) {
+    //     // 对路由变化作出响应...
+    //       console.log(to, from)
+    //   }
+    // },
     created () {
+      this.initTemplateHandle()
+    },
+    methods: {
+      initTemplateHandle(){
       var self = this
-
       self.getNewestTemplateData(self.storeId, function(res){
         //判断是否存在区域
         if(res.area && res.area.length) {
@@ -217,12 +220,7 @@
         self.isRenderFinished = true     
 
       })
-      
-      //this.initCityMap()
-      //console.log(this.$route)
-    },
-    methods: {
-
+      },
       entireCountryChangeHandle(value){
         const self = this
         const h = self.$createElement
@@ -301,10 +299,12 @@
       },
       onDelHandle (value, index) {
         var self = this
-
         if(value.sysAreaNames && value.sysAreaNames.length) {
           for(var i=0;i<value.sysAreaNames.length; i++) {
-            self.citiesMap[value.sysAreaNames[i]].checked=false
+            if(value.sysAreaNames[i]){
+              self.citiesMap[value.sysAreaNames[i]].checked=false
+            }
+            
           }          
         }
 
@@ -486,6 +486,7 @@
           if (valid) {
             self.updateCityMap()
             self.dialogVisible = false
+
           } else {
             console.log('error submit!!');
             return false;
@@ -532,6 +533,7 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             self.saveTemplateData()
+            
           } else {
             console.log('error submit!!');
             return false;
@@ -551,6 +553,7 @@
               message: '物流模板保存成功！',
               type: 'success'
             });
+            self.initTemplateHandle()
           }else {
             self.$message({
               message: '物流模板保存失败，请重新尝试。',
@@ -559,13 +562,13 @@
             self.submitLoading = true          
           }
         })
- 
+        
       },
       formartSubmitData (submitData){
         var jsonSubmitData = JSON.stringify(submitData)
         var newData = JSON.parse(jsonSubmitData)
         var self = this
-        alert(self.entireCountryChecked)
+
         if(newData.templateType == 0 && self.entireCountryChecked) {
           newData.templateValueList.push(self.entireCountry[0])
         }

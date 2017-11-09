@@ -63,7 +63,6 @@
       formartData (){
         var self = this
         var cateData = self.formartCateData(this.skuData)
-        console.log('获取类目数据', cateData)
         var genData = self.gen(cateData)
 
         self.productSkuTable = self.getProductSkuProperty(genData)
@@ -121,9 +120,7 @@
       changeHandle (row) {
         
         var rowData = this.addRow(row)
-        console.log('我正在被改动', row, rowData)
         var productSkuTable = this.formartAddRow(rowData)
-        console.log(this.tables, '你好')
         this.$emit('updateProductSkuProperty', productSkuTable)
         productSkuTable = null
       },
@@ -140,7 +137,6 @@
           }
         }
         data = null
-        console.log('组合用户选择的数据',arr)
         return arr
       },
       addRow(row){

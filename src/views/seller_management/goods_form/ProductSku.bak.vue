@@ -32,11 +32,12 @@
         <div class="cate-property-item" v-else-if="productCate.catePropertySelection == 2 && productCate.catePropertyParentId == '0'">
           <div class="text">{{productCate.catePropertyName}}</div>
           <div class="input">
-            <el-input  v-model="productCate.values[0].value" :value="productCate.values[0].value" placeholder="自定义属性" @change="changeHandle">
-              <template slot="append" v-if="productCate.catePropertyUnit">
-                <span>{{productCate.catePropertyUnit}}</span>
-              </template>
-            </el-input>
+              <el-input  v-model="productCate.values[0].value" :value="productCate.values[0].value" placeholder="自定义属性" @change="changeHandle">
+                <template slot="append" v-if="productCate.catePropertyUnit">
+                  <span>{{productCate.catePropertyUnit}}</span>
+                </template>
+              </el-input>
+            
           </div>
         </div>
     </template>
@@ -69,6 +70,7 @@
       formartData: function(data){
         var saveData = this.formartSaveData(data)
         this.catePropertyGroupList = this.formartValues(saveData)
+        console.log('类目属性格式化后的数据',saveData, this.catePropertyGroupList)
         this.changeHandle()
       },
 
@@ -142,7 +144,7 @@
         obj.catePropertyUnit = data.catePropertyUnit
         obj.productCatePropertyId = data.productCatePropertyId
         obj.catePropertySelection = data.catePropertySelection
-        obj.catePropertyType = data.catePropertyType
+        obj.catePropertySelection = data.catePropertySelection
         obj.catePropertyUnit = data.catePropertyUnit
         obj.options = data.options
         if(data)
@@ -154,6 +156,7 @@
         obj.id = data.productCatePropertyId
         obj.name = data.catePropertyName
         obj.value = ''
+        obj.unit = data.catePropertyUnit
         return obj;
       },
 

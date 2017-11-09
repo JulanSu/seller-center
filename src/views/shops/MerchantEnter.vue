@@ -8,10 +8,10 @@
 					<el-input :maxlength="30" v-model="ruleForm.enterpriseName" placeholder="请输入企业名称"  class="wid400"></el-input>
 				</el-form-item>
 				<el-form-item label="组织机构代码证/营业执照" label-width="200px">
-					<upload-pictures :note="uploadTishi1" :url="ruleForm.broadwiseLogo" :listen="'listenToPic1'" @listenToPic1="sucpic1"></upload-pictures>
+					<upload-pictures :note="uploadTishi1" :url="ruleForm.enterpriseLicence" :listen="'listenToPic1'" @listenToPic1="sucpic1"></upload-pictures>
 				</el-form-item>
-				<el-form-item label="" prop="broadwiseLogo"  label-width="200px" class='updata'>
-					<el-input v-model="ruleForm.broadwiseLogo" class="wid280"></el-input>
+				<el-form-item label="" prop="enterpriseLicence"  label-width="200px" class='updata'>
+					<el-input v-model="ruleForm.enterpriseLicence" class="wid280"></el-input>
 				</el-form-item>
 				<el-form-item label="组织机构代码（注册号）" label-width="200px" prop="orgCode">
 					<el-input :maxlength="18" v-model="ruleForm.orgCode" placeholder="请输入组织机构代码（注册号）" class="wid400"></el-input>
@@ -270,7 +270,7 @@ export default {
 				industryCateIdList:[],
 				identityPic1:'',
 				identityPic2:'',
-				broadwiseLogo:'',
+				enterpriseLicence:'',
 				searcBarCode:'',
 				enterpriseName:'',
 				orgCode: '',
@@ -281,7 +281,6 @@ export default {
 				detailedAddress: '',
 				contactName:'',
 			    contactMobile:'',
-			    enterpriseLicence:'',
 			    identityPic:'',
 			    longitude:120.186535,
 	　　　　	latitude:30.310288,
@@ -289,7 +288,7 @@ export default {
 				
 			},
 	        rules: {
-	        	broadwiseLogo: [
+	        	enterpriseLicence: [
 	            	{ required: true, message: '请上传组织结构代码证/营业执照', trigger: 'blur' }
 	          	],
 	          	identityPic1: [
@@ -356,6 +355,11 @@ export default {
         }
 	},*/
     mounted:function(){
+    	if(localStorage.getItem('merchant')==1){
+    		this.$router.push({ path: '/store/message'});
+    	}
+
+
 		//调用地图
 	    this.$refs.MapView.creatmap(this.ruleForm.longitude,this.ruleForm.latitude);
 
@@ -375,7 +379,7 @@ export default {
 	methods: {
 		//组织机构代码证／营业执照上传成功之后
 		sucpic1(url){
-			this.ruleForm.broadwiseLogo=url;
+			this.ruleForm.enterpriseLicence=url;
 		},
 		//法人身份证正面上传成功之后
 		sucpic2(url){
@@ -511,8 +515,8 @@ export default {
 		},
 		/*点击切换企业和个人店铺*/
 		selector(formName){
-			this.$refs[formName].resetFields();/*清空输入的内容*/
-			this.select= { province: '选择省',city: '选择市',area: '选择区'};
+			//this.$refs[formName].resetFields();/*清空输入的内容*/
+			//this.select= { province: '选择省',city: '选择市',area: '选择区'};
 			if(this.isShop==1){/*isShop为1是企业店铺*/
 				this.isShop=0;
 				this.shopHtml="企业身份入驻请点击这里";
@@ -600,8 +604,9 @@ export default {
 		/*返回商户中心按钮*/
 	    getBack(){
 	    	this.dialogVisible1 = false;
-	    	//location.href=config.apiHost;
-	    	this.$router.push({ path: '/store/message'});
+	    	localStorage.setItem("merchant",1);
+	    	window.location.reload();
+	    	
 	    }
 
 	}

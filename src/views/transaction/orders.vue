@@ -183,7 +183,6 @@
                 params.storeId = config.storeId;
                 params.infoTelephone = self.form.userPhone == '' ? null : self.form.userPhone;
                 params.orderStoreType = self.form.typeCheck == '' ? null : self.form.typeCheck
-                console.log(params.orderStoreStatus)
                 if(self.form.statusCheck == undefined){
                     params.orderStoreStatus = null
                 }else{

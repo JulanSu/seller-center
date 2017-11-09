@@ -7,7 +7,7 @@
         </el-form-item>
 
         <el-form-item label="选择品牌" prop="brandId" v-if="storeType == 1">
-          <brand-select v-if="initForm.brandDTOList.length" v-model="goodsForm.brandId" :brandDTOList="initForm.brandDTOList"></brand-select>
+          <brand-select v-model="goodsForm.brandId" :brandDTOList="initForm.brandDTOList"></brand-select>
         </el-form-item>
 
         <el-form-item label="商品标题" prop="productTitle">
@@ -137,6 +137,7 @@
           <category-bar title="宝贝物流服务"></category-bar>
           <el-form-item label="提取方式">
             <el-checkbox checked="checked" disabled>电子交易凭证</el-checkbox>
+            <div></div>
           </el-form-item>
         </div>
         <div class="logistics-info wuliu" prop="shippingTemplateId" v-if="goodsForm.productType == 1">
@@ -161,8 +162,8 @@
         </div>
         <el-form-item>
           <el-button type="primary" @click="submitForm('goodsForm', 1)" :loading="submitLoading">保存</el-button>
-          <template v-if="this.$route.query.productStatus && this.$route.query.productStatus == 1">
-          <el-button type="primary" @click="submitForm('goodsForm', 0)" :loading="draftboxLoading">放入草稿箱</el-button>
+          <template v-if="!$route.query.productStatus || $route.query.productStatus != 1">
+            <el-button type="primary" @click="submitForm('goodsForm', 0)" :loading="draftboxLoading">放入草稿箱</el-button>
           </template>
           <!-- <el-button @click="resetForm('goodsForm')">重置</el-button> -->
         </el-form-item>
@@ -221,6 +222,7 @@
         //表单提交所需要的数据结构
         goodsForm: {
           storeCateProduct: [],
+          applicableShop: '',
           productId: null, //商品ID 10000061
           //productCateName: '',
           productCateId: '', //类目ID
@@ -234,7 +236,7 @@
           productType: '', //商品类型
           productPicUrlList: [], //商品图片列表 链接LIST
           productSkuTable: [], //商品销售规格
-          detailsContent: 'dasdadasdadsadadasda', //富文本
+          detailsContent: '', //富文本
           serviceArea: '', //服务范围 逗号隔开
           shippingTemplateId: '', //物流模板ID
           publishTime: '', //上架时间
@@ -270,12 +272,11 @@
         },
         //表单校验
         goodsFormRules: {
-          brandName: [
-            { required: true, message: '请选择品牌', trigger: 'blur' }
-          ],
+
+          //商品标题
           productTitle: [
-            { required: true, message: '请填写商品标题', trigger: ['change', 'blur'] },
-            { max: 25, message: '商品标题最多不超过25个', trigger: ['change', 'blur'] },
+            { required: true, message: '请填写商品标题', trigger: ['change', 'blur']},
+            { max: 25, message: '商品标题最多不超过25个', trigger: ['change', 'blur']},
             { validator: (rule, value, callback)=>{
               var productTitleRules = this.initForm.productTitleRules;
               validatorStrLength(rule, value, callback, function(len){
@@ -284,6 +285,15 @@
             }, message: '商品标题最多不超过25个', trigger: 'change' 
             },
           ],
+          //品牌名称
+          // brandName: [
+          //   { required: true, message: '请选择品牌', trigger: 'blur' }
+          // ],
+          // 商品描述
+          detailsContent: [
+            { required: true, message: '请输入商品描述', trigger: 'blur' }
+          ],
+          //商品卖点
           sellingPoint: [
             { max: 50, message: '商品卖点最多不超过50个', trigger: 'blur' },
             { validator: (rule, value, callback)=>{
@@ -294,20 +304,25 @@
             }, message: '商品卖点最多不超过50个', trigger: 'change' 
             },
           ],
+          //商品图片列表
+          productPicUrlList: [
+            { required: true, message: '请上传是商品图片', trigger: 'blur' }
+          ],
           // productCateProperty: [
           //   { required: true, message: '请选择类目属性', trigger: 'blur' }
           // ],
-          productSkuTable: [
-            {required: true, message: '请先选择商品销售规格', trigger: 'blur'}
-          ],
+          
+          // productSkuTable: [
+          //   {required: true, message: '请先选择商品销售规格', trigger: 'blur'}
+          // ],
           // 上架时间
           publishTimeType: [
-            {required: true, message: '请先选择商品销售规格', trigger: 'blur'}
+            {required: true, message: '请选择商品上架时间', trigger: 'blur'}
           ],
           // 服务范围
-          citySiteList: [  
-            {required: true, message: '请先选择服务范围', trigger: 'blur'}
-          ]
+          // citySiteList: [  
+          //   {required: true, message: '请先选择服务范围', trigger: 'blur'}
+          // ]
         }
       }
     },
@@ -363,10 +378,8 @@
 
         //判断是否存在类目ID
         if(route.name === '新建商品' && storeId && route.query.productCateId && route.query.productCateName) {
-
           self.getGoodsFormDataHandle(storeId, route.query.productCateId)
-          goodsForm.productCateId = route.query.productCateId
-          initForm.productCateName = route.query.productCateName
+
         }
 
       },
@@ -416,8 +429,6 @@
         goodsForm.productVersionId = data.productVersionId
         goodsForm.shippingTemplateId = data.shippingTemplateId
         initForm.productSkuQuantity = self.productSkuHandle(data.productSkuTable)
-
-        console.log('编辑时表单内容', goodsForm)
         //goodsForm.storeCateList = data.storeCateList  //店铺分类
       },
       getGoodsFormDataHandle (storeId, productCateId){
@@ -430,62 +441,28 @@
         }).then((res)=>{
           let data = res.data.data
           if(res.data.code === 0) {
-            //initForm = merge(data, initForm)
-            if(data.citySiteList && data.citySiteList.length) {
-              initForm.citySiteList = data.citySiteList
-            }
-            
-            if(data.brandDTOList) {
-              if(data.brandDTOList.length){
-                initForm.brandDTOList = data.brandDTOList
-              }else {
-                initForm.brandDTOList = [{
-                  storeId: '0',
-                  nameCn: '无'
-                }]
-              }
-
-            }
-
-            if(data.productCateProperty && data.productCateProperty.length) {
-              initForm.productCateProperty = data.productCateProperty
-            }
-
-            if(data.productSkuProperty && data.productSkuProperty.length) {
-              initForm.productSkuProperty = data.productSkuProperty
-            }
-
-            if(data.storeCateList && data.storeCateList.length) {
-              initForm.storeCateList = data.storeCateList
-            }
-
-            // if(data.brandDTOList && data.brandDTOList.length) {
-            //   initForm.brandDTOList = data.brandDTOList
-            // }
+            initForm = merge(initForm, data)
+            goodsForm.productType = data.productType
+            goodsForm.productId = data.productId
+            goodsForm.productCateId = self.$route.query.productCateId
+            initForm.productCateName = self.$route.query.productCateName
             if(storeType != 1) {
               goodsForm.brandId = 0
             }
-            initForm.storeShippingTemplate = data.storeShippingTemplate
-            goodsForm.productType = data.productType
-            goodsForm.productId = data.productId
             initForm.finished = true
-
           }
         })
       },
       productSkuHandle (data){
         var productSkuQuantity = 0
-
         if(data.length) {
           for(var i= 0; i<data.length; i++) {
             var number = parseInt(data[i].productSkuQuantity);
             if(number) {
               productSkuQuantity += number
             }
-
           }          
         }
-
         return productSkuQuantity
       },
 
@@ -498,37 +475,48 @@
         var self = this
         self.goodsForm.productStatus = statusVal
         console.log('提交数据',self.goodsForm, statusVal)
-         if(statusVal == 1) {
-            self.submitLoading = true
-         }else if(statusVal == 0) {
-            self.draftboxLoading = true
-         }
-        // saveGoodsFormData(self.goodsForm).then((res)=> {
-        //   var data = res.data.data
-        //    if(res.data.code == 0) {
-        //      if(statusVal == 1) {
-        //         self.submitLoading = true
-        //         self.$router.push({path: '/seller-management/underreview'})
-        //      }else if(statusVal == 0) {
-        //         self.draftboxLoading = true
-        //         self.$router.push({path: '/seller-management/draftbox'})
-        //      }
-        //    }else {
-        //       self.submitLoading = false
-        //       self.draftboxLoading = false            
-        //    }
-        // }).catch((res)=>{
-        //   self.submitLoading = false
-        //   self.draftboxLoading = false
-        // })
+        self.submitProductFormData(statusVal)
         // self.$refs[formName].validate((valid) => {
         //   if (valid) {
+        //     self.submitProductFormData(statusVal)
         //     console.log(self.goodsForm)
         //   } else {
         //     console.log('error submit!!');
         //     return false;
         //   }
         // });
+      },
+      submitProductFormData(statusVal){
+        var self = this;
+        if(statusVal == 1) {
+          self.submitLoading = true
+        }else if(statusVal == 0) {
+          self.draftboxLoading = true
+        }
+        console.log(JSON.stringify(self.goodsForm))
+        //表单提交
+        saveGoodsFormData(self.goodsForm).then((res)=> {
+          var data = res.data.data
+           if(res.data.code == 0) {
+             if(statusVal == 1) {
+                self.submitLoading = true
+                self.$router.push({path: '/seller-management/underreview'})
+             }else if(statusVal == 0) {
+                self.draftboxLoading = true
+                self.$router.push({path: '/seller-management/draftbox'})
+             }
+           }else {
+              self.$message({
+                message: '商品提交失败，请重新尝试！',
+                type: 'warning'
+              });
+              self.submitLoading = false
+              self.draftboxLoading = false            
+           }
+        }).catch((res)=>{
+          self.submitLoading = false
+          self.draftboxLoading = false
+        })
       },
       updateCatePropertyGroupList(value) {
 
@@ -550,7 +538,9 @@
   }
 </script>
 <style lang="scss">
-
+  .content-wrapper {
+    padding-right: 20px;
+  }
   .block-form {
     background:#f5f7fa;
     border:1px solid #eeeeee;

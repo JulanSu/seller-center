@@ -111,7 +111,7 @@
                     case 4: return '社区消息'; break;
                     case 5: return '帐号消息'; break;
                     case 6: return '审核消息'; break;
-                    case 7: return '系统消息';  
+                    case 7: return '系统消息';
                 }
             },
             handleSizeChange(val){
