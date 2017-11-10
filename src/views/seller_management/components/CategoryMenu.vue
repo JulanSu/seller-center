@@ -14,15 +14,20 @@
         <el-menu default-active="" unique-opened class="category-menu" v-if="categoryData.length">
           <template  v-for="(item, index) in categoryData">
             <el-menu-item :index="index+''" v-if="item.productCateName" class="sub-title" @click="selectproductCateName(item, index)">
-              <span class="first-letter" v-if="showLetterIcon">A</span>{{item.productCateName}}
+              <span class="first-letter" v-if="showLetterIcon">{{getFirstLetter(item.productCateEname)}}</span>{{item.productCateName}}
               <i class="el-icon-arrow-right" v-if="item.child && item.child.length"></i>
             </el-menu-item>
           </template>     
         </el-menu>
-        <el-menu default-active="" unique-opened class="category-menu search-list" v-if="searchList.length">
-          <template  v-for="(item, index) in searchList">
-            <el-menu-item v-if="!item.child || !item.child.length && item.productCateName" :index="index+''" class="sub-title" @click="selectproductCateName(item, index)"><span class="first-letter" v-if="showLetterIcon">A</span>{{item.productCateName}}<i class="el-icon-arrow-right" v-if="item.child.length"></i></el-menu-item>
-          </template>     
+        <el-menu default-active="" unique-opened class="category-menu search-list" v-if="keywords">
+
+          <template v-if="!searchList.length">
+            <el-menu-item index="2-1" class="sub-title">没有找到相关内容</el-menu-item>
+          </template>
+
+          <template v-else v-for="(item, index) in searchList">
+            <el-menu-item  :index="index+''" class="sub-title" @click="selectproductCateName(item, index)"><span class="first-letter" v-if="showLetterIcon">{{getFirstLetter(item.productCateEname)}}</span>{{item.productCateName}}<i class="el-icon-arrow-right" v-if="item.child && item.child.length"></i></el-menu-item>
+          </template>
         </el-menu>
       </div>
     </div>
@@ -72,31 +77,34 @@
           }
         },
         watch: {
-          keywords (){
-            this.searchHandle();
+          keywords (newVal, oldVal){
+            this.searchHandle(newVal);
           },
           categoryData (){
-            console.log('监听变化')
             this.categoryDataCache = this.categoryData
           }
         },
         mounted () {
-          console.log('计算数据',this.categoryData)
           this.categoryDataCache = this.categoryData
         },
         methods: {
-          searchHandle: function() {
-              var reg = new RegExp(this.keywords == '' ? 'xxyy' :
-                  this.keywords, 'ig');
-              if(!this.keywords) {
+          getFirstLetter(str){
+            if(str) {
+              return str.substring(0,1).toLocaleUpperCase()
+            }
+          },
+          searchHandle(keywords) {
+              var reg = new RegExp(keywords == '' ? 'xxyy' :
+                  keywords, 'ig')
+              if(!keywords) {
                  this.searchList = []
               }else {
               var _arr = [];
               for(var i in this.categoryData){
-                console.log(this.categoryData[i])
+
                 if(
                     reg.test(this.categoryData[i][
-                        'ename'
+                        'productCateEname'
                     ]) ||
                     reg.test(this.categoryData[i][
                         'productCateName'
@@ -105,6 +113,7 @@
                     _arr.push(this.categoryData[i]);
                 }
               }
+
               this.searchList = _arr
             }  
           },
@@ -113,9 +122,6 @@
             let self = this
             this.$emit('categoryClick', row, index)
           },
-          getproductCateName(){
-
-          }
         }
 
     }

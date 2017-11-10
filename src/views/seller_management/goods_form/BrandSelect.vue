@@ -39,7 +39,20 @@
       // }
     },
     mounted (){
-        this.brandId = this.value
+      var listLen = this.brandDTOList.length
+      var curBrandId = this.value
+      var isBrandId = false
+      if(listLen) {
+        for(var i=0; i<listLen; i++) {
+          if(curBrandId == this.brandDTOList[i].brandId) {
+            isBrandId = true
+          } 
+        }
+      }
+      if(!isBrandId) {
+        curBrandId = '0'
+      }
+      this.brandId = curBrandId
     },
     methods: {
       changeHandle(val) {

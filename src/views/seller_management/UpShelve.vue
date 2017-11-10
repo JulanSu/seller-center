@@ -144,7 +144,6 @@
            * @return {[type]}     [description]
            */
           onEditorHandle (row){
-            console.log('编辑商品',row)
             this.$router.push({
               path: '/seller-management/goods/editor', 
               query:{productId: row.productId, productStatus: row.productStatus}
@@ -165,7 +164,6 @@
               theShelvestoSoldOut({
                 productId: row.productId
               }).then((res)=>{
-                console.log('商品下架',res)
                 self.listLoading = false;
                 self.messageHandle('商品下架成功！', 'success')
                 self.getProductList({
@@ -261,7 +259,6 @@
                 self.pagination.pageSize = formartData.pageSize
                 self.listLoading = false
               }
-              console.log('获取商品列表', res)
             })
           },
           handleSizeChange(pageSize) {
@@ -269,14 +266,12 @@
               pageNum:1, 
               pageSize: pageSize
             })
-            console.log(`每页 ${pageSize} 条`);
           },
           handleCurrentChange(pageNum) {
             this.getProductList({
               pageNum: pageNum, 
               pageSize: 10              
             })
-            console.log(`当前页: ${pageNum}`);
           },
           entryDialogHandle (row){
             let self = this;

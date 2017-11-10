@@ -138,7 +138,6 @@
            * @return {[type]}     [description]
            */
           onEditorHandle (row){
-            console.log('编辑商品',row)
             this.$router.push({
               path: '/seller-management/goods/editor', 
               query:{productId: row.productId, productStatus: row.productStatus}
@@ -213,7 +212,6 @@
                 self.pagination.pageSize = formartData.pageSize
                 self.listLoading = false
               }
-              console.log('获取商品列表', res)
             })
           },
           onDelHandle (row){
@@ -240,14 +238,12 @@
               pageNum:1, 
               pageSize: pageSize
             })
-            console.log(`每页 ${pageSize} 条`);
           },
           handleCurrentChange(pageNum) {
             this.getProductList({
               pageNum: pageNum, 
               pageSize: 10              
             })
-            console.log(`当前页: ${pageNum}`);
           },
 
           entryDialogHandle (row){
@@ -260,12 +256,10 @@
             });
           },
           searchSubmitHandle (value){
-            console.log(value)
             if(!value) {
               return 
             }
             this.getProductList(value)
-            console.log('商品查询后的', value)
           },
 
           messageHandle (message, type){

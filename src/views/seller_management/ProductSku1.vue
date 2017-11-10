@@ -112,7 +112,44 @@
         sortByNameData: []
       }
     },
+   /* watch:{
+      calculate:{
+        handler:function() {   //特别注意，不能用箭头函数，箭头函数，this指向全局
+          alert(1)
+        },
+        deep: true 
+      }
+    },*/
+    /*computed: {
+      calculate: function () {
+        var arr=[];
+        for(var i=0;i<this.results.length;i++){
+          
+          var item=this.results[i];
+          var key=Object.keys(item);
+          var obj=item[key];
+
+          if(obj.length>0){
+
+            for(var j=this.results.length-1;j<i;j--){
+          
+              var item2=this.results[j];
+              var key2=Object.keys(item2);
+              var obj2=item2[key2];  
+              if(obj2.length>0){
+                for(var k=0;k<obj2.length;k++){
+                  arr.push({})
+                }
+              }
+            }
+          }
+        }
+        return 1
+
+      }
+    },*/
     mounted () {
+      this.ceshi();
       for (var i=0;i<this.skuData.length;i++)
       {
         var o=this.skuData[i];
@@ -125,6 +162,46 @@
       this.formartSkuDataHandel()
     },
     methods: {
+      ceshi(){
+         var data = {
+            size: ['size1', 'size2', 'size3'],
+            color: ['color1', 'color2', 'color3'],
+            style: ['style1', 'style2', 'style3']
+        };
+
+        var pr = (function(data){
+            var aa = [];
+            for(var pro in data){
+                aa.push(pro);
+            }
+            return aa;
+        })(data);
+        var a=Object.values(data).reduce(function(objs,props,index){
+            if(objs.length==0){
+                return props.reduce(function(oo,att){
+                    var oob = new Object();
+                    oob[pr[index]] = att;
+                    return oo.concat(oob);
+                },[]);
+            }else{
+                var item = objs.reduce(function(ritem,oo){
+                    var tt = props.reduce(function(subitem,att){
+                        var oob = new Object();
+                        for(var i in oo){
+                            oob[i] = oo[i];
+                        }
+                        oob[pr[index]] = att;
+                        subitem.push(oob);
+                        return subitem;
+                    },[]);
+                    return ritem.concat(tt)
+                },[]);
+                return item;
+            }
+            
+        },[]);
+        console.log(a)
+      },
       formartSkuDataHandel () {
         let skuData = this.skuData
         this.sortByNameData = this.sortByName(skuData)

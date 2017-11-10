@@ -1,7 +1,7 @@
 <template>
   <div class="logistics-wrap">
     <el-form-item label="物流模板">
-      <el-select v-model="storeShippingTemplateId" placeholder="选择物流模板">
+      <el-select v-model="storeShippingTemplateId" placeholder="选择物流模板" @change="selectChange">
         <template v-if="logisticsData.length" v-for="item in logisticsData">
           <el-option :label="item.templateName" :value="item.storeShippingTemplateId"></el-option>
         </template>
@@ -18,6 +18,7 @@
         </div> -->
       </div>
     </el-form-item>
+
     <el-form-item label="配送范围及运费" v-if="template.templateType == 0">
       <div class="area-list">
         <div class="area-list-wrap" v-if="template.templateValueList.length" v-for="item in template.templateValueList">
@@ -79,6 +80,9 @@
       this.storeShippingTemplateId = this.logisticsData[0].storeShippingTemplateId
     },
     methods: {
+      selectChange(value){
+        this.$emit('logisticsTemplateType', this.template.templateType)
+      },
       changeTemplate(tid){
         let logisticsData = this.logisticsData
         for(var i=0; i<logisticsData.length;i++) {

@@ -220,7 +220,6 @@
                 self.pagination.pageSize = formartData.pageSize
                 self.listLoading = false
               }
-              console.log('获取商品列表', res)
             })
           },
           handleSizeChange(pageSize) {
@@ -228,14 +227,12 @@
               pageNum:1, 
               pageSize: pageSize
             })
-            console.log(`每页 ${pageSize} 条`);
           },
           handleCurrentChange(pageNum) {
             this.getProductList({
               pageNum: pageNum, 
               pageSize: 10              
             })
-            console.log(`当前页: ${pageNum}`);
           },
 
           entryDialogHandle (row){
@@ -248,12 +245,10 @@
             });
           },
           searchSubmitHandle (value){
-            console.log(value)
             if(!value) {
               return 
             }
             this.getProductList(value)
-            console.log('商品查询后的', value)
           },
           messageHandle (message, type){
             let self = this

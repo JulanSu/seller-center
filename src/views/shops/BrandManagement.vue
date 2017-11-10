@@ -13,21 +13,26 @@
 				<div class="brandlist">
 					<h3><!-- 已过期 已禁用 -->
 						<b>{{myBrand.nameCn}}</b>
-						<span v-if="pastDue(myBrand)" style="color:#ff0201;">(已过期)</span>
+						<!-- <span v-if="pastDue(myBrand)" style="color:#ff0201;">(已过期)</span>
 						<span v-else-if="myBrand.isUsed==0" style="color:#ff0201;">(已禁用)</span>
 						<span v-else>
 							<span v-if="myBrand.isVerified==1"  style="color:#41cac0;">(审核通过)</span>
 							<span v-else-if="myBrand.isVerified==2"  style="color:#ff0201;">(未通过)</span>
 							<span v-else-if="myBrand.isVerified==0" style="color:#41cac0;">(审核中)</span>
 							<span v-else-if="myBrand.isVerified==3" style="color:#ff0201;">(已取消)</span> 
-						</span>
+						</span> -->
+						<span v-if="myBrand.isVerified==2"  style="color:#ff0201;">(未通过)</span>
+						<span v-else-if="myBrand.isVerified==0" style="color:#41cac0;">(审核中)</span>
+						<span v-else-if="pastDue(myBrand)" style="color:#ff0201;">(已过期)</span>
+						<span v-else-if="myBrand.isUsed==0" style="color:#ff0201;">(已禁用)</span>
+						<span v-else="myBrand.isVerified==1"  style="color:#41cac0;">(审核通过)</span>
 						
 					</h3>
 					<p>渠道：{{myBrand.ways}}</p>
 					<p>授权城市：{{myBrand.cityNames}}</p>
 					<p>截止时间：{{time(myBrand)}}</p>
 
-					<div class="btns" v-if="!pastDue(myBrand)&&(myBrand.isVerified==0)&&(myBrand.isUsed!=0)">
+					<div class="btns" v-if="!pastDue(myBrand)&&(myBrand.isVerified==0)">
 						<span class="cancel" @click.stop="cancel(myBrand.storeBrandId)">取消</span>
 					</div>			
 				</div>

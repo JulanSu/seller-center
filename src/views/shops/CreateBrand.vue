@@ -368,6 +368,9 @@ export default {
 			        para.append('domesticOperatorIdCard',this.ruleForm.domesticOperatorIdCard);
 			        para.append('domesticOperatorPhone',this.ruleForm.domesticOperatorPhone);
 
+			        if(this.$route.query.brandId){
+			        	para.append('brandId',this.$route.query.brandId);
+			        }
 			        this.listLoading = true;
 			        brandSavebrand(para).then((res) => {
 			        	if(res.data.code==0){

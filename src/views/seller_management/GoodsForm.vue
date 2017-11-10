@@ -121,7 +121,6 @@
             placeholder="暂用文本域替代富文本（富文本编辑器存在问题，会影响流程）"
             v-model="goodsForm.detailsContent">
           </el-input> -->
-         <!-- <vue-summernote ref="editer" @onChange="onChange"></vue-summernote> -->
          <goods-summernote v-model="goodsForm.detailsContent"></goods-summernote>
         </el-form-item>
 
@@ -137,20 +136,32 @@
           <category-bar title="宝贝物流服务"></category-bar>
           <el-form-item label="提取方式">
             <el-checkbox checked="checked" disabled>电子交易凭证</el-checkbox>
-            <div></div>
+          </el-form-item>
+          <el-form-item label="适用店铺" prop="applicableShop" v-if="goodsForm.productType == 2 || goodsForm.productType == 3 || goodsForm.productType == 4">
+            <el-input
+              type="textarea"
+              :rows="3"
+              placeholder="最多只能输入200个文字"
+              v-model="goodsForm.applicableShop" :maxlength="200">
+            </el-input>
           </el-form-item>
         </div>
         <div class="logistics-info wuliu" prop="shippingTemplateId" v-if="goodsForm.productType == 1">
           <category-bar title="商品物流服务"></category-bar>
-          <logistics-services v-model="goodsForm.shippingTemplateId" :logisticsData="initForm.storeShippingTemplate.data"></logistics-services>
-<!--           <p class="desc" v-else>
-            你还未创建物流模板，请先创建物流模板后再选择噢。
-          </p> -->
+          <logistics-services v-model="goodsForm.shippingTemplateId" :logisticsData="initForm.storeShippingTemplate.data" @logisticsTemplateType="logisticsTemplateType"></logistics-services>
           
+          <el-form-item label="适用店铺" prop="applicableShop" v-if="initForm.templateType == 1 || goodsForm.productType == 2 || goodsForm.productType == 3 || goodsForm.productType == 4">
+            <el-input
+              type="textarea"
+              :rows="3"
+              placeholder="最多只能输入200个文字"
+              v-model="goodsForm.applicableShop" :maxlength="200">
+            </el-input>
+          </el-form-item>
         </div>
         <div class="other-info">
           <category-bar title="其他信息"></category-bar> 
-          <el-form-item label="上架时间" prop="publishTimeType" >
+          <el-form-item label="上架时间" prop="publishTime" >
             <publish-time v-model="goodsForm.publishTime"></publish-time>
           </el-form-item>
           <el-form-item label="是否推荐" prop="productRecommend">
@@ -189,11 +200,15 @@
   import GoodsSummernote from './components/summernote.vue'
   import { getGoodsFormData, saveGoodsFormData} from '@/api/seller'
   import merge from 'merge'
+  // import schema from 'async-validator'
   const win = window;
   const storeId = win.config && win.config.storeId ? win.config.storeId : ''
   const storeType = win.config && win.config.storeType ? win.config.storeType : ''
 
   export default {
+    name: 'GoodsForm',
+
+    componentName: 'GoodsForm',
     components: {
       GoodsSummernote,
       CategoryBar, 
@@ -213,7 +228,9 @@
         var len = getStrLength(value)
         fn(len)
       }
-
+      var validatorTime = (rule, value, callback) => {
+        console.log(rule, value, callback)
+      }
       return {
         storeType: storeType,
         editorProductStatus: '',
@@ -226,7 +243,7 @@
           productId: null, //商品ID 10000061
           //productCateName: '',
           productCateId: '', //类目ID
-          brandId: '', //品牌ID
+          brandId: '0', //品牌ID
           storeId: storeId, //店铺ID
           productTitle: '', //商品标题
           sellingPoint: '', //商品卖点
@@ -239,7 +256,7 @@
           detailsContent: '', //富文本
           serviceArea: '', //服务范围 逗号隔开
           shippingTemplateId: '', //物流模板ID
-          publishTime: '', //上架时间
+          publishTime: '1', //上架时间
           productRecommend: 0, //是否推荐
           productStatus: '', //提交状态
           productSellPrice: '', //展示价格及库存的价格
@@ -252,6 +269,7 @@
           citySiteList:[], 
           storeShippingTemplate: {},
           brandDTOList: [],
+          templateType: '',
           productTitleRules: {
             max: 25,
             curLen: 0
@@ -275,54 +293,53 @@
 
           //商品标题
           productTitle: [
-            { required: true, message: '请填写商品标题', trigger: ['change', 'blur']},
-            { max: 25, message: '商品标题最多不超过25个', trigger: ['change', 'blur']},
-            { validator: (rule, value, callback)=>{
-              var productTitleRules = this.initForm.productTitleRules;
-              validatorStrLength(rule, value, callback, function(len){
-                productTitleRules.curLen = len
-              })
-            }, message: '商品标题最多不超过25个', trigger: 'change' 
-            },
+              {required: true, validator: (rule, value, callback)=>{
+                  if(!value){
+                      callback(new Error('请填写商品标题'))
+                  }
+                  if(value.length>25){
+                      callback(new Error('商品标题最多不超过25个'))
+                  }
+                  callback()
+              }, trigger: ['change', 'blur'] }
           ],
-          //品牌名称
-          // brandName: [
-          //   { required: true, message: '请选择品牌', trigger: 'blur' }
+          // detailsContent: [
+          //   { required: true, message: '请输入商品描述', trigger: 'change' }
           // ],
-          // 商品描述
-          detailsContent: [
-            { required: true, message: '请输入商品描述', trigger: 'blur' }
-          ],
-          //商品卖点
-          sellingPoint: [
-            { max: 50, message: '商品卖点最多不超过50个', trigger: 'blur' },
-            { validator: (rule, value, callback)=>{
-              var sellingPointRules = this.initForm.sellingPointRules;
-              validatorStrLength(rule, value, callback, function(len){
-                sellingPointRules.curLen = len
-              })
-            }, message: '商品卖点最多不超过50个', trigger: 'change' 
-            },
-          ],
-          //商品图片列表
-          productPicUrlList: [
-            { required: true, message: '请上传是商品图片', trigger: 'blur' }
-          ],
-          // productCateProperty: [
-          //   { required: true, message: '请选择类目属性', trigger: 'blur' }
+          // //商品卖点
+          // sellingPoint: [
+          //   { max: 50, message: '商品卖点最多不超过50个', trigger: 'blur' },
+          //   { validator: (rule, value, callback)=>{
+          //     var sellingPointRules = this.initForm.sellingPointRules;
+          //     validatorStrLength(rule, value, callback, function(len){
+          //       sellingPointRules.curLen = len
+          //     })
+          //   }, message: '商品卖点最多不超过50个', trigger: 'change' 
+          //   },
           // ],
+          // //商品图片列表
+          // productPicUrlList: [
+          //   { required: true, message: '请上传是商品图片', trigger: ['change','blur'] }
+          // ],
+          // // productCateProperty: [
+          // //   { required: true, message: '请选择类目属性', trigger: 'blur' }
+          // // ],
           
-          // productSkuTable: [
-          //   {required: true, message: '请先选择商品销售规格', trigger: 'blur'}
+          // // productSkuTable: [
+          // //   {required: true, message: '请先选择商品销售规格', trigger: 'blur'}
+          // // ],
+          // // 上架时间
+          // publishTime: [
+          //   {required: true, message: '请选择商品上架时间', trigger: 'blur'},
+          //   // { validator: validatorTime}
           // ],
-          // 上架时间
-          publishTimeType: [
-            {required: true, message: '请选择商品上架时间', trigger: 'blur'}
-          ],
-          // 服务范围
-          // citySiteList: [  
-          //   {required: true, message: '请先选择服务范围', trigger: 'blur'}
+          // applicableShop: [
+          //   {required: true, message: '请填自提时的适用店铺', trigger: 'blur'}
           // ]
+          // // 服务范围
+          // // citySiteList: [  
+          // //   {required: true, message: '请先选择服务范围', trigger: 'blur'}
+          // // ]
         }
       }
     },
@@ -350,8 +367,13 @@
 
       this.initFormData()
     },
-
     methods: {
+      logisticsTemplateType (value){
+        console.log('ffff', value)
+        this.initForm.templateType = value
+
+        console.log('ffff', value)
+      },
       publishTimeHandle (value){
         this.goodsForm.publishTime = value  
       },
@@ -372,6 +394,7 @@
 
           self.getEditorFormdata(storeId, route.query.productId, route.query.productStatus)
           goodsForm.productId = route.query.productId
+
           return 
 
         }
@@ -402,9 +425,10 @@
             self.initForm = merge(self.initForm, data)
             self.formartEditorData(data)
           }
-          console.log('获取编辑数据',data)
           self.initForm.finished = true
+
         })
+
       },
       formartEditorData(data){
         let self = this
@@ -428,7 +452,9 @@
         goodsForm.productPicUrlList = data.productPicUrlList
         goodsForm.productVersionId = data.productVersionId
         goodsForm.shippingTemplateId = data.shippingTemplateId
+        goodsForm.applicableShop = data.applicableShop
         initForm.productSkuQuantity = self.productSkuHandle(data.productSkuTable)
+        // self.$refs.ruleForm.validate()
         //goodsForm.storeCateList = data.storeCateList  //店铺分类
       },
       getGoodsFormDataHandle (storeId, productCateId){
@@ -473,27 +499,33 @@
        */
       submitForm(formName, statusVal) {
         var self = this
-        self.goodsForm.productStatus = statusVal
-        console.log('提交数据',self.goodsForm, statusVal)
-        self.submitProductFormData(statusVal)
-        // self.$refs[formName].validate((valid) => {
-        //   if (valid) {
-        //     self.submitProductFormData(statusVal)
-        //     console.log(self.goodsForm)
-        //   } else {
-        //     console.log('error submit!!');
-        //     return false;
-        //   }
-        // });
+        var goodsForm = self.goodsForm
+        goodsForm.productStatus = statusVal
+        // if(goodsForm.publishTime == 1) {
+        //   goodsForm.publishTime = ""
+        // }
+        // self.submitProductFormData(statusVal)
+        
+        self.$refs[formName].validate((valid) => {
+          if (valid) {
+            console.log('验证通过，提交表单', self.goodsForm)
+            if(goodsForm.publishTime == 1) {
+              goodsForm.publishTime = ""
+            }
+            self.submitProductFormData(statusVal)
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
       },
       submitProductFormData(statusVal){
-        var self = this;
+        var self = this;        
         if(statusVal == 1) {
           self.submitLoading = true
         }else if(statusVal == 0) {
           self.draftboxLoading = true
         }
-        console.log(JSON.stringify(self.goodsForm))
         //表单提交
         saveGoodsFormData(self.goodsForm).then((res)=> {
           var data = res.data.data

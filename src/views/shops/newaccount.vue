@@ -5,11 +5,8 @@
 				<el-input :maxlength="20" v-model="ruleForm.account" placeholder="请输入帐号名" class="wid280"></el-input>
 			</el-form-item>
 			<el-form-item label="密码"  label-width="100px" prop="password">
-				<el-input type="password" v-model="ruleForm.password" placeholder="请输入密码"  class="wid280" auto-complete="off"></el-input>
+				<el-input :maxlength="20" type="password" v-model="ruleForm.password" placeholder="请输入密码"  class="wid280" auto-complete="off"></el-input>
 			</el-form-item>
-			<el-form-item label="确认密码"  label-width="100px" prop="againpass">
-				<el-input type="password" v-model="ruleForm.againpass" placeholder="再一次输入密码"  class="wid280" auto-complete="off"></el-input>
-			</el-form-item>		
 			<el-form-item label="姓名"  label-width="100px" prop="name">
 				<el-input :maxlength="30" v-model="ruleForm.name" placeholder="请输入姓名" class="wid280"></el-input>
 			</el-form-item>
@@ -62,25 +59,6 @@ import crypto from 'crypto'
             }
           }
       };
-      var validatePass = (rule, value, callback) => {
-        if (value.length<6||value.length>20) {
-          callback(new Error('密码必须大于6位，小于20位'));
-        } else {
-          if (this.ruleForm.againpass !== '') {
-            this.$refs.ruleForm.validateField('againpass');
-          }
-          callback();
-        }
-      };
-      var validatePass2 = (rule, value, callback) => {
-        if (value.length<6||value.length>20){
-          callback(new Error('确认密码必须大于6位，小于20位'));
-        } else if (value !== this.ruleForm.password) {
-          callback(new Error('密码和确认密码不一致，请重新填写'));
-        } else {
-          callback();
-        }
-      };
       return {
         roleList:[],
         listLoading:false,
@@ -103,11 +81,9 @@ import crypto from 'crypto'
             { required: true, message: '请输入账号名', trigger: 'blur' },
             { min: 1, max: 20, message: '长度在 1 到 20 位', trigger: 'blur' }
           ],
-          password: [
-            { required: true, validator: validatePass, trigger: 'blur' }
-          ],
-          againpass: [
-            { required: true, validator: validatePass2, trigger: 'blur' }
+           password: [
+            { required: true, message: '请输入密码', trigger: 'blur' },
+            { min: 6, max: 20, message: '密码必须大于6位,小于20位', trigger: 'blur' }
           ],
           name: [
             { required: true, message: '请输入姓名', trigger: 'blur' },

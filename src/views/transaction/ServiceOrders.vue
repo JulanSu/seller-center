@@ -107,15 +107,10 @@
             switchStatus(a) {
                 let st = ''
                 switch(a) {
-                    case 1:st = '待用户支付'; break;
-                    case 2:st = '待发货';break;
-                    case 3:st = '待收货';break;
-                    case 4:st = '交易成功';break;
-                    case 5:st = '待处理';break;
-                    case 6:st = '待平台审核';break;
-                    case 7:st = '售后完成';break;
-                    case 8:st = '取消售后';break;
-                    case 9:st = '订单关闭';break;
+                    case 1:st = '待处理'; break;
+                    case 2:st = '待平台审核';break;
+                    case 3:st = '售后完成';break;
+                    case 4:st = '已取消';break;
                 }
                 return st;
             },

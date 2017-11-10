@@ -208,18 +208,19 @@
             getTableData(obj){
                 let self = this;
                 orderStore(obj).then(res => {
-                    console.log(res)
                     let moc = res.data
                     if(!moc.data){
                         this.tableData = [];
                         this.total = 0;
                         return false;
                     }
-                    for(let i=0; i<moc.data.list.length; i++) {
-                        let that = moc.data.list[i];
-                        that.pName = that.productNames.join('')
-                        that.orderStoreStatus = this.switchStatus(that.orderStoreStatus)
-                    }
+                    if(moc.data.list){
+                       for(let i=0; i<moc.data.list.length; i++) {
+                            let that = moc.data.list[i];
+                            that.pName = that.productNames.join('')
+                            that.orderStoreStatus = this.switchStatus(that.orderStoreStatus)
+                        }
+                    } 
                     this.total = Number(moc.data.total);
                     this.tableData = moc.data.list
                 })

@@ -34,11 +34,11 @@ const addShop = resolve => require(['@/views/shops/AddShop.vue'],resolve);
 const ProductSku1 = resolve => require(['@/views/seller_management/ProductSku1.vue'],resolve) 
 /*店铺管理 =E */
 const routers = [
-            { 
+            /*{ 
                 path: '/store/ProductSku1',  
                 component: ProductSku1, 
                 name: '商品' 
-            },
+            },*/
             { 
                 path: '/store/message',  
                 component: message, 

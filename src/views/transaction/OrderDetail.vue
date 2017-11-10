@@ -240,7 +240,11 @@
                 sendProduct(qs.stringify(params)).then( res => {
                     if(res.data.data){
                         self.btnStatus = false;
-                        
+                        self.dialogFormVisible = false;
+                        this.$message({
+                            message: '发货成功',
+                            type: 'success'
+                        });
                     }else{
                         self.warn(res.data.message)
                     }

@@ -1,6 +1,9 @@
 <template>
   <div class="app-header app-navbar">
-      <div class="logo logo-width">{{sysName}}</div>
+      <router-link to="/home/index">
+        <div class="logo logo-width">{{sysName}}</div>
+      </router-link>
+      
       <div class="breadcrumb-container">
           <!-- <strong class="title">{{$route.path}}</strong> -->
           <el-breadcrumb separator="/" class="breadcrumb-router">

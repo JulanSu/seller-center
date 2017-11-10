@@ -433,15 +433,20 @@ export default {
         	var maxArr=this.ruleForm.selIndustry.concat(this.curCateName);
    			this.industryCateId.push(row.industryCateId);
         	if(maxArr.length>9){
-        		this.$message({
-		          message: '主营行业不能超过10个哦',
-		          type: 'warning'
-		        });
+        		this.$message({message: '主营行业不能超过10个哦',type: 'warning'});
 		        return false;
         	}
+        	
+        	var strJson=this.curCateName.join(",");
+        	var str=this.stCateName+","+row.industryCateName;
 
-        	this.curCateName.push([this.stCateName,row.industryCateName]);
-
+        	var selIndustryJson =this.ruleForm.selIndustry.join(",");
+        	if((strJson.indexOf(str)>=0)||(selIndustryJson.indexOf(str)>=0)){
+        		this.$message({message: '该主营行业已选过',type: 'warning'});
+        	}else{
+        		this.curCateName.push([this.stCateName,row.industryCateName]);
+        	}
+        	
 
         },
         //选择行业的确定按钮
@@ -536,7 +541,7 @@ export default {
 			};
 		},
 		/*保存按钮*/
-		submitForm(formName) {console.log(this.ruleForm.industryCateIdList)
+		submitForm(formName) {
 		    this.$refs[formName].validate((valid) => {
 	            if (valid) {
 	            	if(!this.ruleForm.industryCateIdList.length){

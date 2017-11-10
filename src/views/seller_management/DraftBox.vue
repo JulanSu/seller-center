@@ -136,7 +136,6 @@
            * @return {[type]}     [description]
            */
           onEditorHandle (row){
-            console.log('编辑商品',row)
             this.$router.push({
               path: '/seller-management/goods/editor', 
               query:{productId: row.productId, productStatus: row.productStatus}
@@ -171,7 +170,6 @@
                 self.pagination.pageSize = formartData.pageSize
                 self.listLoading = false
               }
-              console.log('获取商品列表', res)
             })
           },
           onDelHandle (row){

@@ -30,15 +30,17 @@
     watch: {
       publishTimeType: function (newVal, oldVal){
         if(newVal === '立即上架'){
-          this.$emit('input', '')
+          this.$emit('input', '1')
           this.curTime = ''
+        }else if(newVal === '定时上架'){
+          this.$emit('input', '')
+          this.curTime = ''          
         }
       }
     },
     
     created (){
-
-      if(this.value) {
+      if(this.value && this.value != 1) {
         this.curTime = this.value
         this.publishTimeType = '定时上架'
       }

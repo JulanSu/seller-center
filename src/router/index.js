@@ -10,6 +10,10 @@ import PersonMessage from '@/views/message/PersonMessage.vue'
 //商品管理路由
 import goodsManagementRoutes from './goodsManagementRoutes.js'
 import ProductSku from '@/views/seller_management/ProductSku.vue'
+
+//首页路由
+import home from './home.js'
+
 //店铺管理路由
 import shopsManagementRoutes from './shopsManagementRoutes.js'
 
@@ -18,6 +22,7 @@ import transaction from './transactionRoutes.js'
 
 /*营销路由管理*/
 import marketingCenter from './marketingCenterRoutes.js'
+
 
 Vue.use(VueRouter)
 
@@ -43,11 +48,19 @@ const routers = new VueRouter({
         name: '',
         hidden: true
     },
+    
+    {
+        path: '/home',
+        component: Full,
+        name: '商户中心',
+        hidden:true,
+        children: home
+    },
     {
         path: '/',
         component: Full,
         name: '',
-        redirect: '/seller-management/goods',
+        redirect: '/home',
         hidden: true
     },
     // {

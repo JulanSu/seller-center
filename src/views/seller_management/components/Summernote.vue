@@ -10,18 +10,19 @@
     
     data() {
       return {
-        content: ''
+        currentValue: ''
       }
     },
     props: {
-      value: {
-        type: String,
-        default: ''
-      }
+      value: [String, Number],
+      validateEvent: {
+        type: Boolean,
+        default: true
+      },
     },
     watch: {
-      content(val){
-        this.$emit('input', val)
+      currentValue(newVal, oldVal){
+        this.setCurrentValue(newVal)
       }
     },
 
@@ -33,13 +34,21 @@
         // 这里做上传图片的操作，上传成功之后便可以用到下面这句将图片插入到编辑框中
         // editer.run('insertImage', 'http://ikz2ydxo.gic.bgp.cnbj01.cdsgss.com/rest/927381435927494656.jpg')
       })
-      editer.$on('onChange', function (contents) {
+      editer.$on('onChange', function (currentValues) {
         // 当富文本框内容发生变化时做什么事
-        self.content = contents
+        self.currentValue = currentValues
+        self.$emit('input', currentValues)
+        self.$emit('change', currentValues)
+        self.handleBlur()
       })
       self.setVal(this.value)
     },
   methods: {
+    handleBlur() {
+      // if (this.validateEvent) {
+      //   this.dispatch('ElFormItem', 'el.form.blur', [this.currentValue]);
+      // }
+    },
     updateimage(files, editer){
     let self = this
     let file = files[0]      
@@ -72,7 +81,11 @@
     getVal () {
       // 获取初始值
       this.$refs.editer.run('code')
-    }
+    },      
+    setCurrentValue(value) {
+        if (value === this.currentValue) return;
+        this.currentValue = value;
+      }
   }
 
   }
