@@ -11,6 +11,7 @@ import Vuex from 'vuex'
 import router from '@/router/'
 import '../theme/index.css'
 import './assets/iconfont/iconfont.css'
+import './assets/iconfont/iconfont.js'
 import './styles/main.css'
 import './permission.js'  //权限
 //import NProgress from 'nprogress'
@@ -57,7 +58,7 @@ router.beforeEach((to, from, next) => {
     localStorage.setItem("merchant",0);
     next({ path: '/store/message'}); // 确保一定要调用 next()
   }
-
+  
   next() // 确保一定要调用 next()
 })
 

@@ -202,7 +202,7 @@
                 var data = res.data.data
                 if(res.data.code == 0) {
                   self.listLoading = false;
-                  self.messageHandle('商品删除成功！', 'success')
+                  self.messageHandle('商品取消审核成功！', 'success')
                   self.getProductList({
                     pageNum: 1,
                     pageSize: 10

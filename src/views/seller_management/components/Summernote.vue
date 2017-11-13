@@ -29,6 +29,7 @@
     mounted () {
       const self = this
       const editer = self.$refs.editer
+      this.setVal(this.value)
       editer.$on('onImageUpload', function (files) {
         self.updateimage(files, editer)
         // 这里做上传图片的操作，上传成功之后便可以用到下面这句将图片插入到编辑框中
@@ -39,36 +40,36 @@
         self.currentValue = currentValues
         self.$emit('input', currentValues)
         self.$emit('change', currentValues)
-        self.handleBlur()
       })
-      self.setVal(this.value)
+
+      // editer.$on('onBlur', function (currentValues) {
+      // 
+      //   // 当富文本框内容发生变化时做什么事
+      //   self.$emit('change', currentValues)
+      // })
     },
   methods: {
-    handleBlur() {
-      // if (this.validateEvent) {
-      //   this.dispatch('ElFormItem', 'el.form.blur', [this.currentValue]);
-      // }
-    },
+
     updateimage(files, editer){
-    let self = this
-    let file = files[0]      
-    let param = new FormData(); //创建form对象
-    param.append('file', file, file.name);//通过append向form对象添加数据
-    //FormData私有类对象，访问不到，可以通过get判断值是否传进去
-    let config = {
-      headers:{'Content-Type':'multipart/form-data'}
-    };  //添加请求头
-    axios.post('http://gss.dmp.hzjiehun.bid/gss/upload/', param, config)
-    .then(res=>{
-      if(res.data.code == 0) {
-        editer.run('insertImage', res.data.data)
-      }else {
-        self.$message({
-          message: '图片上传失败，请重新尝试！',
-          type: 'warning'
-        });
-      }
-    })   
+      let self = this
+      let file = files[0]      
+      let param = new FormData(); //创建form对象
+      param.append('file', file, file.name);//通过append向form对象添加数据
+      //FormData私有类对象，访问不到，可以通过get判断值是否传进去
+      let config = {
+        headers:{'Content-Type':'multipart/form-data'}
+      };  //添加请求头
+      axios.post('http://gss.dmp.hzjiehun.bid/gss/upload/', param, config)
+      .then(res=>{
+        if(res.data.code == 0) {
+          editer.run('insertImage', res.data.data)
+        }else {
+          self.$message({
+            message: '图片上传失败，请重新尝试！',
+            type: 'warning'
+          });
+        }
+      })   
 
     },
     // updateValue (value) {

@@ -35,15 +35,15 @@
                   </div>
                   <div class="area-item">+运费</div>
                   <div class="area-item">
-                    <el-input v-model="item.shippingCost" style="width:80px" placeholder=""></el-input>
+                    <input class="el-input__inner" type="text" v-model="item.shippingCost" name="" placeholder="" @keyup="changeHandle($event, item.shippingCost)" style="width:80px">
                   </div>
                   <div class="area-item">元/件，满</div>
                   <div class="area-item">
-                    <el-input v-model="item.shippingLimitNum" style="width:80px" placeholder=""></el-input>
+                    <input class="el-input__inner" type="text" v-model="item.shippingLimitNum" name="" placeholder="" @keyup="changeHandle($event, item.shippingLimitNum)" style="width:80px">
                   </div>
                   <div class="area-item">件</div>
                   <div class="area-item">
-                    <el-input v-model="item.shippingLimitCost" style="width:80px" placeholder=""></el-input>
+                    <input class="el-input__inner" type="text" v-model="item.shippingLimitCost" name="" placeholder="" @keyup="changeHandle($event, item.shippingLimitCost)" style="width:80px">
                   </div>
                   <div class="area-item">元</div>
                 </div>
@@ -57,15 +57,16 @@
                   <div class="area-item"><el-input v-model="item.sysAreaNames.join(',')" style="width:208px" placeholder="浙江、江苏、上海" @focus="citySelectHandle(item, index)"></el-input></div>
                   <div class="area-item">+运费</div>
                   <div class="area-item">
-                    <el-input v-model="item.shippingCost" style="width:80px" placeholder=""></el-input>
+                    <input class="el-input__inner" type="text" v-model="item.shippingCost" name="" placeholder="" @keyup="changeHandle($event, item.shippingCost)" style="width:80px">
                   </div>
                   <div class="area-item">元/件，满</div>
                   <div class="area-item">
-                    <el-input v-model="item.shippingLimitNum" style="width:80px" placeholder=""></el-input>
+                    <input type="text" class="el-input__inner" v-model="item.shippingLimitNum" name="" placeholder="" @keyup="changeHandle($event, item.shippingLimitNum)" style="width:80px">
+                    
                   </div>
                   <div class="area-item">件</div>
                   <div class="area-item">
-                    <el-input v-model="item.shippingLimitCost" style="width:80px" placeholder=""></el-input>
+                    <input type="text" class="el-input__inner" v-model="item.shippingLimitCost" name="" placeholder="" @keyup="changeHandle($event, item.shippingLimitCost)" style="width:80px">
                   </div>
                   <div class="area-item">元</div>
                   <div class="area-item" v-if="index"><el-button type="text" @click="onDelHandle(item, index)">删除</el-button></div>
@@ -196,6 +197,10 @@
       this.initTemplateHandle()
     },
     methods: {
+      changeHandle(event, value){
+        let reg = /^[1-9]\d*$/;
+        event.target.value = value.replace(/\D/g,'')
+      },  
       initTemplateHandle(){
       var self = this
       self.getNewestTemplateData(self.storeId, function(res){
@@ -626,5 +631,8 @@
 
       }
     }
+  }
+  .el-input__inner {
+    
   }
 </style>

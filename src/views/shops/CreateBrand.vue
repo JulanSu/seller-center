@@ -15,7 +15,7 @@
 				<el-input :maxlength="20" v-model="ruleForm.nameCn" class="wid400" @blur="findName('china')" placeholder="请输入品牌名称"></el-input>
 			</el-form-item>	
 			<el-form-item  prop="nameEn" label="品牌英文名称"  label-width="200px">
-				<el-input :maxlength="20" v-model="ruleForm.nameEn" class="wid400" @blur="findName('english')" placeholder="请输入品牌英文名称"></el-input>
+				<el-input :maxlength="50" v-model="ruleForm.nameEn" class="wid400" @blur="findName('english')" placeholder="请输入品牌英文名称"></el-input>
 			</el-form-item>
 
 			<div v-if="isshow">
@@ -71,22 +71,20 @@
 			<el-form-item prop="cityNames" label="授权城市"  label-width="200px">
 				<el-input :maxlength="20" v-model="ruleForm.cityNames" class="wid400" placeholder="请输入授权城市"></el-input>
 			</el-form-item>
-			<el-form-item label="有效时间"  label-width="200px">
-			    <el-col style="width:190px;">
-			      <el-form-item prop="endValidTime">
-			        <el-date-picker type="date" v-model="ruleForm.endValidTime" style="width: 100%;" placeholder="请选择有效截至时间"></el-date-picker>
-			      </el-form-item>
+			<el-form-item label="有效时间"  label-width="200px" prop="endValidTime" class="timers">
+		        <el-date-picker  type="date" v-model="ruleForm.endValidTime" style="width: 100%;" placeholder="请选择有效截至时间"></el-date-picker>
+
 			    </el-col>
 			</el-form-item>
 			<el-form-item label="品牌LOGO" label-width="200px">
-				<upload-pictures :note="uploadTishi1" :url="ruleForm.logo" :listen="'listenToPic4'" @listenToPic4="sucpic4" ref="uploadPic4"></upload-pictures>
+				<upload-pictures :note="uploadTishi1" :url="ruleForm.logo" :listen="'listenToPic4'" :picSize='"800.KB"' @listenToPic4="sucpic4" ref="uploadPic4"></upload-pictures>
 			</el-form-item>
 			<el-form-item label="" prop="logo"  label-width="200px" class='updata'>
 				<el-input v-model="ruleForm.logo" class="wid280"></el-input>
 			</el-form-item>
 			<div v-if="!isshow" >
 				<el-form-item label="品牌资质" label-width="200px">
-					<upload-pictures2 :note="uploadTishi1" :url="ruleForm.authorizationUrl" :listen="'listenToPic1'" @listenToPic1="sucpic1" ref="uploadPic1" class="h"></upload-pictures2>
+					<upload-pictures2 :note="uploadTishi1" :url="ruleForm.authorizationUrl" :listen="'listenToPic1'" :picSize='"800.KB"' @listenToPic1="sucpic1" ref="uploadPic1" class="h"></upload-pictures2>
 				</el-form-item>
 				<el-form-item label="" prop="authorizationUrl"  label-width="200px" class='updata'>
 					<el-input v-model="ruleForm.authorizationUrl" class="wid280"></el-input>
@@ -95,7 +93,7 @@
 			
 			<div v-if="isshow">
 				<el-form-item label="报关单" label-width="200px">
-					<upload-pictures :note="uploadTishi2" :url="ruleForm.customsDeclaration" :listen="'listenToPic3'" @listenToPic3="sucpic3" ref="uploadPic3" class="rr"></upload-pictures>
+					<upload-pictures :note="uploadTishi2" :url="ruleForm.customsDeclaration" :listen="'listenToPic3'" :picSize='"800.KB"' @listenToPic3="sucpic3" ref="uploadPic3" class="rr"></upload-pictures>
 					<div class="example"  @click="iconSimple(src1)">
 						<div><img :src='customsDeclarationPic'/></div>
 						<span>参考示例</span>
@@ -163,11 +161,43 @@ export default {
   		UploadPictures2
   	},
 	data() {
+		var validateNumber1= (rule, value, callback) => {
+          var reg =/^\d+$/g;
+          if (!value.match(reg)) {
+            callback(new Error('请输入正确的商标申请号'));
+          } else {
+            callback();
+          }
+        };
+        var validateNumber2= (rule, value, callback) => {
+          var reg =/^\d+$/g;
+            if (!value.match(reg)) {
+            callback(new Error('请输入正确的身份证号'));
+          } else {
+            callback();
+          }
+        };
+        var validateNumber3= (rule, value, callback) => {
+          var reg =/^\d+$/g;
+          if (!value.match(reg)) {
+            callback(new Error('请输入正确的手机号码'));
+          } else {
+            callback();
+          }
+        };
+        var validateNumber4= (rule, value, callback) => {
+          var reg =/^\d+$/g;
+          if (!value.match(reg)) {
+            callback(new Error('请输入正确的联系电话'));
+          } else {
+            callback();
+          }
+        };
       return {
       	customsDeclarationPic:config.customsDeclaration,
       	listLoading:false,
-      	uploadTishi1:"图片尺寸200px*200px以上，大小800k以内，格式png/jpg/jpeg，格式要求jpg、jpeg、png，不超过10MB",
-      	uploadTishi2:"图片尺寸800px*800px以上，大小800k以内，格式png/jpg/jpeg，格式要求jpg、jpeg、png，不超过10MB",
+      	uploadTishi1:"图片尺寸200px*200px以上，大小800k以内，格式png/jpg/jpeg",
+      	uploadTishi2:"图片尺寸800px*800px以上，大小800k以内，格式png/jpg/jpeg",
       	categoryBarTitle1: '品牌信息',
       	categoryBarTitle2: '国内经营人信息',
       	dialogVisible1: false,
@@ -222,7 +252,8 @@ export default {
 	        ],
 	        trademarkNumber: [
 	            { required: true, message: '请输入商标申请号', trigger: 'blur' },
-	            { min: 8, max: 8, message: '请输入正确的商标申请号', trigger: 'blur' }
+	            { min: 8, max: 8, message: '请输入正确的商标申请号', trigger: 'blur' },
+	            { validator:validateNumber1,trigger: ['change','blur']}
 	        ],
 	        trademarkApplicant: [
 	            { required: true, message: '请输入商标申请人', trigger: 'blur' },
@@ -247,16 +278,19 @@ export default {
 	            { min:2, max: 30, message: '长度为 2 到 30 位', trigger: 'blur' }
 	        ],
 	        domesticOperatorIdCard: [
-	            { required: true, message: '请填写身份证号', trigger: 'blur' },
-	            { min:18, max: 18, message: '长度为 18 位', trigger: 'blur' }
+	            { message: '请填写身份证号', trigger: 'blur' },
+	            { min:18, max: 18, message: '长度为 18 位', trigger: 'blur' },
+	            { validator:validateNumber2,trigger: ['change','blur']}
 	        ],
 	        domesticOperatorPhone: [
-	            { required: true, message: '请填写手机号码', trigger: 'blur' },
-	            { min: 11, max: 11, message: '长度为 11 位', trigger: 'blur' }
+	            {  message: '请填写手机号码', trigger: 'blur' },
+	            { min: 11, max: 11, message: '长度为 11 位', trigger: 'blur' },
+	            { validator:validateNumber3,trigger: ['change','blur']}
 	        ],
 	        contactMobile: [
-	            {  message: '请填写联系电话', trigger: 'blur' },
-	            { min: 11, max: 11, message: '长度为 11 位', trigger: 'blur' }
+	            { required: true,  message: '请填写联系电话', trigger: 'blur' },
+	            { min: 11, max: 11, message: '长度为 11 位', trigger: 'blur' },
+	            { validator:validateNumber4,trigger: ['change','blur']}
 	        ]
         }
       };
@@ -395,7 +429,7 @@ export default {
 	    },
         /*切换注册地，清空表单选项*/
         resetForm(formName) {
-        	console.log(this.ruleForm)
+        	this.$refs[formName].resetFields();
         	/*if(this.ruleForm.registerLocation=="中国大陆"){
         		this.$refs.uploadPic1.revise(this.ruleForm.authorizationUrl);//修改图片的值
         	}else{
@@ -492,7 +526,14 @@ export default {
 		}
 		
 	}
-	
+	.timers{
+		.el-form-item__content{
+			width:400px;
+		}
+		.el-input__inner{
+			width:400px;
+		}
+	}
 	.category-bar{
 		padding-top:0;
 		margin:20px 0;

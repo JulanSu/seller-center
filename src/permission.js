@@ -8,7 +8,7 @@ import cookie from './util/cookie.js'
  */
 let childArray = cookie.getCookie('childArray');
 
-config.storeType == '2' ? asyncRouterArr[2].children.splice(2,1) : ''; //1企业店铺,2个人店铺
+config.storeType == '2' ? asyncRouterArr[2].children.splice(1,1) : ''; //1企业店铺,2个人店铺
 if(childArray){       //是子账号
       asyncRouterArr[2].children.splice(5,1); 
       childArray = childArray.split('[')[1].split(']')[0].split(',');

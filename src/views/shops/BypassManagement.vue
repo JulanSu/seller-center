@@ -99,7 +99,7 @@ export default {
 
 <style lang="scss">
 .bypass-index{
-	width:960px;
+	width:962px;
 	padding:40px 0 0 40px;
 	a{
 	    text-decoration:none;

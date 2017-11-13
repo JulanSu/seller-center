@@ -14,6 +14,7 @@ var rootIP = process.env.API_ROOT;
 //店铺信息
 export const getShopMessage = params => { return axios.get(`${base}/store/get`, { params: params }); };
 export const updateShopMessage = params => { return axios.post(`${base}/store/update`,params); };
+export const storeCheckname = params => { return axios.get(`${base}/store/checkname`, { params: params }); };
 
 //查看店铺资质信息
 export const storeGetMerchant = params => { return axios.get(`${base}/store/get_merchant`, { params: params }); };
@@ -29,7 +30,7 @@ export const merchantSave = params => { return axios.post(`${base}/merchant/save
 //门店管理
 export const getClassifyList = params => { return axios.get(`${base}/store/branch/list`, { params: params }); };
 export const getClassifyGet = params => { return axios.get(`${base}/store/branch/get`, { params: params }); };
-export const saveClassify = params => { return axios.get(`${base}/store/branch/save`, { params: params }); };
+export const saveClassify = params => { return axios.post(`${base}/store/branch/save`, params); };
 export const updateClassify = params => { return axios.post(`${base}/store/branch/update`, params,{}); };
 export const pageStoreCateProduct = params => { return axios.get(`${base}/product/pagestorecateproduct`, { params: params }); };
 
@@ -41,6 +42,8 @@ export const operatorList = params => { return axios.get(`${base}/store/operator
 export const operatorSave = params => { return axios.post(`${base}/store/operator/save`, params); };
 export const operatorUpdate = params => { return axios.post(`${base}/store/operator/update`, params); };
 export const operatorRemove = params => { return axios.post(`${base}/store/operator/remove`, params); };
+//检查子帐号是否重名
+export const operatorCheckaccount = params => { return axios.get(`${base}/store/operator/checkaccount`,  { params: params }); };
 
 //店铺子账号角色管理
 export const roleChangeStatus = params => { return axios.post(`${base}/store/operator/role/change_status`, params); };
@@ -49,9 +52,11 @@ export const roleList = params => { return axios.get(`${base}/store/operator/rol
 export const roleGetAuthority = params => { return axios.get(`${base}/store/operator/role/get_authority`,  { params: params }); };
 export const roleSave = params => { return axios.post(`${base}/store/operator/role/save`, params); };
 export const roleUpdate = params => { return axios.post(`${base}/store/operator/role/update`, params); };
+//可用子帐号列表
+export const roleUsedlist = params => { return axios.get(`${base}/store/operator/role/usedlist`, { params: params }); };
 
 //分类管理
-export const cateGet = params => { return axios.post(`${base}/store/cate/get`, params); };
+export const cateGet = params => { return axios.get(`${base}/store/cate/get`, { params: params }); };
 export const cateList = params => { return axios.get(`${base}/store/cate/list`, { params: params }); };
 export const cateRemove = params => { return axios.post(`${base}/store/cate/remove`,params); };
 export const cateSave = params => { return axios.post(`${base}/store/cate/save`,params); };
@@ -60,7 +65,7 @@ export const cateUpdate = params => { return axios.post(`${base}/store/cate/upda
 export const productList = params => { return axios.get(`${base}/store/cate/product/list`, { params: params }); };
 export const productRemove = params => { return axios.post(`${base}/store/cate/product/remove`,params); };
 export const categoryAll = params => { return axios.get(`${base}/product/category/all`, { params: params }); };
-export const productListcate = params => { return axios.post(`${base}/store/cate/product/listcate`,params); };
+export const productListcate = params => { return axios.get(`${base}/store/cate/product/listcate`,{ params: params }); };
 export const productSave = params => { return axios.post(`${base}/store/cate/product/save`,params); };
 export const productPagetheshelves = params => { return axios.get(`${base}/product/pagetheshelves`, { params: params }); };
 

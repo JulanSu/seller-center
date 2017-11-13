@@ -14,7 +14,9 @@
         </div>
       <div class="userinfo">
 
-        <div class="user-item">欢迎你，{{ueseName}}</div>
+        <div class="user-item">
+            <router-link to="/home/index">欢迎你，{{ueseName}}</router-link>
+        </div>
         <div class="user-item" style="padding:0 30px 0 10px;">
           <el-dropdown trigger="click"  @command="handleCommand" @visible-change="triangle">
             <span class="el-dropdown-link userinfo-inner">商户中心<i class="iconfont icon-xiala2 el-xuanzhuan1"></i></span>
@@ -126,6 +128,7 @@ export default {
         padding-right: 50px;
         float: right;
         color: #666;
+        a{text-decoration:none;vertical-align:baseline;zoom:1;}
         .pipe {
           display: inline-block;
           height:24px;

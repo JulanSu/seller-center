@@ -166,9 +166,9 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
         this.dialogVisible1=true;
         this.productId=row.productId;
         this.roleAuthority=[];
-        var para = new URLSearchParams();
-        para.append('productId',row.productId);
-        
+        let para = {
+          productId:row.productId
+        };
         productListcate(para).then((res) => {
           if(res.data.code==0){
             this.roleAuthority=res.data.data;

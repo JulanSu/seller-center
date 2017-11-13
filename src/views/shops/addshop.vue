@@ -13,7 +13,7 @@
 			<el-form-item label="营业时间" label-width="120px" prop="workTime">
 				<el-input :maxlength=30 v-model="ruleForm.workTime" placeholder="请输入营业时间" class="wid280"></el-input>
 			</el-form-item>
-			<el-form-item label="门店地址"  label-width="120px">
+			<el-form-item label="门店地址"  label-width="120px" prop="address">
 				<v-distpicker :province="select.province" :city="select.city" :area="select.area" @province="onProvince" @city="onCity" @selected="onSelected"></v-distpicker>
 			</el-form-item>
 			<el-form-item label="" label-width="120px" prop="address">
@@ -78,6 +78,14 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 		        }
 	        }
 	    };
+	    var validateNumber1= (rule, value, callback) => {
+          var reg =/^\d+$/g;
+          if (!value.match(reg)) {
+            callback(new Error('请输入正确的手机号'));
+          } else {
+            callback();
+          }
+        };
       return {
       	dialogVisible1: false,
       	/*地图组件需要传递的数据*/
@@ -110,7 +118,8 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
             { min: 1, max: 30, message: '长度在 1 到 30 位', trigger: 'blur' }
           ],
           contactMobile:[
-          	{ validator: validatePhone,trigger: 'blur' }
+          	{ required: true,validator: validatePhone,trigger: 'blur' },
+            { validator:validateNumber1,trigger: ['change','blur']}
           ],
           contactPerson: [
             { required: true, message: '请输入门店联系人', trigger: 'blur' },
@@ -345,6 +354,9 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
     .exhibition{
     	font-size:14px;
 		color:#333333;
+    }
+    .address + .el-form-item__error{
+    	display:none;
     }
     /* 成功弹框样式 */
 	.el-dialog--tiny{

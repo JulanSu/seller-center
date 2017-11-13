@@ -3,8 +3,17 @@
     <div class="cate-property-item" v-for="(productCate, topIndex) in skuData">
       <div class="text">{{productCate.catePropertyName}}</div>
       <div class="input">           
-          <template v-for="(item, index) in productCate.options">
+          <!-- <template v-for="(item, index) in productCate.options">
             <el-checkbox :key="item.catePropertyValue" :label="item.catePropertyValue" v-model="productCate.values[index].value" :true-label="item.catePropertyValue" false-label=""  @change="checkboxChangeHandle(item, index,productCate)"></el-checkbox>
+          </template> -->
+          <template v-for="(item, index) in productCate.options">
+            <el-form-item label="权限" label-width="100px" prop="roleAuthority">
+              <el-checkbox-group v-model="ruleForm.roleAuthority">
+                <el-checkbox v-for="item in jurisdiction" :label="item.catePropertyValue" :key="item.catePropertyValue"  @change="checkboxChangeHandle(item, index,productCate)">
+                  {{item.name}}
+                </el-checkbox>
+              </el-checkbox-group> 
+            </el-form-item>
           </template>
       </div>
     </div>

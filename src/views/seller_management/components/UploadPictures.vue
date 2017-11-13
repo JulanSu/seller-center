@@ -110,6 +110,7 @@ export default {
 
       if(res.code === 0) {
         this.imageUrl.push(res.data);
+        this.$emit('change', res.data)
       }else {
         this.$message.warning('上传商品图片失败！请重新尝试。');
       }

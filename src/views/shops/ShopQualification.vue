@@ -7,9 +7,9 @@
 					<div class="only-ready">{{ruleForm.enterpriseName}}</div>
 				</el-form-item>
 				<el-form-item label="组织机构代码证/营业执照" label-width="200px">
-					<upload-pictures :note="uploadTishi" :url="ruleForm.enterpriseLicence" :listen="'listenToPic1'" @listenToPic1="sucpic1"></upload-pictures>
+					<upload-pictures :note="uploadTishi" :url="ruleForm.enterpriseLicence" :listen="'listenToPic1'" :picSize='"800.kB"' @listenToPic1="sucpic1"></upload-pictures>
 				</el-form-item>
-				<el-form-item label="" prop="enterpriseLicence"  label-width="120px" class='updata'>
+				<el-form-item label="" prop="enterpriseLicence"  label-width="200px" class='updata'>
 					<el-input v-model="ruleForm.enterpriseLicence" class="wid280"></el-input>
 				</el-form-item>
 				<el-form-item label="组织机构代码（注册号）" label-width="200px" prop="orgCode">
@@ -34,13 +34,13 @@
 			</div>
 
 			<el-form-item :label="ident1" label-width="200px">
-				<upload-pictures :note="uploadTishi" :url="ruleForm.identityPic1" :listen="'listenToPic2'" @listenToPic2="sucpic2"></upload-pictures>
+				<upload-pictures :note="uploadTishi" :url="ruleForm.identityPic1" :listen="'listenToPic2'" :picSize='"800.kB"' @listenToPic2="sucpic2"></upload-pictures>
 			</el-form-item>
 			<el-form-item label="" prop="identityPic1"  label-width="200px" class='updata'>
 				<el-input v-model="ruleForm.identityPic1" class="wid280"></el-input>
 			</el-form-item>
 			<el-form-item :label="ident2" label-width="200px">
-				<upload-pictures :note="uploadTishi" :url="ruleForm.identityPic2" :listen="'listenToPic3'" @listenToPic3="sucpic3"></upload-pictures>
+				<upload-pictures :note="uploadTishi" :url="ruleForm.identityPic2" :listen="'listenToPic3'" :picSize='"800.kB"' @listenToPic3="sucpic3"></upload-pictures>
 			</el-form-item>
 			<el-form-item label="" prop="identityPic2"  label-width="200px" class='updata'>
 				<el-input v-model="ruleForm.identityPic2" class="wid280"></el-input>
@@ -91,6 +91,30 @@ export default {
 		        }
 	        }
 	    };
+	    var validateNumber1= (rule, value, callback) => {
+            var reg =/^\d+$/g;
+            if (!value.match(reg)) {
+            	callback(new Error('请输入正确组织机构代码（注册码）'));
+            } else {
+            	callback();
+            }
+	    };
+	    var validateNumber2= (rule, value, callback) => {
+	        var reg =/^\d+$/g;
+            if (!value.match(reg)) {
+	            callback(new Error('请输入正确身份证号'));
+	        } else {
+	            callback();
+	        }
+	    };
+	    var validateNumber3= (rule, value, callback) => {
+	        var reg =/^\d+$/g;
+            if (!value.match(reg)) {
+	            callback(new Error('请输入正确的手机号'));
+	        } else {
+	            callback();
+	        }
+	    };
 		return {
 		  	shopStyle:config.storeType,
 		  	categoryBarTitle1: '企业店铺资质',
@@ -134,15 +158,18 @@ export default {
 		      	],
 		      	orgCode: [
 			        { required: true, message: '请输入组织机构代码（注册码）', trigger: 'blur' },
-			        { min:18, max: 18, message: '请输入正确组织机构代码（注册码）', trigger: 'blur' }
+			        { min:18, max: 18, message: '请输入正确组织机构代码（注册码）', trigger: 'blur' },
+			        { validator:validateNumber1,trigger: ['change','blur']}
 		      	],
 		      	identityNumber: [
 		        	{ required: true, message: '请输入法人身份证', trigger: 'blur' },
-		        	{ min:18, max: 18, message: '请输入正确身份证号', trigger: 'blur' }
+		        	{ min:18, max: 18, message: '请输入正确身份证号', trigger: 'blur' },
+		        	{ validator:validateNumber2,trigger: ['change','blur']}
 
 		      	],
 		      	contactMobile: [
-		        	{ validator: validatePhone,trigger: 'blur' }
+		        	{ validator: validatePhone,trigger: 'blur' },
+		        	{ validator:validateNumber3,trigger: ['change','blur']}
 
 		      	]
 		    }

@@ -8,24 +8,24 @@
 				</div>
 			</el-form-item>
 			<el-form-item label="店铺名称" prop="name"  label-width="120px">
-				<el-input :maxlength="20" v-model="ruleForm.name" placeholder="店铺名称"  class="wid280"></el-input>
+				<el-input :maxlength="20" v-model="ruleForm.name" placeholder="店铺名称"  class="wid280" @blur="findName()"></el-input>
 			</el-form-item>
 			<el-form-item label="店铺公告"  prop="notice" label-width="120px">
 				<el-input  :maxlength="50" v-model="ruleForm.notice" placeholder="店铺公告"  class="wid280"></el-input>
 			</el-form-item>
 			<el-form-item label="店铺LOGO" label-width="120px">
-				<upload-pictures :url="ruleForm.logo" :note="uploadTishi1" :listen="'listenToPic1'" @listenToPic1="sucpic1"></upload-pictures>
+				<upload-pictures :url="ruleForm.logo" :note="uploadTishi1" :listen="'listenToPic1'" :picSize='"10.MB"' @listenToPic1="sucpic1"></upload-pictures>
 			</el-form-item>
 			<el-form-item label="" prop="logo"  label-width="120px" class='updata'>
 				<el-input v-model="ruleForm.logo" class="wid280"></el-input>
 			</el-form-item>
 			<el-form-item label="店铺主图" label-width="120px">
-				<upload-pictures :url="ruleForm.broadwiseLogo" :note="uploadTishi2" :listen="'listenToPic2'" @listenToPic2="sucpic2"></upload-pictures>
+				<upload-pictures :url="ruleForm.broadwiseLogo" :note="uploadTishi2" :listen="'listenToPic2'" :picSize='"10.MB"' @listenToPic2="sucpic2"></upload-pictures>
 			</el-form-item>
 			<el-form-item label="" prop="broadwiseLogo"  label-width="120px" class='updata'>
 				<el-input v-model="ruleForm.broadwiseLogo" class="wid280"></el-input>
 			</el-form-item>
-			<el-form-item label="门店地址"  label-width="120px">
+			<el-form-item label="门店地址"  label-width="120px" prop="address">
 				<v-distpicker :province="select.province" :city="select.city" :area="select.area" @province="onProvince" @city="onCity" @selected="onSelected"></v-distpicker>
 			</el-form-item>
 			<el-form-item label="" label-width="120px" prop="address">
@@ -82,7 +82,7 @@ import CategoryBar from '@/components/CategoryBar.vue'/*标题*/
 import UploadPictures from '@/components/UploadPictures.vue'/*上传图片组件*/
 import VDistpicker from 'v-distpicker';/*城市三级联动*/
 import MapView from '@/components/Map';/*地图组件*/
-import { getShopMessage,updateShopMessage } from '@/api/shopApi';
+import { getShopMessage,updateShopMessage,storeCheckname } from '@/api/shopApi';
 
 
 
@@ -106,9 +106,15 @@ export default {
 		        }
 	        }
 	    };
-	    var validatePhone1 = (rule, value, callback) => {
-	       
-	    };
+	    var validateNumber1= (rule, value, callback) => {
+          var reg =/^\d+$/g;
+          if (!value.match(reg)) {
+            callback(new Error('请输入正确的手机号'));
+          } else {
+            callback();
+          }
+        };
+
 		return {
 			categoryBarTitle: '店铺基本信息',
 			uploadTishi1:"请传160*160,格式要求jpg,jpeg,png,不超过10MB",
@@ -167,7 +173,8 @@ export default {
 	            	{ min: 2, max: 30, message: '请输入正确的运营人姓名', trigger: 'blur' }
 	          	],
 	          	contactMobile: [
-	          		{ validator: validatePhone,trigger: 'blur' }
+	          		{ validator: validatePhone,trigger: 'blur' },
+	          		{ validator:validateNumber1,trigger: ['change','blur']}
 	          	]
 	        }
 
@@ -177,7 +184,14 @@ export default {
           // 如果路由有变化，会再次执行该方法
         "$route": function(){
             
+        },
+        'ruleForm.contactMobile':function(){
+        	//var a=this.ruleForm.contactMobile;
+        	//var d=this.ruleForm.contactMobile.replace(/\D/g,'')
+        	/*this.$set(this.ruleForm,'contactName',1)
+            console.log(this.ruleForm.contactMobile)*/
         }
+
     },
     mounted() {
       	this.getShop();
@@ -204,6 +218,21 @@ export default {
     },
 
 	methods: {
+		//判断店铺名是否重名
+		findName(){
+			if(!this.ruleForm.name){
+				return false;
+			}
+			let para = {
+	          storeName: this.ruleForm.name
+	        };
+	        storeCheckname(para).then((res) => {
+	        	if(res.data.code!=0){
+	        		this.$message({message: '店铺重名，请重新填写',type: 'warning'});
+	        	}
+	        });
+		},
+		
 		//店铺logo上传成功之后
 		sucpic1(url){
 			this.ruleForm.logo=url;
@@ -390,6 +419,9 @@ export default {
     	padding:0;
     	margin:0;
     	list-style:none;
+    }
+    .address + .el-form-item__error{
+    	display:none;
     }
     
 }

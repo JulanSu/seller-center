@@ -12,7 +12,7 @@
 			    </el-checkbox-group> 
 			</el-form-item>
 			<el-form-item label="" label-width="100px">
-				<el-button type="primary" @click="changePermission('ruleForm')">修改权限</el-button>
+				<el-button type="primary" @click="changePermission('ruleForm')">{{btnHtml}}</el-button>
 			</el-form-item>
 		</el-form>
 	</section>	
@@ -24,6 +24,7 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority} from '@/api/shopApi';
   export default {
     data() {
       return {
+        btnHtml:'保存权限',
         isAdd:1,
         listLoading:false,
         jurisdiction: [],
@@ -40,7 +41,7 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority} from '@/api/shopApi';
             { min: 1, max: 20, message: '请输入角色名称', trigger: 'blur' }
           ],
           roleAuthority: [
-            { type: 'array', required: true, message: '请至少选择一个权限', trigger: 'change' }
+            { type: 'array', required: true, message: '请选择权限', trigger: 'change' }
           ]
         }
       };
@@ -66,6 +67,7 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority} from '@/api/shopApi';
     methods: {
       /*如果是编辑角色页面，需要取该角色的数据*/
       dataFetch(id){
+        this.btnHtml='修改权限';
         let para = {
           storeOperatorRoleId:id
         };

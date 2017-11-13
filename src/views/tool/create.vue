@@ -395,7 +395,7 @@
                     self.warn('不可小于开始时间')
                 }
             },
-            addCash(){
+            addCash(){ 
                 let self = this,
                     addObject = {smallPrice: '', largePrice: '', count: ''};
                 self.cashType.manJian.push(addObject);

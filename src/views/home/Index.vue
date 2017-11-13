@@ -14,8 +14,10 @@
           <li>服务范围:{{message.cityString}}</li>
         </ol>
       </div>
-      <div class="goodsBtn">
-        <span></span>
+      <div class="goodsBtn" @click="jump">
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-fabushangpin"></use>
+        </svg>
         <p>发布商品</p>
       </div>
     </div>
@@ -74,6 +76,22 @@ export default {
   },
 
   methods: {
+    //跳转发布商品页面
+    jump(){
+      var arr=this.$router.options.routes;
+      var flag=false;console.log(this.$router.options)
+      for(var i=0;i<arr.length;i++){
+        if(arr[i].path=="/merchant-enter"){
+          flag=true;
+        }
+      }
+
+      if(flag){
+        this.$router.push({ path: '/seller-management/goods'});
+      }else{
+        this.$message({message: '您没有该权限',type: 'warning'});
+      }
+    },
     //获取店铺信息
     getShop() {
       let para = {
@@ -161,6 +179,7 @@ export default {
           li{
             font-size: 14px;
             color: #666666;
+            margin-bottom:5px;
             h4{
               font-size: 16px;
               color: #333333;
@@ -175,9 +194,20 @@ export default {
         
       }
       .goodsBtn{
+        margin-top:30px;
         margin-left:122px;
         width:80px;
         text-align:center;
+        cursor:pointer;
+        .icon{
+          width:80px;
+          height:80px;
+        }
+        p{
+          margin-top:10px;
+          font-size: 12px;
+          color: #333333;
+        }
 
       }
     }

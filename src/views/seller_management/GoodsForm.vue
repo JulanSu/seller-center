@@ -51,6 +51,7 @@
                   <table cellspacing="0" cellpadding="0" border="0" class="el-table__body" style="width: 100%">
                     <tbody>
                       <template v-if="goodsForm.productSkuTable.length" v-for="productSku in goodsForm.productSkuTable">
+                
                           <tr class="el-table__row">
 
                               <td v-for="item in productSku.data">
@@ -58,7 +59,7 @@
                               </td>
                             <td>
                               <div class="cell">
-                                <input class="" v-model="productSku.productPrice" @keyup="initForm.productSkuQuantity = productSkuHandle(goodsForm.productSkuTable)" /></div>
+                                <input class="" class="el-input__inner" v-model="productSku.productPrice" @keyup="initForm.productSkuQuantity = productSkuHandle(goodsForm.productSkuTable)" /></div>
                             </td>
                             <td>
                               <div class="cell">
@@ -102,6 +103,7 @@
                         <td>
                           <div class="cell" v-if="initForm.productSkuQuantity">
                             {{initForm.productSkuQuantity}}
+
                           </div>
                         </td>
                       </tr>
@@ -111,17 +113,11 @@
           </div> 
         </el-form-item>
         <el-form-item label="商品图片" prop="productPicUrlList" class="sellFormat-sku update-img">
-        <upload-pictures v-model="goodsForm.productPicUrlList" :note="initForm.uploadTishi1"></upload-pictures>
+          <upload-pictures v-model="goodsForm.productPicUrlList" :note="initForm.uploadTishi1" @change="uploadHandle"></upload-pictures>
         </el-form-item>
 
         <el-form-item label="商品描述" prop="detailsContent" class="sellFormat-sku">
-<!--           <el-input
-            type="textarea"
-            :rows="2"
-            placeholder="暂用文本域替代富文本（富文本编辑器存在问题，会影响流程）"
-            v-model="goodsForm.detailsContent">
-          </el-input> -->
-         <goods-summernote v-model="goodsForm.detailsContent"></goods-summernote>
+         <goods-summernote v-model="goodsForm.detailsContent" @change="contentChangehandle"></goods-summernote>
         </el-form-item>
 
         <el-form-item label="服务范围" prop="serviceArea">
@@ -224,9 +220,16 @@
       UploadPictures
     },
     data() {
-      var validatorStrLength = (rule, value, callback, fn) => {
-        var len = getStrLength(value)
-        fn(len)
+      var validatorStrLength = (rule, value, callback) => {
+          var len = getStrLength(value)
+          if(!value){
+              callback(new Error('请填写商品标题'))
+          }else if(len.length>25){
+              callback(new Error('商品标题最多不超过25个'))
+          }else {
+            callback()
+          }
+          
       }
       var validatorTime = (rule, value, callback) => {
         console.log(rule, value, callback)
@@ -293,34 +296,41 @@
 
           //商品标题
           productTitle: [
-              {required: true, validator: (rule, value, callback)=>{
-                  if(!value){
-                      callback(new Error('请填写商品标题'))
-                  }
-                  if(value.length>25){
-                      callback(new Error('商品标题最多不超过25个'))
-                  }
+            { required: true,validator: (rule, value, callback) => {
+              var len = getStrLength(value)
+              var productTitleRules = this.initForm.productTitleRules;
+                if(!value){
+                    callback(new Error('请填写商品标题'))
+                }else if(len>25){
+                  console.log(len)
+                    callback(new Error('商品标题最多不超过25个'))
+                }else {
                   callback()
-              }, trigger: ['change', 'blur'] }
+                }
+              productTitleRules.curLen = len
+            }, trigger: 'blur, change' },
           ],
-          // detailsContent: [
-          //   { required: true, message: '请输入商品描述', trigger: 'change' }
-          // ],
+          // //商品描述
+          detailsContent: [
+            { required: true, type: 'string', message: '请输入商品描述', trigger: 'blur, change'}
+          ],
           // //商品卖点
-          // sellingPoint: [
-          //   { max: 50, message: '商品卖点最多不超过50个', trigger: 'blur' },
-          //   { validator: (rule, value, callback)=>{
-          //     var sellingPointRules = this.initForm.sellingPointRules;
-          //     validatorStrLength(rule, value, callback, function(len){
-          //       sellingPointRules.curLen = len
-          //     })
-          //   }, message: '商品卖点最多不超过50个', trigger: 'change' 
-          //   },
-          // ],
-          // //商品图片列表
-          // productPicUrlList: [
-          //   { required: true, message: '请上传是商品图片', trigger: ['change','blur'] }
-          // ],
+          sellingPoint: [
+            { validator: (rule, value, callback) => {
+              var len = getStrLength(value)
+              var sellingPointRules = this.initForm.sellingPointRules;
+              if(len > 50){
+                callback(new Error('商品卖点最多不超过50个'))
+              }else {
+                callback()
+              }
+              sellingPointRules.curLen = len
+            }, trigger: 'blur, change' },
+          ],
+          //商品图片列表
+          productPicUrlList: [
+            {required: true, type: 'array', message: '请上传是商品图片', trigger: 'change, blur' }
+          ],
           // // productCateProperty: [
           // //   { required: true, message: '请选择类目属性', trigger: 'blur' }
           // // ],
@@ -328,14 +338,14 @@
           // // productSkuTable: [
           // //   {required: true, message: '请先选择商品销售规格', trigger: 'blur'}
           // // ],
-          // // 上架时间
-          // publishTime: [
-          //   {required: true, message: '请选择商品上架时间', trigger: 'blur'},
-          //   // { validator: validatorTime}
-          // ],
-          // applicableShop: [
-          //   {required: true, message: '请填自提时的适用店铺', trigger: 'blur'}
-          // ]
+          // 上架时间
+          publishTime: [
+            {required: true, message: '请选择商品上架时间', trigger: 'blur'},
+            // { validator: validatorTime}
+          ],
+          applicableShop: [
+            {required: true, message: '请填自提时的适用店铺', trigger: 'change,blur'}
+          ]
           // // 服务范围
           // // citySiteList: [  
           // //   {required: true, message: '请先选择服务范围', trigger: 'blur'}
@@ -369,10 +379,8 @@
     },
     methods: {
       logisticsTemplateType (value){
-        console.log('ffff', value)
         this.initForm.templateType = value
 
-        console.log('ffff', value)
       },
       publishTimeHandle (value){
         this.goodsForm.publishTime = value  
@@ -454,6 +462,12 @@
         goodsForm.shippingTemplateId = data.shippingTemplateId
         goodsForm.applicableShop = data.applicableShop
         initForm.productSkuQuantity = self.productSkuHandle(data.productSkuTable)
+
+        setTimeout(function(){
+          self.$refs.goodsForm.validateField('productTitle');
+          self.$refs.goodsForm.validateField('sellingPoint');
+        },100)
+        
         // self.$refs.ruleForm.validate()
         //goodsForm.storeCateList = data.storeCateList  //店铺分类
       },
@@ -480,6 +494,7 @@
         })
       },
       productSkuHandle (data){
+        console.log(data)
         var productSkuQuantity = 0
         if(data.length) {
           for(var i= 0; i<data.length; i++) {
@@ -505,10 +520,9 @@
         //   goodsForm.publishTime = ""
         // }
         // self.submitProductFormData(statusVal)
-        
+        console.log('表单提交', self.goodsForm)
         self.$refs[formName].validate((valid) => {
           if (valid) {
-            console.log('验证通过，提交表单', self.goodsForm)
             if(goodsForm.publishTime == 1) {
               goodsForm.publishTime = ""
             }
@@ -565,6 +579,20 @@
       },
       onChange (value) {
         console.log(value)
+      },
+      uploadHandle(value){
+        console.log('上传图片成功',value)
+        this.$refs.goodsForm.validateField('productPicUrlList');
+        
+      },
+      contentChangehandle(value){
+        var self = this
+        console.log('文字输入校验',value)
+        setTimeout(function(){
+          self.$refs.goodsForm.validateField('detailsContent');
+        },100)
+        
+        
       }
     }
   }
@@ -613,6 +641,13 @@
       text-align: center;
     }
   }
-
-
+  .modal-dialog {
+    margin-top: 150px;
+  }
+  .note-editable {
+    max-height: 100% !important;
+  }
+  .note-group-image-url {
+    display: none;
+  }
 </style>

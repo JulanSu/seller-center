@@ -42,27 +42,27 @@ const routers = new VueRouter({
     //     name: '',
     //     hidden: true
     // },
+
     {
-        path: '/productsku',
-        component: ProductSku,
+        path: '/',
+        component: Full,
         name: '',
         hidden: true
-    },
-    
+    },    
     {
         path: '/home',
         component: Full,
         name: '商户中心',
         hidden:true,
+        redirect: '/home/index',
         children: home
     },
-    {
-        path: '/',
-        component: Full,
-        name: '',
-        redirect: '/home',
-        hidden: true
-    },
+    // {
+    //     path: '/productsku',
+    //     component: ProductSku,
+    //     name: '',
+    //     hidden: true
+    // },
     // {
 
     //     path: '/seller-management',

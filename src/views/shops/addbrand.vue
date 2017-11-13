@@ -1,5 +1,11 @@
 <template>
 	<section class="add-account" v-loading="listLoading">
+		<div class="gotoPrev">
+			<router-link to="/store/brand-management/sel-brand" class="selbrand" icon="plus" style="width:100px;cursor:pointer;">
+		      	<b class="iconfont icon-fanhui"></b>
+				<span>添加品牌</span>
+		    </router-link>	
+		</div>
 		<ul>
 			<template>
 				<li  v-for="(brandTit,key,index) in brandTits" @click="switchover(index,key,brandTit)" :brand-id="key" :class="{on:index==nowIndex}">
@@ -15,33 +21,29 @@
 			</template>
 		</ul>
 		<el-form :model="ruleForm" :rules="rules" ref="ruleForm">
-			<el-form-item label="品牌名称" label-width="100px" prop="nameCn">
+			<el-form-item label="品牌名称" label-width="120px" prop="nameCn">
 				<div>{{ruleForm.nameCn}}</div>
 			</el-form-item>
-			<el-form-item label="品牌资质" label-width="100px">
-				<upload-pictures :note="uploadAptitude" :url="ruleForm.authorizationUrl" :listen="'listenToPic1'" @listenToPic1="sucpic1" ref="uploadPic"></upload-pictures>
+			<el-form-item label="品牌资质" label-width="120px">
+				<upload-pictures :note="uploadAptitude" :url="ruleForm.authorizationUrl" :listen="'listenToPic1'" :picSize='"10.MB"' @listenToPic1="sucpic1" ref="uploadPic"></upload-pictures>
 			</el-form-item>
-			<el-form-item label="" prop="authorizationUrl"  label-width="100px" class='updata'>
+			<el-form-item label="" prop="authorizationUrl"  label-width="120px" class='updata'>
 				<el-input v-model="ruleForm.authorizationUrl" class="wid280"></el-input>
 			</el-form-item>
-			<el-form-item prop="ways" label="授权渠道 " label-width="100px">
+			<el-form-item prop="ways" label="授权渠道 " label-width="120px">
 				<el-input :maxlength="50" v-model="ruleForm.ways" placeholder="请输入授权渠道" class="wid400"></el-input>
 			</el-form-item>	
-			<el-form-item prop="cityNames" label="授权城市"  label-width="100px">
+			<el-form-item prop="cityNames" label="授权城市"  label-width="120px">
 				<el-input :maxlength="20" v-model="ruleForm.cityNames" placeholder="请输入授权城市" class="wid400"></el-input>
 			</el-form-item>
-			<el-form-item label="有效截止时间"  label-width="100px">
-			    <el-col style="width:190px;">
-			      <el-form-item prop="endValidTime">
-			        <el-date-picker type="date" v-model="ruleForm.endValidTime" placeholder="请输入有效结束时间" style="width: 100%;"></el-date-picker>
-			      </el-form-item>
-			    </el-col>
+			<el-form-item label="有效截止时间"  label-width="120px" prop="endValidTime"  class="timers">
+			    <el-date-picker type="date" v-model="ruleForm.endValidTime" placeholder="请输入有效结束时间" style="width: 100%;"></el-date-picker>
 			</el-form-item>
-			<el-form-item prop="contactMobile" label="联系电话"  label-width="100px">
+			<el-form-item prop="contactMobile" label="联系电话"  label-width="120px">
 				<el-input :maxlength="11" v-model="ruleForm.contactMobile" placeholder="请输入联系电话" class="wid400"></el-input>
 				<p class="tishi">审核同学有疑问时，会通过此联系方式联系您</p>
 			</el-form-item>
-			<el-form-item label="" label-width="100px">
+			<el-form-item label="" label-width="120px">
 				<el-button :class="{notclick:!btnClick}" type="primary" @click="submitForm('ruleForm')">提交审核</el-button>
 			</el-form-item>
 			
@@ -67,12 +69,20 @@ export default {
 	        } else {
 	        	var first=value.slice(0,1);
 		        if ((value.length!=11)||(first!=1)) {
-		          	callback(new Error('请输入正确的手机号'));
+		          	callback(new Error('请输入正确的联系电话'));
 		        }else{
 		        	callback();
 		        }
 	        }
 	    };
+	    var validateNumber1= (rule, value, callback) => {
+          var reg =/^\d+$/g;
+          if (!value.match(reg)) {
+            callback(new Error('请输入正确的联系电话'));
+          } else {
+            callback();
+          }
+        };
         return {
         	btnClick:true,
 	      	isCompile:false,//标记是编辑页面还是创建品牌页面
@@ -117,10 +127,11 @@ export default {
 		          	{ max: 20, message: '长度最多 20 位', trigger: 'blur' }
 		        ],
 		        endValidTime: [
-		         	{ type: 'date', required: true, message: '请选择有效结束时间', trigger: 'blur' }
+		         	{ required: true,type: 'date', message: '请选择有效结束时间', trigger: 'blur' }
 		        ],
 		        contactMobile: [
-		          	{ validator: validatePhone,trigger: 'blur' }
+		          	{ required: true,validator: validatePhone,trigger: 'blur' },
+		          	{ validator:validateNumber1,trigger: ['change','blur']}
 		        ]
 		    }
     	};
@@ -360,12 +371,16 @@ export default {
 
 <style lang="scss">
 .add-account{
-	padding-top:20px;
+	padding-top:40px;
 	padding-bottom:30px;
 	overflow: hidden;
+	padding-left:20px;
 	/* 公共样式 */
 	.wid400{
     	width:400px;
+    }
+    a{
+    	text-decoration: none;
     }
     p,h6,ul{
     	margin:0;
@@ -378,6 +393,36 @@ export default {
 	.notclick{
 		background:#ddd !important;
 		border-color:#ddd !important;
+	}
+	.timers{
+		.el-form-item__content{
+			width:400px;
+		}
+		.el-input__inner{
+			width:400px;
+		}
+	}
+	.gotoPrev{
+		width:300px;
+		background:#fff;
+		height:60px;
+		line-height:60px;
+		position:fixed;
+		top:0;
+		b{
+			display:inline-block;
+			border:1px solid #cccccc;
+			width:30px;
+			line-height:18px;
+			height:20px;
+			text-align:center;
+			color:#aaa;
+			margin-right:10px;
+		}
+		span{
+			font-size:14px;
+			color:#666666;
+		}
 	}
 	ul{
 		float:left;

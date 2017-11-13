@@ -8,7 +8,7 @@
 					<el-input :maxlength="30" v-model="ruleForm.enterpriseName" placeholder="请输入企业名称"  class="wid400"></el-input>
 				</el-form-item>
 				<el-form-item label="组织机构代码证/营业执照" label-width="200px">
-					<upload-pictures :note="uploadTishi1" :url="ruleForm.enterpriseLicence" :listen="'listenToPic1'" @listenToPic1="sucpic1"></upload-pictures>
+					<upload-pictures :note="uploadTishi1" :url="ruleForm.enterpriseLicence" :listen="'listenToPic1'" :picSize='"5.MB"' @listenToPic1="sucpic1"></upload-pictures>
 				</el-form-item>
 				<el-form-item label="" prop="enterpriseLicence"  label-width="200px" class='updata'>
 					<el-input v-model="ruleForm.enterpriseLicence" class="wid280"></el-input>
@@ -45,7 +45,7 @@
 				</el-form-item>
 			</div>
 			<el-form-item :label="ident1" label-width="200px">
-				<upload-pictures :note="uploadTishi2" :url="ruleForm.identityPic1" :listen="'listenToPic2'" @listenToPic2="sucpic2"></upload-pictures>
+				<upload-pictures :note="uploadTishi2" :url="ruleForm.identityPic1" :listen="'listenToPic2'" :picSize='"800.KB"' @listenToPic2="sucpic2"></upload-pictures>
 				<div class="example">
 					<div @click="iconSimple(2)"><img :src='identPic2'/></div>
 					<span>参考示例</span>
@@ -56,7 +56,7 @@
 				<el-input v-model="ruleForm.identityPic1" class="wid280"></el-input>
 			</el-form-item>
 			<el-form-item :label="ident2" label-width="200px">
-				<upload-pictures :note="uploadTishi2" :url="ruleForm.identityPic2" :listen="'listenToPic3'" @listenToPic3="sucpic3"></upload-pictures>
+				<upload-pictures :note="uploadTishi2" :url="ruleForm.identityPic2" :listen="'listenToPic3'" :picSize='"800.KB"' @listenToPic3="sucpic3"></upload-pictures>
 
 				<div class="example">
 					<div @click="iconSimple(1)"><img :src='identPic1' /></div>
@@ -95,7 +95,7 @@
 				</div>
 			</el-form-item>
 			
-			<el-form-item label="门店地址"  label-width="200px">
+			<el-form-item label="门店地址"  label-width="200px" prop="address">
 				<v-distpicker :province="select.province" :city="select.city" :area="select.area" @province="onProvince" @city="onCity" @selected="onSelected"></v-distpicker>
 			</el-form-item>
 			<el-form-item label="" label-width="200px" prop="address" class="search-hezi">
@@ -220,6 +220,30 @@ export default {
 		        }
 	        }
 	    };
+	    var validateNumber1= (rule, value, callback) => {
+          var reg =/^\d+$/g;
+          if (!value.match(reg)) {
+            callback(new Error('请输入正确的组织机构代码（注册码）'));
+          } else {
+            callback();
+          }
+	    };
+	    var validateNumber2= (rule, value, callback) => {
+	        var reg =/^\d+$/g;
+            if (!value.match(reg)) {
+	            callback(new Error('请输入正确身份证号'));
+	        } else {
+	            callback();
+	        }
+	    };
+	    var validateNumber3= (rule, value, callback) => {
+	        var reg =/^\d+$/g;
+            if (!value.match(reg)) {
+	            callback(new Error('请输入正确的手机号'));
+	        } else {
+	            callback();
+	        }
+	    };
 		return {
 			identPic1:config.ident1,
 			identPic2:config.ident2,
@@ -302,8 +326,9 @@ export default {
 	            	{ min: 1, max: 30, message: '长度为 1 到 30 位', trigger: 'blur' }
 	          	],
 	          	orgCode: [
-	            	{ required: true, message: '请输入组织机构代码/注册号', trigger: 'blur' },
-	            	{ min: 18, max: 18, message: '请输入正确的组织机构代码（注册码）', trigger: 'blur' }
+	            	{ required: true, message: '请输入组织机构代码（注册码）', trigger: 'blur' },
+	            	{ min: 18, max: 18, message: '请输入正确的组织机构代码（注册码）', trigger: 'blur' },
+	            	{ validator:validateNumber1,trigger: ['change','blur']}
 	          	],
 	          	legalPerson: [
 	            	{ required: true, message: '请输入姓名', trigger: 'blur' },
@@ -311,7 +336,8 @@ export default {
 	          	],
 		        identityNumber: [
 		            { required: true, message: '请输入身份证号', trigger: 'blur' },
-	            	{ min: 18, max: 18, message: '请输入正确身份证号', trigger: 'blur' }
+	            	{ min: 18, max: 18, message: '请输入正确身份证号', trigger: 'blur' },
+	            	 { validator:validateNumber2,trigger: ['change','blur']}
 		        ],
 	          	name: [
 	            	{ required: true, message: '请输入店铺名称', trigger: 'blur' },
@@ -325,7 +351,9 @@ export default {
 	            	{ min: 2, max: 30, message: '请输入正确的姓名', trigger: 'blur' }
 	          	],
 		        contactMobile: [
-		        	{ validator: validatePhone,trigger: 'blur' }
+		        	{ validator: validatePhone,trigger: 'blur' },
+		        	{ validator:validateNumber3,trigger: ['change','blur']}
+
 	          	],
 		        address:[
 		           { required: true, message: '请输入详细地址', trigger: 'blur' }
@@ -618,4 +646,10 @@ export default {
 }
 </script>
 <style lang="scss">
+.merchant-enter{
+	.address + .el-form-item__error{
+		display:none;
+	}
+}
+
 </style>

@@ -84,7 +84,8 @@ import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 
 				}else{
 					var parm={storeBrandId:row.storeBrandId,compile:1};
-					if(this.pastDue(row)){
+
+					if(this.pastDue(row)||(row.isVerified==2)||(row.isVerified==0)){
 						parm.noClick=false;
 					}else{
 						if(row.isUsed==0){
