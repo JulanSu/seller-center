@@ -6,7 +6,6 @@ import Qs from 'qs';
 /*let base = 'http://192.168.88.42:8083';*/
 let base = 'http://shop.dmp.hzjiehun.bid';
 let pichost='http://gss.dmp.hzjiehun.bid';
-let brandHost='http://admin.dmp.hzjiehun.bid';//郭星提供的在品牌列表页点击品牌进入详情页，还是创建品牌（品牌库没有）的页面前判断
 
 let host = '';
 var rootIP = process.env.API_ROOT;
@@ -54,6 +53,8 @@ export const roleSave = params => { return axios.post(`${base}/store/operator/ro
 export const roleUpdate = params => { return axios.post(`${base}/store/operator/role/update`, params); };
 //可用子帐号列表
 export const roleUsedlist = params => { return axios.get(`${base}/store/operator/role/usedlist`, { params: params }); };
+//检查角色名称是否可用
+export const roleCheckname = params => { return axios.get(`${base}/store/operator/role/checkname`, { params: params }); };
 
 //分类管理
 export const cateGet = params => { return axios.get(`${base}/store/cate/get`, { params: params }); };

@@ -115,7 +115,7 @@
                 params.voucherFromOrder = self.form.orderNumber;
                 params.voucherStatus = self.form.planCheck == '' ? -1 : self.form.planCheck;
                 params.createBeginTime = self.form.startTime ? self.timeFormat(self.form.startTime) : null;
-                params.createEndTime = self.form.endTime ? self.timeFormat(self.form.endTime) :null;
+                params.createEndTime = self.form.endTime ? self.timeFormat(self.form.endTime) + " 23:59:59" : null;
                 params.pageNum = self.currentPage;
                 params.pageSize = self.pageSize;
                 return params;

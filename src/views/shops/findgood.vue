@@ -84,11 +84,17 @@ import { productList,productRemove} from '@/api/shopApi';
         this.listLoading = true;
 
         productList(para).then((res) => {
-          this.total = Number(res.data.data.total);
-          this.datas = res.data.data.list;
+          if (res.data.code==0) {
+            this.total = Number(res.data.data.total);
+            this.datas = res.data.data.list;
+          }else{
+            this.$message.error(res.data.message);
+          }
+          
 
           this.listLoading = false;
         }).catch((res)=> {
+          this.$message.error('建立连接失败');
           this.listLoading = false;
         });
       },
@@ -102,10 +108,17 @@ import { productList,productRemove} from '@/api/shopApi';
           para.append('storeCateProductId',row.storeCateProductId);
           
           productRemove(para).then((res) => {
+            if(res.data.code==0){
+              this.getProductList();//更新列表
+
+            }else{
+              this.$message.error(res.data.message);
+            }
             this.listLoading = false;
-            this.getProductList();//更新列表
+            
           }).catch((res)=> {
             this.listLoading = false;
+            this.$message.error('建立连接失败');
           });
         });
       },

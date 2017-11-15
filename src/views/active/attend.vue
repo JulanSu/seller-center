@@ -12,7 +12,7 @@
             </tr>
             <tr>
                 <td>活动终端</td>
-                <td>{{switchType(detail.activityTerminal)}}</td>
+                <td>{{detail.activityTerminal}}</td>
             </tr>
             <tr>
                 <td>营销工具</td>
@@ -28,7 +28,7 @@
             </tr>
         </table>
         <el-row style="margin-top:28px;" v-if='!showAct'>
-            <router-link to="/marketing-center/management" class="return">返回</router-link>
+            <router-link to="/marketing-center/management?name=platformActive" class="return">返回</router-link>
             <el-button class="goto" type="primary" :disabled='btnNotClick' @click='attendAct'>立即参与</el-button>
         </el-row>
         <section v-if='showAct'class='atd-con'>

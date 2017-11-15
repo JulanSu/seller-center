@@ -1,8 +1,8 @@
 <template>
-	<section class="new-role">
-		<el-form v-loading="listLoading" :model="ruleForm" label-width="80px" :rules="rules" ref="ruleForm" style="width:60%;min-width:600px;">
+	<section class="new-role" v-loading="listLoading">
+		<el-form :model="ruleForm" label-width="80px" :rules="rules" ref="ruleForm" style="width:60%;min-width:600px;">
 			<el-form-item label="岗位名称" label-width="100px" prop="roleName">
-				<el-input :maxlength="20" v-model="ruleForm.roleName" placeholder="请输入岗位名称" class="wid270"></el-input>
+				<el-input :maxlength="20" v-model="ruleForm.roleName" placeholder="请输入岗位名称" class="wid270" @blur="findName"></el-input>
 			</el-form-item>	
 			<el-form-item label="权限" label-width="100px" prop="roleAuthority">
 			    <el-checkbox-group v-model="ruleForm.roleAuthority">
@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import {roleGet,roleUpdate,roleSave,roleGetAuthority} from '@/api/shopApi';
+import {roleGet,roleUpdate,roleSave,roleGetAuthority,roleCheckname} from '@/api/shopApi';
 
   export default {
     data() {
@@ -51,9 +51,15 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority} from '@/api/shopApi';
       this.listLoading = true;
       roleGetAuthority({}).then((res) => {
         this.listLoading = false;
-        this.jurisdiction=res.data.data;
+        if(res.data.code==0){
+          this.jurisdiction=res.data.data;
+        }else{
+          this.$message.error(res.data.message);
+        }
+        
       }).catch((res)=> {
         this.listLoading = false;
+        this.$message.error('接口建立连接失败');
       });
     },
     mounted:function(){
@@ -65,6 +71,18 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority} from '@/api/shopApi';
       }
     },
     methods: {
+      /*查找角色名是否重名*/
+      findName(){
+        var para={
+          storeId:config.storeId,
+          roleName:this.ruleForm.roleName
+        }
+        roleCheckname(para).then((res) => {
+            if(res.data.code==1){
+              this.$message.error('角色重名，请重新输入角色名称');
+            }
+        });
+      },
       /*如果是编辑角色页面，需要取该角色的数据*/
       dataFetch(id){
         this.btnHtml='修改权限';
@@ -75,16 +93,15 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority} from '@/api/shopApi';
         roleGet(para).then((res) => {
           this.ruleForm= res.data.data;
           if(!this.ruleForm.roleAuthority){
-            this.ruleForm.roleAuthority=[];
-          
+            this.ruleForm.roleAuthority=[];   
           }else{
-
             this.ruleForm.roleAuthority=JSON.parse(this.ruleForm.roleAuthority);
 
           }
           this.listLoading = false;
         }).catch((res)=> {
           this.listLoading = false;
+          this.$message.error('接口建立连接失败');
         });
 
       },
@@ -101,6 +118,8 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority} from '@/api/shopApi';
               that.$router.push({ path: '/store/bypass-management/role-list' });
             }
           });
+        }else{
+          this.$message.error(res.data.message);
         }
       },
       /*修改权限按钮*/
@@ -119,19 +138,19 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority} from '@/api/shopApi';
                 this.sucFun(res);
               }).catch((res)=> {
                 this.listLoading = false;
+                this.$message.error('接口建立连接失败');
               });
             }else{
-              console.log(this.ruleForm.selJurisdict)
               para.append('storeId',config.storeId);
               roleSave(para).then((res)=>{
                 this.sucFun(res);
               }).catch((res)=> {
                 this.listLoading = false;
+                this.$message.error('接口建立连接失败');
               });
             }
             
           } else {
-            console.log('error submit!!');
             return false;
           }
         });
@@ -142,7 +161,7 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority} from '@/api/shopApi';
 
 <style lang="scss">
 .new-role{
-  padding:40px 0 0 0px;
+  padding:20px 0 0 0px;
   .wid270{
     width:270px;
   }

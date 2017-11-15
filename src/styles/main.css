@@ -62,19 +62,27 @@
   background-color: #35404d;
 }
 
+.el-dropdown-menu {
+  z-index: 99999;
+}
+
 .updata .el-input {
   display: none;
 }
 
 /* 表格公共样式 */
-table.el-table__header thead tr {
+.el-table {
+  border: 0;
+}
+
+.el-table table.el-table__header thead tr {
   height: 44px;
   background: #f5f7fa;
   -webkit-box-shadow: 0 1px 0 0 #eeeeee;
   box-shadow: 0 1px 0 0 #eeeeee;
 }
 
-table.el-table__body tbody tr {
+.el-table table.el-table__body tbody tr {
   height: 90px;
   background: #ffffff;
   -webkit-box-shadow: 0 1px 0 0 #eeeeee;
@@ -112,18 +120,18 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 0 3px;
 }
 
-.wuliu ul, .wuliu li {
+.logistics-block ul, .logistics-block li {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.wuliu .area-list .area-list-wrap {
+.logistics-block .area-list .area-list-wrap {
   margin-bottom: 20px;
   overflow: hidden;
 }
 
-.wuliu .area-list .area-item {
+.logistics-block .area-list .area-item {
   float: left;
   padding: 0 5px;
 }

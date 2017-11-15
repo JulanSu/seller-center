@@ -6,7 +6,7 @@
 				<div class="exhibition">
 					<span>{{ruleForm.shopType}}</span>
 				</div>
-			</el-form-item>
+			</el-form-item> 
 			<el-form-item label="店铺名称" prop="name"  label-width="120px">
 				<el-input :maxlength="20" v-model="ruleForm.name" placeholder="店铺名称"  class="wid280" @blur="findName()"></el-input>
 			</el-form-item>
@@ -32,7 +32,7 @@
 				<el-input v-model="ruleForm.address" placeholder="输入详细地址" class="wid280" @change="searchDetail" @focus="searchFocus"></el-input>
 				<el-button type="primary" class="mapbtn" @click="searchbtn">搜索地图</el-button>
 			</el-form-item>
-			<el-form-item label="经纬坐标" label-width="120px">
+			<el-form-item label="经纬坐标" label-width="120px"> 
 				<p>{{ ruleForm.latitude+","+ruleForm.longitude}}</p>
 			</el-form-item>
 			<el-form-item label="" label-width="120px">
@@ -85,13 +85,28 @@ import MapView from '@/components/Map';/*地图组件*/
 import { getShopMessage,updateShopMessage,storeCheckname } from '@/api/shopApi';
 
 
-
 export default {
 	components: {
 		CategoryBar,
 		UploadPictures,
 		VDistpicker,
 		MapView	
+	},
+	beforeRouteLeave (to, from, next) {
+	    // 导航离开该组件的对应路由时调用
+	    // 可以访问组件实例 `this`
+	    if(this.flag){
+	      	this.$confirm('您还未保存，是否去其他页面?', '提示', {
+		        confirmButtonText: '确定',
+		        cancelButtonText: '取消',
+	        	type: 'warning'
+	      	}).then(() => {
+	        	next();
+	      	}).catch(() => {
+	      	});
+	    }else{
+	    	next(); 
+	    } 
 	},
 	data() {
 		var validatePhone = (rule, value, callback) => {
@@ -116,6 +131,8 @@ export default {
         };
 
 		return {
+			listLoading:false,
+			flag:false,
 			categoryBarTitle: '店铺基本信息',
 			uploadTishi1:"请传160*160,格式要求jpg,jpeg,png,不超过10MB",
 			uploadTishi2:"请上传750*320，格式要求jpg、jpeg、png，不超过10MB",
@@ -151,6 +168,7 @@ export default {
 				startValidTime:'' ,
 				endValidTime:'',
 			},
+			biaoji:{},
 	        rules: {
 	        	logo:[
 	        		{ required: true, message: '请上传店铺LOGO', trigger: 'blur' },
@@ -174,23 +192,45 @@ export default {
 	          	],
 	          	contactMobile: [
 	          		{ validator: validatePhone,trigger: 'blur' },
-	          		{ validator:validateNumber1,trigger: ['change','blur']}
+	          		{ validator: validateNumber1,trigger: 'blur'},
+	          		{ validator: validateNumber1,trigger: 'change'}
 	          	]
 	        }
 
 		}
 	},
-	watch: {
-          // 如果路由有变化，会再次执行该方法
-        "$route": function(){
-            
-        },
-        'ruleForm.contactMobile':function(){
-        	//var a=this.ruleForm.contactMobile;
-        	//var d=this.ruleForm.contactMobile.replace(/\D/g,'')
-        	/*this.$set(this.ruleForm,'contactName',1)
-            console.log(this.ruleForm.contactMobile)*/
-        }
+	watch: {         
+        // 如果路由有变化，会再次执行该方法
+    	'ruleForm.name':function(){
+    		this.fillOut('name');
+    	},
+    	'ruleForm.notice':function(){
+    		this.fillOut('notice');
+    	},
+    	'ruleForm.logo':function(){
+    		this.fillOut('logo');
+    	},
+    	'ruleForm.broadwiseLogo':function(){
+    		this.fillOut('broadwiseLogo');
+    	},
+    	'ruleForm.address':function(){
+    		this.fillOut('address');
+    	},
+    	'ruleForm.latitude':function(){
+    		this.fillOut('latitude');
+    	},
+    	'ruleForm.longitude':function(){
+    		this.fillOut('longitude');
+    	},
+    	'ruleForm.workTime':function(){
+    		this.fillOut('workTime');
+    	},
+    	'ruleForm.contactName':function(){
+    		this.fillOut('contactName');
+    	},
+    	'ruleForm.contactMobile':function(){
+    		this.fillOut('contactMobile');
+    	}
 
     },
     mounted() {
@@ -218,6 +258,13 @@ export default {
     },
 
 	methods: {
+		fillOut(key){
+			if(this.biaoji[key]!=this.ruleForm[key]){
+				this.flag=true;
+			}
+			
+
+		},
 		//判断店铺名是否重名
 		findName(){
 			if(!this.ruleForm.name){
@@ -269,15 +316,22 @@ export default {
 	          storeId: config.storeId
 	        };
 	        getShopMessage(para).then((res) => {
-	        	this.ruleForm=res.data.data;
-	        	this.ruleForm.shopType=this.ruleForm.shopType==1?"企业入驻":"个人入驻";
-        		this.switchover(this.ruleForm.address);
-        		this.ruleForm.longitude/=1000000;
-        		this.ruleForm.latitude/=1000000;
-        		//调用地图
-        		this.$refs.MapView.creatmap(this.ruleForm.longitude,this.ruleForm.latitude);
-
-	        });
+	        	if(res.data.code==0){
+	        		this.ruleForm=res.data.data;
+		        	this.ruleForm.shopType=this.ruleForm.shopType==1?"企业入驻":"个人入驻";
+	        		this.switchover(this.ruleForm.address);
+	        		this.ruleForm.longitude/=1000000;
+	        		this.ruleForm.latitude/=1000000;
+	        		//调用地图
+	        		this.$refs.MapView.creatmap(this.ruleForm.longitude,this.ruleForm.latitude);
+	        		this.biaoji = JSON.parse(JSON.stringify(this.ruleForm));
+	        	}else{
+	        		this.$message.error(res.data.message);
+	        	}
+	        	
+	        }).catch((res)=> {
+		        this.$message.error('接口建立连接失败');
+		    });
 	    },
 	    /*将取到的地址信息分割传到三级联动组件上面*/
 	    switchover:function(address){
@@ -373,6 +427,7 @@ export default {
 
 			        updateShopMessage(para).then((res) => {
 			        	if(res.data.code==0){
+			        		this.flag=false;
 			        		this.$message({
 					           message: '保存成功',
 					           type: 'success'
@@ -380,8 +435,9 @@ export default {
 			        	}else{
 			        		this.$message.error(res.data.message);
 			        	}
-			        	
-			        });
+			        }).catch((res)=> {
+				        this.$message.error('接口建立连接失败');
+				    });
 		        }else {
 		        	return false;
 		      	}
@@ -413,7 +469,7 @@ export default {
 		color:#333333;
     }
     .category-bar{
-    	padding:40px 0 20px 40px;
+    	padding:20px 0 20px 20px;
     }
     ol,ul,li{
     	padding:0;

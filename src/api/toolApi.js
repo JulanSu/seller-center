@@ -6,7 +6,7 @@ const base = config.apiHost;
 export const toolList = params => { return axios.get(`${base}/marketing/tools/shop`,  {params:params}); }
 
 /*获取店铺商品列表*/
-export const productList = params => { return axios.get(`${base}/product/store/list`,  {params:params}) }
+export const productList = params => { return axios.get(`${base}/product/listontheshelves`,  {params:params}) }
 
 /*店铺创建活动*/
 export const createAct = params => { return axios.post(`${base}/marketing/activity/save`,  params)}

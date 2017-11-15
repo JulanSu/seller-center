@@ -128,7 +128,7 @@
           <store-cate v-model="goodsForm.storeCateProduct" :storeCateList="initForm.storeCateList"></store-cate>
         </el-form-item>
         
-        <div class="logistics-info wuliu" prop="shippingTemplateId" v-if="goodsForm.productType == 2 || goodsForm.productType == 3">
+        <div class="logistics-info wuliu" prop="shippingTemplateId" v-if="goodsForm.productType == 2 || goodsForm.productType == 3 || goodsForm.productType == 4">
           <category-bar title="宝贝物流服务"></category-bar>
           <el-form-item label="提取方式">
             <el-checkbox checked="checked" disabled>电子交易凭证</el-checkbox>

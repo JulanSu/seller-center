@@ -22,7 +22,7 @@ const routers = [
         { path: '/transaction/coupon', component: Coupon, name: '发出的点券' },
         { path: '/transaction/reservation', component: Reservation, name: '结算管理' ,
             children: [
-                { path: '/transaction/reservation/reservation-detail', component: ReservationDetail, name: '订单详情' },
+                { path: '/transaction/reservation/reservation-detail', component: ReservationDetail, name: '结算明细' },
             ]
         }
 ]

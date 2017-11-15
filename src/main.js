@@ -5,6 +5,7 @@ import VueSummernote from '@/components/editer'
 import ElementUI from 'element-ui'
 import LoadingMask from '@/components/loading/'
 import VueResource from 'vue-resource'
+import { MessageBox } from 'element-ui';
 // import VueRouter from 'vue-router'
 import store from '@/vuex/store'
 import Vuex from 'vuex'
@@ -29,12 +30,18 @@ Vue.use(LoadingMask)
 
 Vue.use(VueSummernote, {
   height: 300,
-  codemirror: {
-    mode: 'text/html',
-    htmlMode: true,
-    lineNumbers: true,
-    theme: 'monokai'
-  }
+  toolbar: [
+    ['style', ['style']],
+    ['font', ['bold', 'underline', 'clear']],
+    ['fontname', ['fontname']],
+    ['fontsize', ['fontsize']],
+    ['color', ['color']],
+    ['para', ['ul', 'ol', 'paragraph']],
+    ['table', ['table']],
+    ['insert', ['link', 'picture', 'video']],
+    ['view', ['fullscreen']]
+    // ['view', ['fullscreen', 'codeview', 'help']]
+  ]
 })
 
 
@@ -59,7 +66,8 @@ router.beforeEach((to, from, next) => {
     next({ path: '/store/message'}); // 确保一定要调用 next()
   }
   
-  next() // 确保一定要调用 next()
+  
+  next(); // 确保一定要调用 next()
 })
 
 //router.afterEach(transition => {

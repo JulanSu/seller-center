@@ -94,8 +94,8 @@ import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 							parm.noClick=false;
 						}
 					}
-					
-					this.$router.push({ path: 'brand-management/compile-brand', query:parm });
+					/*parm.noClick=true;*/
+					this.$router.push({ path: '/store/brand-management/compile-brand', query:parm });
 				}
 			},
 
@@ -107,10 +107,13 @@ import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 		        brandCancelverify(para).then((res) => {
 		        	if(res.data.code==0){
 		        		this.getBrandList();
+		        	}else{
+		        		this.$message.error(res.data.message);
 		        	}
 		          	this.listLoading = false;
 		        }).catch((res)=> {
 		          	this.listLoading = false;
+		          	this.$message.error('接口建立连接失败');
 		        });
 			},
 

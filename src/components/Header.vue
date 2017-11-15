@@ -19,7 +19,7 @@
         </div>
         <div class="user-item" style="padding:0 30px 0 10px;">
           <el-dropdown trigger="click"  @command="handleCommand" @visible-change="triangle">
-            <span class="el-dropdown-link userinfo-inner">商户中心<i class="iconfont icon-xiala2 el-xuanzhuan1"></i></span>
+            <span class="el-dropdown-link userinfo-inner">商户中心<i class="iconfont icon-xiala2" :class="{'el-xuanzhuan1':elXuanzhuan1,'el-xuanzhuan2':elXuanzhuan2}"></i></span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item  command="a">设置</el-dropdown-item>
               <el-dropdown-item command="exit">退出登录</el-dropdown-item>
@@ -41,6 +41,7 @@ export default {
     return {
       total: null,
       ueseName:'',
+
       elXuanzhuan1:false,
       elXuanzhuan2:false
     }
@@ -84,14 +85,21 @@ export default {
     handleCommand(command) {
      if(command=="exit"){
         userLogout({}).then((res) => {
-          window.location.href=config.apiHost;
+          window.location.href= config.apiHost + '/login';
         });
       }
        
     },
     //下拉框出现/隐藏时触发
     triangle(isShow){
-
+      if(isShow){
+        this.elXuanzhuan1=true;
+        this.elXuanzhuan2=false;
+      }else{
+        this.elXuanzhuan1=false;
+        this.elXuanzhuan2=true;
+      }
+      
     }
   }
 }
@@ -218,9 +226,8 @@ export default {
         border-left: 1px solid #eee;
       }
     }
-
-    
   }
+
   .el-dropdown-menu{
     background:#ffffff;
     border:1px solid #dddddd;
@@ -235,13 +242,33 @@ export default {
       padding:0 26px;
     }  
   }
-  .el-xuanzhuan1{
+
+  .el-xuanzhuan1{ 
+    transform:rotate(-180deg);
+    -ms-transform:rotate(-180deg);   /* IE 9 */
+    -moz-transform:rotate(-180deg);  /* Firefox */
+    -webkit-transform:rotate(-180deg); /* Safari 和 Chrome */
+    -o-transform:rotate(-180deg);  /* Opera */
+  }
+  .el-xuanzhuan2{ 
+    transform:rotate(-360deg);
+    -ms-transform:rotate(-360deg);   /* IE 9 */
+    -moz-transform:rotate(-360deg);  /* Firefox */
+    -webkit-transform:rotate(-360deg); /* Safari 和 Chrome */
+    -o-transform:rotate(-360deg);  /* Opera */
+  }
+
+  .icon-xiala2{
     display:inline-block;
-    transform:rotate(180deg);
-    -ms-transform:rotate(180deg);   /* IE 9 */
-    -moz-transform:rotate(180deg);  /* Firefox */
-    -webkit-transform:rotate(180deg); /* Safari 和 Chrome */
-    -o-transform:rotate(180deg);  /* Opera */
+    transform-origin:center;/*定义动画的旋转中心点*/
+    -webkit-transform-origin:center;  /* Safari 和 Chrome */
+    -moz-transition-origin:center;
+    -o-transition-origin:center;
+    
+    transition: All 0.4s ease-in-out;
+    -webkit-transition: All 0.4s ease-in-out;
+    -moz-transition: All 0.4s ease-in-out;
+    -o-transition: All 0.4s ease-in-out;
   }
 
   

@@ -13,7 +13,7 @@
             </div>
             <div class="message-item-detail" v-if="item.bottom">
                 <p v-html="item.content"></p>
-                <router-link :to="item.jumpLink" v-if='item.jumpType != 0'>查看详情</router-link>
+                <router-link :to="item.jumpLink" v-if='item.jumpNot != ""'>查看详情</router-link>
             </div>
         </div>
         <div class="block">
@@ -49,8 +49,8 @@
                 let self = this,
                     params = {
                         uid: config.uid,
-                        page: self.currentPage,
-                        size: self.pageSize
+                        pageNum: self.currentPage,
+                        pageSize: self.pageSize
                     }
                 msgList(params).then( res => {
                     if(res.data.data){
@@ -58,7 +58,8 @@
                         self.total = Number(res.data.data.total)
                         for(let i=0; i<self.message.length; i++){
                             self.$set(self.message[i],'bottom',false);
-                            self.message[i].jumpType != 2 ? self.message[i].jumpLink = self.message[i].jumpLink + self.switchUrl(self.message[i].subType) + '?id=' + self.message[i].jumpId : '';
+                            self.message[i].jumpLink = self.switchUrl(self.message[i].subType) + '&id=' + self.message[i].jumpId;
+                            self.$set(self.message[i],'jumpNot',self.switchUrl(self.message[i].subType));
                         }
                     }
                 })
@@ -67,27 +68,43 @@
             switchUrl(a){
                 switch(a) {
                     /*活动消息*/
-                    case 3011: return '/marketing-center/management'; break;     
-                    case 3021: return '/marketing-center/management'; break; 
-                    case 3022: return '/marketing-center/management'; break; 
-                    case 3031: return '/marketing-center/management'; break; 
-                    case 3041: return '/marketing-center/management'; break; 
-                    case 3042: return '/marketing-center/management'; break; 
+                    case 3011: return '/marketing-center/management?name=platformActive'; break;//平台对店铺发起活动的邀请-店铺受邀
+                    case 3021: return '/marketing-center/management?name=storeActive'; break;
+                        // 店铺报名平台活动的申请-审核通过
+                    case 3022: return '/marketing-center/management?name=platformActive'; break; //店铺报名平台活动的申请-审核未通过
+                    case 3031: return '/marketing-center/management?name=storeActive'; break; 
+                        //平台对店铺活动的审核-下架店铺活动
+                    case 3041: return '/marketing-center/management?from=mes'; break; 
+                        //平台/店铺活动开始结束状态-活动开始
+                    case 3042: return '/marketing-center/management?from=mes'; break;
+                        //平台/店铺活动开始结束状态-活动结束
                     /*订单消息*/
-                    case 2011: return '/transaction/orders/order-detail'; break; 
-                    case 2012: return '/transaction/orders/order-detail'; break; 
+                    case 2011: return '/transaction/orders/order-detail?from=mes'; break; 
+                        //新订单产生订单状态为PY时
+                    case 2012: return '/transaction/orders/order-detail?from=mes'; break; 
+                        //用户申请售后订单状态为RO时
                     /*店铺消息*/
-                    case 6012: return '/store/brand-management'; break;
-                    case 6022: return '/store/shop-management'; break;
-                    case 6032: return '/store/shop-management'; break;
-                    case 6042: return '/seller-management/notpass'; break;
-                    case 6052: return '/seller-management/notpass'; break;
-                    case 7026: return '/seller-management/downshelve'; break;
-                    case 7032: return '/seller-management/downshelve'; break;
-                    case 7046: return '/store/message'; break;
-                    case 7051: return '/seller-management/downshelve'; break;
-                    case 7061: return '/store/message'; break;
-                    default: return '/';
+                    case 6012: return '/store/brand-management?from=mes'; break;  
+                        //商家发起创建品牌的申请-审核不通过
+                    case 6022: return '/store/shop-management?from=mes'; break;  
+                        //商家发起店铺入驻的申请-审核不通过
+                    case 6032: return '/store/message?from=mes'; break;
+                        //商家发起修改店铺信息的申请-审核不通过
+                    case 6042: return '/seller-management/notpass?from=mes'; break;
+                        //商家发起上传商品的申请-审核不通过
+                    case 6052: return '/seller-management/notpass?from=mes'; break;
+                        //商家发起修改商品信息的申请-审核不通过
+                    case 7026: return '/seller-management/downshelve?from=mes'; break;
+                        //后台修改行业信息的通知-取消行业关联类目导致店铺商品下架
+                    case 7032: return '/seller-management/downshelve?from=mes'; break;
+                        //后台修改品牌信息的通知-禁用品牌导致店铺商品下架
+                    case 7046: return '/store/message?from=mes'; break;
+                        //后台修改店铺信息的通知-关闭店铺
+                    case 7051: return '/seller-management/downshelve?from=mes'; break;
+                        //后台修改商品信息的通知-下架商品
+                    case 7061: return '/store/message?from=mes'; break;
+                        //品牌授权有效期到期、店铺失去品牌经营权的通知
+                    default: return '';
                 }
             },
             /*时间戳转化*/

@@ -1,5 +1,5 @@
 <template>
-  <section class="role-list">
+  <section class="role-list"  v-loading="listLoading">
     <!--工具条-->
     <el-col :span="24" class="tool-bar" style="padding-bottom: 0px;">
       <router-link to="/store/bypass-management/new-role" class="add-role">
@@ -7,7 +7,7 @@
       </router-link>
     </el-col>
     <!--列表-->
-    <el-table :data="users" v-loading="listLoading" width="100%;">
+    <el-table :data="users" width="100%;">
       <el-table-column prop="roleName" label="角色名称" min-width="180"  align="center">
       </el-table-column>
       <el-table-column prop="isUsed" label="状态" :formatter="formatUsed" min-width="180"  align="center">
@@ -28,6 +28,7 @@ import { roleList,roleChangeStatus } from '@/api/shopApi';
   export default {
     data() {
       return {
+
         pageSize:10,
         pageNum:1,
         users: [],
@@ -59,9 +60,15 @@ import { roleList,roleChangeStatus } from '@/api/shopApi';
 
           roleChangeStatus(para).then((res) => {
             this.listLoading = false;
-            this.getRoleList();//更新列表
+            if(res.data.code==0){
+              this.getRoleList();//更新列表
+            }else{
+              this.$message.error(res.data.message);
+            }
+            
           }).catch((res)=> {
             this.listLoading = false;
+            this.$message.error('接口建立连接失败');
           });
         })
       },
@@ -74,10 +81,16 @@ import { roleList,roleChangeStatus } from '@/api/shopApi';
         };
         this.listLoading = true;
         roleList(para).then((res) => {
-          this.users = res.data.data;
+          if(res.data.code==0){
+            this.users = res.data.data;
+          }else{
+            this.$message.error(res.data.message);
+          }
+          
           this.listLoading = false;
         }).catch((res)=> {
           this.listLoading = false;
+          this.$message.error('接口建立连接失败');
         });
       }
     },
@@ -90,7 +103,7 @@ import { roleList,roleChangeStatus } from '@/api/shopApi';
 
 <style lang="scss">
 .role-list{
-  padding:40px 40px 0 20px;
+  padding:20px 40px 0 20px;
   a{
     text-decoration:none;
   }

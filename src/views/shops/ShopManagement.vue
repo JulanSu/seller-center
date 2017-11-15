@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
+import {getClassifyList, updateClassify} from '@/api/shopApi';
 
 
   export default {
@@ -77,9 +77,16 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
         };
         this.listLoading = true;
         getClassifyList(para).then((res) => {
-          this.total = Number(res.data.data.total);
-          this.users = res.data.data.list;
           this.listLoading = false;
+          if(res.data.code==0){
+            this.total = Number(res.data.data.total);
+            this.users = res.data.data.list;
+          }else{
+            this.$message.error(res.data.message);
+          }  
+        }).catch((res)=> {
+          this.listLoading = false;
+          this.$message.error('接口建立连接失败');
         });
       },
       handleCurrentChange(val) {
@@ -98,34 +105,31 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
           this.$msgbox({
             title: "设为总店",
             message: h('p', null, [
-              h('span', null, '确认要设为总店吗？ '),
-              h('i', { style: 'text-align: center' }, '')
+              h('span', null, '确认要设为总店吗？ ')
             ]),
             showCancelButton: true,
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             beforeClose: (action, instance, done) => {
+              console.log(action)
               if (action === 'confirm') {
-                //instance.confirmButtonLoading = true;
-                //instance.confirmButtonText = '执行中...';
                 //编辑门店提交接口
                 var para = new URLSearchParams();
                 para.append('storeBranchId',row.storeBranchId);
                 para.append('isHead',isHead);
+                 this.listLoading = true;
                 updateClassify(para).then((res) => {
+                  this.listLoading = false;
                   if(res.data.code==0){
-                    this.getUsers();
-                    //instance.confirmButtonLoading = false;
-                    done();
-
+                    this.getUsers(); 
                   }else{
-                    done();
                     this.$message.error(res.data.message);
-
                   }
-                  
+                  done();
                 }).catch((res)=> {
-                  //this.listLoading = false;
+                  this.listLoading = false;
+                  done();
+                  this.$message.error('接口建立连接失败');
                 });
               }else {
                 done();

@@ -3,53 +3,52 @@
 		<div class="gotoPrev">
 			<router-link to="/store/brand-management/sel-brand" class="selbrand" icon="plus" style="width:100px;cursor:pointer;">
 		      	<b class="iconfont icon-fanhui"></b>
-				<span>{{tit}}品牌</span>
+				<span>添加品牌</span>
 		    </router-link>	
 		</div>
-		<div style="min-width:870px;">
-			<ul>
-				<template>
-					<li  v-for="(brandTit,key,index) in brandTits" @click="switchover(index,key,brandTit)" :brand-id="key" :class="{on:index==nowIndex}">
-						<h6>{{brandTit}}</h6>
-						<div>
-							<p v-if="index==i"  v-for="(item,k,i) in tishi">
-								<span v-if="item==false">(待填写)</span>
-								<span v-else style="color:#41cac0">(已填写完整)</span>
-							</p>
-						</div>
-						
-					</li>
-				</template>
-			</ul>
-			<el-form :model="ruleForm" :rules="rules" ref="ruleForm">
-				<el-form-item label="品牌名称" label-width="120px" prop="nameCn">
-					<div>{{ruleForm.nameCn}}</div>
-				</el-form-item>
-				<el-form-item label="品牌资质" label-width="120px">
-					<upload-pictures :note="uploadAptitude" :url="ruleForm.authorizationUrl" :listen="'listenToPic1'" :picSize='"10.MB"' @listenToPic1="sucpic1" ref="uploadPic"></upload-pictures>
-				</el-form-item>
-				<el-form-item label="" prop="authorizationUrl"  label-width="120px" class='updata'>
-					<el-input v-model="ruleForm.authorizationUrl" class="wid280"></el-input>
-				</el-form-item>
-				<el-form-item prop="ways" label="授权渠道 " label-width="120px">
-					<el-input :maxlength="50" v-model="ruleForm.ways" placeholder="请输入授权渠道" class="wid400"></el-input>
-				</el-form-item>	
-				<el-form-item prop="cityNames" label="授权城市"  label-width="120px">
-					<el-input :maxlength="20" v-model="ruleForm.cityNames" placeholder="请输入授权城市" class="wid400"></el-input>
-				</el-form-item>
-				<el-form-item label="有效截止时间"  label-width="120px" prop="endValidTime"  class="timers">
-				    <el-date-picker type="date" v-model="ruleForm.endValidTime" placeholder="请输入有效结束时间" style="width: 100%;"></el-date-picker>
-				</el-form-item>
-				<el-form-item prop="contactMobile" label="联系电话"  label-width="120px">
-					<el-input :maxlength="11" v-model="ruleForm.contactMobile" placeholder="请输入联系电话" class="wid400"></el-input>
-					<p class="tishi">审核同学有疑问时，会通过此联系方式联系您</p>
-				</el-form-item>
-				<el-form-item label="" label-width="120px">
-					<el-button :class="{notclick:btnClick}" type="primary" @click="submitForm('ruleForm')">提交审核</el-button>
-				</el-form-item>
-				
-			</el-form>
-		</div>
+		<ul>
+			<template>
+				<li  v-for="(brandTit,key,index) in brandTits" @click="switchover(index,key,brandTit)" :brand-id="key" :class="{on:index==nowIndex}">
+					<h6>{{brandTit}}</h6>
+					<div>
+						<p v-if="index==i"  v-for="(item,k,i) in tishi">
+							<span v-if="item==false">(待填写)</span>
+							<span v-else style="color:#41cac0">(已填写完整)</span>
+						</p>
+					</div>
+					
+				</li>
+			</template>
+		</ul>
+		<el-form :model="ruleForm" :rules="rules" ref="ruleForm">
+			<el-form-item label="品牌名称" label-width="120px" prop="nameCn">
+				<div>{{ruleForm.nameCn}}</div>
+			</el-form-item>
+			<el-form-item label="品牌资质" label-width="120px">
+				<upload-pictures :note="uploadAptitude" :url="ruleForm.authorizationUrl" :listen="'listenToPic1'" :picSize='"10.MB"' @listenToPic1="sucpic1" ref="uploadPic"></upload-pictures>
+			</el-form-item>
+			<el-form-item label="" prop="authorizationUrl"  label-width="120px" class='updata'>
+				<el-input v-model="ruleForm.authorizationUrl" class="wid280"></el-input>
+			</el-form-item>
+			<el-form-item prop="ways" label="授权渠道 " label-width="120px">
+				<el-input :maxlength="50" v-model="ruleForm.ways" placeholder="请输入授权渠道" class="wid400"></el-input>
+			</el-form-item>	
+			<el-form-item prop="cityNames" label="授权城市"  label-width="120px">
+				<el-input :maxlength="20" v-model="ruleForm.cityNames" placeholder="请输入授权城市" class="wid400"></el-input>
+			</el-form-item>
+			<el-form-item label="有效截止时间"  label-width="120px" prop="endValidTime"  class="timers">
+			    <el-date-picker type="date" v-model="ruleForm.endValidTime" placeholder="请输入有效结束时间" style="width: 100%;"></el-date-picker>
+			</el-form-item>
+			<el-form-item prop="contactMobile" label="联系电话"  label-width="120px">
+				<el-input :maxlength="11" v-model="ruleForm.contactMobile" placeholder="请输入联系电话" class="wid400"></el-input>
+				<p class="tishi">审核同学有疑问时，会通过此联系方式联系您</p>
+			</el-form-item>
+			<el-form-item label="" label-width="120px">
+				<el-button :class="{notclick:!btnClick}" type="primary" @click="submitForm('ruleForm')">提交审核</el-button>
+			</el-form-item>
+			
+		</el-form>
+		
 	</section>
 	
 </template>
@@ -65,9 +64,9 @@ export default {
 
     data() {
     	var validatePhone = (rule, value, callback) => {
-	        if (value === '') {
+	        if (value === '') {console.log(value)
 	          callback(new Error('请输入联系电话'));
-	        } else {
+	        } else {console.log(value)
 	        	var first=value.slice(0,1);
 		        if ((value.length!=11)||(first!=1)) {
 		          	callback(new Error('请输入正确的联系电话'));
@@ -89,8 +88,7 @@ export default {
 	    	}   
         };
         return {
-        	tit:"添加",
-        	btnClick:false,
+        	btnClick:true,
 	      	isCompile:false,//标记是编辑页面还是创建品牌页面
 	      	listLoading:false,//loading效果
 	      	database:{},//用于添加品牌页面记录每个品牌编辑的数据
@@ -119,7 +117,6 @@ export default {
 	            endValidTime: '',
 	            contactMobile: '',
 	            authorizationUrl:'',
-	            submit:false
 	        },
 	        rules: {
 	        	authorizationUrl:[
@@ -138,8 +135,7 @@ export default {
 		        ],
 		        contactMobile: [
 	                { required: true,validator: validatePhone,trigger: 'blur' },
-		          	{ validator:validateNumber1,trigger:'blur'},
-		          	{ validator:validateNumber1,trigger:'change'}
+		          	{ validator:validateNumber1,trigger: ['change','blur']}
 		        ]
 		    }
     	};
@@ -152,9 +148,8 @@ export default {
     	var noClick=this.$route.query.noClick;
 
 	    if(compile==1){	
-	    	this.tit="编辑"
-	    	if((noClick==true)||(noClick=='true')){//判断是否是已禁用的品牌
-	    		this.btnClick=true;
+	    	if(noClick){//判断是否是已禁用的品牌
+	    		this.btnClick=false;
 	    	}
 
 	    	this.isCompile=false;
@@ -171,13 +166,10 @@ export default {
 	        		this.brandTits={
 			    		storeBrandId:this.ruleForm.nameCn
 			    	};
-	        	}else{
-	        		this.$message.error(res.data.message);
 	        	}
 	          	this.listLoading = false;
 	        }).catch((res)=> {
 	          	this.listLoading = false;
-	          	this.$message.error('接口建立连接失败');
 	        });
 
 	    	this.$set(this.database,"key"+storeBrandId,this.ruleForm);
@@ -186,14 +178,13 @@ export default {
     		
 	    }else{//添加品牌
 	    	this.brandTits=this.$route.query;
-			this.ruleForm.nameCn=Object.values(this.brandTits)[0];
-	    	//this.ruleForm.nameCn=this.brandTits[Object.keys(this.brandTits).sort((a,b)=>a-b)[0]];
 
+	    	this.ruleForm.nameCn=this.brandTits[Object.keys(this.brandTits).sort((a,b)=>a-b)[0]];
 	    	var keyArr=[];
 	    	for(var i in this.brandTits){
 	    		keyArr.push(i);
-	    		this.$set(this.database,"key"+i,this.fullModel);
-	    		/*this.$set(this.database,"submit",false);*/
+	    		this.$set(this.database,"key"+i,{});
+	    		this.$set(this.database,"submit",false);
 	    		this.$set(this.tishi,"key"+i,false);//tishi
 	    		
 	    	}
@@ -202,21 +193,22 @@ export default {
 	},
 
     watch: {
-    	'ruleForm.ways':function(){
-    		this.fillOut();
-    	},
-    	'ruleForm.cityNames':function(){
-    		this.fillOut();
-    	},
-    	'ruleForm.endValidTime':function(){
-    		this.fillOut();
-    	},
-    	'ruleForm.contactMobile':function(){
-    		this.fillOut();
-    	},
     	'ruleForm.authorizationUrl':function(){
     		this.fillOut();
     	},
+        "ruleForm.ways": function(){
+        	this.fillOut();
+        },
+        "ruleForm.cityNames":  function(){
+
+        	this.fillOut();
+        },
+        "ruleForm.endValidTime":  function(){
+        	this.fillOut();
+        },
+        "ruleForm.contactMobile":  function(){
+        	this.fillOut();
+        }
     }, 
 
     methods: {
@@ -231,7 +223,6 @@ export default {
 	    		v3=this.ruleForm.endValidTime,
 	    		v4=this.ruleForm.contactMobile,
 	    		v5=this.ruleForm.authorizationUrl;
-
 	    	var keyId;
 	    	if(this.$route.query.compile==1){
 	    		keyId="key"+this.$route.query.storeBrandId;
@@ -249,23 +240,20 @@ export default {
 
     	/*切换品牌*/
     	switchover(index,key,brandTit){
-
-    		//this.$refs.ruleForm.resetFields();
+    		
     		this.$set(this.database,"key"+this.prevKey,this.ruleForm);//切换品牌前保存当前品牌填写的信息
+    		console.log(this.ruleForm)
     		this.nowIndex=index; 
 			this.prevKey=key;
 
 			this.ruleForm=this.database["key"+key];
-
-			this.ruleForm.nameCn=Object.values(this.brandTits)[index];
-			/*this.ruleForm.nameCn=this.brandTits[Object.keys(this.brandTits).sort((a,b)=>a-b)[index]];*/
+			this.ruleForm.nameCn=this.brandTits[Object.keys(this.brandTits).sort((a,b)=>a-b)[index]];
 			this.$refs.uploadPic.revise(this.ruleForm.authorizationUrl);//修改图片的值
-			
-
+			this.$refs.ruleForm.clearValidate;//移除表单的校验结果
     	},
 
     	/*时间转换为毫秒数*/
-    	transitionTime(t){
+    	transitionTime(t){console.log(t)
     		if(t instanceof Date){
     			t=t.getTime();
     		}
@@ -349,7 +337,7 @@ export default {
 
     	/*提交品牌信息*/
 	    submitForm(formName) {
-	    	if(this.btnClick){
+	    	if(!this.btnClick){
 	    		return false;
 	    	}
 	        this.$refs[formName].validate((valid) => {
@@ -387,11 +375,9 @@ export default {
 </script>
 
 <style lang="scss">
-.el-date-picker{
-	width:250px !important;
-}
 .add-account{
-	padding-top:20px;
+	padding-top:40px;
+	padding-bottom:30px;
 	overflow: hidden;
 	padding-left:20px;
 	/* 公共样式 */
@@ -413,13 +399,9 @@ export default {
 		background:#ddd !important;
 		border-color:#ddd !important;
 	}
-	
 	.timers{
-		.el-date-editor{
-			width:400px !important;
-		}
 		.el-form-item__content{
-			width:224px;
+			width:400px;
 		}
 		.el-input__inner{
 			width:400px;
@@ -451,9 +433,10 @@ export default {
 		float:left;
 		list-style: none;
 		width:195px;
-		min-height:850px;
-		background:#F5F7FA;
 		border-top:1px solid #ddd;
+		border-right:1px solid #ddd;
+		min-height:680px;
+		background:#F5F7FA;
 		li{
 			text-align:center;
 			font-size: 14px;
@@ -476,13 +459,12 @@ export default {
 		li.on{
 			background:#fff;
 			border-left-color:#41CAC0;
-			border-right:1px solid #ddd;
 		}
 		li.on:before,li.on:after{
 			border: solid transparent;
 		  	content: ' ';
 		  	height: 0;
-		  	left: 172px;
+		  	left: 174px;
 		  	position: absolute;
 		  	width: 0;
 		}
@@ -492,10 +474,10 @@ export default {
 		    top: 35px;
 		}
 		li.on:after{
-			border-width: 12px;
+			border-width: 9px;
 			border-right-color: #fff;
-			top: 33px;
-			left:172px;
+			top: 36px;
+			left:176px;
 		}
 		
 	}
@@ -504,6 +486,7 @@ export default {
 		height:620px;
 		min-width:600px;
 		padding-top:30px;
+		border-top:1px solid #ddd;
 	}	
 }
 </style>

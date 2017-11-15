@@ -19,7 +19,7 @@ const addFenLei = resolve => require(['@/views/shops/AddFenLei.vue'],resolve);
 const findGood = resolve => require(['@/views/shops/FindGood.vue'],resolve);
 const allGood = resolve => require(['@/views/shops/AllGood.vue'],resolve);
 
-/*子帐号管理*/
+/*子账号管理*/
 const bypassManagement = resolve => require(['@/views/shops/BypassManagement.vue'],resolve);
 const newAccount = resolve => require(['@/views/shops/NewAccount.vue'],resolve);
 const roleList = resolve => require(['@/views/shops/RoleList.vue'],resolve);
@@ -83,9 +83,9 @@ const routers = [
                 name: '子账号管理',
                 children: [
                     { path: '/store/bypass-management/role-list', component: roleList, name: '管理角色' }, 
-                    { path: '/store/bypass-management/account-list', component: accountList, name: '子帐号列表' },
-                    { path: '/store/bypass-management/new-account', component: newAccount, name: '新建子帐号' },
-                    { path: '/store/bypass-management/compile-account', component: newAccount, name: '编辑子帐号' },
+                    { path: '/store/bypass-management/account-list', component: accountList, name: '子账号列表' },
+                    { path: '/store/bypass-management/new-account', component: newAccount, name: '新建子账号' },
+                    { path: '/store/bypass-management/compile-account', component: newAccount, name: '编辑子账号' },
                     { path: '/store/bypass-management/new-role', component: newRole, name: '新建角色' },
                     { path: '/store/bypass-management/:id', component: newRole, name: '编辑角色' }
                 

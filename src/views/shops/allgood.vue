@@ -116,17 +116,21 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
       };
 
       cateList(para).then((res) => {
-        this.jurisdiction = res.data.data.list;
         this.listLoading = false;
 
-        //将取到的店铺分类插入页面的选择框里面
-        for(var i=0;i<this.jurisdiction.length;i++){
-          
-          this.$set(this.form.fenlei, this.form.fenlei.length,this.jurisdiction[i]);
+        if(res.data.code==0){
+          this.jurisdiction = res.data.data.list;
+          //将取到的店铺分类插入页面的选择框里面
+          for(var i=0;i<this.jurisdiction.length;i++){
+            this.$set(this.form.fenlei, this.form.fenlei.length,this.jurisdiction[i]);
+          }
+        }else{
+          this.$message.error(res.data.message);
         }
-       console.log(this.form.fenlei)
+        
       }).catch((res)=> {
         this.listLoading = false;
+        this.$message.error('接口建立连接失败');
       });
     },
     methods: {
@@ -172,11 +176,14 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
         productListcate(para).then((res) => {
           if(res.data.code==0){
             this.roleAuthority=res.data.data;
+          }else{
+            this.$message.error(res.data.message);
           }
           this.listLoading = false;
          
         }).catch((res)=> {
           this.listLoading = false;
+          this.$message.error('接口建立连接失败');
         });
        
       },
@@ -203,18 +210,12 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
               }
             });
           }else{
-            this.$message({
-              message: '关联失败',
-              type: 'warning'
-            });
+            this.$message.error('关联失败');
           }
           this.listLoading = false;
         }).catch((res)=> {
           this.listLoading = false;
-          this.$message({
-            message: '关联失败',
-            type: 'warning'
-          });
+          this.$message.error('接口建立连接失败');
         });
       },
       //获取列表
@@ -231,11 +232,16 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
         };
         this.listLoading = true;
         productPagetheshelves(para).then((res) => {
-          this.total = Number(res.data.data.total);
-          this.datas = res.data.data.list;
+          if(res.data.code==0){
+            this.total = Number(res.data.data.total);
+            this.datas = res.data.data.list;
+          }else{
+            this.$message.error(res.data.message);
+          }
           this.listLoading = false;
         }).catch((res)=> {
           this.listLoading = false;
+          this.$message.error('接口建立连接失败');
         });
       },
       handleCurrentChange(val) {

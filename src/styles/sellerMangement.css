@@ -60,3 +60,7 @@
   color: #41cac0;
   background-color: #35404d;
 }
+
+.el-dropdown-menu {
+  z-index: 99999;
+}

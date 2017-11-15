@@ -59,7 +59,7 @@
         });
 
 
-      },
+      }
       //折叠导航栏
       // collapse:function(){
       //   this.isCollapse=!this.isCollapse;
@@ -132,6 +132,7 @@
       }
 
       .content-container {
+        margin-top:10px;
         position: relative;
         // background: #f1f2f7;
         flex:1;

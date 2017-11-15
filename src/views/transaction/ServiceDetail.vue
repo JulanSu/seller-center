@@ -20,14 +20,14 @@
                 <el-col :span="5" v-if="detail.shippingWay != '无需配送'">
                     备注：<span>{{detail.remark}}</span>
                 </el-col>
-                <el-col :span="5">
+                <el-col :span="5" v-if="detail.orderType == 1">
                     收货人：<span>{{detail.receiverName}}</span>
                 </el-col>
-                <el-col :span="5">
+                <el-col :span="5" v-if="detail.orderType == 1">
                     收货人手机号：<span>{{detail.receiverPhone}}</span>
                 </el-col>
             </el-row>
-            <el-row class='send-addres'>
+            <el-row class='send-addres' v-if="detail.orderType == 1">
                 收货地址：<span>{{detail.receiverAddr}}</span>
             </el-row>
         </div>

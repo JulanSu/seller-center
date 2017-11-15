@@ -1,7 +1,7 @@
 <template>
-	<section class="bypass-index" v-if='$route.name=="子账号管理"'>
+	<section class="bypass-index" v-if='$route.name=="子账号管理"' v-loading="listLoading">
 		<h2>账号概况</h2>
-		<ul class="use-style" v-loading="listLoading">
+		<ul class="use-style">
 			<li>
 				<span>使用中</span>
 				<b>{{formList.usedNum}}</b>
@@ -18,7 +18,7 @@
 		<ul class="use-style bapass-btn">
 			<li @click='jump'>
 				<i class="iconfont icon-zizhanghao"></i>
-				<span>新建子帐号</span>
+				<span>新建子账号</span>
 			</li>
 			<li style="border-left:1px solid #ddd;border-right:1px solid #ddd;">
 				<router-link to="/store/bypass-management/role-list">
@@ -26,11 +26,11 @@
 					<span>岗位角色</span>
 				</router-link>
 			</li>
-			<li>
+			<li style="width:326px;">
 
 				<router-link to="/store/bypass-management/account-list">
 					<i class="iconfont icon-zizhanghaoliebiao"></i>
-					<span>子帐号列表</span>
+					<span>子账号列表</span>
 				</router-link>
 			</li>
 		</ul>
@@ -60,7 +60,7 @@ export default {
         }
     },
 	methods:{
-		//新建子帐号按钮
+		//新建子账号按钮
 		jump(){
 			this.getNum();
 			if(this.formList.usedNum>=5){
@@ -69,7 +69,7 @@ export default {
 			}
 			this.$router.push({ path: '/store/bypass-management/new-account'});
 		},
-		//获取子帐号使用数量
+		//获取子账号使用数量
 		getNum(){
 			let para = {
 				storeId:config.storeId
@@ -84,6 +84,7 @@ export default {
 		    	}
 		    }).catch((res)=> {
 		        this.listLoading = false;
+		        this.$message.error('接口建立连接失败');
 		    });
 		}
     },
@@ -100,7 +101,7 @@ export default {
 <style lang="scss">
 .bypass-index{
 	width:962px;
-	padding:40px 0 0 40px;
+	padding:20px 0 0 20px;
 	a{
 	    text-decoration:none;
 	}

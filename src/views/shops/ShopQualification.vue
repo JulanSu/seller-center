@@ -1,5 +1,5 @@
 <template>
-	<section class="qualification">
+	<section class="qualification" v-loading="listLoading">
 		<el-form :model="ruleForm" :rules="rules" ref="ruleForm">
 			<div v-if='shopStyle==1'>
 				<category-bar :title="categoryBarTitle1"></category-bar>
@@ -100,7 +100,7 @@ export default {
             }
 	    };
 	    var validateNumber2= (rule, value, callback) => {
-	        var reg =/^\d+$/g;
+	        var reg =/(^\d{0,18}$)|(^\d{17}(\d|X|x)$)/g;
             if (!value.match(reg)) {
 	            callback(new Error('请输入正确身份证号'));
 	        } else {
@@ -122,6 +122,8 @@ export default {
 		  	ident1:'法人身份证正面',
 		  	ident2:'法人身份证反面',
 		  	uploadTishi:"请上传800px*800px以上，格式要求jpg、jpeg、png，不超过800k",
+
+		  	listLoading:false,
 
 		    ruleForm: {
 		      	enterpriseName: '',
@@ -159,17 +161,20 @@ export default {
 		      	orgCode: [
 			        { required: true, message: '请输入组织机构代码（注册码）', trigger: 'blur' },
 			        { min:18, max: 18, message: '请输入正确组织机构代码（注册码）', trigger: 'blur' },
-			        { validator:validateNumber1,trigger: ['change','blur']}
+			        { validator:validateNumber1,trigger: 'blur'},
+			        { validator:validateNumber1,trigger: 'change'}
 		      	],
 		      	identityNumber: [
 		        	{ required: true, message: '请输入法人身份证', trigger: 'blur' },
 		        	{ min:18, max: 18, message: '请输入正确身份证号', trigger: 'blur' },
-		        	{ validator:validateNumber2,trigger: ['change','blur']}
+		        	{ validator:validateNumber2,trigger: 'blur'},
+		        	{ validator:validateNumber2,trigger: 'change'}
 
 		      	],
 		      	contactMobile: [
 		        	{ validator: validatePhone,trigger: 'blur' },
-		        	{ validator:validateNumber3,trigger: ['change','blur']}
+		        	{ validator:validateNumber3,trigger: 'blur'},
+		        	{ validator:validateNumber3,trigger: 'change'}
 
 		      	]
 		    }
@@ -189,10 +194,13 @@ export default {
         		this.ruleForm.identityPic1=identitys[0];
         		this.ruleForm.identityPic2=identitys[1];
 
+        	}else{
+        		this.$message.error(res.data.message);
         	}
           	this.listLoading = false;
         }).catch((res)=> {
 	        this.listLoading = false;
+	        this.$message.error('接口建立连接失败');
 	    });
         if(config.storeType!=1){
         	this.ident1="身份证正面";
@@ -242,6 +250,7 @@ export default {
 		        	}
 		        }).catch((res)=> {
 			        this.listLoading = false;
+			        this.$message.error('接口建立连接失败');
 			    });
 		      } else {
 		        return false;
@@ -263,7 +272,8 @@ export default {
 	}
 
 	.category-bar{
-		padding-left:40px;
+		padding-left:20px;
+		padding-top:0;
 	}
 	.unchangeable{
 		width:100px;

@@ -20,14 +20,14 @@
                 <el-col :span="5" v-if="detail.shippingWay == '配送'">
                     备注：<span>{{detail.remark}}</span>
                 </el-col>
-                <el-col :span="5">
+                <el-col :span="5" v-if="allPay">
                     收货人：<span>{{detail.receiverName}}</span>
                 </el-col>
-                <el-col :span="5">
+                <el-col :span="5" v-if="allPay">
                     收货人手机号：<span>{{detail.receiverPhone}}</span>
                 </el-col>
             </el-row>
-            <el-row class='send-addres'>
+            <el-row class='send-addres' v-if="allPay">
                 收货地址：<span>{{detail.receiverAddr}}</span>
             </el-row>
         </div>
@@ -141,6 +141,7 @@
                 serviceText: '',
                 detail:'',
                 after: {},
+                allPay: false,
                 disabled: true,
                 /*弹窗数据*/
                 dialogFormVisible: false,
@@ -156,8 +157,10 @@
             let orderId = this.$route.query.orderId;
             orderDetail({orderStoreId: orderId}).then(res => {
                 this.detail = res.data.data;
+                this.allPay = this.detail.orderType == 1 ? true : false; 
                 for(let i=0; i<this.detail.productList.length; i++){
                     let that = this.detail.productList[i];
+                    that.orderProductStatus == 1 ? this.detail.tradeId = '用户未支付' : '';
                     that.orderProductStatus = this.switchStatus(that.orderProductStatus)
                     that.proPri = [];
                     for(let key in that.productPrivileges){

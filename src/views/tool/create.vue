@@ -2,8 +2,9 @@
     <section class="create-act">
         <el-form ref="form" :model="form" label-width="130px" style='margin-top:30px'>
            
-            <el-form-item label="现金券名称">
-                <el-input v-model="form.name" class='name' :maxlength='20'></el-input>
+            <el-form-item label="现金券名称" prop='name'>
+                <el-input v-model="form.name" class='name' :maxlength='30'></el-input>
+                <strong v-if='tipArray[0]'>请输入现金券名称</strong>
             </el-form-item>
 
             <el-form-item label="现金券领取时间">
@@ -11,6 +12,7 @@
                     <el-date-picker type="datetime" placeholder="选择日期时间" v-model="form.getTime[0]" class='w180' :picker-options="pickerOptions0"></el-date-picker>
                     <span style="margin:0 8px">至</span>
                     <el-date-picker type="datetime" placeholder="选择日期时间" v-model="form.getTime[1]" class='w180' :picker-options="pickerOptions0"></el-date-picker >
+                    <strong v-if='tipArray[1]'>{{tipText[1]}}</strong>
                 </el-row>
             </el-form-item>
 
@@ -23,10 +25,12 @@
                     <el-date-picker type="datetime" placeholder="选择日期" v-model="userTime.timeSection[0]" class='w180' :picker-options="pickerOptions0"></el-date-picker>
                     <span style="margin:0 8px">至</span>
                     <el-date-picker type="datetime" placeholder="选择时间" v-model="userTime.timeSection[1]" class='w180' :picker-options="pickerOptions0"></el-date-picker>
+                    <strong v-if='tipArray[2]'>请输入有效时间段</strong>
                 </el-row>
                 <el-row style='margin-top: 10px;padding:0 10px;' v-else>
-                    <el-input v-model="userTime.timeNumber" class='w180' placeholder="请输入天数" :maxlength='10' @blur='isNumber($event)'></el-input>
+                    <el-input v-model="userTime.timeNumber" class='w180' placeholder="请输入天数" :maxlength='10' @change='isNumber($event,"init",2)'></el-input>
                     <span style="margin:0 8px">天</span>
+                    <strong v-if='tipArray[2]'>{{tipText[2]}}</strong>
                 </el-row>
             </el-form-item>
                 
@@ -40,27 +44,28 @@
                 <section class="cash" v-if="cashType.type=='会员等级券'">
                     <el-row style='margin-top: 10px;' v-for="item in cashType.huiYuan" :key="item.name">
                         <span class="cash-name">{{item.name}}</span>
-                        <el-input placeholder='请输入' style='width:210px' v-model='item.money'  @blur='isNumber($event, item.money)' :maxlength="10"></el-input>
+                        <el-input placeholder='请输入' style='width:210px' v-model='item.money'  @change='isNumber($event,"flaot",3)' :maxlength="10"></el-input>
                         <span style="margin:0 8px">元</span>
-                        <el-input placeholder='发放数量' style='width:120px'  v-model='item.count'  @blur='isNumber($event)' :maxlength="10"></el-input>
+                        <el-input placeholder='发放数量' style='width:120px'  v-model='item.count'  @change='isNumber($event,"init",3)' :maxlength="10"></el-input>
                         <span style="margin:0 8px">张</span>
-                    </el-row>
+                    </el-row>  
+                        
                 </section>
                 <section class="cash" v-if="cashType.type=='固定金额券'">
                     <el-row style='margin-top: 10px;padding-left: 10px'>
-                        <el-input placeholder='请输入' style='width:210px' v-model="cashType.guDing.money"  @blur='isNumber($event)' :maxlength="10"></el-input>
+                        <el-input placeholder='请输入' style='width:210px' v-model="cashType.guDing.money"  @change='isNumber($event,"float",3)' :maxlength="10"></el-input>
                         <span style="margin:0 8px" >元</span>
-                        <el-input placeholder='发放数量' style='width:120px' v-model="cashType.guDing.count"  @blur='isNumber($event)' :maxlength="10"></el-input>
+                        <el-input placeholder='发放数量' style='width:120px' v-model="cashType.guDing.count"  @change='isNumber($event,"init",3)' :maxlength="10"></el-input>
                         <span style="margin:0 8px">张</span>
                     </el-row>
                 </section>
                 <section class="cash" v-if="cashType.type=='满减券'">
                     <el-row style='margin-top: 10px;padding-left: 10px' v-for='(item,index) in cashType.manJian' :key="">
-                        <el-input placeholder='现金券面值' style='width:210px' v-model='item.smallPrice' :maxlength="10" @blur='isNumber($event)'></el-input>
+                        <el-input placeholder='现金券面值' style='width:210px' v-model='item.smallPrice' :maxlength="10" @change='isNumber($event,"float",3)'></el-input>
                         <span style="margin:0 8px">————</span>
-                        <el-input placeholder='消费满足金额' style='width:210px' :maxlength="10" @blur='isNumber($event)'  v-model='item.largePrice'></el-input>
+                        <el-input placeholder='消费满足金额' style='width:210px' :maxlength="10" @change='isNumber($event,"float",3)'  v-model='item.largePrice'></el-input>
                         <span style="margin:0 8px">元</span>
-                        <el-input placeholder='发放数量' style='width:120px' v-if="index == 0" :maxlength="10" @blur='isNumber($event)' v-model='item.count'></el-input>
+                        <el-input placeholder='发放数量' style='width:120px' v-if="index == 0" :maxlength="10" @change='isNumber($event,"init",3)' v-model='item.count'></el-input>
                         <span style="margin:0 8px" v-if="index == 0">张</span>
                     </el-row>
                     <el-row style='margin-top: 10px;padding-left: 10px' class='add' v-if="cashType.manJian.length < 4" >
@@ -69,20 +74,21 @@
                 </section>
                 <section class="cash" v-if="cashType.type=='折扣券'">
                     <el-row style='margin-top: 10px;padding-left: 10px'>
-                        <el-input placeholder='请输入' style='width:210px' :maxlength="2" @blur='isNumber($event)' v-model="cashType.zheKou.percent"></el-input>
+                        <el-input placeholder='请输入' style='width:210px' :maxlength="2" @change='isNumber($event,"init",3)'v-model="cashType.zheKou.percent"></el-input>
                         <span style="margin:0 8px">%</span>
-                        <el-input placeholder='发放数量' style='width:120px' :maxlength="10" @blur='isNumber($event)' v-model="cashType.zheKou.count"></el-input>
+                        <el-input placeholder='发放数量' style='width:120px' :maxlength="10" @change='isNumber($event,"init",3)' v-model="cashType.zheKou.count"></el-input>
                         <span style="margin:0 8px">张</span>
                     </el-row>
                     <el-row style='margin-top: 10px;padding-left: 10px'>
-                        <el-input placeholder='请输入' style='width:210px' :maxlength="10" @blur='isNumber($event)' v-model="cashType.zheKou.min"></el-input>
+                        <el-input placeholder='请输入' style='width:210px' :maxlength="10" @change='isNumber($event,"float",3)' v-model="cashType.zheKou.min"></el-input>
                         <span style="margin:0 8px">元起用</span>
                     </el-row>
                     <el-row style='margin-top: 10px;padding-left: 10px'>
-                        <el-input placeholder='请输入' style='width:210px' :maxlength="10" @blur='isNumber($event)' v-model="cashType.zheKou.max"></el-input>
+                        <el-input placeholder='请输入' style='width:210px' :maxlength="10" @change='isNumber($event,"float",3)' v-model="cashType.zheKou.max"></el-input>
                         <span style="margin:0 8px">最多抵扣金额元</span>
                     </el-row>
                 </section>
+                <strong v-if='tipArray[3]'>{{tipText[3]}}</strong>
               </el-form-item>
 
             <el-form-item label="抵扣券价格">
@@ -91,9 +97,11 @@
                   <el-radio label="付费"></el-radio>
                 </el-radio-group>
                 <el-row style='margin-top: 10px;padding-left:10px' v-if='cashFree.type =="付费"'>
-                    <el-input placeholder='现金值' style='width:210px' v-model='cashFree.count' :maxlength="10" @blur='isNumber($event,"cashFree","count")'></el-input>
+                    <el-input placeholder='现金值' style='width:210px' v-model='cashFree.count' :maxlength="10" @change='isNumber($event,"init",4)'></el-input>
                     <span style="margin:0 8px">元</span>
+                    <strong v-if='tipArray[4]'>{{tipText[4]}}</strong>
                 </el-row>
+                
             </el-form-item>
 
             <el-form-item label="适用商品范围">
@@ -114,6 +122,7 @@
                         </div>
                     </div>
                 </el-row>
+                <strong v-if='tipArray[5]'>请选择商品</strong>
             </el-form-item>
 
             <el-form-item label="领取成功后提示" style="padding-left:10px">
@@ -121,6 +130,7 @@
                 <el-row class="tips">
                     如无特殊说明，一律默认为“先谈单再出示现金券，可直接抵扣订单合同金额”，不能超过30个汉字
                 </el-row>
+                <strong style="left:0" v-if='tipArray[6]'>请输入提示</strong>
             </el-form-item>
 
             <el-form-item label="现金券详情页图" style="padding-left:10px">
@@ -137,10 +147,12 @@
                         <span>添加上传图片</span>
                     </div>
                 </el-upload>
+                <strong style="left:0" v-if='tipArray[7]'>请上传图片</strong>
             </el-form-item>
 
             <el-form-item label="现金券使用规则" style="padding-left:10px" class='textarea-con'>
-                <el-input type="textarea" v-model="form.rule" :maxlength='300'></el-input>
+                <el-input type="textarea" v-model="form.rule" :maxlength='1000'></el-input>
+                <strong style="left:0" v-if='tipArray[8]'>请输入使用规则</strong>
             </el-form-item>
 
             <el-form-item>
@@ -166,6 +178,7 @@
 
 <script>
     import qs from 'qs';
+    import rules from './components/rules.js';
     import { productList , createAct, attendAct, actLastData, changeAct, changeAttendAct} from '@/api/toolApi';
     export default {
         data() {
@@ -176,6 +189,7 @@
                 btnText: '立即创建',
                 marketingCouponId: '',
                 imageUrl: '',
+                imgUrl: '',
                 showAgainBtn: false,
                 beginTime: null,
                 userTime: {
@@ -209,21 +223,23 @@
                     zheKou: {percent: '', count: '', min: '', max: ''}
                 },
                 cashFree: {
-                    type: '免费',
+                    type: '付费',
                     count: '' 
                 },
                 forProduct: {
                     type: '全部商品通用',
                     product: []
                 },
-                allProduct: null
+                allProduct: null,
+                tipArray: []
             }
         }, 
         props:[
             'bTime','eTime'
         ],
         created(){
-            this.typeFrom()
+            this.typeFrom();
+            rules.init(this);
             productList({'storeId':config.storeId}).then(res => {
                 this.allProduct = res.data.data;
                 for(let i=0; i<this.allProduct.length; i++){
@@ -235,7 +251,7 @@
         watch:{
             form:{
                 handler(val){
-                    this.getTimeChange(val)
+                    this.getTimeChange(val) 
                 },
                 deep:true
             },
@@ -458,81 +474,14 @@
                 })
             },
             /*校验数字*/
-            isNumber(e){
+            isNumber(e, t, i){
                 let self = this;
-                // let flag = /^[0-9]{1,10}$/.test(e.target.value)
-                // if(!flag){
-                //     e.target.value = '';
-                //     if(e.target.attributes["maxlength"].value == 2){
-                //         self.warn('请输入1-99的整数');
-                //         return false;
-                //     }
-                //     self.warn('请输入数字')
-                // }
+                rules.numberCorrect(e, t, i, self)
             },
             /*提交表单数据*/
             onSubmit(){
                 let self = this;
-                // if(self.form.name == '' || !self.form.getTime[0] || !self.form.getTime[1] || self.form.tips == '' || self.form.rule == ''){
-                //     self.warn('请把内容输入完整')
-                //     return false;
-                // }
-                // if(self.userTime.type == "有效时间段"){
-                //     if(!self.userTime.timeSection[0] || !self.userTime.timeSection[1]){
-                //         self.warn('请输入现金券使用期限')
-                //         return false;
-                //     }
-                // }
-                // if(self.userTime.type == "领取后有效天数"){
-                //     if(self.userTime.timeNumber == ''){
-                //         self.warn('请输入现金券使用期限')
-                //         return false;
-                //     }
-                // }
-                // if(self.cashType.type == "会员等级券"){
-                //     for(let i=0; i<self.cashType.huiYuan.length; i++){
-                //         let that = self.cashType.huiYuan[i];
-                //         if(that.money == '' || that.count == ''){
-                //             self.warn('请输入现金券面值')
-                //             return false;
-                //         }
-                //     }
-                // }
-                // if(self.cashType.type == "固定金额券"){
-                //    if(self.cashType.guDing.money == '' || self.cashType.guDing.count== ''){
-                //         self.warn('请输入现金券面值')
-                //         return false;
-                //    }
-                // }
-                // if(self.cashType.type == "满减券"){
-                //     if(self.cashType.manJian[0].smallPrice == '' || self.cashType.manJian[0].largePrice == '' || self.cashType.manJian[0].count == ''){
-                //             self.warn('请输入现金券面值')
-                //             return false;
-                //     }
-                // }
-                // if(self.cashType.type == "折扣券"){
-                //     if(self.cashType.zheKou.percent == '' || self.cashType.zheKou.count == '' || self.cashType.zheKou.min == '' || self.cashType.zheKou.max == '' ){
-                //             self.warn('请输入现金券面值')
-                //             return false;
-                //     }
-                // }
-                // if(self.cashFree.type == '付费'){
-                //     if(self.cashFree.count == ''){
-                //         self.warn('请输入抵扣券价格')
-                //         return false;
-                //     }
-                // }
-                // if(self.forProduct.type == '部分商品可用'){
-                //     if(self.forProduct.product.length == 0){
-                //         self.warn('请选择商品')
-                //         return false;
-                //     }
-                // }
-                // if(self.imageUrl == ''){
-                //     self.warn('请选择现金券详情图')
-                //     return false;
-                // }
-                self.postData()
+                rules.allRight(self) ? self.postData() : '';
             },
             postData(){
                 let self = this,params = {};  
@@ -706,6 +655,17 @@
     .create-act {
         width: 100%;
         float: left;
+        section{
+            position: relative;
+        }
+        strong{
+            font-weight: 400;
+            color: #f00;
+            position: absolute;
+            left:10px;
+            // top: 30px;
+            bottom: -28px;
+        }
         .name{
             margin-left: 10px;
             width: 280px;

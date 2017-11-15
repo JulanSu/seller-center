@@ -14,7 +14,7 @@
                     <el-button type="primary" class='search-btn' @click='searchStore'>查询</el-button>
                 </el-row>
 
-                <el-table :data="storeTable" class='table-con' align='center' :row-style="{height:'100px'}">
+                <el-table :data="storeTable" class='table-con' align='center' :default-sort = "{prop: 'createdAt',order: 'descending'}" :row-style="{height:'100px'}">
                     <el-table-column prop="marketingActivityId" label="活动ID" align='center'></el-table-column>
                     <el-table-column prop="activityName" label="活动名称" align='center'></el-table-column>
                     <el-table-column prop="toolsName" label="营销工具" align='center'></el-table-column>
@@ -23,7 +23,7 @@
                             <div>{{switchTime(scope.row.activityBeginTime)}} 至 {{switchTime(scope.row.activityEndTime)}}</div>
                         </template>
                     </el-table-column>
-                    <el-table-column label="创建时间" align='center'>
+                    <el-table-column label="创建时间" align='center' prop='createdAt'>
                          <template slot-scope="scope">
                             <div>{{switchTime(scope.row.createdAt)}}</div>
                         </template>
@@ -60,10 +60,10 @@
                     <el-input v-model="platKeyword" placeholder='输入活动名称/ID查询' class='search-input'></el-input>
                     <el-button type="primary" class='search-btn' @click='searchPlat'>查询</el-button>
                 </el-row>
-                <el-table :data="platTable" class='table-con' align='center' :row-style="{height:'100px'}">
+                <el-table :data="platTable" class='table-con' align='center' :row-style="{height:'100px'}" :default-sort = "{prop: 'signUpBeginTime',order: 'descending'}">
                     <el-table-column prop="marketingActivityId" label="活动ID" align='center'></el-table-column>
                     <el-table-column prop="activityName" label="活动名称" align='center'></el-table-column>
-                    <el-table-column label="活动时间" align='center'>
+                    <el-table-column label="活动时间" align='center' prop='signUpBeginTime'>
                          <template slot-scope="scope">
                             <div>{{switchTime(scope.row.activityBeginTime)}} 至 {{switchTime(scope.row.activityEndTime)}}</div>
                         </template>
@@ -157,8 +157,8 @@
                 storeId: config.storeId,
                 toolsId: 1,
                 activityStatus: 0,
-                page: 1,
-                size: 20
+                pageNum: 1,
+                pageSize: 20
             };
             this.getStoreData(params1)
             /*获取平台活动*/
@@ -167,8 +167,8 @@
                 activityStatus: 0,
                 signStatus: 0,
                 auditStatus: 0,
-                page: 1,
-                size: 20
+                pageNum: 1,
+                pageSize: 20
             };
             this.getPlatData(params2)
         },
@@ -184,8 +184,8 @@
                         storeId: config.storeId,
                         toolsId: 1,
                         activityStatus: self.storeStatus,
-                        page: self.currentPageStore,
-                        size: self.pageSizeStore,
+                        pageNum: self.currentPageStore,
+                        pageSize: self.pageSizeStore,
                         keyword: self.storeKeyword
                     }
                 return params;
@@ -255,8 +255,8 @@
                         activityStatus: self.platStatus,
                         signStatus: self.signStatus,
                         auditStatus: self.auditStatus,
-                        page: self.currentPagePlat,
-                        size: self.pageSizePlat,
+                        pageNum: self.currentPagePlat,
+                        pageSize: self.pageSizePlat,
                         keyword: self.platKeyword
                     }
                 return params;

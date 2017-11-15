@@ -1,7 +1,8 @@
 <template>
 	<section class="create-brand" >
+	    <div class="gotoPrev">阶段一：填写品牌信息</div>
 		<el-form :model="ruleForm" :rules="rules" ref="ruleForm" v-loading="listLoading">
-			<h2>阶段一：填写品牌信息</h2>
+			
 			<el-form-item label="注册地" label-width="200px" class="lefttit">
 			    <el-radio-group v-model="ruleForm.registerLocation" @change="resetForm('ruleForm')">
 			        <el-radio label="中国大陆"></el-radio>
@@ -170,7 +171,7 @@ export default {
           }
         };
         var validateNumber2= (rule, value, callback) => {
-          var reg =/^\d+$/g;
+           var reg =/(^\d{0,18}$)|(^\d{17}(\d|X|x)$)/g;
             if (!value.match(reg)) {
             callback(new Error('请输入正确的身份证号'));
           } else {
@@ -253,7 +254,8 @@ export default {
 	        trademarkNumber: [
 	            { required: true, message: '请输入商标申请号', trigger: 'blur' },
 	            { min: 8, max: 8, message: '请输入正确的商标申请号', trigger: 'blur' },
-	            { validator:validateNumber1,trigger: ['change','blur']}
+	            { validator:validateNumber1,trigger: 'blur'},
+	            { validator:validateNumber1,trigger: 'change'}
 	        ],
 	        trademarkApplicant: [
 	            { required: true, message: '请输入商标申请人', trigger: 'blur' },
@@ -280,17 +282,20 @@ export default {
 	        domesticOperatorIdCard: [
 	            { message: '请填写身份证号', trigger: 'blur' },
 	            { min:18, max: 18, message: '长度为 18 位', trigger: 'blur' },
-	            { validator:validateNumber2,trigger: ['change','blur']}
+	            { validator:validateNumber2,trigger: 'blur'},
+	            { validator:validateNumber2,trigger: 'change'}
 	        ],
 	        domesticOperatorPhone: [
-	            {  message: '请填写手机号码', trigger: 'blur' },
+	            { message: '请填写手机号码', trigger: 'blur' },
 	            { min: 11, max: 11, message: '长度为 11 位', trigger: 'blur' },
-	            { validator:validateNumber3,trigger: ['change','blur']}
+	            { validator:validateNumber3,trigger: 'blur'},
+	            { validator:validateNumber3,trigger: 'change'}
 	        ],
 	        contactMobile: [
 	            { required: true,  message: '请填写联系电话', trigger: 'blur' },
 	            { min: 11, max: 11, message: '长度为 11 位', trigger: 'blur' },
-	            { validator:validateNumber4,trigger: ['change','blur']}
+	            { validator:validateNumber4,trigger: 'blur'},
+	            { validator:validateNumber4,trigger: 'change'}
 	        ]
         }
       };
@@ -421,6 +426,7 @@ export default {
 			          	this.listLoading = false;
 			        }).catch((res)=> {
 			          	this.listLoading = false;
+			          	this.$message.error('接口建立连接失败');
 			        });
 		        }else {
 	            	return false;
@@ -460,6 +466,7 @@ export default {
 <style lang="scss">
 .create-brand{
 	padding-top:10px;
+	padding-left:20px;
 	/* 公共样式 */
 	p,h2{
 		margin:0;
@@ -476,6 +483,17 @@ export default {
 		color: #333333;
 		font-weight:normal;
 		margin-bottom:20px;
+	}
+	.gotoPrev{
+		width:300px;
+		background:#fff;
+		height:60px;
+		line-height:60px;
+		position:fixed;
+		top:0;
+		left: 240px;
+		font-size:14px;
+		color:#666666;
 	}
 	/* 成功弹框样式 */
 	.el-dialog--tiny{

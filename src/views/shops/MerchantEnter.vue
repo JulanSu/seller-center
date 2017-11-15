@@ -229,7 +229,7 @@ export default {
           }
 	    };
 	    var validateNumber2= (rule, value, callback) => {
-	        var reg =/^\d+$/g;
+	        var reg =/(^\d{0,18}$)|(^\d{17}(\d|X|x)$)/g;
             if (!value.match(reg)) {
 	            callback(new Error('请输入正确身份证号'));
 	        } else {
@@ -328,7 +328,8 @@ export default {
 	          	orgCode: [
 	            	{ required: true, message: '请输入组织机构代码（注册码）', trigger: 'blur' },
 	            	{ min: 18, max: 18, message: '请输入正确的组织机构代码（注册码）', trigger: 'blur' },
-	            	{ validator:validateNumber1,trigger: ['change','blur']}
+	            	{ validator:validateNumber1,trigger: 'blur'},
+	            	{ validator:validateNumber1,trigger: 'change'}
 	          	],
 	          	legalPerson: [
 	            	{ required: true, message: '请输入姓名', trigger: 'blur' },
@@ -337,7 +338,8 @@ export default {
 		        identityNumber: [
 		            { required: true, message: '请输入身份证号', trigger: 'blur' },
 	            	{ min: 18, max: 18, message: '请输入正确身份证号', trigger: 'blur' },
-	            	 { validator:validateNumber2,trigger: ['change','blur']}
+	            	 { validator:validateNumber2,trigger: 'blur'},
+	            	 { validator:validateNumber2,trigger: 'change'}
 		        ],
 	          	name: [
 	            	{ required: true, message: '请输入店铺名称', trigger: 'blur' },
@@ -352,7 +354,8 @@ export default {
 	          	],
 		        contactMobile: [
 		        	{ validator: validatePhone,trigger: 'blur' },
-		        	{ validator:validateNumber3,trigger: ['change','blur']}
+		        	{ validator:validateNumber3,trigger: 'blur'},
+		        	{ validator:validateNumber3,trigger: 'change'}
 
 	          	],
 		        address:[
@@ -393,8 +396,10 @@ export default {
 
 	    //获取行业数据
 	    industryListall({}).then((res) => {
-	        this.categoryData = res.data.data;
-	    });
+	    	if(res.data.code==0){
+	    		this.categoryData = res.data.data;
+	    	}   
+	    })
 
 	    var that=this;
 	    var o= document.getElementById("merchant-enter");
@@ -622,12 +627,12 @@ export default {
 		            	if(res.data.code==0){
 		            		this.dialogVisible1=true;
 		            	}else{
-		            		this.$message({message:res.data.message,type: 'warning'});
+		            		this.$message.error(res.data.message);
 		            	}
 		                
 		            }).catch((res)=> {
 		                this.listLoading = false;
-		                this.$message({message:"接口建立连接失败",type: 'warning'});
+		                this.$message.error('接口建立连接失败');
 		            });
 		      	}else {
 		        	return false;

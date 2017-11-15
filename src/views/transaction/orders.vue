@@ -8,7 +8,7 @@
             <el-select v-model="form.statusCheck" placeholder="订单状态" class='w180'>
                 <el-option v-for="item in form.orderStatus" :key="item.statusId" :label="item.label" :value="item.statusId"></el-option>
             </el-select>
-            <el-input v-model="form.orderNumber" class='w180' placeholder='请输入订单号' :maxlength='15' @blur="numberIsRight(2)"></el-input>
+            <el-input v-model="form.orderNumber" class='w180' placeholder='请输入订单号'  @blur="numberIsRight(2)"></el-input>
             <el-date-picker type="date" v-model="form.startTime" class='w120' @change='chooseTime' placeholder='订单时间'></el-date-picker>
             <span>—</span>
             <el-date-picker type="date" v-model="form.endTime" class='w120' @change='chooseTime' placeholder='订单时间'></el-date-picker>
@@ -57,37 +57,62 @@
                             {label: '全部', statusId: null},
                             {label: '待用户支付', statusId: 1},
                             {label: '待发货', statusId: 2},
-                            {label: '待收货', statusId: 3},
-                            {label: '待自提', statusId: 3.1},
-                            {label: '待核销', statusId: 3.2},
-                            {label: '交易成功', statusId: 4}
+                            {label: '待用户收货', statusId: 3},
+                            {label: '待用户自提', statusId: 3.1},
+                            {label: '待用户核销', statusId: 3.2},
+                            {label: '交易成功', statusId: 4},
+                            {label: '待商家处理', statusId: 5},
+                            {label: '待平台审核', statusId: 6},
+                            {label: '售后完成', statusId: 7},
+                            {label: '订单关闭', statusId: 9},
+
                         ]},
                         {id: 1, status:[                        //全款
                             {label: '全部', statusId: null},
                             {label: '待用户支付', statusId: 1},
                             {label: '待发货', statusId: 2},
-                            {label: '待收货', statusId: 3},
-                            {label: '交易成功', statusId: 4}
+                            {label: '待用户收货', statusId: 3},
+                            {label: '待用户核销', statusId: 3.1},  
+                            {label: '交易成功', statusId: 4},
+                            {label: '待商家处理', statusId: 5},
+                            {label: '待平台审核', statusId: 6},
+                            {label: '售后完成', statusId: 7},
+                            {label: '订单关闭', statusId: 9},
+
                         ]},
                         {id: 2, status:[                        //定金
                             {label: '全部', statusId: null},
                             {label: '待用户支付', statusId: 1},
                             {label: '待发货', statusId: 2},
-                            {label: '待核销', statusId: 3},
-                            {label: '交易成功', statusId: 4}
+                            {label: '待用户核销', statusId: 3},
+                            {label: '交易成功', statusId: 4},
+                            {label: '待商家处理', statusId: 5},
+                            {label: '待平台审核', statusId: 6},
+                            {label: '售后完成', statusId: 7},
+                            {label: '订单关闭', statusId: 9},
+
                         ]},
                         {id: 3, status:[                        //点券
                             {label: '全部', statusId: null},
                             {label: '待用户支付', statusId: 1},
                             {label: '待发货', statusId: 2},
-                            {label: '交易成功', statusId: 34}
+                            {label: '交易成功', statusId: 34},
+                            {label: '待商家处理', statusId: 5},
+                            {label: '待平台审核', statusId: 6},
+                            {label: '售后完成', statusId: 7},
+                            {label: '订单关闭', statusId: 9},
+
                         ]},
                         {id: 4, status:[
                             {label: '全部', statusId: null},      //现金券
                             {label: '待用户支付', statusId: 1},
                             {label: '待发货', statusId: 2},
-                            {label: '待收货', statusId: 3},
-                            {label: '交易成功', statusId: 4}
+                            {label: '待用户收货', statusId: 3},
+                            {label: '交易成功', statusId: 4},
+                            {label: '待商家处理', statusId: 5},
+                            {label: '待平台审核', statusId: 6},
+                            {label: '售后完成', statusId: 7},
+                            {label: '订单关闭', statusId: 9}
                         ]}
                     ],
                     orderNumber: '',
@@ -142,7 +167,7 @@
                     case 2:st = '待发货';break;
                     case 3:st = '待收货';break;
                     case 4:st = '交易成功';break;
-                    case 5:st = '待处理';break;
+                    case 5:st = '待商家处理';break;
                     case 6:st = '待平台审核';break;
                     case 7:st = '售后完成';break;
                     case 8:st = '取消售后';break;

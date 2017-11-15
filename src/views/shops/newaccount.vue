@@ -1,8 +1,8 @@
 <template>
-	<section class="add-sub-account">
-		<el-form v-loading="listLoading" :model="ruleForm" label-width="80px" :rules="rules" ref="ruleForm">
-			<el-form-item label="帐号名" label-width="100px" prop="account">
-				<el-input :maxlength="20" v-model="ruleForm.account" placeholder="请输入帐号名" class="wid280" @blur="findName"></el-input>
+	<section class="add-sub-account" v-loading="listLoading">
+		<el-form :model="ruleForm" label-width="80px" :rules="rules" ref="ruleForm">
+			<el-form-item label="账号名" label-width="100px" prop="account">
+				<el-input :maxlength="20" v-model="ruleForm.account" placeholder="请输入账号名" class="wid280" @blur="findName"></el-input>
 			</el-form-item>
 			<el-form-item label="密码"  label-width="100px" prop="password" class="passhezi">
 				<el-input :maxlength="20" :type="types" v-model="ruleForm.password" placeholder="请输入密码"  class="wid280" auto-complete="off"></el-input>
@@ -77,7 +77,7 @@ import crypto from 'crypto'
           }
       };
       var validateNumber2= (rule, value, callback) => {
-          var reg =/^\d+$/g;
+          var reg =/(^\d{0,18}$)|(^\d{17}(\d|X|x)$)/g;
           if (!value.match(reg)) {
             callback(new Error('请输入正确的身份证号码'));
           } else {
@@ -111,7 +111,8 @@ import crypto from 'crypto'
           password: [
             { required: true, message: '请输入密码', trigger: 'blur' },
             { min: 6, max: 20, message: '密码必须大于6位,小于20位', trigger: 'blur' },
-            {  validator: validatePassword, trigger: ['change','blur'] }
+            {  validator: validatePassword, trigger: 'blur'},
+            {  validator: validatePassword, trigger: 'change'}
           ],
           name: [
             { required: true, message: '请输入姓名', trigger: 'blur' },
@@ -122,13 +123,14 @@ import crypto from 'crypto'
           ],
           mobile: [
             { required: true,validator: validatePhone,trigger: 'blur' },
-            
-            { validator:validateNumber1,trigger: ['change','blur']}
+            { validator:validateNumber1,trigger:'blur'},
+            { validator:validateNumber1,trigger: 'change'}
           ],
           identityNumber: [
             { required: true, message: '请输入身份证号码', trigger: 'blur' },
             { min:18, max: 18, message: '身份证号码输入有误', trigger: 'blur' },
-            { validator:validateNumber2,trigger: ['change','blur']}
+            { validator:validateNumber2,trigger:'blur'},
+            { validator:validateNumber2,trigger:'change'}
           ]
         }
       };
@@ -139,14 +141,17 @@ import crypto from 'crypto'
         storeId:config.storeId
       };
       roleUsedlist(para).then((res) => {
-        this.roleList=res.data.data;
-        this.ruleForm.role=res.data.data;
+        if(res.data.code==0){
+          this.roleList=res.data.data;
+          this.ruleForm.role=res.data.data;
+        }
+        
       });
 
-      /*如果是编辑子帐号页面，需要取该子帐号的数据*/
-      var id=this.$route.params.id;
+      /*如果是编辑子账号页面，需要取该子账号的数据*/
+      var id=this.$route.query.id;
       if(id){
-        //获取子帐号信息
+        //获取子账号信息
         this.isAdd=2;
         this.dataFetch(id);
       }
@@ -170,25 +175,29 @@ import crypto from 'crypto'
         }
         operatorCheckaccount({"account":this.ruleForm.account}).then((res) => {
             if(res.data.code==1){
-              this.$message({message: '用户名重复',type: 'warning'});
+              this.$message.error('用户名重复，请重新输入');
             }
         });
       },
-      /*如果是编辑子帐号页面，需要取该子帐号的数据*/
+      /*如果是编辑子账号页面，需要取该子账号的数据*/
       dataFetch(id){ 
         let para = {
           storeOperatorId:id
         };
         this.listLoading = true;
         operatorGet(para).then((res) => {
-          this.ruleForm= res.data.data;
-          this.ruleForm.againpass=this.ruleForm.password;
-          this.ruleForm.role=this.roleList;
-          this.ruleForm.password="********************";
-
+          if (res.data.code==0) {
+            this.ruleForm= res.data.data;
+            this.ruleForm.againpass=this.ruleForm.password;
+            this.ruleForm.role=this.roleList;
+            this.ruleForm.password="********************";
+          }else{
+            this.$message.error(res.data.message);
+          }
           this.listLoading = false;
         }).catch((res)=> {
           this.listLoading = false;
+          this.$message.error('接口建立连接失败');
         });
 
       },
@@ -204,7 +213,7 @@ import crypto from 'crypto'
             }
           });
         }else{
-          this.$message({message: res.data.message,type: 'warning'});
+          this.$message.error(res.data.message);
         }
       },
 
@@ -232,7 +241,7 @@ import crypto from 'crypto'
                 this.sucFun(res);  
               }).catch((res)=> {
                 this.listLoading = false;
-                this.$message({message: '接口建立连接失败',type: 'warning'});
+                this.$message.error('接口建立连接失败');
               });
             }else{
               para.append('password',md5(this.ruleForm.password));
@@ -241,7 +250,7 @@ import crypto from 'crypto'
                 this.sucFun(res);
               }).catch((res)=> {
                 this.listLoading = false;
-                this.$message({message: '接口建立连接失败',type: 'warning'});
+                this.$message.error('接口建立连接失败');
               });
             }
             
@@ -256,7 +265,7 @@ import crypto from 'crypto'
 
 <style lang="scss">
 .add-sub-account{
-  padding:40px 0 0 0;
+  padding:20px 0 0 0;
   .wid280{
     width:280px;
   }

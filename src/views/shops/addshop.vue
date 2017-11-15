@@ -1,5 +1,5 @@
 <template>
-	<section class="add-store" id='add-store'>
+	<section class="add-store" id='add-store'  v-loading="listLoading">
 		<el-form :model="ruleForm" label-width="80px" :rules="rules" ref="ruleForm" style="width:60%;min-width:600px;">
 			<el-form-item label="门店名称" label-width="120px" prop="name">
 				<el-input :maxlength="30" v-model="ruleForm.name" placeholder="请输入门店名称" class="wid280"></el-input>
@@ -46,7 +46,7 @@
 				</div>
 			    
 			    <span slot="footer" class="dialog-footer">
-				    <el-button type="primary" @click="getBack">返回门店列表</el-button>
+				    <el-button type="primary" @click="getBack">确定</el-button>
 			    </span>
 			</el-dialog>
 		</el-form>
@@ -87,6 +87,7 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
           }
         };
       return {
+      	listLoading:false,
       	dialogVisible1: false,
       	/*地图组件需要传递的数据*/
 		height:300,
@@ -119,7 +120,8 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
           ],
           contactMobile:[
           	{ required: true,validator: validatePhone,trigger: 'blur' },
-            { validator:validateNumber1,trigger: ['change','blur']}
+            { validator:validateNumber1,trigger: 'blur'},
+            { validator:validateNumber1,trigger: 'change'}
           ],
           contactPerson: [
             { required: true, message: '请输入门店联系人', trigger: 'blur' },
@@ -263,6 +265,8 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 	    },
 		add(para){//添加门店提交接口
 			saveClassify(para).then((res) => {
+				this.listLoading = false;
+
 	        	if(res.data.code==0){
 	        		this.dialogVisible1 = true;
 	        	}else{
@@ -270,11 +274,12 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 	        	}
 	        }).catch((res)=> {
 		        this.listLoading = false;
+		        this.$message.error('接口建立连接失败');
 		    });
 		},
 		update(para){//编辑门店提交接口
 			updateClassify(para).then((res) => {
-				
+				this.listLoading = false;
 	        	if(res.data.code==0){
 	        		this.dialogVisible1 = true;
 	        	}else{
@@ -283,6 +288,7 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 	        	
 	        }).catch((res)=> {
 		        this.listLoading = false;
+		        this.$message.error('接口建立连接失败');
 		    });
 		},
         submitForm(formName) {
@@ -314,7 +320,7 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 					para.append('latitude',Number(this.ruleForm.latitude*1000000));
 					para.append('isHead',Number(this.ruleForm.isHead));
 
-
+					this.listLoading = true;
 		            if(this.isAdd==1){//添加
 		            	para.append('storeId',config.storeId);
 						this.add(para);

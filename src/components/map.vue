@@ -36,6 +36,7 @@ export default{
 			var that=this;
 　　　　　　window.map = new BMap.Map("maps");
 　　　　　　var point = new BMap.Point(p1,p2);
+
 　　　　　　map.centerAndZoom(point, 16);
 			map.clearOverlays(); //清除标注
 　　　　　　var marker = new BMap.Marker(point);// 创建标注
@@ -77,6 +78,7 @@ export default{
 			    var myGeo = new BMap.Geocoder();
 			    myGeo.getPoint(addre, function(point){
 			        if (point) {
+			        	console.log(point)
 			            map.centerAndZoom(point, 16);
 			            map.addOverlay(new BMap.Marker(point));
 			            map.clearOverlays(); //清除标注
@@ -86,10 +88,9 @@ export default{
 			            that.$emit("listenToChildEvent",point.lng, point.lat);//传递值给父组件
 			            that.mapevent(map);//给初始化的地图添加事件
 			        }else{
-			            that.$message({
-				          message: '请挪动地图,点击地图手动定位',
-				          type: 'warning'
-				        });
+			        	that.$message.error('请挪动地图,点击地图手动定位');
+						that.creatmap(120.186535,30.310288);
+
 			        }
 			    });
 		    }
@@ -147,6 +148,14 @@ export default{
 	    li:hover{
 	    	background:#eeeeee;
 	    }
+	}
+
+}
+.load_hezi{
+	.avatar-uploader{
+		.el-upload{
+			border-radius: 0 !important;
+		}
 	}
 }
 </style>

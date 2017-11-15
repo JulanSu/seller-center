@@ -1,14 +1,3 @@
-<!-- <template>
-　　<div>
-　　　　<ul>
-　　　　　　<li v-for="(item,$index) in items" @click="selectStyle (item, $index) " :class="{'active':item.active,'unactive':!item.active}" >
-　　　　　　{{item.select}} 
-　　　　　　<span class="icon" v-show="item.active">当我是图标</span>
-　　　　　　</li>
-　　　　</ul>
-　　</div>
-</template> -->
-
 
 <template>
 	<section class="sel-brand">
@@ -37,11 +26,9 @@
 		<div class="show-sel">
 			<div class="brand-sel">
 				<b v-if="curCateName">您当前选择的是：</b>
+        <i v-if="JSON.stringify(curCateName) =='{}'">无</i>
 				<template v-if="curCateName" v-for="(item,key) in curCateName">
-		        <span>
-              <b>{{item}}</b>
-              <i class="el-icon-circle-close" @click="delBrand(item,key)"></i> 
-            </span>	
+		        <span><b>{{item}}</b><i class="iconfont icon-guanbi1" @click="delBrand(item,key)"></i> </span>	
 		    </template>
 			</div>
 			<div class="brand-btn">
@@ -191,6 +178,7 @@ export default {
 </script>
 <style lang="scss">
 .sel-brand{
+  padding:20px 0 0 20px;
 	a{
 		text-decoration:none;
 		color:#333;
@@ -209,11 +197,13 @@ export default {
 	}
 	.show-sel{
     width:980px;
-		background:#fffaf2;
-		border:1px solid #fad29a;
-		overflow: hidden;
-    padding:10px 0;
-		margin-top:10px;
+		background:#f5f7fa;
+		border:1px solid #41cac0;
+		height:27px;
+    padding:5px 0;
+		margin-top:20px;
+    font-size:12px;
+    position:relative;
 		.brand-sel{
 			padding-left:20px;
 			font-size:12px;
@@ -221,16 +211,23 @@ export default {
 			float:left;
 			b{
 				color:#333;
+
 			}
+      i{
+        font-style: normal;
+      }
       span{
-        margin-left:20px;
         cursor:pointer;
         position:relative;
+        margin-right:20px;
+        b{
+          font-weight:100;
+        }
         i{
           position:absolute;
           display:block;
-          top:-4px;
-          right:-12px;
+          top:-10px;
+          right:-14px;
           color:red;
         }
       }
@@ -244,12 +241,33 @@ export default {
       font-size:12px;
 		}
 	}
+  .show-sel:before,.show-sel:after{
+    border: solid transparent;
+    content: ' ';
+    height: 0;
+    left: 44px;
+    position: absolute;
+    width: 0;
+  }
+  .show-sel:before {
+    border-width: 8px;
+    border-bottom-color: #41cac0;
+    top: -16px;
+  }
+  .show-sel:after{
+    border-width: 7px;
+    border-bottom-color: #f5f7fa;
+    top: -14px;
+    left:45px;
+  }
 	.btns{
     width:980px;
     text-align:center;
 		text-align:center;
 		margin-top:30px;
-
+    a{
+      margin-left:30px;
+    }
 	}
   .all-logo{
     width:500px;
@@ -288,8 +306,8 @@ export default {
         margin:0 0 10px 10px;
       }
       li.on{
-        color:#fff;
-        background:#41cac0;
+        color:#41cac0;
+        background:#eee;
       }
     }
 
