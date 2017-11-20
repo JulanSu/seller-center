@@ -1,5 +1,5 @@
 <template>
-  <el-select v-model="brandId" placeholder="选择品牌" @change="changeHandle">
+  <el-select v-model="brandId" placeholder="请选择品牌" @change="changeHandle">
     <el-option label="无" value="0"  key="无"></el-option>
     <template v-for="brand in brandDTOList">
       <el-option :label="brand.nameCn" :value="brand.brandId"  :key="brand.nameCn"></el-option>
@@ -49,14 +49,13 @@
           } 
         }
       }
-      if(!isBrandId) {
-        curBrandId = '0'
-      }
+      // if(!isBrandId) {
+      //   curBrandId = '0'
+      // }
       this.brandId = curBrandId
     },
     methods: {
       changeHandle(val) {
-        console.log(val)
       }
     }
   }

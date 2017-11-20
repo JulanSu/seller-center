@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Full from '@/components/Full.vue'
 
 import MerchantEnter from '@/views/shops//MerchantEnter.vue'
+import MerchantEnter1 from '@/views/shops//MerchantEnter1.vue'
 
 //import mendian from '@/views/charts/mendian.vue'
 import PersonMessage from '@/views/message/PersonMessage.vue'
@@ -101,6 +102,12 @@ const routers = new VueRouter({
     {
         path: '/merchant-enter',
         component: MerchantEnter,
+        name: '',
+        hidden: true
+    },
+    {
+        path: '/merchant-enter1',
+        component: MerchantEnter1,
         name: '',
         hidden: true
     }

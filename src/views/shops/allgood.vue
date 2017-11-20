@@ -13,11 +13,12 @@
           :value="item.storeCateId">
         </el-option>
       </el-select>
-      <el-date-picker type="date" v-model="form.searchStartTime" class='w160' placeholder='创建起始时间' atyle="margin-right;"></el-date-picker>
+      <el-date-picker type="date" v-model="form.searchStartTime" class='w160' :editable="false" placeholder='创建起始时间'></el-date-picker>
+      </el-date-picker>
       <span>—</span>
-      <el-date-picker type="date" v-model="form.searchEndTime" class='w160' placeholder='创建结束时间' style="margin-left:10px;"></el-date-picker>
+      <el-date-picker type="date" v-model="form.searchEndTime" class='w160' :editable="false" placeholder='创建结束时间'></el-date-picker>
       <el-button type="primary" class='search-btn' @click="findGood">查询</el-button>
-  </el-row>
+    </el-row>
     <!--列表-->
     <el-table :data="datas"  style="width: 100%;">
       <el-table-column prop="productId" label="ID" min-width="120" align="center">
@@ -87,6 +88,7 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
   export default {
     data() {
       return {
+        flag:true,
         form:{
           fenlei:[
             {cateName:"全部",storeCateId:""},
@@ -112,7 +114,8 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
     mounted() {
       this.getProductPagetheshelves();
       let para = {
-        storeId:config.storeId
+        storeId:config.storeId,
+        pageSize:1000
       };
 
       cateList(para).then((res) => {
@@ -134,6 +137,14 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
       });
     },
     methods: {
+      /*时间转换为字符串*/
+      transitionTime(t){
+        if(t instanceof Date){
+          var y=t.getMonth()+Number(1);
+          t= t.getFullYear()+"-"+y+"-"+t.getDate();
+        }
+        return t;
+      },
       //当选择每页多少条时触发
       handleSizeChange(val){
         this.pageSize = val;
@@ -162,6 +173,8 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
         var fenlei=row.storeCateNameList;
         if(!row.storeCateNameList){
           fenlei='无';
+        }else{
+          fenlei=fenlei.join(" / ");
         }
         return fenlei;
       },
@@ -193,7 +206,10 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
       },
       //关联弹框的确定关联按钮
       addRelevanceBtn(){
-        console.log(this.roleAuthority)
+        if(!this.flag){
+          return false;
+        }
+        this.flag=false;
         var para = new URLSearchParams();
         para.append('productId',this.productId);
         para.append('storeCateIdList',this.roleAuthority);
@@ -201,25 +217,28 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
         productSave(para).then((res) => {
           var that=this;
           if(res.data.code==0){
+            that.dialogVisible1=false;
             this.$message({
               message: '关联成功',
               type: 'success',
               onClose:function(){
                 that.getProductPagetheshelves();
-                that.dialogVisible1=false;
+               
               }
             });
           }else{
             this.$message.error('关联失败');
           }
           this.listLoading = false;
+          this.flag=true;
         }).catch((res)=> {
+          this.flag=true;
           this.listLoading = false;
           this.$message.error('接口建立连接失败');
         });
       },
       //获取列表
-      getProductPagetheshelves() {
+      getProductPagetheshelves(){
         let para = {
           storeId:config.storeId,
           pageNum: this.pageNum,
@@ -230,6 +249,12 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
           searchStartTime:this.form.searchStartTime,
           searchEndTime:this.form.searchEndTime
         };
+        if(para.searchStartTime){
+          para.searchStartTime=this.transitionTime(this.form.searchStartTime)+" "+"00:00:00";
+        }
+        if(para.searchEndTime){
+          para.searchEndTime=this.transitionTime(this.form.searchEndTime)+" "+"23:59:59";
+        }
         this.listLoading = true;
         productPagetheshelves(para).then((res) => {
           if(res.data.code==0){
@@ -245,8 +270,8 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
         });
       },
       handleCurrentChange(val) {
-        this.pageNum = val;
-        this.getproductPagetheshelves();
+        this.pageNum =val;
+        this.getProductPagetheshelves();
       }
 
     }
@@ -257,7 +282,7 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
 
 .all-good{
 
-  padding:40px 40px 0 20px;
+  padding:20px 40px 0 20px;
   a{
     text-decoration:none;
   }

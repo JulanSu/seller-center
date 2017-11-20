@@ -73,7 +73,7 @@
                 </el-row>
                 <div class="service" v-if='item.orderProductAfterId'>
                     <el-row class='table-detail'>
-                        <el-col :span="5">售后单编号：{{item.orderProductAfterId}}</el-col>
+                        <el-col :span="5">售后单编号：{{item.orderAfterSerialNumber}}</el-col>
                         <el-col :span="3"></el-col>
                         <el-col :span="3"></el-col>
                         <el-col :span="4">售后单</el-col>
@@ -158,6 +158,7 @@
             orderDetail({orderStoreId: orderId}).then(res => {
                 this.detail = res.data.data;
                 this.allPay = this.detail.orderType == 1 ? true : false; 
+                this.detail.shippingWay = this.detail.orderType == 1 ? '配送' : '无需配送';
                 for(let i=0; i<this.detail.productList.length; i++){
                     let that = this.detail.productList[i];
                     that.orderProductStatus == 1 ? this.detail.tradeId = '用户未支付' : '';
@@ -168,7 +169,7 @@
                         that.proPri.push(money)
                     }
                 }
-                this.detail.productList[0].orderProductStatus == '待发货' ? this.btnStatus = true : '';
+                (this.detail.productList[0].orderProductStatus == '待发货' && this.detail.productList[0].orderProductAfterStatus == 0) ? this.btnStatus = true : '';
             })
         },
         methods: {
@@ -178,13 +179,9 @@
                 switch(a) {
                     case 1:st = '待用户支付'; break;
                     case 2:st = '待发货';break;
-                    case 3:st = '待收货';break;
+                    case 3:st = '待用户收货';break;
                     case 4:st = '交易成功';break;
-                    case 5:st = '待处理';break;
-                    case 6:st = '待平台审核';break;
-                    case 7:st = '售后完成';break;
-                    case 8:st = '取消售后';break;
-                    case 9:st = '订单关闭';break;
+                    case 5:st = '订单关闭';break;
                 }
                 return st;
             },
@@ -192,10 +189,10 @@
             switchAfter(a){
                 let st = '';
                 switch(a) {
-                    case 1:st = '待处理'; break;
+                    case 1:st = '待商家处理'; break;
                     case 2:st = '待平台审核';break;
                     case 3:st = '售后完成';break;
-                    case 4:st = '已取消';break;
+                    case 4:st = '售后取消';break;
                 }
                 return st;
             },

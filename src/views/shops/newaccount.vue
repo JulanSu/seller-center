@@ -11,7 +11,8 @@
 			<el-form-item label="姓名"  label-width="100px" prop="name">
 				<el-input :maxlength="30" v-model="ruleForm.name" placeholder="请输入姓名" class="wid280"></el-input>
 			</el-form-item>
-			<el-form-item label="性别" label-width="100px" prop="gender">
+			<el-form-item label="性别" label-width="100px" prop="gender" class="requireHezi">
+          <span class="require" style='left:-50px;'>*</span>
 			    <el-radio-group v-model="ruleForm.gender">
 			      <el-radio :label="1">男</el-radio>
 			      <el-radio :label="2">女</el-radio>
@@ -90,6 +91,7 @@ import crypto from 'crypto'
         roleList:[],
         listLoading:false,
         isAdd:1,
+        csname:'',
         ruleForm: {
           storeOperatorId:'',
           account: '',
@@ -144,6 +146,7 @@ import crypto from 'crypto'
         if(res.data.code==0){
           this.roleList=res.data.data;
           this.ruleForm.role=res.data.data;
+          this.csname=this.ruleForm.account;
         }
         
       });
@@ -170,7 +173,7 @@ import crypto from 'crypto'
       },
       /*查找账号是否已存在*/
       findName(val){
-        if(!this.ruleForm.account){
+        if(!(this.ruleForm.account)||(this.ruleForm.account==this.csname)){
           return false;
         }
         operatorCheckaccount({"account":this.ruleForm.account}).then((res) => {
@@ -190,7 +193,11 @@ import crypto from 'crypto'
             this.ruleForm= res.data.data;
             this.ruleForm.againpass=this.ruleForm.password;
             this.ruleForm.role=this.roleList;
+            console.log(this.roleList)
             this.ruleForm.password="********************";
+            if(res.data.data.roleName){
+              this.ruleForm.roleId=res.data.data.roleName;
+            }
           }else{
             this.$message.error(res.data.message);
           }

@@ -70,6 +70,15 @@
   display: none;
 }
 
+.requireHezi {
+  position: relative;
+}
+
+.requireHezi .require {
+  position: absolute;
+  color: #ff4949;
+}
+
 /* 表格公共样式 */
 .el-table {
   border: 0;
@@ -354,7 +363,7 @@ div.address select:selected {
 
 .merchant-enter .myIndustry h4 {
   background: #f5f7fa;
-  width: 378px;
+  width: 398px;
   height: 38px;
   line-height: 38px;
   padding-left: 20px;
@@ -507,7 +516,7 @@ div.address select:selected {
 
 /* 品牌管理列表页 */
 .brand {
-  margin: 40px 0 0 40px;
+  margin: 30px 0 0 20px;
   /*公共样式*/
   /* 创建商品按钮 */
   /* 列表样式 */
@@ -599,6 +608,10 @@ div.address select:selected {
   height: 20px;
   line-height: 20px;
   margin-bottom: 10px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 260px;
 }
 
 .brand ul li .brandlist .btns {

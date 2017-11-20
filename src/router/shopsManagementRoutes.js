@@ -30,15 +30,8 @@ const accountList = resolve => require(['@/views/shops/AccountList.vue'],resolve
 const shopManagement = resolve => require(['@/views/shops/ShopManagement.vue'],resolve);
 const addShop = resolve => require(['@/views/shops/AddShop.vue'],resolve);
 
-/*商品测试*/
-const ProductSku1 = resolve => require(['@/views/seller_management/ProductSku1.vue'],resolve) 
 /*店铺管理 =E */
 const routers = [
-            /*{ 
-                path: '/store/ProductSku1',  
-                component: ProductSku1, 
-                name: '商品' 
-            },*/
             { 
                 path: '/store/message',  
                 component: message, 
@@ -65,16 +58,11 @@ const routers = [
                 component: classifyManagement, 
                 name: '分类管理' ,
                 children: [
-                    { path: '/store/classify-management/add-fen-lei', component: addFenLei, name: '新增分类' },    
-                    { 
-                        path: '/store/classify-management/find-good',
-                        component: findGood,
-                        name: '查看商品',
-                        children:[
-                            { path: '/store/classify-management/find-good/all-good', component: allGood, name: '全部分类商品列表' }
-                        ]
-                    },
+                    { path: '/store/classify-management/add-fen-lei', component: addFenLei, name: '新增分类' },  
+                    { path: '/store/classify-management/all-good', component: allGood, name: '全部分类商品列表' },  
+                    { path: '/store/classify-management/find-good', component: findGood, name: '查看商品' },
                     { path: '/store/classify-management/:id', component: addFenLei, name: '编辑分类' }
+
                 ]
             },
             { 

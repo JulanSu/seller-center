@@ -1,54 +1,159 @@
 <template>
   <div class="cate-property block-form">
-    <template v-if="catePropertyGroupList.length" v-for="productCate in catePropertyGroupList">
-        <div class="cate-property-item" v-if=" productCate.catePropertySelection == 0">
-          <div class="text">{{productCate.catePropertyName}}</div>
-          <el-select v-model="productCate.values[0].value" placeholder="请选择服务范围" @change="changeHandle">
-            <template v-for="option in productCate.options">  
-              <el-option :text="option.catePropertyValue" :value="option.catePropertyValue" :key="option.productCatePropertyValuesId"></el-option>
-            </template>
-          </el-select>
-        </div>
-        <div class="cate-property-item" v-else-if="productCate.catePropertySelection == 1">
-          <div class="text">{{productCate.catePropertyName}}</div>
-          <div class="input">
-            <template v-for="(item, index) in productCate.options">
-              <el-checkbox :key="item.catePropertyValue" :label="item.catePropertyValue" v-model="productCate.values[index].value" :true-label="item.catePropertyValue" false-label=""  @change="changeHandle"></el-checkbox>
-            </template>
-          </div>
-        </div>        
-        <template v-else-if="productCate.catePropertySelection == 2 && productCate.catePropertyParentId == '-1'">
-          <div class="cate-property-item" v-if="productCate.values.length && productCate.catePropertyName != item.name" v-for="item in productCate.values">
-            <div class="text">{{item.name}}</div>
-            <div class="input">
-                <el-input  v-model="item.value" :value="item.value" placeholder="自定义属性" @change="changeHandle">
-                  <template slot="append" v-if="productCate.catePropertyUnit">
-                    <span>{{productCate.catePropertyUnit}}</span>
+    <el-form :model="catePropertyForm" label-position="top" ref="catePropertyForm" label-width="100px">
+      <template  v-if="catePropertyForm.list.length" v-for="(item, index) in catePropertyForm.list">
+        <!-- 单选组 -->
+        <template v-if="item.catePropertySelection == 0">       
+          <el-form-item 
+            :label="item.catePropertyName" 
+            v-if="!item.catePropertyRequired"
+            :key="item.catePropertyParentId"
+            :prop="'list.'+index+'.values[0].value'"
+            :rules="{required: true, message: item.catePropertyName + '不能为空！', trigger: 'blur'}">
+            <el-select v-model="item.values[0].value" :placeholder="'请选择'+item.catePropertyName" @change="selectChangeHandle">
+              <template v-for="option in item.options">  
+                <el-option :label="option.catePropertyValue" :value="option.catePropertyValue" :key="option.itemPropertyValuesId"></el-option>
+              </template>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-else :label="item.catePropertyName">
+            <el-select v-model="item.values[0].value" :placeholder="'请选择'+item.catePropertyName" @change="selectChangeHandle">
+              <template v-for="option in item.options">  
+                <el-option ::label="option.catePropertyValue" :value="option.catePropertyValue" :key="option.itemPropertyValuesId"></el-option>
+              </template>
+            </el-select>
+          </el-form-item>
+        </template>
+        <!-- 多选框 -->
+        <template v-else-if="item.catePropertySelection == 1">
+          <el-form-item 
+            :label="item.catePropertyName" 
+            v-if="!item.catePropertyRequired"
+            :key="item.catePropertyParentId"
+            :prop="'list.'+index+'.values'"
+            :rules="{required: true, type: 'array', message:item.catePropertyName + '不能为空！', trigger: 'blur'}">
+            
+            <el-checkbox-group v-model="item.values" @change="checkboxChangeHandle">
+              <template v-for="(option, index) in item.options">
+                <el-checkbox :key="option.catePropertyValue" :label="option.catePropertyValue"></el-checkbox>
+              </template>
+            </el-checkbox-group>
+          </el-form-item>
+
+          <el-form-item v-else :label="item.catePropertyName">
+            <el-checkbox-group v-model="item.values" @change="checkboxChangeHandle">
+              <template v-for="(option, index) in item.options">
+                <el-checkbox :key="option.catePropertyValue" :label="option.catePropertyValue"></el-checkbox>
+              </template>
+            </el-checkbox-group>
+          </el-form-item>
+        </template>
+        <template v-else-if="item.catePropertySelection == 2 && item.catePropertyParentId != '-1'">
+          <template v-if="!item.catePropertyInputLimit">
+            <el-form-item 
+              :label="item.catePropertyName" 
+              v-if="!item.catePropertyRequired"
+              :key="item.catePropertyParentId"
+              :prop="'list.'+index+'.values[0].value'"
+              :rules="{required: true, message:item.catePropertyName + '不能为空！', trigger: 'blur'}">
+                <el-input  v-model="item.values[0].value" :value="item.values[0].value" placeholder="自定义内容" @change="">
+                  <template slot="append" v-if="item.catePropertyUnit">
+                    <span>{{item.catePropertyUnit}}</span>
                   </template>
                 </el-input>
-            </div>
-          </div>
+            </el-form-item>
+            <el-form-item 
+              :label="item.catePropertyName" 
+              v-else
+              :key="item.catePropertyParentId">
+                <el-input  v-model="item.values[0].value" :value="item.values[0].value" placeholder="自定义内容" @change="">
+                  <template slot="append" v-if="item.catePropertyUnit">
+                    <span>{{item.catePropertyUnit}}</span>
+                  </template>
+                </el-input>
+            </el-form-item>
+          </template>
+
+          <template v-if="item.catePropertyInputLimit == 1">
+            <el-form-item 
+              :label="item.catePropertyName" 
+              v-if="!item.catePropertyRequired"
+              :key="item.catePropertyParentId"
+              :prop="'list.'+index+'.values[0].value'"
+              :rules="[
+              {required: true, message:item.catePropertyName + '不能为空！', trigger: 'change, blur'}]">
+                <el-input  v-model="item.values[0].value" :value="item.values[0].value" placeholder="自定义内容" @change="">
+                  <template slot="append" v-if="item.catePropertyUnit">
+                    <span>{{item.catePropertyUnit}}</span>
+                  </template>
+                </el-input>
+<!--                 <div class="el-input el-input-group el-input-group--append">
+                  <input type="number" class="el-input__inner" v-model.number="item.values[0].value" placeholder="自定义内容">
+                    <div class="el-input-group__append"><span>{{item.catePropertyUnit}}</span></div>
+                </div> -->
+            </el-form-item>
+<!--             <el-form-item 
+              :label="item.catePropertyName" 
+              v-else
+              :prop="'list.'+index+'.values[0].value'"
+              :rules="[
+              {type: 'number', message:item.catePropertyName + '必须为数值'}]"
+              :key="item.catePropertyParentId"> -->
+            <el-form-item 
+              :label="item.catePropertyName" 
+              v-else>
+                <el-input  v-model="item.values[0].value" :value="item.values[0].value" placeholder="自定义内容" @change="">
+                  <template slot="append" v-if="item.catePropertyUnit">
+                    <span>{{item.catePropertyUnit}}</span>
+                  </template>
+                </el-input>
+<!--                 <div class="el-input el-input-group el-input-group--append">
+                  <input type="number" class="el-input__inner" v-model.number="item.values[0].value" placeholder="自定义内容">
+                    <div class="el-input-group__append"><span>{{item.catePropertyUnit}}</span></div>
+                </div> -->
+            </el-form-item>
+          </template>
+
+          <template v-if="item.catePropertyInputLimit == 2">
+            <el-form-item 
+              :label="item.catePropertyName" 
+              v-if="!item.catePropertyRequired"
+              :key="item.catePropertyParentId"
+              :prop="'list.'+index+'.values[0].value'"
+              :rules="{required: true, type: 'string', message:item.catePropertyName + '不能为空！', trigger: 'blur'}">
+                <el-date-picker
+                  v-model="item.values[0].value"
+                  type="date"
+                  placeholder="选择日期"
+                  value-format="yyyy-MM-dd" @change="datePickerChangeHandle(item.values[0])">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item 
+              :label="item.catePropertyName" 
+              v-else
+              :key="item.catePropertyParentId">
+                <el-date-picker
+                  v-model="item.values[0].value"
+                  type="date"
+                  placeholder="选择日期"
+                  value-format="yyyy-MM-dd" @change="datePickerChangeHandle(item.values[0])">
+                </el-date-picker>
+            </el-form-item>
+          </template>
         </template>
-        <div class="cate-property-item" v-else-if="productCate.catePropertySelection == 2 && productCate.catePropertyParentId == '0'">
-          <div class="text">{{productCate.catePropertyName}}</div>
-          <div class="input">
-            <el-input  v-model="productCate.values[0].value" :value="productCate.values[0].value" placeholder="自定义属性" @change="changeHandle">
-              <template slot="append" v-if="productCate.catePropertyUnit">
-                <span>{{productCate.catePropertyUnit}}</span>
-              </template>
-            </el-input>
-          </div>
-        </div>
-    </template>
+      </template>
+    </el-form>
   </div>
 </template>
 
 <script>
-  import merge from 'merge'
+  import moment from 'moment'
   export default {
     data() {
       return {
-        catePropertyGroupList: []
+        catePropertyForm: {
+          list: []
+        },
       }
     },
     props: {
@@ -57,81 +162,81 @@
         default: function(){
           return []
         }
-      }
+      },
+      value: [Array]
+    },
+    watch:{
+      'catePropertyForm': {
+        handler (newVal, oldVal){
+        }
+      },
+      deep: true
     },
     computed: {
       
     },
     created (){
-      this.formartData(this.catePropertyData)
+      let catePropertyData = this.catePropertyData.concat()
+      this.catePropertyForm.list = this.initCatePropertyFormData(catePropertyData)
     },
     methods: {
-      formartData: function(data){
-        var saveData = this.formartSaveData(data)
-        this.catePropertyGroupList = this.formartValues(saveData)
-        this.changeHandle()
+      datePickerChangeHandle(obj){
+        obj.value = moment(obj.value).format("YYYY-MM-DD")
       },
-
+      submitForm() {
+        let self = this
+        self.$refs['catePropertyForm'].validate((valid) => {
+          if (valid) {
+            let fdata = self.formartSubmitData()
+            let sdata = self.getSubmitData(fdata)
+            let results = self.formartValues(sdata)
+            self.$emit('input', results)
+            self.$emit('onUploadStatus', true)
+          } else {
+            self.$emit('onUploadStatus', false)
+            self.$message({
+              message: '请检查必填项是否已填写完！',
+              type: 'warning'
+            });
+            return false;
+          }
+        });
+      },
+      getSubmitData: function(data){
+        let results = []
+        let father = []
+        let children = []
+        for(var i = 0, len = data.length; i < len; i++) {
+          if(data[i].catePropertySelection == 2) {
+            if(data[i].catePropertyParentId == '-1'){
+              data[i].values = []
+              father.push(data[i])
+            }else if(data[i].catePropertyParentId != 0) {
+              //某个父的儿子
+              children.push(data[i])
+            }else if(data[i].catePropertyParentId == 0) {
+              results.push(data[i])
+            } 
+          }else {
+            results.push(data[i])
+          }
+        }
+        for(var j=0; j< father.length; j++) {
+          for(var k=0; k< children.length; k++) {
+            if(children[k].catePropertyParentId == father[j].productCatePropertyId) {
+              father[j].values.push(children[k].values[0])
+            }
+          }
+          results.push(father[j])
+        }
+        return results
+      },
       formartValues: function(data){
         var arr = []
         for(var i=0 ; i<data.length; i++) {
           arr.push(this.getGroupSaveDTO(data[i]))
         }
         return arr
-      },
-      formartOptions(options, data){
-        var arr = []
-        for(var i=0; i<options.length;i++) {
-          var obj ={}
-          obj.id = options[i].productCatePropertyValuesId
-          obj.name = data.catePropertyName
-          obj.value = ''
-          arr.push(obj)
-        }
-        return arr;
-      },
-      formartSaveData: function(data){
-
-        var input = []
-        var aaaa = []
-        for(var i=0; i < data.length; i++) {
-          if(data[i]['catePropertySelection'] == 2 && data[i]['catePropertyParentId'] == "-1") {
-            data[i]['value'] = []
-            input.push(data[i])
-          }else if(data[i]['catePropertySelection'] == 2 && data[i]['catePropertyParentId'] != 0) {
-            
-            // data[i]['values'] = [this.getGroupSaveValueDTO(data[i])]
-            aaaa.push(data[i])
-          }else if(data[i]['catePropertySelection'] == 2 && data[i]['catePropertyParentId'] == 0){
-            
-            //data[i]['values'] = [this.getGroupSaveValueDTO(data[i])]
-            input.push(data[i])
-          }else if(data[i]['catePropertySelection'] == 1){
-            var arr = []
-            // if(data[i]['options'].length) {
-            //   data[i]['values'] = this.formartOptions(data[i]['options'], data[i])
-            // }
-            
-            input.push(data[i])
-          }else if(data[i]['catePropertySelection'] == 0) {
-            
-            //data[i]['values'] = [this.getGroupSaveValueDTO(data[i])]
-            input.push(data[i])           
-          }
-        }
-        
-
-        if(input.length) {
-          for (var j=0; j<input.length;j++) {
-            for(var k=0;k<aaaa.length;k++) {
-              if(input[j]['productCatePropertyId'] == aaaa[k]['catePropertyParentId']) {
-                //input[j]['values'].push(this.getGroupSaveValueDTO(aaaa[k]))
-                input[j]['values'].push(aaaa[k].values[0])
-              }
-            }
-          }
-        }
-        return input;
       },
       getGroupSaveDTO(data){
         var obj = {}
@@ -140,66 +245,80 @@
         obj.catePropertyName = data.catePropertyName
         obj.catePropertyParentId = data.catePropertyParentId
         obj.catePropertyUnit = data.catePropertyUnit
-        obj.productCatePropertyId = data.productCatePropertyId
         obj.catePropertySelection = data.catePropertySelection
+        obj.catePropertyRequired = data.catePropertyRequired
         obj.catePropertyType = data.catePropertyType
-        obj.catePropertyUnit = data.catePropertyUnit
-        obj.options = data.options
-        if(data)
         obj.values = data.values
         return obj
       },
-      getGroupSaveValueDTO(data){
-        var obj = {}
-        obj.id = data.productCatePropertyId
-        obj.name = data.catePropertyName
-        obj.value = ''
-        return obj;
-      },
-
-      changeHandle(){
-        var jsonData = JSON.stringify(this.catePropertyGroupList)
-        var saveData = this.getSaveData(jsonData)
-        this.$emit('updateCatePropertyGroupList', saveData);
-      },
-      getSaveData(json){
-        var newData = JSON.parse(json)
-        if(newData.length) {
-          for(var i=0;i<newData.length;i++) {
-            for(var obj in newData[i]) {
-              if(obj === 'catePropertySelection' || obj === 'options') {
-                delete newData[i][obj]
-              }
-            }
+      initCatePropertyFormData(data){
+        var self = this
+        for(var i=0,cLen =data.length; i<cLen; i++) {
+          if(!data[i].catePropertySelection) {
+            //data[i].values = self.formartSelectValues(data[i])
+          }else if(data[i].catePropertySelection == 1) {
+            data[i].values = self.formartCheckboxValues(data[i])
           }
         }
-        return newData;
+        return data
+      },
+      formartCheckboxValues(obj){
+        var arr = []
+        for(var i =0; i < obj.values.length; i++) {
+          if(obj.values[i].value) {
+            arr.push(obj.values[i].value)
+          }
+        }
+
+        return arr
+      },
+      formartSelectValues(obj){
+        return [{
+            name: obj.catePropertyName,
+            id: obj.productCatePropertyId,
+            value: obj.value
+          }]
+      },
+      selectChangeHandle(value){
+      },
+      checkboxChangeHandle(value){
+      },
+      inputChangeHandle(value ,obj){
+        obj.value = value
+          //event.target.value = event.target.value.replace(/\D/g,'')
+      },
+      formartSubmitData(){
+        var json = JSON.stringify(this.catePropertyForm.list)
+        var data = JSON.parse(json)
+        for(var i=0, len = data.length; i< len; i++) {
+          var checkboxData = data[i]
+          var arr = []
+          if(checkboxData.catePropertySelection == 1) {
+            for(var j=0, arrLen = checkboxData.values.length; j<arrLen;j++) {
+              var obj = {}
+              obj.value = checkboxData.values[j]
+              obj.id = checkboxData.productCatePropertyId
+              obj.name = checkboxData.catePropertyName
+              arr.push(obj)
+            }
+            checkboxData.values = arr
+          }
+        }
+
+        return data
       }
+
     }
   }
 </script>
 
 <style lang="scss">
-  .cate-property {
-    overflow: hidden;
-    .el-form-item {
-      margin-bottom: 20px;
-    }
-    .cate-property-item {
-      margin:0 80px 20px 0;
-      height: 36px;
-      float: left;
-      .text {
-        margin-right: 20px;
-        float: left;
-        text-align: right;
-        width: 80px;
-      }
-      .input {
-        position: relative;
-        display: inline-block;
-      }
+  .cate-property-list {
 
+  }
+  .cate-property  {
+    .el-form-item {
+      margin-bottom:18px;
     }
   }
 </style>

@@ -4,10 +4,13 @@
 		<el-form :model="ruleForm" :rules="rules" ref="ruleForm" v-loading="listLoading">
 			
 			<el-form-item label="注册地" label-width="200px" class="lefttit">
-			    <el-radio-group v-model="ruleForm.registerLocation" @change="resetForm('ruleForm')">
+			    <el-radio-group v-if="isCreat" v-model="ruleForm.registerLocation" @change="resetForm('ruleForm')">
 			        <el-radio label="中国大陆"></el-radio>
 			        <el-radio label="港澳台"></el-radio>
 			        <el-radio label="国外"></el-radio>
+			    </el-radio-group>
+			    <el-radio-group v-else v-model="ruleForm.registerLocation">
+			        <el-radio :label="ruleForm.registerLocation"></el-radio>
 			    </el-radio-group>
 			</el-form-item>
 			<category-bar :title="categoryBarTitle1"></category-bar>
@@ -32,7 +35,8 @@
 				<el-form-item prop="trademarkApplicant" label="商标申请人"  label-width="200px">
 					<el-input :maxlength="30" v-model="ruleForm.trademarkApplicant" class="wid400"  placeholder="请输入商标申请人"></el-input>
 				</el-form-item>
-				<el-form-item prop="trademarkType" label="注册类型" label-width="200px">
+				<el-form-item prop="trademarkType" label="注册类型" label-width="200px" class="requireHezi">
+					<span class="require" style='left:-78px;'>*</span>
 				    <el-radio-group v-model="ruleForm.trademarkType">
 				        <el-radio :label="1">R标</el-radio>
 				        <el-radio :label="0">TM标</el-radio>
@@ -73,27 +77,30 @@
 				<el-input :maxlength="20" v-model="ruleForm.cityNames" class="wid400" placeholder="请输入授权城市"></el-input>
 			</el-form-item>
 			<el-form-item label="有效时间"  label-width="200px" prop="endValidTime" class="timers">
-		        <el-date-picker  type="date" v-model="ruleForm.endValidTime" style="width: 100%;" placeholder="请选择有效截至时间"></el-date-picker>
+		        <el-date-picker  type="date" :editable="false" v-model="ruleForm.endValidTime" style="width: 100%;" placeholder="请选择有效截至时间"></el-date-picker>
 
 			    </el-col>
 			</el-form-item>
-			<el-form-item label="品牌LOGO" label-width="200px">
+			<el-form-item label="品牌LOGO" label-width="200px" class="requireHezi">
+				<span class="require" style='left:-90px;'>*</span>
 				<upload-pictures :note="uploadTishi1" :url="ruleForm.logo" :listen="'listenToPic4'" :picSize='"800.KB"' @listenToPic4="sucpic4" ref="uploadPic4"></upload-pictures>
 			</el-form-item>
 			<el-form-item label="" prop="logo"  label-width="200px" class='updata'>
 				<el-input v-model="ruleForm.logo" class="wid280"></el-input>
 			</el-form-item>
 			<div v-if="!isshow" >
-				<el-form-item label="品牌资质" label-width="200px">
-					<upload-pictures2 :note="uploadTishi1" :url="ruleForm.authorizationUrl" :listen="'listenToPic1'" :picSize='"800.KB"' @listenToPic1="sucpic1" ref="uploadPic1" class="h"></upload-pictures2>
+				<el-form-item label="品牌资质" label-width="200px" class="requireHezi">
+					<span class="require" style='left:-78px;'>*</span>
+					<upload-pictures2 :note="uploadTishi1" :url="ruleForm.trademarkCertificate" :listen="'listenToPic1'" :picSize='"800.KB"' @listenToPic1="sucpic1" ref="uploadPic1" class="h"></upload-pictures2>
 				</el-form-item>
-				<el-form-item label="" prop="authorizationUrl"  label-width="200px" class='updata'>
-					<el-input v-model="ruleForm.authorizationUrl" class="wid280"></el-input>
+				<el-form-item label="" prop="trademarkCertificate"  label-width="200px" class='updata'>
+					<el-input v-model="ruleForm.trademarkCertificate" class="wid280"></el-input>
 				</el-form-item>
 			</div>
 			
 			<div v-if="isshow">
-				<el-form-item label="报关单" label-width="200px">
+				<el-form-item label="报关单" label-width="200px" class="requireHezi">
+					<span class="require" style='left:-64px;'>*</span>
 					<upload-pictures :note="uploadTishi2" :url="ruleForm.customsDeclaration" :listen="'listenToPic3'" :picSize='"800.KB"' @listenToPic3="sucpic3" ref="uploadPic3" class="rr"></upload-pictures>
 					<div class="example"  @click="iconSimple(src1)">
 						<div><img :src='customsDeclarationPic'/></div>
@@ -127,6 +134,8 @@
 			    title=""
 			    top="30%"
 				:visible.sync="dialogVisible1"
+				:show-close='false'
+		        :close-on-click-modal='false'
 				size="tiny">
 				<div class="suc">
 					<span class="el-icon-circle-check"></span>
@@ -172,7 +181,7 @@ export default {
         };
         var validateNumber2= (rule, value, callback) => {
            var reg =/(^\d{0,18}$)|(^\d{17}(\d|X|x)$)/g;
-            if (!value.match(reg)) {
+            if (!value.match(reg)&&value) {
             callback(new Error('请输入正确的身份证号'));
           } else {
             callback();
@@ -180,7 +189,7 @@ export default {
         };
         var validateNumber3= (rule, value, callback) => {
           var reg =/^\d+$/g;
-          if (!value.match(reg)) {
+          if (!value.match(reg)&&value) {
             callback(new Error('请输入正确的手机号码'));
           } else {
             callback();
@@ -195,6 +204,7 @@ export default {
           }
         };
       return {
+      	isCreat:true,
       	customsDeclarationPic:config.customsDeclaration,
       	listLoading:false,
       	uploadTishi1:"图片尺寸200px*200px以上，大小800k以内，格式png/jpg/jpeg",
@@ -206,6 +216,8 @@ export default {
       	dialogVisible:false,
       	src1:"http://2.hapn.cc:20080/n/00802v_b009W1MMTZ0a02w8.jpg",
       	moren:"",
+      	csname:'',
+      	ecsname:'',
 
         ruleForm: {
 			registerLocation:'中国大陆',
@@ -227,13 +239,13 @@ export default {
 			domesticOperatorIdCard: '',
 			domesticOperatorPhone: "",
 			contactMobile:"",
-			authorizationUrl:''
+			trademarkCertificate:''
 		},
         rules: {
         	logo: [
 	            { required: true, message: '请上传品牌LOGO', trigger: 'blur' }
 	        ],
-        	authorizationUrl: [
+        	trademarkCertificate: [
 	            { required: true, message: '请上传品牌资质', trigger: 'blur' }
 	        ],
 	        customsDeclaration: [
@@ -308,6 +320,7 @@ export default {
    	mounted(){
     	//测试品牌2 更新
     	if(this.$route.query.brandId){
+    		this.isCreat=false;//标记是编辑页面
     		var parm={
 	    		brandId:this.$route.query.brandId,
 	    		storeId:config.storeId
@@ -320,7 +333,9 @@ export default {
 	        			this.ruleForm.registerIndustry="农、林、牧、渔业";
 	        		}
 	        		this.ruleForm.endValidTime=new Date(this.ruleForm.endValidTime);
-	        		this.ruleForm.trademarkType=Number(this.ruleForm.trademarkType);;
+	        		this.ruleForm.trademarkType=Number(this.ruleForm.trademarkType);
+	        		this.csname=this.ruleForm.nameCn;
+	        		this.ecsname=this.ruleForm.nameEn
 	        	}else{
 	        		this.$message({message: res.data.message,type: 'warning'});
 	        	}
@@ -351,10 +366,13 @@ export default {
     		if(val=='english'){
     			names=this.ruleForm.nameEn;
     			tit='英文';
+    			if(!(names)||(names==this.ecsname)){
+		            return false;
+		        }
     		}
-    		if(!names){
-    			return false;
-    		}
+    		if(!(names)||(names==this.csname)){
+		            return false;
+		        }
 	        brandCheckbrandname({"name":names}).then((res) => {
 	          	if((res.data.code==1)&&(res.data.message=='品牌名称重复')){
 
@@ -386,7 +404,7 @@ export default {
 	            if (valid) {
 	          		var para = new URLSearchParams();  
 			        para.append('storeId',config.storeId);
-			        para.append('authorizationUrl',this.ruleForm.authorizationUrl);
+			        para.append('trademarkCertificate',this.ruleForm.trademarkCertificate);
 			        para.append('ways',this.ruleForm.ways);
 			        para.append('cityNames',this.ruleForm.cityNames);
 			        para.append('startValidTime','');
@@ -409,6 +427,12 @@ export default {
 
 			        if(this.$route.query.brandId){
 			        	para.append('brandId',this.$route.query.brandId);
+			        }
+
+			        if(this.ruleForm.registerLocation=="中国大陆"){
+			        	para.append('authorizationUrl',this.ruleForm.trademarkCertificate);
+			        }else{
+			        	para.append('authorizationUrl',this.ruleForm.customsDeclaration);
 			        }
 			        this.listLoading = true;
 			        brandSavebrand(para).then((res) => {
@@ -435,12 +459,27 @@ export default {
 	    },
         /*切换注册地，清空表单选项*/
         resetForm(formName) {
-        	this.$refs[formName].resetFields();
-        	/*if(this.ruleForm.registerLocation=="中国大陆"){
-        		this.$refs.uploadPic1.revise(this.ruleForm.authorizationUrl);//修改图片的值
+        	
+        	if(this.ruleForm.logo){
+        		this.$refs.uploadPic4.revise("");//修改图片的值
+        	}
+        	
+
+        	if(this.ruleForm.registerLocation=="中国大陆"){
+        		if(this.ruleForm.trademarkCertificate){
+        			this.$refs.uploadPic1.revise("");//修改图片的值
+        		}	
+
         	}else{
-        		this.$refs.uploadPic3.revise(this.ruleForm.customsDeclaration);//修改图片的值
-        	}*/
+        		if(this.ruleForm.customsDeclaration){
+        			this.$refs.uploadPic3.revise("");//修改图片的值
+        		}
+        		
+        	}
+        	this.$refs[formName].resetFields();
+        	this.ruleForm.trademarkType=1;
+        	this.ruleForm.registerIndustry='农、林、牧、渔业';
+        	this.ruleForm.trademarkApplicant='';
         },
 	    /*返回商户中心按钮*/
 	    getBack(){
@@ -449,7 +488,7 @@ export default {
 	    },
 	    //品牌资质图片上传成功之后
 		sucpic1(url){
-			this.ruleForm.authorizationUrl=url;
+			this.ruleForm.trademarkCertificate=url;
 		},
 		//报关单上传成功之后
 		sucpic3(url){
@@ -458,6 +497,8 @@ export default {
 		//品牌LOGO上传成功之后
 		sucpic4(url){
 			this.ruleForm.logo=url;
+			console.log(url)
+			console.log(this.ruleForm.logo)
 		}
     }
 }

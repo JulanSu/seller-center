@@ -6,3 +6,7 @@ export const getCount = state => {
 export const getStoreId = state => {
     return state.storeId
 }
+
+export const getUserSelectedSku = state => {
+    return state.userSelectedTheSku
+}

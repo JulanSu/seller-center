@@ -11,7 +11,7 @@ let childArray = cookie.getCookie('childArray');
 
 config.storeType == '2' ? asyncRouterArr[2].children.splice(1,1) : ''; //1企业店铺,2个人店铺
 if(childArray){       //是子账号
-      asyncRouterArr[2].children.splice(4,1);
+      config.storeType == '2' ? asyncRouterArr[2].children.splice(3,1) : asyncRouterArr[2].children.splice(4,1) 
       childArray = childArray.split('[')[1].split(']')[0].split(',');
       childArray.forEach( (v,i) => {
         switch(Number(v)) {

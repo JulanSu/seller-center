@@ -1,7 +1,7 @@
 <template>
 	<section class="add-account" v-loading="listLoading">
 		<div class="gotoPrev">
-			<router-link to="/store/brand-management/sel-brand" class="selbrand" icon="plus" style="width:100px;cursor:pointer;">
+			<router-link to="/store/brand-management" class="selbrand" icon="plus" style="width:100px;cursor:pointer;">
 		      	<b class="iconfont icon-fanhui"></b>
 				<span>{{tit}}品牌</span>
 		    </router-link>	
@@ -10,14 +10,13 @@
 			<ul>
 				<template>
 					<li  v-for="(brandTit,key,index) in brandTits" @click="switchover(index,key,brandTit)" :brand-id="key" :class="{on:index==nowIndex}">
-						<h6>{{brandTit}}</h6>
+						<h6>{{brandTit.nameCn}}</h6>
 						<div>
 							<p v-if="index==i"  v-for="(item,k,i) in tishi">
 								<span v-if="item==false">(待填写)</span>
 								<span v-else style="color:#41cac0">(已填写完整)</span>
 							</p>
 						</div>
-						
 					</li>
 				</template>
 			</ul>
@@ -25,7 +24,12 @@
 				<el-form-item label="品牌名称" label-width="120px" prop="nameCn">
 					<div>{{ruleForm.nameCn}}</div>
 				</el-form-item>
-				<el-form-item label="品牌资质" label-width="120px">
+				<el-form-item v-if="ruleForm.registerLocation==1" label="品牌资质" label-width="120px"  class="requireHezi">
+					<span class="require" style='left:-78px;'>*</span>
+					<upload-pictures :note="uploadAptitude" :url="ruleForm.authorizationUrl" :listen="'listenToPic1'" :picSize='"10.MB"' @listenToPic1="sucpic1" ref="uploadPic"></upload-pictures>
+				</el-form-item>
+				<el-form-item v-else label="报关单" label-width="120px" class="requireHezi">
+					<span class="require" style='left:-63px;'>*</span>
 					<upload-pictures :note="uploadAptitude" :url="ruleForm.authorizationUrl" :listen="'listenToPic1'" :picSize='"10.MB"' @listenToPic1="sucpic1" ref="uploadPic"></upload-pictures>
 				</el-form-item>
 				<el-form-item label="" prop="authorizationUrl"  label-width="120px" class='updata'>
@@ -38,7 +42,7 @@
 					<el-input :maxlength="20" v-model="ruleForm.cityNames" placeholder="请输入授权城市" class="wid400"></el-input>
 				</el-form-item>
 				<el-form-item label="有效截止时间"  label-width="120px" prop="endValidTime"  class="timers">
-				    <el-date-picker type="date" v-model="ruleForm.endValidTime" placeholder="请输入有效结束时间" style="width: 100%;"></el-date-picker>
+				    <el-date-picker type="date" v-model="ruleForm.endValidTime" :editable="false" placeholder="请输入有效结束时间" style="width: 100%;"></el-date-picker>
 				</el-form-item>
 				<el-form-item prop="contactMobile" label="联系电话"  label-width="120px">
 					<el-input :maxlength="11" v-model="ruleForm.contactMobile" placeholder="请输入联系电话" class="wid400"></el-input>
@@ -108,7 +112,9 @@ export default {
 	            cityNames: '',
 	            endValidTime: '',
 	            contactMobile: '',
-	            authorizationUrl:''
+	            authorizationUrl:'',
+	            registerLocation:'',
+	            submit:false
 	        },
 	        fullModel: {
 	        	storeBrandId:"",
@@ -119,11 +125,15 @@ export default {
 	            endValidTime: '',
 	            contactMobile: '',
 	            authorizationUrl:'',
+	            registerLocation:'',
 	            submit:false
 	        },
 	        rules: {
 	        	authorizationUrl:[
-	        		{ required: true, message: '请上传店铺资质', trigger: 'blur' }
+	        		{ required: true, message: '请上传图片', trigger: 'blur' }
+	        	],
+	        	authorizationUrl2:[
+	        		{ required: true, message: '请上传报关单', trigger: 'blur' }
 	        	],
 		        ways: [
 		          	{ required: true, message: '请输入授权渠道', trigger: 'blur' },
@@ -169,8 +179,13 @@ export default {
 	        		this.ruleForm = res.data.data;
 	            	this.ruleForm.endValidTime=new Date(this.ruleForm.endValidTime);
 	        		this.brandTits={
-			    		storeBrandId:this.ruleForm.nameCn
+			    		storeBrandId:{
+			    			"nameCn":this.ruleForm.nameCn
+			    		}
 			    	};
+			    	if(res.data.data.registerLocationType==0){
+			    		this.ruleForm.registerLocation=1;
+			    	}
 	        	}else{
 	        		this.$message.error(res.data.message);
 	        	}
@@ -185,19 +200,32 @@ export default {
 
     		
 	    }else{//添加品牌
-	    	this.brandTits=this.$route.query;
-			this.ruleForm.nameCn=Object.values(this.brandTits)[0];
-	    	//this.ruleForm.nameCn=this.brandTits[Object.keys(this.brandTits).sort((a,b)=>a-b)[0]];
+	    	if(this.$route.query.add=='y'){
 
-	    	var keyArr=[];
-	    	for(var i in this.brandTits){
-	    		keyArr.push(i);
-	    		this.$set(this.database,"key"+i,this.fullModel);
-	    		/*this.$set(this.database,"submit",false);*/
-	    		this.$set(this.tishi,"key"+i,false);//tishi
-	    		
-	    	}
-	    	this.prevKey=keyArr[0];
+
+		    	this.brandTits=JSON.parse(sessionStorage.getItem("addBrand"));
+				var brandTitsKey= (function(data){
+		            	var keys = [];
+			            for(var pro in data){
+			                keys.push(pro);
+			            }
+			            return keys;
+			        })(this.brandTits);	
+
+		    	var keyArr=[];
+		    	for(var i in this.brandTits){
+		    		keyArr.push(i);
+		    		this.$set(this.database,"key"+i, JSON.parse(JSON.stringify(this.fullModel)));
+		    		this.$set(this.database["key"+i],'nameCn',this.brandTits[i].nameCn);//设置品牌名称
+		    		this.$set(this.database["key"+i],'registerLocation',this.brandTits[i].registerLocation);//设置品牌是大陆地区还是港澳台
+
+		    		this.$set(this.tishi,"key"+i,false);//tishi
+		    		
+		    	}
+		    	this.prevKey=keyArr[0];
+
+		    	this.ruleForm=this.database["key"+brandTitsKey[0]];
+	    }
 	    }
 	},
 
@@ -216,7 +244,7 @@ export default {
     	},
     	'ruleForm.authorizationUrl':function(){
     		this.fillOut();
-    	},
+    	}
     }, 
 
     methods: {
@@ -241,6 +269,7 @@ export default {
     		if(v1&&v2&&v3&&v4&&(/^1\d{10}$/.test(v4))&&v5){
         		this.$set(this.database[keyId],"submit",true);
         		this.$set(this.tishi,"key"+this.prevKey,true);
+
         	}else{
         		this.$set(this.database[keyId],"submit",false);
         		this.$set(this.tishi,"key"+this.prevKey,false);
@@ -249,18 +278,14 @@ export default {
 
     	/*切换品牌*/
     	switchover(index,key,brandTit){
-
-    		//this.$refs.ruleForm.resetFields();
     		this.$set(this.database,"key"+this.prevKey,this.ruleForm);//切换品牌前保存当前品牌填写的信息
+
     		this.nowIndex=index; 
 			this.prevKey=key;
-
+			
 			this.ruleForm=this.database["key"+key];
 
-			this.ruleForm.nameCn=Object.values(this.brandTits)[index];
-			/*this.ruleForm.nameCn=this.brandTits[Object.keys(this.brandTits).sort((a,b)=>a-b)[index]];*/
 			this.$refs.uploadPic.revise(this.ruleForm.authorizationUrl);//修改图片的值
-			
 
     	},
 
@@ -287,24 +312,28 @@ export default {
     	/*编辑成功后回到品牌列表*/
     	suc(){
     		this.$router.push({ path: '/store/brand-management' });
+    		return false;
     	},
 
     	/*新增页面成功后回到品牌列表*/
     	sucAdd(){
-    		this.$delete(this.brandTits,this.subBrandId);//删除右上角的刚刚提交成功的品牌
     		this.$delete(this.tishi,"key"+this.subBrandId);
+    		this.$delete(this.database,"key"+this.subBrandId);
+ 
+			this.$delete(this.brandTits,this.subBrandId);//删除右上角的刚刚提交成功的品牌
     		this.nowIndex=0; 
     		
     		var arr1=Object.keys(this.brandTits);
 	        this.ruleForm=this.database["key"+arr1[0]];
 
 	        this.prevKey=arr1[0];
-
+			
 	        if(arr1.length){
 	        	this.$refs.uploadPic.revise(this.ruleForm.authorizationUrl);//修改图片的值
 	        }else{
 	        	this.suc();
 	        }
+	       
     	},
 
     	/*编辑失败后回到品牌列表*/
@@ -360,6 +389,7 @@ export default {
 		            var para = new URLSearchParams();
 			       
 			        para.append('authorizationUrl',this.ruleForm.authorizationUrl);
+			        para.append('trademarkCertificate',this.ruleForm.authorizationUrl);
 			        para.append('ways',this.ruleForm.ways);
 			        para.append('cityNames',this.ruleForm.cityNames);
 			        para.append('startValidTime','');

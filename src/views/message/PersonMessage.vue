@@ -201,7 +201,7 @@
                 padding: 20px 40px;
                 cursor: default;
                 p{
-                    display:inline-block;
+                    display:inline;
                     line-height: 150%;
                 }
                 a{

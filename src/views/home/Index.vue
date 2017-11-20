@@ -81,7 +81,7 @@ export default {
       var arr=this.$router.options.routes;
       var flag=false;console.log(this.$router.options)
       for(var i=0;i<arr.length;i++){
-        if(arr[i].path=="/merchant-enter"){
+        if(arr[i].path=="/seller-management"){
           flag=true;
         }
       }
@@ -89,7 +89,7 @@ export default {
       if(flag){
         this.$router.push({ path: '/seller-management/goods'});
       }else{
-        this.$message({message: '您没有该权限',type: 'warning'});
+        this.$message({message: '您没有创建商品的权限哦',type: 'warning'});
       }
     },
     //获取店铺信息

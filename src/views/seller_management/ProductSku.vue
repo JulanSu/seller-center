@@ -163,6 +163,7 @@
     },
     created(){
       this.formartSkuDataHandel()
+    
     },
     methods: {
       /**

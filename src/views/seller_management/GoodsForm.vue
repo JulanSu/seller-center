@@ -1,5 +1,5 @@
 <template>
-  <div class="goods-form">
+  <div class="goods-form" style="height: 1200px">
     <template v-if="initForm.finished">
       <el-form :model="goodsForm" :rules="goodsFormRules" ref="goodsForm" label-width="120px">
         <el-form-item label="当前类目" prop="cate">
@@ -10,71 +10,30 @@
           <brand-select v-model="goodsForm.brandId" :brandDTOList="initForm.brandDTOList"></brand-select>
         </el-form-item>
 
-        <el-form-item label="商品标题" prop="productTitle">
-          <el-input v-model="goodsForm.productTitle" placeholder="商品标题"><template slot="append"><span :class="['error', titleRulesClass]">{{initForm.productTitleRules.curLen}}</span>/25</template></el-input>
+        <el-form-item label="商品名称" prop="productTitle">
+          <el-input v-model="goodsForm.productTitle" placeholder="商品名称"><template slot="append"><span :class="['error', titleRulesClass]">{{initForm.productTitleRules.curLen}}</span>/20</template></el-input>
         </el-form-item>
 
         <el-form-item label="商品卖点" prop="sellingPoint">
-          <el-input v-model="goodsForm.sellingPoint" placeholder="商品卖点"><template slot="append"><span :class="['error', sellingPointRulesClass]">{{initForm.sellingPointRules.curLen}}</span>/50</template></el-input>
+          <el-input v-model="goodsForm.sellingPoint" placeholder="商品卖点"><template slot="append"><span :class="['error', sellingPointRulesClass]">{{initForm.sellingPointRules.curLen}}</span>/100</template></el-input>
         </el-form-item>
 
-      <el-form-item label="类目属性" prop="productCateProperty">
-        <cate-property v-if="initForm.productCateProperty.length" :catePropertyData="initForm.productCateProperty" @updateCatePropertyGroupList="updateCatePropertyGroupList"></cate-property>
-      </el-form-item> 
+        <el-form-item label="类目属性" prop="catePropertyList" v-if="initForm.productCateProperty.length">
+          <cate-property ref="subjectchildMethod"  v-model="goodsForm.catePropertyList"  :catePropertyData="initForm.productCateProperty" @onUploadStatus="uploadStatusHandle"></cate-property>
+        </el-form-item> 
 
-      <el-form-item label="商品规格" prop="catePropertyList">
-        <product-sku v-if="initForm.productSkuProperty.length" :skuData="initForm.productSkuProperty" @updateProductSkuProperty="updateProductSkuProperty"></product-sku>
+      <el-form-item label="商品规格">
+        <product-sku-options v-if="initForm.productSkuProperty.length" :skuData="initForm.productSkuProperty"></product-sku-options>
       </el-form-item>
 
-        <el-form-item label="商品销售规格" prop="productSkuTable" class="sellFormat-sku">
-            <div class="el-table el-table--fit el-table--striped el-table--enable-row-hover el-table--enable-row-transition" style="width: 100%;">
-              <div class="el-table__header-wrapper">
-                <table cellspacing="0" cellpadding="0" border="0" class="el-table__header" style="width:100%">
-                    <thead>
-                      <tr>
-                        <template v-for="productCate in initForm.productSkuProperty">
-                          <th colspan="1" rowspan="1" class="is-leaf">
-                            <div class="cell">{{productCate.catePropertyName}}</div>
-                          </th>
-                        </template>
-                        <th colspan="1" rowspan="1" class="is-leaf">
-                          <div class="cell">价格</div>
-                        </th>
-                        <th colspan="1" rowspan="1" class="is-leaf">
-                          <div class="cell">库存</div>
-                        </th>
-                      </tr>
-                    </thead>
-                  </table>
-                </div>
-                <div class="el-table__body-wrapper">
-                  <table cellspacing="0" cellpadding="0" border="0" class="el-table__body" style="width: 100%">
-                    <tbody>
-                      <template v-if="goodsForm.productSkuTable.length" v-for="productSku in goodsForm.productSkuTable">
-                
-                          <tr class="el-table__row">
-
-                              <td v-for="item in productSku.data">
-                                <div class="cell">{{item.value}}</div>
-                              </td>
-                            <td>
-                              <div class="cell">
-                                <input class="" class="el-input__inner" v-model="productSku.productPrice" @keyup="initForm.productSkuQuantity = productSkuHandle(goodsForm.productSkuTable)" /></div>
-                            </td>
-                            <td>
-                              <div class="cell">
-                                <input class="" v-model="productSku.productSkuQuantity" @keyup=" initForm.productSkuQuantity = productSkuHandle(goodsForm.productSkuTable)" />
-                              </div>
-                            </td>
-                          </tr>
-                      </template>
-                    </tbody>
-                  </table><!---->
-                </div><!----><!----><!----><!---->
-
-          </div>   
-        </el-form-item>
-
+      <el-form-item label="商品销售规格" style="margin-bottom: 30px;" prop="productSkuTable" class="sellFormat-sku">
+        <product-sku-table 
+        v-model="goodsForm.productSkuTable" 
+        :skuTableData="initForm.productSkuTable" 
+        :productSkuProperty="initForm.productSkuProperty"
+        @updateSkuTableError="updateSkuTableError"
+        @updateSkuQuantity="updateSkuQuantity"></product-sku-table>
+      </el-form-item>
         <el-form-item label="展示价格及库存" prop="productSellPrice" class="sellFormat-sku">
           <div class="el-table el-table--fit el-table--striped el-table--enable-row-hover el-table--enable-row-transition" style="width: 100%;">
               <div class="el-table__header-wrapper">
@@ -96,14 +55,13 @@
                   <tbody>
                       <tr class="el-table__row">
                         <td >
-                          <div class="cell">
-                            <input class="" v-model.number="goodsForm.productSellPrice" type="number" />
+                          <div class="cell el-input el-input-group el-input-group--append">
+                            <input v-model="goodsForm.productSellPrice" @blur="blurValidHandle" class="el-input__inner" type="number" />
                           </div>
                         </td>
                         <td>
                           <div class="cell" v-if="initForm.productSkuQuantity">
                             {{initForm.productSkuQuantity}}
-
                           </div>
                         </td>
                       </tr>
@@ -128,32 +86,78 @@
           <store-cate v-model="goodsForm.storeCateProduct" :storeCateList="initForm.storeCateList"></store-cate>
         </el-form-item>
         
-        <div class="logistics-info wuliu" prop="shippingTemplateId" v-if="goodsForm.productType == 2 || goodsForm.productType == 3 || goodsForm.productType == 4">
+        <div class="logistics-info logistics-block" v-if="goodsForm.productType == 2 || goodsForm.productType == 3 || goodsForm.productType == 4">
           <category-bar title="宝贝物流服务"></category-bar>
           <el-form-item label="提取方式">
             <el-checkbox checked="checked" disabled>电子交易凭证</el-checkbox>
           </el-form-item>
-          <el-form-item label="适用店铺" prop="applicableShop" v-if="goodsForm.productType == 2 || goodsForm.productType == 3 || goodsForm.productType == 4">
+          <el-form-item label="适用店铺" prop="applicableShop" :rules="[{required: true, message: '请填自提时的适用店铺！', trigger: 'change,blur'}]">
             <el-input
               type="textarea"
+              v-model="goodsForm.applicableShop"
               :rows="3"
               placeholder="最多只能输入200个文字"
-              v-model="goodsForm.applicableShop" :maxlength="200">
+               :maxlength="200" @change="validApplicableShopField">
             </el-input>
           </el-form-item>
         </div>
-        <div class="logistics-info wuliu" prop="shippingTemplateId" v-if="goodsForm.productType == 1">
+        <div class="logistics-info logistics-block" v-if="goodsForm.productType == 1">
           <category-bar title="商品物流服务"></category-bar>
-          <logistics-services v-model="goodsForm.shippingTemplateId" :logisticsData="initForm.storeShippingTemplate.data" @logisticsTemplateType="logisticsTemplateType"></logistics-services>
-          
-          <el-form-item label="适用店铺" prop="applicableShop" v-if="initForm.templateType == 1 || goodsForm.productType == 2 || goodsForm.productType == 3 || goodsForm.productType == 4">
-            <el-input
-              type="textarea"
-              :rows="3"
-              placeholder="最多只能输入200个文字"
-              v-model="goodsForm.applicableShop" :maxlength="200">
-            </el-input>
-          </el-form-item>
+        <div class="logistics-wrap">
+            <template v-if="!initForm.storeShippingTemplate.data">
+              <el-form-item label="物流模板" prop="shippingTemplateId">
+                <p class="desc" style="color:#999">你还没有创建物流模板，请先新建物流模板。</p>
+                <el-button type="primary" @click="createLogisticsTemplate">新建物流模板</el-button>
+              </el-form-item>
+            </template>
+            <template v-else>
+              <el-form-item label="物流模板" prop="shippingTemplateId">
+                <el-select v-model="goodsForm.shippingTemplateId" placeholder="选择物流模板" @change="selectChange">
+                  <template v-if="initForm.storeShippingTemplate.data && initForm.storeShippingTemplate.data.length" v-for="item in initForm.storeShippingTemplate.data">
+                    <el-option :label="item.templateName" :value="item.storeShippingTemplateId"></el-option>
+                  </template>
+                </el-select>
+              </el-form-item>
+              <template v-if="goodsForm.shippingTemplateId">
+                <el-form-item label="配送自提">
+                  <span v-if="template.templateType == 0">配送</span>
+                  <div v-else-if="template.templateType == 1">
+                    <div>自提</div>
+                  </div>
+                </el-form-item>
+                <el-form-item label="配送范围及运费" v-if="template.templateType == 0">
+                  <div class="area-list">
+                    <div class="area-list-wrap" v-if="template.templateValueList.length" v-for="item in template.templateValueList">
+                        <div class="area-item"><el-input style="width:208px" :value="item.sysAreaNames.join(',')" disabled></el-input></div>
+                        <div class="area-item">+运费</div>
+                        <div class="area-item"><el-input disabled :value="item.shippingCost" style="width:80px" placeholder=""></el-input></div>
+                        <div class="area-item">元/件，满</div>
+                        <div class="area-item"><el-input disabled :value="item.shippingLimitNum" style="width:80px" placeholder=""></el-input></div>
+                        <div class="area-item">件</div>
+                        <div class="area-item"><el-input disabled :value="item.shippingLimitCost" style="width:80px" placeholder=""></el-input></div>
+                        <div class="area-item">元</div>
+                    </div>
+                  </div>
+                </el-form-item>
+                <el-form-item 
+                label="适用店铺" 
+                :class="!applicableShopStatus ? 'is-error' : ''" 
+                v-else 
+                prop="applicableShop" 
+                id="applicableShop">
+                  <el-input
+                    type="textarea"
+                    :rows="3"
+                    required
+                    placeholder="最多只能输入200个文字"
+                    v-model="goodsForm.applicableShop" @keydown="validApplicableShopField" @blur="validApplicableShopField" :maxlength="200">
+                  </el-input>
+                  <div class="el-form-item__error" v-if="!applicableShopStatus">适用店铺不能为空！</div>
+                </el-form-item>
+              </template>
+          </template>
+        </div>
+
         </div>
         <div class="other-info">
           <category-bar title="其他信息"></category-bar> 
@@ -184,7 +188,8 @@
   import CategoryBar from '@/components/CategoryBar.vue'
   import UpdateImg from './goods_form/UpdateImg.vue'
   import CateProperty from './goods_form/CateProperty.vue'
-  import ProductSku from './goods_form/ProductSku.vue'
+  import ProductSkuOptions from './goods_form/ProductSkuOptions.vue'
+  import ProductSkuTable from './goods_form/ProductSkuTable.vue'
   import PublishTime from './goods_form/PublishTime.vue'
   import CitySiteList from './goods_form/CitySiteList.vue'
   import StoreCate from './goods_form/StoreCate.vue'
@@ -203,7 +208,6 @@
 
   export default {
     name: 'GoodsForm',
-
     componentName: 'GoodsForm',
     components: {
       GoodsSummernote,
@@ -212,7 +216,8 @@
       UpdateImg, 
       CateProperty,
       LogisticsServices,
-      ProductSku,
+      ProductSkuOptions,
+      ProductSkuTable,
       CitySiteList,
       PublishTime,
       StoreCate,
@@ -221,24 +226,36 @@
     },
     data() {
       var validatorStrLength = (rule, value, callback) => {
-          var len = getStrLength(value)
-          if(!value){
-              callback(new Error('请填写商品标题'))
-          }else if(len.length>25){
-              callback(new Error('商品标题最多不超过25个'))
-          }else {
-            callback()
-          }
-          
-      }
-      var validatorTime = (rule, value, callback) => {
-        console.log(rule, value, callback)
+        var len = getStrLength(value)
+        if(!value){
+            callback(new Error('请填写商品名称'))
+        }else if(len.length>20){
+            callback(new Error('商品名称最多不超过20个'))
+        }else {
+          callback()
+        }
       }
       return {
+        //物流模板
+        template: {
+          templateValueList: [{
+            sysAreaCodes: '',
+            shippingCost: '',
+            shippingLimitNum: '',
+            shippingLimitCost: '',
+            sysAreaNames: []
+          }],//运费模板列表
+          storeId: '',  //店铺ID
+          templateName: '', //模板名称
+          storeShippingTemplateId: '',//运费模板ID
+          templateType: 0
+        },
+        applicableShopStatus: false,
         storeType: storeType,
         editorProductStatus: '',
         submitLoading: false,
         draftboxLoading: false,
+        catePropertyValidStatus: false,
         //表单提交所需要的数据结构
         goodsForm: {
           storeCateProduct: [],
@@ -246,20 +263,20 @@
           productId: null, //商品ID 10000061
           //productCateName: '',
           productCateId: '', //类目ID
-          brandId: '0', //品牌ID
+          brandId: '', //品牌ID
           storeId: storeId, //店铺ID
-          productTitle: '', //商品标题
+          productTitle: '', //商品名称
           sellingPoint: '', //商品卖点
          //storeCateList: [],//店铺中分类
           productVersionId: null,
-          catePropertyList: [], //店铺中分类
+          catePropertyList: [], //类目属性列表
           productType: '', //商品类型
           productPicUrlList: [], //商品图片列表 链接LIST
           productSkuTable: [], //商品销售规格
           detailsContent: '', //富文本
           serviceArea: '', //服务范围 逗号隔开
           shippingTemplateId: '', //物流模板ID
-          publishTime: '1', //上架时间
+          publishTime: 'productPublishedOnTime', //上架时间
           productRecommend: 0, //是否推荐
           productStatus: '', //提交状态
           productSellPrice: '', //展示价格及库存的价格
@@ -274,11 +291,11 @@
           brandDTOList: [],
           templateType: '',
           productTitleRules: {
-            max: 25,
+            max: 20,
             curLen: 0
           },
           sellingPointRules: {
-            max: 50,
+            max: 100,
             curLen: 0
           },
           productSkuLength: 0,
@@ -293,24 +310,26 @@
         },
         //表单校验
         goodsFormRules: {
-
-          //商品标题
+          brandId: [
+            {required: true, message: '请选择品牌', trigger: 'blur, change'}
+          ],
+          //商品名称
           productTitle: [
             { required: true,validator: (rule, value, callback) => {
               var len = getStrLength(value)
               var productTitleRules = this.initForm.productTitleRules;
                 if(!value){
-                    callback(new Error('请填写商品标题'))
-                }else if(len>25){
-                  console.log(len)
-                    callback(new Error('商品标题最多不超过25个'))
+                    callback(new Error('请填写商品名称'))
+                }else if(len>20){
+
+                    callback(new Error('商品名称字数最多不超过20'))
                 }else {
                   callback()
                 }
               productTitleRules.curLen = len
             }, trigger: 'blur, change' },
           ],
-          // //商品描述
+          //商品描述
           detailsContent: [
             { required: true, type: 'string', message: '请输入商品描述', trigger: 'blur, change'}
           ],
@@ -320,45 +339,66 @@
               var len = getStrLength(value)
               var sellingPointRules = this.initForm.sellingPointRules;
               if(len > 50){
-                callback(new Error('商品卖点最多不超过50个'))
+                callback(new Error('商品卖点字数最多不超过50个'))
               }else {
                 callback()
               }
               sellingPointRules.curLen = len
             }, trigger: 'blur, change' },
           ],
+
+          //服务范围
+          serviceArea: [
+            {required: true, type: 'string', message: '请选择服务范围', trigger: 'change, blur' }
+          ],
+          //运费模板
+          shippingTemplateId: [
+            {required: true, type: 'string', message: '请选择物流模板', trigger: 'change, blur' }
+          ],
           //商品图片列表
           productPicUrlList: [
-            {required: true, type: 'array', message: '请上传是商品图片', trigger: 'change, blur' }
+            {required: true, type: 'array', message: '请上传商品图片', trigger: 'change, blur' }
           ],
-          // // productCateProperty: [
-          // //   { required: true, message: '请选择类目属性', trigger: 'blur' }
-          // // ],
-          
-          // // productSkuTable: [
-          // //   {required: true, message: '请先选择商品销售规格', trigger: 'blur'}
-          // // ],
+          productSellPrice: [
+            {required: true,message: '展示价格不能为空！', trigger: 'change, blur' }
+          ],
+          // productCateProperty: [
+          //   { required: true, message: '请选择类目属性', trigger: 'blur' }
+          // ],         
+          // productSkuTable: [
+          //   {required: true, message: '请先选择商品销售规格', trigger: 'blur'}
+          // ],
           // 上架时间
           publishTime: [
-            {required: true, message: '请选择商品上架时间', trigger: 'blur'},
+            {required: true, message: '请选择商品上架时间', trigger: 'change, blur' },
             // { validator: validatorTime}
           ],
-          applicableShop: [
-            {required: true, message: '请填自提时的适用店铺', trigger: 'change,blur'}
+          productSkuTable: [
+            {required: true, validator: (rule, value, callback) => {
+              var isFinished = true
+              if(!value.length){
+                callback(new Error('请先选择商品规格！'))
+              }
+              if(value.length){
+                for(var i=0;i<value.length;i++) {
+                  if(!value[i].productPrice || !value[i].productSkuQuantity){
+                    isFinished = false
+                    callback(new Error('价格和库存不能为空！'))
+                  }
+                }
+                if(isFinished) {
+                  callback()
+                }
+              }
+            }, trigger: 'change'}
           ]
-          // // 服务范围
-          // // citySiteList: [  
-          // //   {required: true, message: '请先选择服务范围', trigger: 'blur'}
-          // // ]
+          // applicableShop: [
+          //   {required: true, message: '请填自提时的适用店铺！', trigger: 'change,blur'}
+          // ]
         }
       }
     },
     computed: {
-
-
-      productSellPrice: function(val){
-
-      },
       titleRulesClass: function(value){
 
         var productTitleRules = this.initForm.productTitleRules;
@@ -374,13 +414,83 @@
       }
     },
     created(){
-
       this.initFormData()
+      
     },
     methods: {
+      validField(){
+        var productType = this.goodsForm.productType
+        var templateType = this.template.templateType
+        if(productType == 1){
+          if(!templateType) {
+            this.applicableShopStatus = true
+            return
+          }
+        }
+        this.validApplicableShopField()
+        
+      },
+      /**
+       * validApplicableShopField 校验适配店铺的问题
+       * @return {[type]} [description]
+       */
+      validApplicableShopField(){
+        if(this.goodsForm.applicableShop != '') {
+          this.applicableShopStatus = true
+        }else {
+          this.applicableShopStatus = false
+        }
+      },
+      blurValidHandle(value){
+        this.$refs.goodsForm.validateField('productSellPrice')
+      },
+      /**
+       * createLogisticsTemplate 新建物流模板
+       * @return {[type]} [description]
+       */
+      createLogisticsTemplate(){
+        let self = this
+        self.$confirm('新建物流模板将会离开当前操作，你是否需要离开？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          self.$router.push({path: '/seller-management/logistics'})
+        }).catch(() => {
+        
+        });
+      },
+      /**
+       * changeTemplate 切换物流模板
+       * @param  { String } tid 物流模板ID
+       * @return {[type]}     [description]
+       */
+      changeTemplate(tid){
+        let logisticsData = this.initForm.storeShippingTemplate
+        if(logisticsData && logisticsData.data) {
+          for(var i=0; i<logisticsData.data.length;i++) {
+            if(tid == logisticsData.data[i].storeShippingTemplateId) {
+              this.template = logisticsData.data[i]
+            }
+          }          
+        }
+      },
+      /**
+       * selectChange 切换物流模板事件回调函数
+       * @param  { String } value 物流模板ID
+       * @return {[type]}       [description]
+       */
+      selectChange(value){
+        this.goodsForm.shippingTemplateId = value
+        this.changeTemplate(value)
+        if(!this.template.templateType) {
+          this.applicableShopStatus = true
+        }else {
+          this.validField()
+        }
+      },
       logisticsTemplateType (value){
         this.initForm.templateType = value
-
       },
       publishTimeHandle (value){
         this.goodsForm.publishTime = value  
@@ -395,18 +505,13 @@
         let route = this.$route
         let goodsForm = this.goodsForm
         let initForm = this.initForm
-
-
         //判断是否编辑页面，是否存在店铺ID，是否存在商品ID
         if(route.name == '编辑商品' && storeId && route.query.productId &&route.query.productStatus || route.query.productStatus == 0 || route.query.productStatus == -1){
 
           self.getEditorFormdata(storeId, route.query.productId, route.query.productStatus)
           goodsForm.productId = route.query.productId
-
           return 
-
         }
-
         //判断是否存在类目ID
         if(route.name === '新建商品' && storeId && route.query.productCateId && route.query.productCateName) {
           self.getGoodsFormDataHandle(storeId, route.query.productCateId)
@@ -414,6 +519,7 @@
         }
 
       },
+
       /**
        * getEditorFormdata 获取编辑商品的数据
        * @param  { String } storeId   店铺ID
@@ -433,8 +539,8 @@
             self.initForm = merge(self.initForm, data)
             self.formartEditorData(data)
           }
+          self.validField()
           self.initForm.finished = true
-
         })
 
       },
@@ -459,9 +565,15 @@
         goodsForm.storeCateProduct = data.storeCateProduct
         goodsForm.productPicUrlList = data.productPicUrlList
         goodsForm.productVersionId = data.productVersionId
-        goodsForm.shippingTemplateId = data.shippingTemplateId
+        goodsForm.shippingTemplateId = data.shippingTemplateId == 0 ? '' : data.shippingTemplateId
+        initForm.storeShippingTemplate = data.storeShippingTemplate
+        if(data.productType == 1) {
+          if(data.shippingTemplateId){
+            self.changeTemplate(data.shippingTemplateId)
+          }          
+        }
         goodsForm.applicableShop = data.applicableShop
-        initForm.productSkuQuantity = self.productSkuHandle(data.productSkuTable)
+        initForm.productSkuQuantity = self.getProductSkuQuantity(data.productSkuTable)
 
         setTimeout(function(){
           self.$refs.goodsForm.validateField('productTitle');
@@ -485,18 +597,20 @@
             goodsForm.productType = data.productType
             goodsForm.productId = data.productId
             goodsForm.productCateId = self.$route.query.productCateId
+            goodsForm.shippingTemplateId = data.shippingTemplateId
             initForm.productCateName = self.$route.query.productCateName
             if(storeType != 1) {
               goodsForm.brandId = 0
             }
+
             initForm.finished = true
           }
+          
         })
       },
-      productSkuHandle (data){
-        console.log(data)
+      getProductSkuQuantity (data){
         var productSkuQuantity = 0
-        if(data.length) {
+        if(data && data.length) {
           for(var i= 0; i<data.length; i++) {
             var number = parseInt(data[i].productSkuQuantity);
             if(number) {
@@ -506,7 +620,6 @@
         }
         return productSkuQuantity
       },
-
       /**
        * submitForm 表单提交，提交时需要对表单校验
        * @param  { String } formName 表单名称
@@ -515,20 +628,25 @@
       submitForm(formName, statusVal) {
         var self = this
         var goodsForm = self.goodsForm
+        var initForm = self.initForm
         goodsForm.productStatus = statusVal
-        // if(goodsForm.publishTime == 1) {
-        //   goodsForm.publishTime = ""
-        // }
-        // self.submitProductFormData(statusVal)
-        console.log('表单提交', self.goodsForm)
+        if(initForm.productCateProperty && initForm.productCateProperty.length) {
+          self.$refs.subjectchildMethod.submitForm();
+        }else {
+          self.catePropertyValidStatus = true
+        }
+        console.log('表单提交', self.goodsForm, self.applicableShopStatus, self.catePropertyValidStatus)
         self.$refs[formName].validate((valid) => {
-          if (valid) {
-            if(goodsForm.publishTime == 1) {
-              goodsForm.publishTime = ""
-            }
+          if(!self.applicableShopStatus){
+            return false;
+          }
+          if (valid && self.catePropertyValidStatus) {
             self.submitProductFormData(statusVal)
           } else {
-            console.log('error submit!!');
+            self.$message({
+              message: '请检查必填项是否已填写完！',
+              type: 'warning'
+            });
             return false;
           }
         });
@@ -553,7 +671,7 @@
              }
            }else {
               self.$message({
-                message: '商品提交失败，请重新尝试！',
+                message: res.data.message,
                 type: 'warning'
               });
               self.submitLoading = false
@@ -564,30 +682,26 @@
           self.draftboxLoading = false
         })
       },
-      updateCatePropertyGroupList(value) {
-
-        this.goodsForm.catePropertyList = value
-        console.log('更新类目属性', value)
+      uploadStatusHandle(value){
+        this.catePropertyValidStatus = value
       },
-      updateProductSkuProperty (value) {
+      updateSkuTableError(value){
+        this.$refs.goodsForm.validateField('productSkuTable')
+      },
+      updateSkuQuantity(value){
 
-        this.goodsForm.productSkuTable = value
-        console.log('更新商品规格', value)
+        this.initForm.productSkuQuantity  = this.getProductSkuQuantity(value)
+        
       },
       upSysAreaHandle (value) {
         this.goodsForm.serviceArea = value
       },
-      onChange (value) {
-        console.log(value)
-      },
       uploadHandle(value){
-        console.log('上传图片成功',value)
         this.$refs.goodsForm.validateField('productPicUrlList');
         
       },
       contentChangehandle(value){
         var self = this
-        console.log('文字输入校验',value)
         setTimeout(function(){
           self.$refs.goodsForm.validateField('detailsContent');
         },100)
@@ -629,13 +743,13 @@
         height: 35px;
         line-height: 35px;
         text-align: center;
-        border-width: 0;
+       // border-width: 0;
         opacity: 1;
         background: border-box;
-      &:hover,
-      &:focus {
-        border: 0;
-      }
+      //&:hover,
+      //&:focus {
+      // border: 0;
+      //}
     }
     .cell {
       text-align: center;

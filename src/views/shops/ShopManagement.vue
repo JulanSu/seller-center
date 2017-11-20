@@ -33,7 +33,7 @@
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
       :page-sizes="[20, 50, 100]"
-      :current-page="page"
+      :current-page="pageNum"
       :page-size="pageSize"
       layout="sizes,prev, pager, next, jumper,total"
       :total="total" style="float:right;">
@@ -55,7 +55,7 @@ import {getClassifyList, updateClassify} from '@/api/shopApi';
         },
         users: [],
         total: 0,
-        page: 1,
+        pageNum: 1,
         pageSize:20,
         listLoading: false,
       }
@@ -72,7 +72,7 @@ import {getClassifyList, updateClassify} from '@/api/shopApi';
       getUsers() {
         let para = {
           storeId:config.storeId,
-          page: this.page,
+          pageNum: this.pageNum,
           pageSize: this.pageSize
         };
         this.listLoading = true;
@@ -90,7 +90,7 @@ import {getClassifyList, updateClassify} from '@/api/shopApi';
         });
       },
       handleCurrentChange(val) {
-        this.page = val;
+        this.pageNum = val;
         this.getUsers();
       },
       //当选择每页多少条时触发

@@ -45,6 +45,11 @@
             return this.$route.name !== undefined? this.$route.name +new Date(): this.$route +new Date();
         }
     },
+    watch: {
+     '$route' (to, from) {
+        console.log(this.$route.path)
+     }
+   },
     methods: {
       //退出登录
       logout: function () {
@@ -132,7 +137,7 @@
       }
 
       .content-container {
-        margin-top:10px;
+        padding-top:10px;
         position: relative;
         // background: #f1f2f7;
         flex:1;

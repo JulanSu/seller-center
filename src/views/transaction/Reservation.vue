@@ -112,7 +112,7 @@
             /*页面页数*/
             handleCurrentChange(val) {
                 let self = this;
-                self.pageSize = val
+                self.currentPage = val
                 self.getData(self.getParams())
             },
             directionGo(row){

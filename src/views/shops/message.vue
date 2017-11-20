@@ -1,5 +1,5 @@
 <template>
-	<section class="shop-message" id='shop-message'>
+	<section class="shop-message" id='shop-message' ref="viewBox">
 		<category-bar :title="categoryBarTitle"></category-bar>
 		<el-form :model="ruleForm" :rules="rules" ref="ruleForm">
 			<el-form-item label="入驻类型" prop="shopType" label-width="120px" class="lefttit">
@@ -13,13 +13,15 @@
 			<el-form-item label="店铺公告"  prop="notice" label-width="120px">
 				<el-input  :maxlength="50" v-model="ruleForm.notice" placeholder="店铺公告"  class="wid280"></el-input>
 			</el-form-item>
-			<el-form-item label="店铺LOGO" label-width="120px">
+			<el-form-item label="店铺LOGO" label-width="120px" class="requireHezi">
+				<span class="require" style='left:-90px;'>*</span>
 				<upload-pictures :url="ruleForm.logo" :note="uploadTishi1" :listen="'listenToPic1'" :picSize='"10.MB"' @listenToPic1="sucpic1"></upload-pictures>
 			</el-form-item>
 			<el-form-item label="" prop="logo"  label-width="120px" class='updata'>
 				<el-input v-model="ruleForm.logo" class="wid280"></el-input>
 			</el-form-item>
-			<el-form-item label="店铺主图" label-width="120px">
+			<el-form-item label="店铺主图" label-width="120px" class="requireHezi">
+				<span class="require" style='left:-78px;'>*</span>
 				<upload-pictures :url="ruleForm.broadwiseLogo" :note="uploadTishi2" :listen="'listenToPic2'" :picSize='"10.MB"' @listenToPic2="sucpic2"></upload-pictures>
 			</el-form-item>
 			<el-form-item label="" prop="broadwiseLogo"  label-width="120px" class='updata'>
@@ -29,15 +31,14 @@
 				<v-distpicker :province="select.province" :city="select.city" :area="select.area" @province="onProvince" @city="onCity" @selected="onSelected"></v-distpicker>
 			</el-form-item>
 			<el-form-item label="" label-width="120px" prop="address">
-				<el-input v-model="ruleForm.address" placeholder="输入详细地址" class="wid280" @change="searchDetail" @focus="searchFocus"></el-input>
+				<el-input v-model="ruleForm.address" id="ser" placeholder="输入详细地址" class="wid280"></el-input>
 				<el-button type="primary" class="mapbtn" @click="searchbtn">搜索地图</el-button>
 			</el-form-item>
 			<el-form-item label="经纬坐标" label-width="120px"> 
-				<p>{{ ruleForm.latitude+","+ruleForm.longitude}}</p>
+				<p>{{ ruleForm.longitude+","+ruleForm.latitude}}</p>
 			</el-form-item>
 			<el-form-item label="" label-width="120px">
-				<map-view :height="height" :longitude="ruleForm.longitude" :latitude="ruleForm.latitude" @listenToChildEvent="showsite" @listenToSel="showKey" ref="MapView">
-				</map-view>
+				<map-view :longitude="ruleForm.longitude" :latitude="ruleForm.latitude" @listenToChildEvent="showsite" @listenTolongitude="getResult" ref="MapView"></map-view>
 			</el-form-item>
 			<el-form-item label="营业时间" prop="workTime" label-width="120px">
 				<el-input :maxlength="50" v-model="ruleForm.workTime" placeholder="请输入营业时间" class="wid280"></el-input>
@@ -52,7 +53,7 @@
 					<span>{{ruleForm.industryCateString}}</span>
 				</div>
 			</el-form-item>
-			<el-form-item label="经营品牌" label-width="120px">
+			<el-form-item v-if="!personals" label="经营品牌" label-width="120px">
 				<div class="exhibition">
 					<span>{{ruleForm.brandString}}</span>
 				</div>
@@ -81,7 +82,7 @@
 import CategoryBar from '@/components/CategoryBar.vue'/*标题*/
 import UploadPictures from '@/components/UploadPictures.vue'/*上传图片组件*/
 import VDistpicker from 'v-distpicker';/*城市三级联动*/
-import MapView from '@/components/Map';/*地图组件*/
+import MapView from '@/components/Map1';/*地图组件*/
 import { getShopMessage,updateShopMessage,storeCheckname } from '@/api/shopApi';
 
 
@@ -97,12 +98,13 @@ export default {
 	    // 可以访问组件实例 `this`
 	    if(this.flag){
 	      	this.$confirm('您还未保存，是否去其他页面?', '提示', {
-		        confirmButtonText: '确定',
-		        cancelButtonText: '取消',
 	        	type: 'warning'
 	      	}).then(() => {
-	        	next();
+	        	//next();
+	        	//next()
+	        	next()
 	      	}).catch(() => {
+	      		
 	      	});
 	    }else{
 	    	next(); 
@@ -131,18 +133,19 @@ export default {
         };
 
 		return {
+			personals:false,
 			listLoading:false,
 			flag:false,
 			categoryBarTitle: '店铺基本信息',
 			uploadTishi1:"请传160*160,格式要求jpg,jpeg,png,不超过10MB",
 			uploadTishi2:"请上传750*320，格式要求jpg、jpeg、png，不超过10MB",
 
-			height:300,
-	　　　　longitude:116.404,
-	　　　　latitude:39.915,
+	　　　　longitude:"",
+	　　　　latitude:"",
 			site:"116.4.404015,39.912734",
 			searchsite:"",
 			selcity:"",
+			csname:'',
 
 			select: { 
 				province: '省',
@@ -191,7 +194,7 @@ export default {
 	            	{ min: 2, max: 30, message: '请输入正确的运营人姓名', trigger: 'blur' }
 	          	],
 	          	contactMobile: [
-	          		{ validator: validatePhone,trigger: 'blur' },
+	          		{required: true,validator: validatePhone,trigger: 'blur' },
 	          		{ validator: validateNumber1,trigger: 'blur'},
 	          		{ validator: validateNumber1,trigger: 'change'}
 	          	]
@@ -235,22 +238,21 @@ export default {
     },
     mounted() {
       	this.getShop();
-      	var that=this;
-	    var o= document.getElementById("shop-message");
-	    o.onclick=function(){
-		    that.$refs.MapView.clearKey();
-	    };
+      	var o=document.getElementsByClassName("content-container")[0];
+ 		o.addEventListener('scroll', this.handleScroll);
 
-	    
+ 		if(config.storeType!=1){//个人店铺
+ 			this.personals=true;
+ 		}
     },
+
     computed: {
     	//将毫秒数转化为时间格式
         time: function () {
         	var flag='';
         	if(this.ruleForm.endValidTime){
-				var startData=new Date(this.ruleForm.startValidTime);
 	        	var endData=new Date(this.ruleForm.endValidTime);
-	        	flag=startData.getFullYear()+" / "+(startData.getMonth()+1)+" / "+startData.getDate()+" - "+endData.getFullYear()+" / "+(endData.getMonth()+1)+" / "+endData.getDate();
+	        	flag=endData.getFullYear()+" / "+(endData.getMonth()+1)+" / "+endData.getDate();
 	        	 
         	}
         	return flag;
@@ -258,6 +260,14 @@ export default {
     },
 
 	methods: {
+
+		handleScroll () {
+			var arr=document.getElementsByClassName("tangram-suggestion-main");
+
+			for(var i=0;i<arr.length;i++){
+				arr[i].style.display="none";
+			}
+		},
 		fillOut(key){
 			if(this.biaoji[key]!=this.ruleForm[key]){
 				this.flag=true;
@@ -267,7 +277,7 @@ export default {
 		},
 		//判断店铺名是否重名
 		findName(){
-			if(!this.ruleForm.name){
+			if(!(this.ruleForm.name)||(this.ruleForm.name==this.csname)){
 				return false;
 			}
 			let para = {
@@ -288,49 +298,39 @@ export default {
 		sucpic2(url){
 			this.ruleForm.broadwiseLogo=url;
 		},
-		fetchDate(){
-			},
-		//搜索关键字后点击筛选下拉结果，点击的元素的值传给父元素的input输入框
-		showKey(key){
-			this.ruleForm.address=key;
-		},
-		searchFocus(){
-			var addr=this.selProvince+this.selCity+this.selArea+this.ruleForm.address;
-			if(!addr){
-				this.$message({
-		          message: '请先选择省市区',
-		          type: 'warning'
-		        });
-		        
-			}
-		},
-		//地图输入框输入时匹配地址
-		searchDetail(){
-			var addr=this.selProvince+this.selCity+this.selArea+this.ruleForm.address;
-			this.$refs.MapView.againmap(this.ruleForm.longitude,this.ruleForm.latitude,addr,this.ruleForm.address);
 
-		},
 		//获取店铺信息
 	    getShop() {
+
 	        let para = {
 	          storeId: config.storeId
 	        };
 	        getShopMessage(para).then((res) => {
 	        	if(res.data.code==0){
+	        		
 	        		this.ruleForm=res.data.data;
 		        	this.ruleForm.shopType=this.ruleForm.shopType==1?"企业入驻":"个人入驻";
+
 	        		this.switchover(this.ruleForm.address);
 	        		this.ruleForm.longitude/=1000000;
 	        		this.ruleForm.latitude/=1000000;
-	        		//调用地图
+					this.biaoji = JSON.parse(JSON.stringify(this.ruleForm));
 	        		this.$refs.MapView.creatmap(this.ruleForm.longitude,this.ruleForm.latitude);
-	        		this.biaoji = JSON.parse(JSON.stringify(this.ruleForm));
+	        		this.csname=this.ruleForm.name;
+	        		var timer1=window.setTimeout(function(){
+	        			var arr=document.getElementsByClassName("tangram-suggestion-main");
+						for(var i=0;i<arr.length;i++){
+							arr[i].style.display="none";
+						}
+	        			window.clearTimeout(timer1);
+	        		},500);
+	        		
 	        	}else{
 	        		this.$message.error(res.data.message);
 	        	}
 	        	
 	        }).catch((res)=> {
-		        this.$message.error('接口建立连接失败');
+		          	console.log("cw")
 		    });
 	    },
 	    /*将取到的地址信息分割传到三级联动组件上面*/
@@ -353,6 +353,7 @@ export default {
     		}else{
     			this.ruleForm.address=arrAddress[0];
     		}
+    		this.$refs.MapView.againAddr(this.ruleForm.address);
 	    },
 		/*城市三级联动，选择城市后将数据存储起来，点击搜索地图按钮时，加在自己输入的地址之前*/
 		onProvince(data) {
@@ -382,15 +383,19 @@ export default {
 		    	this.selArea='';
 		    }
 	    },
-	    /*点击搜索地图调用map子组件里面的地图事件*/
-		searchbtn(){
-			var addr=this.selProvince+this.selCity+this.selArea+this.ruleForm.address
-			this.$refs.MapView.againmap(this.ruleForm.longitude,this.ruleForm.latitude,addr);
-		},
 		/*地图组件更改后传递数据到父组件*/
 		showsite(lng,lat){
 			this.ruleForm.longitude=lng;
 			this.ruleForm.latitude=lat;
+		},
+		/*点击搜索地图调用map子组件里面的地图事件*/
+		searchbtn(){
+			var addr=this.ruleForm.address;
+			this.$refs.MapView.searchMap(addr);
+		},
+		//子组件里面的input内容传递给父组件的搜索框
+		getResult:function(h){
+			this.ruleForm.address=h;
 		},
 		/*保存按钮*/
 		submitForm(formName) {

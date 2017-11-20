@@ -1,4 +1,3 @@
-
 <template>
 	<section class="sel-brand">
 		<category-bar :title="categoryBarTitle"></category-bar>
@@ -28,7 +27,7 @@
 				<b v-if="curCateName">您当前选择的是：</b>
         <i v-if="JSON.stringify(curCateName) =='{}'">无</i>
 				<template v-if="curCateName" v-for="(item,key) in curCateName">
-		        <span><b>{{item}}</b><i class="iconfont icon-guanbi1" @click="delBrand(item,key)"></i> </span>	
+		        <span><b>{{item.nameCn}}</b><i class="iconfont icon-guanbi1" @click="delBrand(item,key)"></i> </span>	
 		    </template>
 			</div>
 			<div class="brand-btn">
@@ -104,15 +103,20 @@ export default {
         var isOn=row.active;
         if(!isOn){
           this.$set(row,'active',true);
-          this.$set(this.curCateName,row.brandId,row.nameCn);
+          var objs={
+            nameCn:row.nameCn
+          };
+          if(row.registerLocation=='中国大陆'){
+            objs.registerLocation=1;//设置该品牌是否是中国大陆品牌
+          }else{
+            objs.registerLocation=2;//2为国外或是港澳台
+          }
+
+          this.$set(this.curCateName,row.brandId,objs);
         }else{
           this.$set(row,'active',false);
           this.$delete(this.curCateName,row.brandId);
         }
-
-
-        
-
 
       },
       //删除品牌
@@ -137,7 +141,8 @@ export default {
             type: 'warning'
           });
         }else{
-          this.$router.push({ path: '/store/brand-management/add-brand', query:this.curCateName })
+          sessionStorage.setItem("addBrand",JSON.stringify(this.curCateName));
+          this.$router.push({ path: '/store/brand-management/add-brand', query:{'add':'y'} })
         }
       },
 

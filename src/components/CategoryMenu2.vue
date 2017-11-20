@@ -180,7 +180,7 @@
     }
   }
   .category-menu {
-    background-color: #FFF;
+    background-color: #FFF !important;
 
     .el-menu-item {
       position: relative;

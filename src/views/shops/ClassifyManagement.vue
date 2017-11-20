@@ -146,7 +146,7 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
        //产看商品
       handleSee: function (row) {
         var parm={id:row.storeCateId};
-        this.$router.push({ path: '/store/classify-management/find-good/', query:parm });
+        this.$router.push({ path: '/store/classify-management/find-good', query:parm });
       },
       //分页
       handleCurrentChange:function(val){

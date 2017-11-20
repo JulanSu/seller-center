@@ -23,16 +23,38 @@ export default{
 　　　　return{
 			searchResult:[],
 			inputHtml:'2',
-			resultHtml:''
+			resultHtml:'',
+			dis:"none"
 　　　　}
 　　},
 
 　　props:{ //里面存放的也是数据，与data里面的数据不同的是，这里的数据是从其他地方得到的数据
 		longitude:{}, //定义经度
-　　　　latitude:{} //定义纬度
+		latitude:{} //定义纬度
 　　},
 
 	methods:{
+		//初始化
+		creatmap(lng,lat){
+			var p1=this.longitude;
+			var p2=this.latitude;
+
+			if(arguments.length>0){
+				p1=lng;
+				p2=lat;
+			}
+
+			if(!p1&&!p2){//如果没有传 经纬度，就是新建，地图默认定位为北京
+				p1='116.404';
+				p2='39.915';
+			}
+			
+			var point = new BMap.Point(p1,p2);
+	　　　　map.centerAndZoom(point, 16);
+			that.jump(point);
+			that.addZoom();
+			that.clickMap();
+		},
 		//监听输入框输入的值，传递给父组件的input里面
 		detailed(){
 			that.$emit('listenTolongitude',this.inputHtml);//触发父组件的方法并赋值
@@ -71,12 +93,14 @@ export default{
 　　　　　　var marker = new BMap.Marker(point);// 创建标注
 　　　　　　map.addOverlay(marker);// 将标注添加到地图中
 			marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+
 			that.$emit("listenToChildEvent",point.lng , point.lat);//传递值给父组件
 		},
 
 		//手动搜索地图
 		searchMap(addre){
 		    var myGeo = new BMap.Geocoder();
+
 		    myGeo.getPoint(addre, function(point){
 		        if (point) {
 		            map.centerAndZoom(point, 16);
@@ -100,27 +124,19 @@ export default{
 			//向地图中添加比例尺控件
 			var ctrl_sca = new BMap.ScaleControl({anchor:BMAP_ANCHOR_BOTTOM_LEFT});
 			map.addControl(ctrl_sca);
+		},
+
+		againAddr(addr){
+			this.inputHtml=addr;
 		}
+
 	},
 	mounted:function() {
+		window.myValue='';
 		window.that=this;
 		window.map = new BMap.Map("maps");
 
-		var p1=this.longitude;
-		var p2=this.latitude;
-		if(!this.longitude||!this.latitude){//如果没有传 经纬度，就是新建，地图默认定位为北京
-			p1='116.404';
-			p2='39.915';
-		}
-		
-		var point = new BMap.Point(p1,p2);
-　　　　map.centerAndZoom(point, 16);
-		that.jump(point);
-
-		that.addZoom();
-
-		that.clickMap();
-		
+		this.creatmap();
 
 		window.ac = new BMap.Autocomplete({"input" : "suggestId",   //建立一个自动完成的对象
 			"location" : map
@@ -145,14 +161,14 @@ export default{
 			that.resultHtml=value;
 		});
 
-		window.myValue='';
+		
 		ac.addEventListener("onconfirm", function(e) {    //鼠标点击下拉列表后的事件
 			var _value = e.item.value;
 			myValue = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
 			//that.G("searchResultPanel").innerHTML ="onconfirm<br />index = " + e.item.index + "<br />myValue = " + myValue;
 			//that.resultHtml="onconfirm<br />index = " + e.item.index + "<br />myValue = " + myValue;
-			that.resultHtml=myValue
-			that.setPlace();
+			that.resultHtml=myValue;
+			//that.setPlace();
 			that.$emit('listenTolongitude',myValue);//触发父组件的方法并赋值
 		});
 
@@ -183,6 +199,18 @@ export default{
 	    width: 280px;
 	    height: 36px;
 	    padding-left: 10px;
+	    border:1px solid #bfd8d9;
+	}
+	#suggestId:focus{
+		outline:none;
+		border-color: #41cac0;
+	}
+	#suggestId:hover{
+		border-color: rgb(131, 162, 165);
+	}
+	#searchResultPanel{
+		position:absolute !important;
+		top:0;
 	}
 
 }

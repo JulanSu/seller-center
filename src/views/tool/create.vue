@@ -3,15 +3,15 @@
         <el-form ref="form" :model="form" label-width="130px" style='margin-top:30px'>
            
             <el-form-item label="现金券名称" prop='name'>
-                <el-input v-model="form.name" class='name' :maxlength='30'></el-input>
+                <el-input v-model="form.name" class='name' :maxlength='30' @input='btnChanges'></el-input>
                 <strong v-if='tipArray[0]'>请输入现金券名称</strong>
             </el-form-item>
 
             <el-form-item label="现金券领取时间">
                 <el-row style='padding-left:10px'>
-                    <el-date-picker type="datetime" placeholder="选择日期时间" v-model="form.getTime[0]" class='w180' :picker-options="pickerOptions0"></el-date-picker>
+                    <el-date-picker type="datetime" placeholder="选择日期时间" v-model="form.getTime[0]" class='w180' :picker-options="pickerOptions0" @input='btnChanges' :editable='false'></el-date-picker>
                     <span style="margin:0 8px">至</span>
-                    <el-date-picker type="datetime" placeholder="选择日期时间" v-model="form.getTime[1]" class='w180' :picker-options="pickerOptions0"></el-date-picker >
+                    <el-date-picker type="datetime" placeholder="选择日期时间" v-model="form.getTime[1]" class='w180' :picker-options="pickerOptions0" @input='btnChanges' :editable='false'></el-date-picker >
                     <strong v-if='tipArray[1]'>{{tipText[1]}}</strong>
                 </el-row>
             </el-form-item>
@@ -22,13 +22,13 @@
                     <el-radio label="领取后有效天数"></el-radio>
                 </el-radio-group>
                 <el-row style='margin-top: 10px;padding:0 10px;' v-if="userTime.type =='有效时间段'">
-                    <el-date-picker type="datetime" placeholder="选择日期" v-model="userTime.timeSection[0]" class='w180' :picker-options="pickerOptions0"></el-date-picker>
+                    <el-date-picker type="datetime" placeholder="选择日期" v-model="userTime.timeSection[0]" class='w180' :picker-options="pickerOptions0" @input='btnChanges' :editable='false'></el-date-picker>
                     <span style="margin:0 8px">至</span>
-                    <el-date-picker type="datetime" placeholder="选择时间" v-model="userTime.timeSection[1]" class='w180' :picker-options="pickerOptions0"></el-date-picker>
+                    <el-date-picker type="datetime" placeholder="选择时间" v-model="userTime.timeSection[1]" class='w180' :picker-options="pickerOptions0" @input='btnChanges' :editable='false'></el-date-picker>
                     <strong v-if='tipArray[2]'>请输入有效时间段</strong>
                 </el-row>
                 <el-row style='margin-top: 10px;padding:0 10px;' v-else>
-                    <el-input v-model="userTime.timeNumber" class='w180' placeholder="请输入天数" :maxlength='10' @change='isNumber($event,"init",2)'></el-input>
+                    <el-input v-model="userTime.timeNumber" class='w180' placeholder="请输入天数" :maxlength='10' @change='isNumber($event,"init",2)' @input='btnChanges'></el-input>
                     <span style="margin:0 8px">天</span>
                     <strong v-if='tipArray[2]'>{{tipText[2]}}</strong>
                 </el-row>
@@ -44,28 +44,28 @@
                 <section class="cash" v-if="cashType.type=='会员等级券'">
                     <el-row style='margin-top: 10px;' v-for="item in cashType.huiYuan" :key="item.name">
                         <span class="cash-name">{{item.name}}</span>
-                        <el-input placeholder='请输入' style='width:210px' v-model='item.money'  @change='isNumber($event,"flaot",3)' :maxlength="10"></el-input>
+                        <el-input placeholder='请输入' style='width:210px' v-model='item.money'  @change='isNumber($event,"flaot",3)' :maxlength="10" @input='btnChanges'></el-input>
                         <span style="margin:0 8px">元</span>
-                        <el-input placeholder='发放数量' style='width:120px'  v-model='item.count'  @change='isNumber($event,"init",3)' :maxlength="10"></el-input>
+                        <el-input placeholder='发放数量' style='width:120px'  v-model='item.count'  @change='isNumber($event,"init",3)' :maxlength="10" @input='btnChanges'></el-input>
                         <span style="margin:0 8px">张</span>
                     </el-row>  
                         
                 </section>
                 <section class="cash" v-if="cashType.type=='固定金额券'">
                     <el-row style='margin-top: 10px;padding-left: 10px'>
-                        <el-input placeholder='请输入' style='width:210px' v-model="cashType.guDing.money"  @change='isNumber($event,"float",3)' :maxlength="10"></el-input>
+                        <el-input placeholder='请输入' style='width:210px' v-model="cashType.guDing.money"  @change='isNumber($event,"float",3)' :maxlength="10" @input='btnChanges'></el-input >
                         <span style="margin:0 8px" >元</span>
-                        <el-input placeholder='发放数量' style='width:120px' v-model="cashType.guDing.count"  @change='isNumber($event,"init",3)' :maxlength="10"></el-input>
+                        <el-input placeholder='发放数量' style='width:120px' v-model="cashType.guDing.count"  @change='isNumber($event,"init",3)' :maxlength="10" @input='btnChanges'></el-input>
                         <span style="margin:0 8px">张</span>
                     </el-row>
                 </section>
                 <section class="cash" v-if="cashType.type=='满减券'">
                     <el-row style='margin-top: 10px;padding-left: 10px' v-for='(item,index) in cashType.manJian' :key="">
-                        <el-input placeholder='现金券面值' style='width:210px' v-model='item.smallPrice' :maxlength="10" @change='isNumber($event,"float",3)'></el-input>
+                        <el-input placeholder='现金券面值' style='width:210px' v-model='item.smallPrice' :maxlength="10" @change='isNumber($event,"float",3)' @input='btnChanges'></el-input>
                         <span style="margin:0 8px">————</span>
-                        <el-input placeholder='消费满足金额' style='width:210px' :maxlength="10" @change='isNumber($event,"float",3)'  v-model='item.largePrice'></el-input>
+                        <el-input placeholder='消费满足金额' style='width:210px' :maxlength="10" @change='isNumber($event,"float",3)'  v-model='item.largePrice' @input='btnChanges'></el-input>
                         <span style="margin:0 8px">元</span>
-                        <el-input placeholder='发放数量' style='width:120px' v-if="index == 0" :maxlength="10" @change='isNumber($event,"init",3)' v-model='item.count'></el-input>
+                        <el-input placeholder='发放数量' style='width:120px' v-if="index == 0" :maxlength="10" @change='isNumber($event,"init",3)' v-model='item.count' @input='btnChanges'></el-input>
                         <span style="margin:0 8px" v-if="index == 0">张</span>
                     </el-row>
                     <el-row style='margin-top: 10px;padding-left: 10px' class='add' v-if="cashType.manJian.length < 4" >
@@ -74,17 +74,17 @@
                 </section>
                 <section class="cash" v-if="cashType.type=='折扣券'">
                     <el-row style='margin-top: 10px;padding-left: 10px'>
-                        <el-input placeholder='请输入' style='width:210px' :maxlength="2" @change='isNumber($event,"init",3)'v-model="cashType.zheKou.percent"></el-input>
+                        <el-input placeholder='请输入' style='width:210px' :maxlength="2" @change='isNumber($event,"init",3)'v-model="cashType.zheKou.percent" @input='btnChanges'></el-input>
                         <span style="margin:0 8px">%</span>
-                        <el-input placeholder='发放数量' style='width:120px' :maxlength="10" @change='isNumber($event,"init",3)' v-model="cashType.zheKou.count"></el-input>
+                        <el-input placeholder='发放数量' style='width:120px' :maxlength="10" @change='isNumber($event,"init",3)' v-model="cashType.zheKou.count" @input='btnChanges'></el-input>
                         <span style="margin:0 8px">张</span>
                     </el-row>
                     <el-row style='margin-top: 10px;padding-left: 10px'>
-                        <el-input placeholder='请输入' style='width:210px' :maxlength="10" @change='isNumber($event,"float",3)' v-model="cashType.zheKou.min"></el-input>
+                        <el-input placeholder='请输入' style='width:210px' :maxlength="10" @change='isNumber($event,"float",3)' v-model="cashType.zheKou.min" @input='btnChanges'></el-input>
                         <span style="margin:0 8px">元起用</span>
                     </el-row>
                     <el-row style='margin-top: 10px;padding-left: 10px'>
-                        <el-input placeholder='请输入' style='width:210px' :maxlength="10" @change='isNumber($event,"float",3)' v-model="cashType.zheKou.max"></el-input>
+                        <el-input placeholder='请输入' style='width:210px' :maxlength="10" @change='isNumber($event,"float",3)' v-model="cashType.zheKou.max" @input='btnChanges'></el-input>
                         <span style="margin:0 8px">最多抵扣金额元</span>
                     </el-row>
                 </section>
@@ -97,7 +97,7 @@
                   <el-radio label="付费"></el-radio>
                 </el-radio-group>
                 <el-row style='margin-top: 10px;padding-left:10px' v-if='cashFree.type =="付费"'>
-                    <el-input placeholder='现金值' style='width:210px' v-model='cashFree.count' :maxlength="10" @change='isNumber($event,"init",4)'></el-input>
+                    <el-input placeholder='现金值' style='width:210px' v-model='cashFree.count' :maxlength="10" @change='isNumber($event,"float",4)' @input='btnChanges'></el-input>
                     <span style="margin:0 8px">元</span>
                     <strong v-if='tipArray[4]'>{{tipText[4]}}</strong>
                 </el-row>
@@ -126,7 +126,7 @@
             </el-form-item>
 
             <el-form-item label="领取成功后提示" style="padding-left:10px">
-                <el-input style='width:520px' v-model='form.tips' :maxlength="30"></el-input>
+                <el-input style='width:520px' v-model='form.tips' :maxlength="30" @input='btnChanges'></el-input>
                 <el-row class="tips">
                     如无特殊说明，一律默认为“先谈单再出示现金券，可直接抵扣订单合同金额”，不能超过30个汉字
                 </el-row>
@@ -137,7 +137,7 @@
                 <el-row class="tips">
                    图片尺寸200px*200px以上，大小800k以内，格式要求jpg、jpeg、png
                 </el-row>
-                <el-upload class="img-uploader" action="http://gss.dmp.hzjiehun.bid/gss/upload" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+                <el-upload class="img-uploader" action="http://gss.dmp.hzjiehun.bid/gss/upload" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" >
                     <div class="picture" v-if="imageUrl" @mouseenter='showAgainBtn=true' @mouseleave='showAgainBtn=false'>
                         <img :src="imageUrl" class="avatar">
                         <p v-if='showAgainBtn'>重新上传</p>
@@ -151,7 +151,7 @@
             </el-form-item>
 
             <el-form-item label="现金券使用规则" style="padding-left:10px" class='textarea-con'>
-                <el-input type="textarea" v-model="form.rule" :maxlength='1000'></el-input>
+                <el-input type="textarea" v-model="form.rule" :maxlength='1000' @input='btnChanges'></el-input>
                 <strong style="left:0" v-if='tipArray[8]'>请输入使用规则</strong>
             </el-form-item>
 
@@ -192,6 +192,7 @@
                 imgUrl: '',
                 showAgainBtn: false,
                 beginTime: null,
+                ajaxDone: false,
                 userTime: {
                     type: '有效时间段',
                     timeSection: [null, null],
@@ -303,6 +304,10 @@
                     }
                 self.disabled = true;
                 actLastData(params).then(res => {
+                    if(!res.data.data){
+                        self.warn('返回的数据有误');
+                        return false;
+                    }
                     let cBase = res.data.data,
                         cMoney = res.data.data.couponDeliveryTypeList,
                         cRange = res.data.data.rangeIdList;
@@ -473,6 +478,12 @@
                     type: 'warning'
                 })
             },
+            /*控制提交次数*/
+            btnChanges(){
+                if(this.ajaxDone){
+                    this.status = false;
+                }
+            },
             /*校验数字*/
             isNumber(e, t, i){
                 let self = this;
@@ -577,6 +588,8 @@
                         });
                     }else{
                         self.warn(res.data.message)
+                        self.status = true;
+                        self.ajaxDone = true;
                     }
                 })
             }, 
@@ -595,6 +608,8 @@
                         });
                     }else{
                         self.warn(res.data.message)
+                        self.status = true;
+                        self.ajaxDone = true;
                     }
                 })
             },
@@ -612,6 +627,8 @@
                         });
                     }else{
                         self.warn(res.data.message)
+                        self.status = true;
+                        self.ajaxDone = true;
                     }
                 })
             },
@@ -630,6 +647,8 @@
                         })
                     }else{
                         self.warn(res.data.message)
+                        self.status = true;
+                        self.ajaxDone = true;
                     }
                 })
             },
@@ -962,11 +981,11 @@
                 }
             }
         }
-        .el-time-spinner{
+    }
+    .el-time-panel__content{
+        box-sizing: content-box !important;
+        *{
             box-sizing: content-box !important;
-            *{
-                box-sizing: content-box !important;
-            }
         }
     }
    

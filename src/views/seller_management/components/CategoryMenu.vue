@@ -11,10 +11,10 @@
             v-model="keywords">
           </el-input>
         </div>
-        <el-menu default-active="" unique-opened class="category-menu" v-if="categoryData.length">
-          <template  v-for="(item, index) in categoryData">
+        <el-menu default-active="" unique-opened class="category-menu" v-if="categoryDataCache.length">
+          <template  v-for="(item, index) in categoryDataCache">
             <el-menu-item :index="index+''" v-if="item.productCateName" class="sub-title" @click="selectproductCateName(item, index)">
-              <span class="first-letter" v-if="showLetterIcon">{{getFirstLetter(item.productCateEname)}}</span>{{item.productCateName}}
+              <span class="first-letter" v-if="showLetterIcon">{{item.firstLetter}}</span>{{item.productCateName}}
               <i class="el-icon-arrow-right" v-if="item.child && item.child.length"></i>
             </el-menu-item>
           </template>     
@@ -26,7 +26,7 @@
           </template>
 
           <template v-else v-for="(item, index) in searchList">
-            <el-menu-item  :index="index+''" class="sub-title" @click="selectproductCateName(item, index)"><span class="first-letter" v-if="showLetterIcon">{{getFirstLetter(item.productCateEname)}}</span>{{item.productCateName}}<i class="el-icon-arrow-right" v-if="item.child && item.child.length"></i></el-menu-item>
+            <el-menu-item  :index="index+''" class="sub-title" @click="selectproductCateName(item, index)"><span class="first-letter" v-if="showLetterIcon">{{item.firstLetter}}</span>{{item.productCateName}}<i class="el-icon-arrow-right" v-if="item.child && item.child.length"></i></el-menu-item>
           </template>
         </el-menu>
       </div>
@@ -81,10 +81,12 @@
             this.searchHandle(newVal);
           },
           categoryData (){
-            this.categoryDataCache = this.categoryData
+            var json = JSON.stringify(this.categoryData)
+            var data = JSON.parse(json)
+            this.categoryDataCache = data
           }
         },
-        mounted () {
+        created () {
           this.categoryDataCache = this.categoryData
         },
         methods: {
@@ -100,17 +102,17 @@
                  this.searchList = []
               }else {
               var _arr = [];
-              for(var i in this.categoryData){
+              for(var i in this.categoryDataCache){
 
                 if(
-                    reg.test(this.categoryData[i][
+                    reg.test(this.categoryDataCache[i][
                         'productCateEname'
                     ]) ||
-                    reg.test(this.categoryData[i][
+                    reg.test(this.categoryDataCache[i][
                         'productCateName'
                     ])
                 ){
-                    _arr.push(this.categoryData[i]);
+                    _arr.push(this.categoryDataCache[i]);
                 }
               }
 
@@ -182,7 +184,7 @@
     }
   }
   .category-menu {
-    background-color: #FFF;
+    background-color: #FFF !important;
 
     .el-menu-item {
       position: relative;

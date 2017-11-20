@@ -1,5 +1,5 @@
 <template>
-  <div class="app-header app-navbar">
+  <div class="app-header app-navbar" id="appHeader">
       <router-link to="/home/index">
         <div class="logo logo-width">{{sysName}}</div>
       </router-link>

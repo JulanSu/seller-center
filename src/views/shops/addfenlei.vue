@@ -7,7 +7,8 @@
       <el-form-item label="店铺LOGO" label-width="100px">
         <upload-pictures :note="uploadLogo" :url="ruleForm.catePic" :listen="'listenToPic1'" :picSize='"10.MB"' @listenToPic1="sucpic1"></upload-pictures>
       </el-form-item>
-      <el-form-item label="显示" label-width="100px" prop="isUsed">
+      <el-form-item label="显示" label-width="100px" prop="isUsed" class="requireHezi">
+          <span class="require" style='left:-50px;'>*</span>
           <el-radio-group v-model="ruleForm.isUsed">
             <el-radio :label="1">是</el-radio>
             <el-radio :label="0">否</el-radio>
@@ -131,7 +132,7 @@ export default {
 
 <style lang="scss">
 .add-fenlei{
-  padding-top:30px;
+  padding-top:20px;
   .wid280{
     width:280px;
   }

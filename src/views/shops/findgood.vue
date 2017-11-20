@@ -53,7 +53,7 @@ import { productList,productRemove} from '@/api/shopApi';
       //关联其他商品按钮
       relevance(){
         //var parm={storeCateId:this.$route.query.id};
-        this.$router.push({ path: '/store/classify-management/find-good/all-good'});
+        this.$router.push({ path: '/store/classify-management/all-good'});
       },
       //转换状态
       formatUsed(row){
@@ -137,7 +137,7 @@ import { productList,productRemove} from '@/api/shopApi';
 
 <style lang="scss">
 .find-good{
-  padding:40px 40px 0 20px;
+  padding:20px 40px 0 20px;
   a{
     text-decoration:none;
   }

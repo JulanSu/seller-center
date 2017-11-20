@@ -10,7 +10,8 @@
             <el-input v-model="formInline.productTitle" placeholder="请输入商品名称"></el-input>
           </el-form-item>
           <el-form-item label="">
-            <el-input v-model="formInline.productId" placeholder="商品ID"></el-input>
+            <input type="number" class="el-input__inner" v-model="formInline.productId" placeholder="商品ID" />
+            <!-- <el-input v-model="formInline.productId" placeholder="商品ID"></el-input> -->
           </el-form-item>
           <el-form-item label="">
             <el-select v-model="formInline.storeCateId" placeholder="店铺分类" style="width: 160px;">

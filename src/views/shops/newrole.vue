@@ -24,6 +24,7 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority,roleCheckname} from '@/api/
   export default {
     data() {
       return {
+        csname:'',
         btnHtml:'保存权限',
         isAdd:1,
         listLoading:false,
@@ -73,6 +74,9 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority,roleCheckname} from '@/api/
     methods: {
       /*查找角色名是否重名*/
       findName(){
+        if(!(this.ruleForm.roleName)||(this.ruleForm.roleName==this.csname)){
+          return false;
+        }
         var para={
           storeId:config.storeId,
           roleName:this.ruleForm.roleName
@@ -91,13 +95,18 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority,roleCheckname} from '@/api/
         };
         this.listLoading = true;
         roleGet(para).then((res) => {
-          this.ruleForm= res.data.data;
-          if(!this.ruleForm.roleAuthority){
-            this.ruleForm.roleAuthority=[];   
-          }else{
-            this.ruleForm.roleAuthority=JSON.parse(this.ruleForm.roleAuthority);
+          if(res.data.code==0){
+            
+            this.ruleForm= res.data.data;
+            this.csname=this.ruleForm.roleName;
+            if(!this.ruleForm.roleAuthority){
+              this.ruleForm.roleAuthority=[];   
+            }else{
+              this.ruleForm.roleAuthority=JSON.parse(this.ruleForm.roleAuthority);
 
+            }
           }
+         
           this.listLoading = false;
         }).catch((res)=> {
           this.listLoading = false;

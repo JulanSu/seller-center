@@ -25,7 +25,7 @@
             <el-table-column label="已核销" align='center' >
                 <template slot-scope="scope">
                     <el-popover trigger="hover" placement="bottom" popper-class='pop-time'>
-                        <p v-for="item in scope.row.voucherRecordList"><i class="el-icon-time"></i>{{ item }}</p>
+                        <p v-for="item in scope.row.voucherRecordList"><i class="el-icon-time"></i>{{ switchTime(item) }}</p>
                         <div slot="reference">
                             <el-tag>{{ scope.row.voucherUseTimes }}</el-tag>
                         </div>
@@ -113,7 +113,7 @@
                 params.userMobile = self.form.userPhone;
                 params.userVoucherId = self.form.cashNumber;
                 params.voucherFromOrder = self.form.orderNumber;
-                params.voucherStatus = self.form.planCheck == '' ? -1 : self.form.planCheck;
+                params.voucherStatus = self.form.planCheck === '' ? -1 : self.form.planCheck;
                 params.createBeginTime = self.form.startTime ? self.timeFormat(self.form.startTime) : null;
                 params.createEndTime = self.form.endTime ? self.timeFormat(self.form.endTime) + " 23:59:59" : null;
                 params.pageNum = self.currentPage;

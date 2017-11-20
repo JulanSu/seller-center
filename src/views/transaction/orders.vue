@@ -61,10 +61,10 @@
                             {label: '待用户自提', statusId: 3.1},
                             {label: '待用户核销', statusId: 3.2},
                             {label: '交易成功', statusId: 4},
-                            {label: '待商家处理', statusId: 5},
-                            {label: '待平台审核', statusId: 6},
-                            {label: '售后完成', statusId: 7},
-                            {label: '订单关闭', statusId: 9},
+                            {label: '待商家处理', statusId: 6},
+                            {label: '待平台审核', statusId: 7},
+                            {label: '售后完成', statusId: 8},
+                            {label: '订单关闭', statusId: 5},
 
                         ]},
                         {id: 1, status:[                        //全款
@@ -72,12 +72,12 @@
                             {label: '待用户支付', statusId: 1},
                             {label: '待发货', statusId: 2},
                             {label: '待用户收货', statusId: 3},
-                            {label: '待用户核销', statusId: 3.1},  
+                            {label: '待用户自提', statusId: 3.1},  
                             {label: '交易成功', statusId: 4},
-                            {label: '待商家处理', statusId: 5},
-                            {label: '待平台审核', statusId: 6},
-                            {label: '售后完成', statusId: 7},
-                            {label: '订单关闭', statusId: 9},
+                            {label: '待商家处理', statusId: 6},
+                            {label: '待平台审核', statusId: 7},
+                            {label: '售后完成', statusId: 8},
+                            {label: '订单关闭', statusId: 5},
 
                         ]},
                         {id: 2, status:[                        //定金
@@ -86,10 +86,10 @@
                             {label: '待发货', statusId: 2},
                             {label: '待用户核销', statusId: 3},
                             {label: '交易成功', statusId: 4},
-                            {label: '待商家处理', statusId: 5},
-                            {label: '待平台审核', statusId: 6},
-                            {label: '售后完成', statusId: 7},
-                            {label: '订单关闭', statusId: 9},
+                            {label: '待商家处理', statusId: 6},
+                            {label: '待平台审核', statusId: 7},
+                            {label: '售后完成', statusId: 8},
+                            {label: '订单关闭', statusId: 5},
 
                         ]},
                         {id: 3, status:[                        //点券
@@ -97,10 +97,10 @@
                             {label: '待用户支付', statusId: 1},
                             {label: '待发货', statusId: 2},
                             {label: '交易成功', statusId: 34},
-                            {label: '待商家处理', statusId: 5},
-                            {label: '待平台审核', statusId: 6},
-                            {label: '售后完成', statusId: 7},
-                            {label: '订单关闭', statusId: 9},
+                            {label: '待商家处理', statusId: 6},
+                            {label: '待平台审核', statusId: 7},
+                            {label: '售后完成', statusId: 8},
+                            {label: '订单关闭', statusId: 5},
 
                         ]},
                         {id: 4, status:[
@@ -109,10 +109,7 @@
                             {label: '待发货', statusId: 2},
                             {label: '待用户收货', statusId: 3},
                             {label: '交易成功', statusId: 4},
-                            {label: '待商家处理', statusId: 5},
-                            {label: '待平台审核', statusId: 6},
-                            {label: '售后完成', statusId: 7},
-                            {label: '订单关闭', statusId: 9}
+                            {label: '订单关闭', statusId: 5},
                         ]}
                     ],
                     orderNumber: '',
@@ -165,13 +162,14 @@
                 switch(a) {
                     case 1:st = '待用户支付'; break;
                     case 2:st = '待发货';break;
-                    case 3:st = '待收货';break;
+                    case 3:st = '待用户收货';break;
                     case 4:st = '交易成功';break;
-                    case 5:st = '待商家处理';break;
-                    case 6:st = '待平台审核';break;
-                    case 7:st = '售后完成';break;
-                    case 8:st = '取消售后';break;
-                    case 9:st = '订单关闭';break;
+                    case 5:st = '订单关闭';break;
+                    case 6:st = '待商家处理';break;
+                    case 7:st = '待平台审核';break;
+                    case 8:st = '售后完成';break;
+                    case 9:st = '取消售后';break;
+                    
                 }
                 return st;
             },
@@ -182,11 +180,6 @@
                 if(!flag && self.form.userPhone != '' && a == 1){
                     self.form.userPhone = '';
                     self.warn('请输入正确的手机号')
-                    return false;
-                }
-                if(a != 1 && self.form.orderNumber != ''){
-                    self.form.orderNumber = '';
-                    self.warn('请输入正确的订单号')
                     return false;
                 }
             },
@@ -242,13 +235,24 @@
                     if(moc.data.list){
                        for(let i=0; i<moc.data.list.length; i++) {
                             let that = moc.data.list[i];
-                            that.pName = that.productNames.join('')
+                            that.pName = self.textSubstr(that.productNames.join(''), that.productNames.length);
                             that.orderStoreStatus = this.switchStatus(that.orderStoreStatus)
                         }
                     } 
                     this.total = Number(moc.data.total);
                     this.tableData = moc.data.list
                 })
+            },
+             /*字数控制*/
+            textSubstr(a, len){
+                if(a.length > 20){
+                    a = a.substr(0,20) + '...'
+                }
+                if(len > 1){
+                    return a = a + `等${len}件`;
+                }else{
+                    return a;
+                }
             },
             /*页面条数*/
             handleSizeChange(val) {

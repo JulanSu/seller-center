@@ -28,8 +28,8 @@
       <el-pagination
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
-      :page-sizes="[25, 50, 100]"
-      :current-page="page"
+      :page-sizes="[20, 50, 100]"
+      :current-page="pageNum"
       :page-size="pageSize"
       layout="sizes,prev, pager, next, jumper,total"
       :total="total" style="float:right;">
@@ -47,7 +47,7 @@ import {operatorList,operatorChangeStatus,operatorGetNum} from '@/api/shopApi';
         datas: [],
         total: 0,
         pageSize: 20,//每页显示多少条
-        page:1,//当前页数
+        pageNum:1,//当前页数
         listLoading: false,
         addLoading: false,
         usedNum:'',
@@ -99,7 +99,7 @@ import {operatorList,operatorChangeStatus,operatorGetNum} from '@/api/shopApi';
         let para = {
           storeId:config.storeId,
           pageSize: this.pageSize,
-          pageNum: this.page
+          pageNum: this.pageNum
         };
         this.listLoading = true;
 
@@ -118,6 +118,7 @@ import {operatorList,operatorChangeStatus,operatorGetNum} from '@/api/shopApi';
       },
       //当选择每页多少条时触发
       handleSizeChange(val){
+        this.pageNum=1;
         this.pageSize = val;
         this.getAccountList();
       },
@@ -165,7 +166,7 @@ import {operatorList,operatorChangeStatus,operatorGetNum} from '@/api/shopApi';
       },
       //分页
       handleCurrentChange:function(val){
-        this.page=val;
+        this.pageNum=val;
         this.getAccountList();
       }
     },

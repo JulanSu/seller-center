@@ -157,15 +157,8 @@
           },
           /**
            * getProductList 获取商品列表
-           * @param  { String } storeId         店铺ID
-           * @param  { Number } pageNum         当前页面
-           * @param  { Number } pageSize        当前页面显示条目
-           * @param  { Number } productId       商品ID
-           * @param  { Number } productName   商品名称 
-           * @param  { String } storeCateId     店铺分类ID
-           * @param  { String } searchStartTime 搜索开始时间
-           * @param  { String } searchEndTime   搜索结束时间
-           * @return {[type]}                 [description]
+           * @param  {[type]} params [description]
+           * @return {[type]}        [description]
            */
           getProductList (params){
             var self = this

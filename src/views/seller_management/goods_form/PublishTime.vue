@@ -4,7 +4,7 @@
     <el-radio label="定时上架" v-model="publishTimeType"></el-radio>
     <div style="margin-top:5px;" v-if="publishTimeType === '定时上架'">
       <el-date-picker
-        v-model="curTime"
+        v-model="value1"
         type="datetime"
         placeholder="选择日期时间" style="width: 280px;" @change="timeHandle">
       </el-date-picker>
@@ -17,7 +17,7 @@
   export default {
     data() {
       return {
-        curTime: '',
+        value1: '',
         publishTimeType: '立即上架'
       }
     },
@@ -30,24 +30,21 @@
     watch: {
       publishTimeType: function (newVal, oldVal){
         if(newVal === '立即上架'){
-          this.$emit('input', '1')
-          this.curTime = ''
+          this.$emit('input', 'productPublishedOnTime')
         }else if(newVal === '定时上架'){
-          this.$emit('input', '')
-          this.curTime = ''          
+          this.$emit('input', this.value1)        
         }
       }
     },
     
     created (){
-      if(this.value && this.value != 1) {
-        this.curTime = this.value
+      if(this.value && this.value != 'productPublishedOnTime') {
+        this.value1 = this.value
         this.publishTimeType = '定时上架'
       }
     },
     methods: {
       timeHandle(value){
-
         this.$emit('input', value)
       }
     }

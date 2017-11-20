@@ -51,7 +51,6 @@
         return arr
       },
       changeHandle(val) {
-        console.log(val)
       }
     }
   }

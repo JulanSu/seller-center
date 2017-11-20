@@ -17,14 +17,14 @@
 				<v-distpicker :province="select.province" :city="select.city" :area="select.area" @province="onProvince" @city="onCity" @selected="onSelected"></v-distpicker>
 			</el-form-item>
 			<el-form-item label="" label-width="120px" prop="address">
-				<el-input v-model="ruleForm.address" placeholder="输入详细地址" class="wid280" @change="searchDetail" @focus="searchFocus"></el-input>
+				<el-input v-model="ruleForm.address" id="ser" placeholder="输入详细地址" class="wid280"></el-input>
 				<el-button type="primary" class="mapbtn" @click="searchbtn">搜索地图</el-button>
 			</el-form-item>
 			<el-form-item label="经纬坐标" label-width="120px">
-				<p>{{ ruleForm.latitude+","+ruleForm.longitude}}</p>
+				<p>{{ ruleForm.longitude+","+ruleForm.latitude}}</p>
 			</el-form-item>
 			<el-form-item label="" label-width="120px">
-				<map-view :height="height" :longitude="ruleForm.longitude" :latitude="ruleForm.latitude" @listenToChildEvent="showsite"  @listenToSel="showKey" ref="MapView">
+				<map-view :longitude="ruleForm.longitude" :latitude="ruleForm.latitude" @listenToChildEvent="showsite" @listenTolongitude="getResult" ref="MapView">
 				</map-view>
 			</el-form-item>
 			<el-form-item label="" label-width="120px">
@@ -33,22 +33,6 @@
 					<span v-else>保存</span>
 				</el-button>
 			</el-form-item>
-			<el-dialog
-			    title=""
-			    top="30%"
-				:visible.sync="dialogVisible1"
-				size="tiny">
-				<div class="suc">
-					<span class="el-icon-circle-check"></span>
-					<div>
-						<h2>您已提交成功</h2>
-					</div>
-				</div>
-			    
-			    <span slot="footer" class="dialog-footer">
-				    <el-button type="primary" @click="getBack">确定</el-button>
-			    </span>
-			</el-dialog>
 		</el-form>
 	</section>
 	
@@ -57,7 +41,7 @@
 <script>
 
 import VDistpicker from 'v-distpicker';/*城市三级联动*/
-import MapView from '@/components/Map';/*地图组件*/
+import MapView from '@/components/Map1';/*地图组件*/
 import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 
   export default {
@@ -109,8 +93,8 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 	        contactMobile:'',
 	        workTime: '',
 	        address: '',
-	        longitude:120.186535,
-	　　　　latitude:30.310288,
+	        longitude:'',
+	　　　　latitude:'',
 			isHead:''
         },
         rules: {
@@ -143,38 +127,27 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 			this.isAdd=2;//1是添加,2是编辑
 			this.dataFetch(id);
 			
-		}else{
-			//调用地图
-	        this.$refs.MapView.creatmap(this.ruleForm.longitude,this.ruleForm.latitude);
 		}
-		var that=this;
-	    var o= document.getElementById("add-store");
-	    o.onclick=function(){
-		    that.$refs.MapView.clearKey();
-	    };
+		var o=document.getElementsByClassName("content-container")[0];
+ 		o.addEventListener('scroll', this.handleScroll);
     },
     methods: {
-    	//搜索关键字后点击筛选下拉结果，点击的元素的值传给父元素的input输入框
-		showKey(key){
-			this.ruleForm.address=key;
-		},
-		searchFocus(){
-			var addr=this.selProvince+this.selCity+this.selArea+this.ruleForm.address;
-			if(!addr){
-				this.$message({
-		          message: '请先选择省市区',
-		          type: 'warning'
-		        });
-			}else{
-				this.$refs.MapView.againmap(this.ruleForm.longitude,this.ruleForm.latitude,addr,this.ruleForm.address);
+    	handleScroll () {
+			var arr=document.getElementsByClassName("tangram-suggestion-main");
 
+			for(var i=0;i<arr.length;i++){
+				arr[i].style.display="none";
 			}
 		},
-		//地图输入框输入时匹配地址
-		searchDetail(){
-			var addr=this.selProvince+this.selCity+this.selArea+this.ruleForm.address;
-			this.$refs.MapView.againmap(this.ruleForm.longitude,this.ruleForm.latitude,addr,this.ruleForm.address);
 
+		/*点击搜索地图调用map子组件里面的地图事件*/
+		searchbtn(){
+			var addr=this.ruleForm.address;
+			this.$refs.MapView.searchMap(addr);
+		},
+		//子组件里面的input内容传递给父组件的搜索框
+		getResult:function(h){
+			this.ruleForm.address=h;
 		},
     	/*城市三级联动，选择城市后将数据存储起来，点击搜索地图按钮时，加在自己输入的地址之前*/
 		onProvince(data) {
@@ -204,11 +177,6 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 		    	this.selArea='';
 		    }
 	    },
-	    /*点击搜索地图调用map子组件里面的地图事件*/
-		searchbtn(){
-			var addr=this.selProvince+this.selCity+this.selArea+this.ruleForm.address
-			this.$refs.MapView.againmap(this.ruleForm.longitude,this.ruleForm.latitude,addr);
-		},
 		/*地图组件更改后传递数据到父组件*/
 		showsite(lng,lat){
 			this.ruleForm.longitude=lng;
@@ -228,6 +196,13 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 	        		this.ruleForm.latitude/=1000000;
 	        		//调用地图
 	        		this.$refs.MapView.creatmap(this.ruleForm.longitude,this.ruleForm.latitude);
+	        		var timer1=window.setTimeout(function(){
+	        			var arr=document.getElementsByClassName("tangram-suggestion-main");
+						for(var i=0;i<arr.length;i++){
+							arr[i].style.display="none";
+						}
+	        			window.clearTimeout(timer1);
+	        		},500);
 
 	        	}else{
 	        		this.$message.error(res.data.message);
@@ -245,6 +220,7 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
     			this.select.city=this.selCity=arrAddress[1];
     			this.select.area=this.selArea=arrAddress[2];
     			this.ruleForm.address=arrAddress[3];
+    			console.log(this.ruleForm.address)
     		}else if(addressLen==3){
     			this.select.province=this.selProvince=arrAddress[0];
     			this.select.city=this.selCity=arrAddress[1];
@@ -255,6 +231,7 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
     		}else{
     			this.ruleForm.address=arrAddress[0];
     		}
+    		this.$refs.MapView.againAddr(this.ruleForm.address);
 	    },
 		/*返回商户中心按钮*/
 	    getBack(){
@@ -263,12 +240,21 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 	    	
 	    	//location.reload();
 	    },
+	    suc(){
+	    	this.$message({
+	            message: '提交成功',
+	            type: 'success',
+	            onClose:function(){
+	              that.$router.push({ path: '/store/shop-management' });
+	            }
+	          });
+	    },
 		add(para){//添加门店提交接口
 			saveClassify(para).then((res) => {
 				this.listLoading = false;
 
 	        	if(res.data.code==0){
-	        		this.dialogVisible1 = true;
+	        		this.suc();
 	        	}else{
 	        		this.$message.error(res.data.message);
 	        	}
@@ -281,7 +267,7 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 			updateClassify(para).then((res) => {
 				this.listLoading = false;
 	        	if(res.data.code==0){
-	        		this.dialogVisible1 = true;
+	        		this.suc();
 	        	}else{
 	        		this.$message.error(res.data.message);
 	        	}

@@ -28,8 +28,7 @@ import { roleList,roleChangeStatus } from '@/api/shopApi';
   export default {
     data() {
       return {
-
-        pageSize:10,
+        pageSize:1000000,
         pageNum:1,
         users: [],
         listLoading: false

@@ -73,7 +73,7 @@
         </div>
         <div class="service">
             <el-row class='table-detail'>
-                <el-col :span="5">售后单编号：{{detail.orderProductAfterId}}</el-col>
+                <el-col :span="5">售后单编号：{{detail.orderAfterSerialNumber}}</el-col>
                 <el-col :span="3"></el-col>
                 <el-col :span="3"></el-col>
                 <el-col :span="4">售后单</el-col>
@@ -152,9 +152,9 @@
                 switch(a) {
                     case 1:st = '待用户支付'; break;
                     case 2:st = '待发货';break;
-                    case 3:st = '待收货';break;
+                    case 3:st = '待用户收货';break;
                     case 4:st = '交易成功';break;
-                    case 5:st = '待处理';break;
+                    case 5:st = '待商家处理';break;
                     case 6:st = '待平台审核';break;
                     case 7:st = '售后完成';break;
                     case 8:st = '取消售后';break;
@@ -167,9 +167,9 @@
                 let st = ''
                 switch(a) {
                     case 1:st = '待商家处理'; break;
-                    case 2:st = '待平台处理';break;
-                    case 3:st = '待收货';break;
-                    case 4:st = '交易成功';break;
+                    case 2:st = '待平台审核';break;
+                    case 3:st = '售后完成';break;
+                    case 4:st = '售后取消';break;
                 }
                 return st;
             },
@@ -193,12 +193,12 @@
                     }
                 postAfter(qs.stringify(params)).then(res => {
                     if(res.data.message == '成功'){
+                        self.detail.orderProductAfterStatus = 2;
+                        self.detail.serviceIsOk = true;
                         this.$message({
                             message: '售后提交成功，请等待审核',
                             type: 'success'
                         });
-                        self.detail.orderProductAfterStatus = 2;
-                        self.detail.serviceIsOk = true;
                     }else{
                         self.warn(res.data.message)
                     }
