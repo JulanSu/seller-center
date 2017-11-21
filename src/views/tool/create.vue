@@ -35,7 +35,7 @@
             </el-form-item>
                 
             <el-form-item label="现金券面值与数量">
-                <el-radio-group v-model="cashType.type" style="padding-left:10px;" :disabled='disabled'>
+                <el-radio-group v-model="cashType.type" style="padding-left:10px;" :disabled='disabled' @change='selectType'>
                     <el-radio label="会员等级券"></el-radio>
                     <el-radio label="固定金额券"></el-radio>
                     <el-radio label="满减券"></el-radio>
@@ -48,7 +48,7 @@
                         <span style="margin:0 8px">元</span>
                         <el-input placeholder='发放数量' style='width:120px'  v-model='item.count'  @change='isNumber($event,"init",3)' :maxlength="10" @input='btnChanges'></el-input>
                         <span style="margin:0 8px">张</span>
-                    </el-row>  
+                    </el-row>
                         
                 </section>
                 <section class="cash" v-if="cashType.type=='固定金额券'">
@@ -101,7 +101,7 @@
                     <span style="margin:0 8px">元</span>
                     <strong v-if='tipArray[4]'>{{tipText[4]}}</strong>
                 </el-row>
-                
+
             </el-form-item>
 
             <el-form-item label="适用商品范围">
@@ -470,6 +470,10 @@
                         break;
                     }
                 }
+            },
+            /*修改现金券类类型*/
+            selectType(){
+                this.$set(this.tipArray,3,false);
             },
             /*消息警告*/
             warn(str){

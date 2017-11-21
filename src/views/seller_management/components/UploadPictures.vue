@@ -5,8 +5,14 @@
 
       <div class="picbox">
         <ul class="el-upload-list el-upload-list--picture-card">
+          <draggable 
+          @update="datadragEnd"
+          class="list-group" 
+          v-model="imageUrl" 
+          :options="{handle:'.item-draggable', animation: 200}">
+           
           <template v-if="imageUrl.length" v-for="(item, index) in imageUrl">
-            <li :tabindex="index" class="el-upload-list__item is-success pic-item">
+            <li :tabindex="index" class="el-upload-list__item is-success pic-item item-draggable">
               <img :src="item" alt="" class="el-upload-list__item-thumbnail">
               <a class="el-upload-list__item-name"><i class="el-icon-document"></i>
               </a>
@@ -16,6 +22,7 @@
                 <i class="el-icon-close"></i><i class="el-icon-close-tip" style="display:none">按delete键可删除</i><!----><span class="el-upload-list__item-actions"><span class="el-upload-list__item-preview"><i class="el-icon-zoom-in"></i></span><span class="el-upload-list__item-delete" @click="delPicHandel(imageUrl, index)"><i class="el-icon-delete"></i></span></span>
               </li>
             </template>
+            </draggable>
           </ul>
           <el-upload
             class="upload-pictrues"
@@ -40,8 +47,12 @@
 <!-- 17682309067 -->
 
 <script>
+import draggable from 'vuedraggable'
 export default {
   name: 'UploadPictures',
+  components:{
+    draggable
+  },
   props: {
     value: {
       type: Array,
@@ -79,6 +90,9 @@ export default {
   //   console.log('图片组件',this.value, this.imageUrl)
   // },
   methods: {
+    datadragEnd(){
+      this.$emit('input', this.imageUrl);
+    },
     delPicHandel (row, index) {
       row.splice(index, 1)
     },

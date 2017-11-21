@@ -1,8 +1,7 @@
 
-import 'summernote'
+import '@/components/summernote/summernote.js'
+import '@/components/summernote/lang/summernote-zh-CN.js'
 import $ from 'jquery'
-import 'summernote/dist/lang/summernote-zh-CN.min.js'
-
 export default {
 
   install: function (Vue, options) {
@@ -75,7 +74,7 @@ export default {
         },
         focus: {
           type: Boolean,
-          default: true
+          default: false
         }
       },
       methods: {

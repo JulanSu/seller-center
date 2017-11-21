@@ -125,7 +125,6 @@ skuData[i].values[j].valueId = skuData[i].options[j].productCatePropertyValuesId
           row.values[0].value = moment(row.values[0].value).format("YYYY-MM-DD")
         }
         var sku = this.getUserSelectedSku()
-        console.log(sku)
         this.$store.dispatch('updateUserSelectedSku', sku)
         //this.$emit('input', sku)
       },

@@ -23,7 +23,7 @@
             <el-table-column prop="orderStoreStatus" label="售后进度" align='center'></el-table-column>
             <el-table-column label="操作" align='center'>
                 <template slot-scope="scope">
-                    <el-button @click="handleClick(scope.row)" type="text" size="small" style="color: #45cdb6" v-if="scope.row.orderStoreStatus == '待处理'">去处理</el-button>
+                    <el-button @click="handleClick(scope.row)" type="text" size="small" style="color: #45cdb6" v-if="scope.row.orderStoreStatus == '待商家处理'">去处理</el-button>
                     <el-button @click="handleClick(scope.row)" type="text" size="small">查看详情</el-button>
                   </template>
             </el-table-column>

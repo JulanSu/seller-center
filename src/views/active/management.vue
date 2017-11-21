@@ -10,7 +10,7 @@
                     <el-select v-model="toolCheck" placeholder="营销工具" style='width:120px;margin-left:20px;'>
                         <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value"></el-option>
                     </el-select>
-                    <el-input v-model="storeKeyword" placeholder='输入活动名称/ID查询' class='search-input'></el-input>
+                    <el-input v-model="storeKeyword" placeholder='输入活动名称/ID查询' class='search-input' :maxlength='18'></el-input>
                     <el-button type="primary" class='search-btn' @click='searchStore'>查询</el-button>
                 </el-row>
 
@@ -57,7 +57,7 @@
                     <el-select v-model="auditStatus" placeholder="审核状态" style='width:120px;margin-left:20px;'>
                         <el-option v-for="item in options5" :key="item.value" :label="item.label" :value="item.value"></el-option>
                     </el-select>
-                    <el-input v-model="platKeyword" placeholder='输入活动名称/ID查询' class='search-input'></el-input>
+                    <el-input v-model="platKeyword" placeholder='输入活动名称/ID查询' class='search-input' :maxlength='18'></el-input>
                     <el-button type="primary" class='search-btn' @click='searchPlat'>查询</el-button>
                 </el-row>
                 <el-table :data="platTable" class='table-con' align='center' :row-style="{height:'100px'}" :default-sort = "{prop: 'signUpBeginTime',order: 'descending'}">

@@ -10,10 +10,10 @@
             </category-menu>
           </el-col>
           <el-col :span="8">
-            <category-menu title="二级类目" v-if="secoundCategoryData.length" :categoryData="secoundCategoryData" @categoryClick="secondHandle"></category-menu>
+            <category-menu title="二级类目" ref="secoundCategory" v-if="secoundCategoryData.length" :categoryData="secoundCategoryData" @categoryClick="secondHandle"></category-menu>
           </el-col>
           <el-col :span="8">
-            <category-menu title="三级类目" v-if="thirstCategoryData.length" :categoryData="thirstCategoryData" @categoryClick="thirdHandle"></category-menu>
+            <category-menu title="三级类目" ref="thirstCategory" v-if="thirstCategoryData.length" :categoryData="thirstCategoryData" @categoryClick="thirdHandle"></category-menu>
           </el-col>
         </el-row>
         <div class="category-nav-breadcrumb">
@@ -122,16 +122,21 @@
         firstHandle (row, index){
           this.curCateGroup = []
           this.getcurCateGroup(0, row)
-          this.secoundCategoryData = []
+
           this.thirstCategoryData = []
           this.secoundCategoryData = row.child
           this.cateSelected = false
+          if(this.$refs.secoundCategory) {
+            this.$refs.secoundCategory.updateActiveIndex()
+          }
         },
         secondHandle (row, index) {
-          this.thirstCategoryData = []
           this.thirstCategoryData = row.child
           this.getcurCateGroup(1, row)
           this.cateSelected = false
+          if(this.$refs.thirstCategory) {
+            this.$refs.thirstCategory.updateActiveIndex()
+          }
         },
         thirdHandle (row, index){
           this.getcurCateGroup(2, row)
@@ -139,7 +144,6 @@
         },
         getcurCateGroup (index, row){
           this.curCateRow = row
-
           this.$set(this.curCateGroup, index, row)
           if(index === 1 && this.curCateGroup.length === 3) {
             this.curCateGroup.splice(index+1,1)

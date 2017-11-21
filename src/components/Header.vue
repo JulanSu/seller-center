@@ -131,6 +131,11 @@ export default {
       background: #FFF;
       color:#333;
       flex-direction: row;
+      position: fixed;
+      margin-top: -60px;
+      z-index: 99999;
+      left: 0;
+      width: 100%;
       .userinfo {
         text-align: right;
         padding-right: 50px;

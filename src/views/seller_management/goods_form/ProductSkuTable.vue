@@ -52,13 +52,15 @@
       return {
         tableTitle: [],
         tableList: [],
-        skuData: null
+        skuData: null,
+        editorSkuListCache: null
       }
     },
     props: {
       value:[Array],
       productSkuProperty: [Array],
       productSkuTable: [Array]
+      
     },
     computed: {
       userSelectedTheSku () {
@@ -76,10 +78,11 @@
           var genData = this.gen(newVal)
           var result  = this.getProductSkuProperty(genData)
           var resultById = this.formartByIdSku(result)
+          var resultBySerialId = this.getProductSkuSerialId(resultById)
           if(!this.skuData) {
-            this.skuData = resultById
+            this.skuData = resultBySerialId
           }else {
-            this.selectedSkuChange(resultById)
+            this.selectedSkuChange(resultBySerialId)
           }
           this.inputChangeHandle()
         }else {
@@ -89,14 +92,38 @@
       }
     },
     methods: {
+      /**
+       * getProductSkuSerialId 获取缓存数据中的productSkuSerialId,并赋值给对应的组合
+       * @param  {[type]} data [description]
+       * @return {[type]}      [description]
+       */
+    getProductSkuSerialId(data){
+      if(this.editorSkuListCache) {
+        for(var item in data){
+          if(this.editorSkuListCache[item]) {
+            data[item].productSkuSerialId = this.editorSkuListCache[item].productSkuSerialId
+          }
+        }
+      }
+      return data
+    },
+    /**
+     * getTableList 生成maps，通过valueId创建唯一的Key
+     * @return {[type]} [description]
+     */
     getTableList(){
       var editorData = this.value
       if(editorData && editorData.length) {
         var resultById = this.formartByIdSku(editorData)
         this.skuData = resultById
+        this.editorSkuListCache = resultById
       }
-      
     },
+    /**
+     * selectedSkuChange 获取用户已组合出来的项，并把其值赋值给最新的项
+     * @param  {[type]} options [description]
+     * @return {[type]}         [description]
+     */
     selectedSkuChange(options){
       var skuData = this.skuData
       for(var key in skuData) {
@@ -106,8 +133,11 @@
       }
       this.skuData = options
     },
+    /**
+     * inputChangeHandle 向父组件传递数据
+     * @return {[type]} [description]
+     */
       inputChangeHandle(){
-
         var data = this.getFormartSkuData()
         this.$emit('input', data)
         this.$emit('updateSkuQuantity', data)
@@ -121,6 +151,11 @@
         }
         return arr
       },
+      /**
+       * formartByIdSku 根据valueId生成maps
+       * @param  {[type]} list [description]
+       * @return {[type]}      [description]
+       */
       formartByIdSku(list){
         var obj = {}
         for(var i=0;i<list.length;i++){

@@ -2,6 +2,7 @@
   <div class="goods-form" style="height: 1200px">
     <template v-if="initForm.finished">
       <el-form :model="goodsForm" :rules="goodsFormRules" ref="goodsForm" label-width="120px">
+        
         <el-form-item label="当前类目" prop="cate">
           {{initForm.productCateName}}
         </el-form-item>
@@ -180,7 +181,7 @@
         </el-form-item>
       </el-form>
     </template>
-    <loading-mask v-else></loading-mask>
+
   </div>
 </template>
 <script>
@@ -283,7 +284,7 @@
         },
         //初始化表单时数据结构
         initForm: {
-          uploadTishi1:"图片尺寸：190*48 ,最多9张，格式要求jpg,jpeg,png,不超过10MB",
+          uploadTishi1:"图片尺寸：190*48 ,最多9张，格式要求jpg,jpeg,png,不超过10MB，图片可拖动排序。",
           productCateName: '',
           publishTimeType: '',
           citySiteList:[], 
@@ -319,10 +320,9 @@
               var len = getStrLength(value)
               var productTitleRules = this.initForm.productTitleRules;
                 if(!value){
-                    callback(new Error('请填写商品名称'))
+                  callback(new Error('请填写商品名称'))
                 }else if(len>20){
-
-                    callback(new Error('商品名称字数最多不超过20'))
+                  callback(new Error('商品名称字数最多不超过20'))
                 }else {
                   callback()
                 }
@@ -636,6 +636,10 @@
           self.catePropertyValidStatus = true
         }
         console.log('表单提交', self.goodsForm, self.applicableShopStatus, self.catePropertyValidStatus)
+        // if(!statusVal) {
+        //   self.submitProductFormData(statusVal)
+        //   return 
+        // }
         self.$refs[formName].validate((valid) => {
           if(!self.applicableShopStatus){
             return false;

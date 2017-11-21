@@ -48,6 +48,7 @@ const routers = new VueRouter({
         path: '/',
         component: Full,
         name: '',
+        redirect: '/home/index',
         hidden: true
     },    
     {
