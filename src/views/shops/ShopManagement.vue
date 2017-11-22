@@ -98,44 +98,30 @@ import {getClassifyList, updateClassify} from '@/api/shopApi';
         this.pageSize = val;
         this.getUsers();
       },
-      //禁用启用
       handleDel: function (index, row) {
-          const h = this.$createElement;
-          var isHead=row.isHead==0?1:0;
-          this.$msgbox({
-            title: "设为总店",
-            message: h('p', null, [
-              h('span', null, '确认要设为总店吗？ ')
-            ]),
-            showCancelButton: true,
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            beforeClose: (action, instance, done) => {
-              console.log(action)
-              if (action === 'confirm') {
-                //编辑门店提交接口
-                var para = new URLSearchParams();
-                para.append('storeBranchId',row.storeBranchId);
-                para.append('isHead',isHead);
-                 this.listLoading = true;
-                updateClassify(para).then((res) => {
-                  this.listLoading = false;
-                  if(res.data.code==0){
-                    this.getUsers(); 
-                  }else{
-                    this.$message.error(res.data.message);
-                  }
-                  done();
-                }).catch((res)=> {
-                  this.listLoading = false;
-                  done();
-                  this.$message.error('接口建立连接失败');
-                });
-              }else {
-                done();
-              }
+        var isHead=row.isHead==0?1:0;
+        this.$confirm('确认要设为总店吗？', "设为总店", {
+          type: 'warning'
+        }).then(() => {
+         //编辑门店提交接口
+          var para = new URLSearchParams();
+          para.append('storeBranchId',row.storeBranchId);
+          para.append('isHead',isHead);
+          this.listLoading = true;
+
+          updateClassify(para).then((res) => {
+            this.listLoading = false;
+            if(res.data.code==0){
+              this.getUsers(); 
+            }else{
+              this.$message.error(res.data.message);
             }
-          })
+          }).catch(()=> {
+            this.listLoading = false;
+            this.$message.error('接口建立连接失败');
+          });
+        }).catch(() => {
+        });
       }
     },
     mounted() {
@@ -166,6 +152,27 @@ import {getClassifyList, updateClassify} from '@/api/shopApi';
       color:#45cdb6;
       padding-left:20px;
       cursor:pointer;
+    }
+  }
+  .el-table{
+    border:0;
+    table.el-table__header{
+      thead{
+        tr{
+          height:44px;
+          background:#f5f7fa;
+          box-shadow:0 1px 0 0 #eeeeee;
+        }
+      }
+    }
+    table.el-table__body{
+      tbody{
+        tr{
+          height:90px;
+          background:#ffffff;
+          box-shadow:0 1px 0 0 #eeeeee;
+        }
+      }
     }
   }
 }

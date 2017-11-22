@@ -154,7 +154,7 @@
         beforeCreate(){
         },
         created(){
-            let orderId = this.$route.query.orderId;
+            let orderId = this.$route.query.orderId ? this.$route.query.orderId : this.$route.query.id;
             orderDetail({orderStoreId: orderId}).then(res => {
                 this.detail = res.data.data;
                 this.allPay = this.detail.orderType == 1 ? true : false; 

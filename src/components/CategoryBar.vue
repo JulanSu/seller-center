@@ -22,7 +22,7 @@ export default {
 
 <style lang="scss">
   .category-bar {
-    padding: 20px 0;
+    padding: 0 0 20px 0;
     .title {
       font-family: PingFangSC-Regular;
       font-size: 16px;

@@ -34,7 +34,7 @@
         <section v-if='showAct'class='atd-con'>
             <div class="atd-title">参与活动</div>
              <section class="create-act" >
-                <createAct :bTime="detail.signUpBeginTime" :eTime="detail.signUpEndTime"></createAct>
+                <createAct :bTime="detail.signUpBeginTime" :eTime="detail.signUpEndTime" :actbTime="detail.activityBeginTime" :acteTime="detail.activityEndTime"></createAct>
             </section>
         </section>
     </section>

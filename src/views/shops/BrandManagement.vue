@@ -17,7 +17,8 @@
 						<span v-else-if="myBrand.isVerified==0" style="color:#41cac0;">(审核中)</span>
 						
 						<span v-else-if="myBrand.isUsed==0" style="color:#ff0201;">(已禁用)</span>
-						<span v-else-if="pastDue(myBrand)" style="color:#ff0201;">(已过期)</span>
+						<span v-else-if="myBrand.isVerified==4" style="color:#ff0201;">(已过期)</span>
+						<!-- <span v-else-if="pastDue(myBrand)" style="color:#ff0201;">(已过期)</span> -->
 						<span v-else="myBrand.isVerified==1"  style="color:#41cac0;">(审核通过)</span>
 						
 					</h3>
@@ -78,7 +79,7 @@ import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 				}else{
 					var parm={storeBrandId:row.storeBrandId,compile:1};
 
-					if(this.pastDue(row)||(row.isVerified==2)||(row.isVerified==0)){
+					if((row.isVerified==4)||(row.isVerified==2)||(row.isVerified==0)){
 						parm.noClick=false;
 					}else{
 						if(row.isUsed==0){

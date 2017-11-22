@@ -1,7 +1,7 @@
 <template>
   <div class="logistics-block">
     <loading-mask v-if="!isRenderFinished"></loading-mask>
-    <el-row class="block">
+    <el-row>
       <el-col :span="24">
         <el-form :model="logisticsForm" :rules="logisticsRules" ref="logisticsForm" label-width="120px" class="logistics-form">
           <el-form-item label="物流模板" prop="storeShippingTemplateId">

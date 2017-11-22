@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Full from '@/components/Full.vue'
+import FullNoLeft from '@/components/FullNoLeft.vue'
+
 
 import MerchantEnter from '@/views/shops//MerchantEnter.vue'
 import MerchantEnter1 from '@/views/shops//MerchantEnter1.vue'
@@ -15,6 +17,9 @@ import ProductSku from '@/views/seller_management/ProductSku.vue'
 //首页路由
 import home from './home.js'
 
+/*404*/
+import NotFound from './404.js'
+
 //店铺管理路由
 import shopsManagementRoutes from './shopsManagementRoutes.js'
 
@@ -23,6 +28,7 @@ import transaction from './transactionRoutes.js'
 
 /*营销路由管理*/
 import marketingCenter from './marketingCenterRoutes.js'
+
 
 
 Vue.use(VueRouter)
@@ -48,13 +54,13 @@ const routers = new VueRouter({
         path: '/',
         component: Full,
         name: '',
+        hidden: true,
         redirect: '/home/index',
-        hidden: true
     },    
     {
         path: '/home',
         component: Full,
-        name: '商户中心',
+        name: '',
         hidden:true,
         redirect: '/home/index',
         children: home
@@ -107,11 +113,13 @@ const routers = new VueRouter({
         hidden: true
     },
     {
-        path: '/merchant-enter1',
-        component: MerchantEnter1,
+        path: '*',
+        component: FullNoLeft,
         name: '',
+        children:NotFound,
         hidden: true
     }
+
     // {   path: '/marketing-center',
     //     component: Full,
     //     name: '营销中心',

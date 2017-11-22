@@ -153,6 +153,9 @@ export default {
 	.bapass-btn{
 		cursor:pointer;
 		background:#f5f7fa;
+		height:80px;
+		line-height:80px;
+
 		li:hover{
 			background:#fff;
 			span{
@@ -160,6 +163,8 @@ export default {
 			}
 		}
 		li{
+			height:78px;
+
 			i{
 				font-size: 24px;
 				color:#41cac0;

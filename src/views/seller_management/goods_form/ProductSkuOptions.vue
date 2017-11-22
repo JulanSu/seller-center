@@ -94,11 +94,19 @@
           return []
         }
       },
+      editorStatus: [Boolean],
       value: [Array]
     },
     created (){
-      var prodcutSkuOptions = this.skuDataAddParam()
-      this.prodcutSkuOptions = prodcutSkuOptions
+      var self = this
+      this.prodcutSkuOptions = this.skuDataAddParam()
+      //判断是否编辑页面
+      
+      if(this.editorStatus){
+        setTimeout(function(){
+          self.updateUserSelectSku()
+        },100)
+      }
     },
     methods: {
       skuDataAddParam(){
@@ -106,7 +114,7 @@
         for(var i=0;i<skuData.length;i++) {
           if(skuData[i].catePropertySelection == 1) {
             for(var j=0;j<skuData[i].options.length;j++) {
-skuData[i].values[j].valueId = skuData[i].options[j].productCatePropertyValuesId
+              skuData[i].values[j].valueId = skuData[i].options[j].productCatePropertyValuesId
             }
           }else {
             skuData[i].values[0].valueId = skuData[i].productCatePropertyId
@@ -124,9 +132,17 @@ skuData[i].values[j].valueId = skuData[i].options[j].productCatePropertyValuesId
         if(row.catePropertySelection == 2 && row.catePropertyInputLimit == 2) {
           row.values[0].value = moment(row.values[0].value).format("YYYY-MM-DD")
         }
-        var sku = this.getUserSelectedSku()
-        this.$store.dispatch('updateUserSelectedSku', sku)
+        this.updateUserSelectSku()
         //this.$emit('input', sku)
+      },
+      /**
+       * updateUserSelectSku 更新用户选择的商品规格
+       * @return {[type]} [description]
+       */
+      updateUserSelectSku(){
+        var sku = this.getUserSelectedSku()
+
+        this.$store.dispatch('updateUserSelectedSku', sku)
       },
       /**
        * getUserSelectedSku 获取用户已选择的options

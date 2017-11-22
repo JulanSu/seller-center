@@ -194,8 +194,7 @@
                 postAfter(qs.stringify(params)).then(res => {
                     if(res.data.message == '成功'){
                         self.detail.orderProductAfterStatus = 2;
-                        self.serviceIsOk = true;
-                        self.detail.orderProductAfterStoreRemark = self.serviceText;
+                        self.detail.serviceIsOk = true;
                         this.$message({
                             message: '售后提交成功，请等待审核',
                             type: 'success'

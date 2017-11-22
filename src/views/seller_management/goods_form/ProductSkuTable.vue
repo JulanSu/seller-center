@@ -17,7 +17,7 @@
       <div class="el-table__body-wrapper">
         <table cellspacing="0" cellpadding="0" border="0" class="el-table__body" style="width: 100%">
           <tbody>  
-            <template v-if="tableList" v-for="(value, key, index) in skuData">
+            <template v-if="skuData" v-for="(value, key, index) in skuData">
               <tr class="el-table__row">
                   <td v-for="item in value.data">
                     <div class="cell">{{item.value}}</div>
@@ -69,20 +69,24 @@
     },
     mounted(){
       this.initTableTitle()
-      this.getTableList()
+      if(this.value && this.value.length) {
+        this.initEditorSku()
+      }
     },
     watch: {
-
       userSelectedTheSku(newVal, oldVal){
+
         if(newVal && newVal.length) {
           var genData = this.gen(newVal)
           var result  = this.getProductSkuProperty(genData)
           var resultById = this.formartByIdSku(result)
           var resultBySerialId = this.getProductSkuSerialId(resultById)
+          
           if(!this.skuData) {
             this.skuData = resultBySerialId
           }else {
-            this.selectedSkuChange(resultBySerialId)
+            this.skuData = this.selectedSkuChange(resultBySerialId)
+
           }
           this.inputChangeHandle()
         }else {
@@ -92,6 +96,58 @@
       }
     },
     methods: {
+      /**
+       * initEditorSku 初始化渲染数据，
+       * @return {[type]} [description]
+       */
+    initEditorSku(){
+      var skuProperty = this.productSkuProperty
+      var skuTableList = this.value
+      var skuPropertyMap = this.getSkuProperty(skuProperty)
+      //判断类目是否完整，商品规格组书否有增删
+      var isCateIntegrity = this.validCateIntegrity(skuPropertyMap, skuTableList)
+      
+      if(!isCateIntegrity) {
+        this.skuData = []
+        return
+      }
+      this.getTableList()
+    },
+    /**
+     * validCateIntegrity 判断类目是否完整，对比用户已保存的商品销售规格的名称和商品规格的品牌
+     * @param  { Object } skuPropertyMap 根据商品规格名称为key的map
+     * @param  { Array } skuTableList   已存商品销售规格
+     * @return {[type]}                [description]
+     */
+    validCateIntegrity(skuPropertyMap, skuTableList){
+      var validStatus = true
+      for(var j=0; j<skuTableList[0].data.length; j++) {
+        var name = skuTableList[0].data[j].name
+        var id = skuTableList[0].data[j].id
+        if(!skuPropertyMap[name]){
+          validStatus = false
+        }else if(skuPropertyMap[name].productCatePropertyId != id) {
+          validStatus = false
+        }
+      }
+      return validStatus
+    },
+    /**
+     * getSkuProperty 使用skuProperty生成map,key为catePropertyName
+     * @param  { Array } data skuProperty数据
+     * @return { Object }     map
+     */
+    getSkuProperty(data){
+      var obj = {}
+      for(var i=0; i<data.length; i++) { 
+        obj[data[i].catePropertyName] = {
+          options:data[i].options,
+          productCatePropertyId: data[i].productCatePropertyId
+        }
+      }
+      return obj
+    },
+
       /**
        * getProductSkuSerialId 获取缓存数据中的productSkuSerialId,并赋值给对应的组合
        * @param  {[type]} data [description]
@@ -112,26 +168,43 @@
      * @return {[type]} [description]
      */
     getTableList(){
-      var editorData = this.value
-      if(editorData && editorData.length) {
-        var resultById = this.formartByIdSku(editorData)
-        this.skuData = resultById
-        this.editorSkuListCache = resultById
-      }
+      var resultById = this.formartByIdSku(this.value)
+      this.skuData = resultById
+      this.editorSkuListCache = resultById
     },
     /**
-     * selectedSkuChange 获取用户已组合出来的项，并把其值赋值给最新的项
+     * selectedSkuChange 获取用户已组合出来的项，并把其值赋值给最新的项 this.skuData 商品销售规格数据
      * @param  {[type]} options [description]
      * @return {[type]}         [description]
      */
     selectedSkuChange(options){
       var skuData = this.skuData
+      
       for(var key in skuData) {
         if(options[key]) {
           options[key] = skuData[key]
+          var data = this.validValuesIntegrity(skuData[key].data, options[key].data)
+          options[key].data = data
         }
       }
-      this.skuData = options
+      return options
+    },
+    /**
+     * validValuesIntegrity 校验商品规格组值和商品销售规格值是否相等
+     * @param  { Object } skuData 商品销售规格map
+     * @param  { Object } options 商品规格Map
+     * @return { Array }  获取用户所选的规格组的值
+     */
+    validValuesIntegrity(skuData, options){
+      var arr = []
+      for(var i=0;i<skuData.length;i++) {
+        for(var j=0;j<options.length;j++) {
+          if(skuData[i].value == options[j].value) {
+            arr.push(skuData[i])
+          }
+        }
+      }
+      return arr
     },
     /**
      * inputChangeHandle 向父组件传递数据
@@ -213,6 +286,10 @@
           }
         }
       },
+      /**
+       * initTableTitle 初始化Table Title
+       * @return {[type]} [description]
+       */
       initTableTitle(){
         var productSkuProperty = this.productSkuProperty
         for(var i=0,len = productSkuProperty.length; i< len; i++) {

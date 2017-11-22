@@ -7365,8 +7365,6 @@
             $videoError.addClass('hidden')
           }
           
-
-          console.log('输入事件', $node)
         })
         ui.onDialogHidden(self.$dialog, function () {
           $videoUrl.off('input');

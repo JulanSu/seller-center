@@ -1,19 +1,14 @@
 <template>
-  <div class="app-container">
+  <div class="app-container bgColor">
     <app-header :sysUserName="sysUserName"></app-header>
     <div class='shadows'></div>
+    <div class="errorTop">
+      <a class="topCont" href="javascript:;">
+        <div class="logos"></div>
+        <p>商户中心登录</p>
+      </a>
+    </div>
     <div class="main">
-        <!--导航菜单-->
-      <el-menu :default-active="$route.path" class="pro-sidebar" unique-opened router backgroundColor="#545c64"
-      textColor="#fff" activeTextColor="#ffd04b">
-        <template v-for="(item,index) in $router.options.routes" v-if="!item.hidden">
-          <el-submenu :index="index+''" v-if="!item.leaf">
-            <template slot="title"><i :class="item.iconCls"></i><span slot="title" class="side-title">{{item.name}}</span></template>
-            <el-menu-item v-for="child in item.children" :key="child.name" :index="child.path" v-if="!child.hidden" >{{child.name}}</el-menu-item>
-          </el-submenu>
-          <el-menu-item v-if="item.leaf && item.children.length>0" :index="item.children[0].path" class="sub-title"><i :class="item.iconCls"></i>{{item.children[0].name}}</el-menu-item>
-        </template>
-      </el-menu>
     <section class="content-container">
       <div class="grid-content bg-purple-light">
         <div :span="24" class="content-wrapper">
@@ -33,7 +28,7 @@
     components: { AppHeader },
     data() {
       return {
-        sysName:'商户中心',
+        sysName:'',
         sysUserName: '',
         sysUserAvatar: ''
       }
@@ -48,6 +43,7 @@
     },
     watch: {
      '$route' (to, from) {
+        console.log(this.$route.path)
      }
    },
     methods: {
@@ -62,7 +58,16 @@
         }).catch(() => {
 
         });
+
+
       }
+      //折叠导航栏
+      // collapse:function(){
+      //   this.isCollapse=!this.isCollapse;
+      // },
+      // showMenu(i,status){
+      //   this.$refs.menuisCollapse.getElementsByClassName('submenu-hook-'+i)[0].style.display=status?'block':'none';
+      // }
     },
     mounted() {
 
@@ -80,14 +85,54 @@
 
 <style lang="scss">
   @import '~scss_vars';
-  .shadows{
+  .bgColor{
+    background:#f5f5f5;
+    .shadows{
+      position:absolute;
+      width:100%;
+      top:56px;
+      height:4px;
+      z-index:999;
+      box-shadow: 0 2px 5px 0 rgba(204, 204, 204, 0.5);
+
+    }
+  }
+
+  .errorTop{
     position:absolute;
-    width:calc(100% - 200px);
-    left:200px; 
-    top:56px;
-    height:4px;
-    z-index:999;
-    box-shadow: 0 2px 5px 0 rgba(204, 204, 204, 0.5);
+    top:0;
+    width:100%;
+    min-width:1190px;
+    height:60px;
+    background:#Fff;
+    transform:translate(-50%,0);
+    z-index:99;
+    .topCont{
+      display:block;
+      width:595px;
+      height:60px;
+      float:right;
+      line-height:60px;
+
+      .logos{
+        width:104px;
+        height:60px;
+        float:left;
+        background:url(../assets/logos.png) no-repeat center;
+        background-size:contain;
+      }
+      p{ 
+        width:170px;
+        padding:0;
+        float:left;
+        padding-left:20px;
+        font-size: 20px;
+        color: #333333;
+        height:60px;
+        line-height:60px;
+
+      }
+    }
 
   }
   .el-menu--collapse {
@@ -138,6 +183,7 @@
       }
 
       .content-container {
+        padding-top:10px;
         position: relative;
         // background: #f1f2f7;
         flex:1;
@@ -161,7 +207,8 @@
         .content-wrapper {
           background-color: #fff;
           box-sizing: border-box;
-          padding: 40px;
+          padding-left:20px;
+          margin-top:10px;
         }
         .breadcrumb-router{
           border:none;

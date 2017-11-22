@@ -11,7 +11,7 @@
             v-model="keywords">
           </el-input>
         </div>
-        <el-menu default-active="" unique-opened class="category-menu" v-if="categoryData.length">
+        <el-menu :default-active="ind" unique-opened class="category-menu" v-if="categoryData.length">
           <template  v-for="(item, index) in categoryData">
             <el-menu-item :index="index+''" class="sub-title" @click="selectproductCateName(item, index)">
               {{item.industryCateName}}
@@ -19,7 +19,7 @@
             </el-menu-item>
           </template>     
         </el-menu>
-        <el-menu :default-active="activeIndex" unique-opened class="category-menu search-list" v-if="searchList.length || keywords">
+        <el-menu default-active="" unique-opened class="category-menu search-list" v-if="searchList.length || keywords">
           <template  v-for="(item, index) in searchList">
             <el-menu-item v-if="item.industryCateName"  :index="index+''" class="sub-title" @click="selectproductCateName(item, index)">
               {{item.industryCateName}}
@@ -37,7 +37,7 @@
     export default {
         data() {
           return {
-            activeIndex: '',
+            num:1,
             searchList: [],
             keywords: '',
             searchValue: '',
@@ -49,6 +49,10 @@
           }
         },
         props: {
+          ind:{
+            type: String,
+            default: "-1"
+          },
           title: {
             type: String,
             default: ''
@@ -82,6 +86,9 @@
           }
         },
         watch: {
+          ind(){
+            console.log(this.ind)
+          },
           keywords (){
             this.searchHandle();
           },
@@ -104,7 +111,9 @@
             }else {
               var _arr = [];
               for(var i in this.categoryData){
+                console.log(this.keywords)
                 if(this.categoryData[i].industryCateEname.match(reg) ||this.categoryData[i].industryCateName.match(reg)){
+
                   _arr.push(this.categoryData[i]);
                   this.searchList = _arr;
                 }

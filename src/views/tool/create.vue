@@ -42,12 +42,12 @@
                     <el-radio label="折扣券"></el-radio>
                 </el-radio-group>
                 <section class="cash" v-if="cashType.type=='会员等级券'">
-                    <el-row style='margin-top: 10px;' v-for="item in cashType.huiYuan" :key="item.name">
+                    <el-row style='margin-top: 10px;' v-for="(item,index) in cashType.huiYuan" :key="item.name">
                         <span class="cash-name">{{item.name}}</span>
                         <el-input placeholder='请输入' style='width:210px' v-model='item.money'  @change='isNumber($event,"flaot",3)' :maxlength="10" @input='btnChanges'></el-input>
                         <span style="margin:0 8px">元</span>
-                        <el-input placeholder='发放数量' style='width:120px'  v-model='item.count'  @change='isNumber($event,"init",3)' :maxlength="10" @input='btnChanges'></el-input>
-                        <span style="margin:0 8px">张</span>
+                        <el-input v-if='index == 0' placeholder='发放数量' style='width:120px'  v-model='item.count'  @change='isNumber($event,"init",3)' :maxlength="10" @input='btnChanges'></el-input>
+                        <span style="margin:0 8px" v-if='index == 0'>张</span>
                     </el-row>
                         
                 </section>
@@ -213,9 +213,9 @@
                     type: '会员等级券',
                     huiYuan: [
                         {name: '新会员', money: '', count: ''},
-                        {name: '老会员', money: '', count: ''},
-                        {name: 'VIP会员', money: '', count: ''},
-                        {name: '金卡会员', money: '', count: ''}
+                        {name: '老会员', money: '', count: 2},
+                        {name: 'VIP会员', money: '', count: 2},
+                        {name: '金卡会员', money: '', count: 2}
                     ],
                     guDing:{money: '', count: ''},
                     manJian:[
@@ -236,7 +236,7 @@
             }
         }, 
         props:[
-            'bTime','eTime'
+            'bTime','eTime','actbTime','acteTime'
         ],
         created(){
             this.typeFrom();
@@ -261,8 +261,7 @@
                     this.userTimeChange(val)
                 },
                 deep:true
-            }
-            
+            }  
         },
         methods: {
             /*判断来自那个页面*/
@@ -327,14 +326,14 @@
                         self.userTime.timeNumber = cBase.couponUseDays;
                     }
                     if(cBase.couponUseType == 0){
-                        self.cashType.type = '会员等级券'
+                        self.cashType.type = '会员等级券';
+                        self.cashType.huiYuan[0].count = cBase.couponDeliveryNum;
                         for(let i=0; i<cMoney.length; i++){
                             self.cashType.huiYuan[i].money = cMoney[i].couponUseMoney
-                            self.cashType.huiYuan[i].count = cMoney[i].couponDeliveryNum
                         }
                     }else if(cBase.couponUseType == 1){
                         self.cashType.type = '固定金额券';
-                        self.cashType.guDing.count = cMoney[0].couponDeliveryNum;
+                        self.cashType.guDing.count = cBase.couponDeliveryNum;
                         self.cashType.guDing.money = cMoney[0].couponUseMoney;
                     }else if(cBase.couponUseType == 2){
                         self.cashType.type = '满减券'
@@ -343,16 +342,16 @@
                             let prm = {
                                 smallPrice: cMoney[i].couponUseMoney, 
                                 largePrice: cMoney[i].couponMinMoney, 
-                                count: cMoney[i].couponDeliveryNum
+                                count: cBase.couponDeliveryNum
                             }
                             self.cashType.manJian.push(prm)
                         }
                     }else{
                         self.cashType.type = '折扣券'
-                        self.cashType.zheKou.count = cMoney[0].couponDeliveryNum
-                        self.cashType.zheKou.percent = cMoney[0].couponUseMoney
-                        self.cashType.zheKou.max = cMoney[0].couponMaxMoney
-                        self.cashType.zheKou.min = cMoney[0].couponMinMoney
+                        self.cashType.zheKou.count = cBase.couponDeliveryNum;
+                        self.cashType.zheKou.percent = cMoney[0].couponUseMoney;
+                        self.cashType.zheKou.max = cMoney[0].couponMaxMoney;
+                        self.cashType.zheKou.min = cMoney[0].couponMinMoney;
                     }
                     if(cBase.couponAmount == 0){
                         self.cashFree.type = '免费'
@@ -390,7 +389,17 @@
                 let self = this;
                 let startTime = Date.parse(val.getTime[0]); 
                 let endTime = Date.parse(val.getTime[1]); 
-                let localDayEnd = new Date(new Date().toLocaleDateString()).getTime() + 24*60*60*1000 -1;  
+                let localDayEnd = new Date(new Date().toLocaleDateString()).getTime() + 24*60*60*1000 -1;
+                if(self.$route.query.type && self.$route.query.type == 'platform'){
+                    if(startTime < self.actbTime){
+                        self.form.getTime[0] = '';
+                        self.warn('不可小于活动开始时间')
+                    }
+                    if(endTime > self.acteTime){
+                        self.form.getTime[1] = '';
+                        self.warn('不可大于活动结束时间')
+                    }
+                }
                 if(startTime < localDayEnd){
                     self.form.getTime[0] = '';
                     self.warn('不可小于今天的23:59:59')
@@ -518,11 +527,11 @@
                     params.couponUseDays = self.userTime.timeNumber;
                 }
                 if(self.cashType.type == '会员等级券'){
-                    params.couponUseType = 0;       //现金券使用类型 0:会员等级，1固定金额，2，满减券，3折扣券            
+                    params.couponUseType = 0;       //现金券使用类型 0:会员等级，1固定金额，2，满减券，3折扣券      
+                    params.couponDeliveryNum = self.cashType.huiYuan[0].count;
                     for(let i=0; i<self.cashType.huiYuan.length; i++){
                         let that = self.cashType.huiYuan[i],
                             cash = {
-                                couponDeliveryNum: that.count,      //现金券领取数量:'0'
                                 couponUseMoney: that.money,          //现金券金额
                                 couponUserLevel: i  //会员等级 0:新会员，1老会员，2，VIP会员，3金卡会员
                             };
@@ -530,17 +539,17 @@
                     }
                 }else if(self.cashType.type == '固定金额券'){
                     params.couponUseType = 1;
+                    params.couponDeliveryNum = self.cashType.guDing.count;
                     let cash = {
-                        couponDeliveryNum: self.cashType.guDing.count,
                         couponUseMoney: self.cashType.guDing.money,
                     }
                     params.marketingCouponDeliveryTypeList.push(cash);
                 }else if(self.cashType.type == '满减券'){
                     params.couponUseType = 2;
+                    params.couponDeliveryNum = self.cashType.manJian[0].count;
                     for(let i=0; i<self.cashType.manJian.length; i++){
                         let that = self.cashType.manJian[i],
                         cash = {
-                            couponDeliveryNum: that.count,
                             couponMinMoney: that.largePrice,
                             couponUseMoney: that.smallPrice
                         }
@@ -548,8 +557,8 @@
                     }
                 }else{
                     params.couponUseType = 3;
-                    let cash = {
-                        couponDeliveryNum: self.cashType.zheKou.count,
+                    params.couponDeliveryNum = self.cashType.zheKou.count;
+                    let cash = {     
                         couponUseMoney: self.cashType.zheKou.percent,
                         couponMaxMoney: self.cashType.zheKou.max,
                         couponMinMoney: self.cashType.zheKou.min
@@ -883,6 +892,7 @@
         .pro-dialog{
             width: 750px;
             height: 580px;
+            z-index: 2001;
             .el-dialog__header{
                 padding: 0;
                 background: $color;

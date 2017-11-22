@@ -69,7 +69,8 @@ import { roleList,roleChangeStatus } from '@/api/shopApi';
             this.listLoading = false;
             this.$message.error('接口建立连接失败');
           });
-        })
+        }).catch(() => {
+        });
       },
       //获取角色列表
       getRoleList() {

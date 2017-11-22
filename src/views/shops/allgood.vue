@@ -65,13 +65,10 @@
       :visible.sync="dialogVisible1"
       size="tiny">
       <div class="relevanceGood">
-        <el-checkbox-group v-model="roleAuthority">
+        <el-checkbox-group v-model="roleAuthority" class="scorllbar">
           <el-checkbox v-for="item in jurisdiction" :label="item.storeCateId" :key="item.storeCateId">
               {{item.cateName}}
           </el-checkbox>
-          <!-- <el-checkbox v-for="item in jurisdiction" :label="1" :key="1">
-              {{item.cateName}}
-          </el-checkbox> -->
         </el-checkbox-group> 
       </div>
         <span slot="footer" class="dialog-footer">
@@ -307,9 +304,12 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
     width:160px !important;
     margin-right:10px;
   }
-  .el-select{
-    width:160px;
+  .search-row{
+    .el-select{
+      width:160px;
+    }
   }
+  
   .cell{
     a{
       color:#45cdb6; 

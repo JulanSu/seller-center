@@ -118,6 +118,7 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
             this.listLoading = false;
             this.$message.error('接口建立连接失败');
           });
+        }).catch(() => {
         });
       },
        //删除子帐号
@@ -141,6 +142,7 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
             this.listLoading = false;
             this.$message.error('接口建立连接失败');
           });
+        }).catch(() => {
         });
       },
        //产看商品

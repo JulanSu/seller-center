@@ -1,5 +1,5 @@
 <template>
-  <div class="block">
+  <div class="">
     <el-row> 
       <el-col :span="2">
         <el-button type="primary" icon="plus" @click="linkHandle" class="create-goods">创建商品</el-button>

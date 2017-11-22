@@ -175,11 +175,11 @@
 	      <div class="">
 	        <el-row>
 		      <el-col :span="8">
-		        <category-menu title="一级行业" v-if="categoryData.length" :categoryData="categoryData" @categoryClick="firstHandle" :arrKey="'secondIndustryList'">
+		        <category-menu title="一级行业" v-if="categoryData.length" :ind="index1" :categoryData="categoryData" @categoryClick="firstHandle" :arrKey="'secondIndustryList'">
 		        </category-menu>
 		      </el-col>
-		      <el-col :span="8">
-		        <category-menu title="二级行业" v-if="secoundCategoryData.length" :categoryData="secoundCategoryData" @categoryClick="secondHandle" :arrKey="'catePath'"></category-menu>
+		      <el-col :span="8" id="erji">
+		        <category-menu title="二级行业" v-if="secoundCategoryData.length" :ind="index2" :categoryData="secoundCategoryData" @categoryClick="secondHandle" :arrKey="'catePath'" ref="secMenu"></category-menu>
 		      </el-col>
 		    </el-row>
 		    <div class="category-nav-breadcrumb">
@@ -260,7 +260,8 @@ export default {
 	        }
 	    };
 		return {
-			
+			index1:"-1",
+			index2:"-1",
 
 			identPic1:config.ident1,
 			identPic2:config.ident2,
@@ -449,6 +450,14 @@ export default {
 
 		//选择行业
 		selCategory(){
+			//删除刚才一级选中的状态
+	        var o=document.querySelectorAll(".is-active")[0];
+	        if(o){
+	        	var cla=o.getAttribute("class");
+	        	cla=cla.replace("is-active",'');
+	        	o.setAttribute("class",cla);
+	        }
+        	
 			this.dialogVisible2=true;
 			this.curCateName=[];
 			this.secoundCategoryData=[];
@@ -458,13 +467,21 @@ export default {
 
 		//一级类目选择事件
 		firstHandle (row, index){
-
+			this.index2="";
 			this.stCateName='';
 			this.stCateName=row.industryCateName;
+			this.secoundCategoryData = [];
 	        if(row.secondIndustryList.length) {
 	            this.secoundCategoryData = row.secondIndustryList;
-	        }else {
-	            this.secoundCategoryData = [];
+	        }
+
+	        //删除刚才二级选中的状态
+	        var o=document.querySelector("#erji").querySelectorAll(".is-active")
+	        console.log(o)
+	        for(var i=0;i<o.length;i++){
+	        	var cla=o[i].getAttribute("class");
+	        	cla=cla.replace("is-active",'');
+	        	o[i].setAttribute("class",cla);
 	        }
         },
 
@@ -497,6 +514,9 @@ export default {
         	}else{
         		this.ruleForm.selIndustry=this.ruleForm.selIndustry.concat(this.curCateName);
         		this.ruleForm.industryCateIdList=this.ruleForm.industryCateIdList.concat(this.industryCateId);
+
+
+
         		this.dialogVisible2=false;
 
         	}
@@ -551,7 +571,7 @@ export default {
 			this.$refs.MapView.searchMap(addr);
 		},
 		/*地图组件更改后传递数据到父组件*/
-		showsite(lng,lat){alert(455)
+		showsite(lng,lat){
 			this.ruleForm.longitude=lng;
 			this.ruleForm.latitude=lat;
 		},

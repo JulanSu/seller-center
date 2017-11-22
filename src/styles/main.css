@@ -1,4 +1,14 @@
 @charset "UTF-8";
+.seller-table th .cell {
+  padding: 0;
+  height: 40px;
+  line-height: 40px;
+}
+
+.seller-table th, .seller-table td {
+  text-align: center;
+}
+
 .seller-table .table-pic {
   width: 60px;
   height: 60px;
@@ -28,11 +38,6 @@
   background: #2a3542;
   border-radius: 0;
   color: #fff;
-  height: 100%;
-  position: fixed;
-  top: 60px;
-  bottom: 0;
-  left: 0;
 }
 
 .pro-sidebar .iconfont {
@@ -71,6 +76,18 @@
   z-index: 99999;
 }
 
+.pb30 {
+  padding-bottom: 30px;
+}
+
+.pb20 {
+  padding-bottom: 20px;
+}
+
+.pt0 {
+  padding-top: 0 !important;
+}
+
 .updata .el-input {
   display: none;
 }
@@ -82,6 +99,10 @@
 .requireHezi .require {
   position: absolute;
   color: #ff4949;
+}
+
+#ser {
+  margin-right: 20px;
 }
 
 /* 表格公共样式 */
@@ -101,6 +122,10 @@
   background: #ffffff;
   -webkit-box-shadow: 0 1px 0 0 #eeeeee;
   box-shadow: 0 1px 0 0 #eeeeee;
+}
+
+.el-table table.el-table__body tbody tr td div {
+  color: #666;
 }
 
 label {

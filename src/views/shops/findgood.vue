@@ -120,6 +120,7 @@ import { productList,productRemove} from '@/api/shopApi';
             this.listLoading = false;
             this.$message.error('建立连接失败');
           });
+        }).catch(() => {
         });
       },
       //分页

@@ -50,9 +50,8 @@
           prop="operational"
           label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="onEditorHandle(scope.row)">编辑</el-button>
             <el-button type="text" @click="onSoldOutHandle(scope.row)">下架</el-button>
-
+            <el-button type="text" @click="onEditorHandle(scope.row)">编辑</el-button>
             <el-button type="text" v-if="!scope.row.productRecommend" @click="onRecommendOnHandle(scope.row)">推荐</el-button>
             <el-button type="text" v-else @click="onRecommendOffHandle(scope.row)">取消推荐</el-button>
           </template>

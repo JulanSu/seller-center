@@ -81,7 +81,7 @@
                     /*订单消息*/
                     case 2011: return '/transaction/orders/order-detail?from=mes'; break; 
                         //新订单产生订单状态为PY时
-                    case 2012: return '/transaction/orders/order-detail?from=mes'; break; 
+                    case 2021: return '/transaction/orders/order-detail?from=mes'; break; 
                         //用户申请售后订单状态为RO时
                     /*店铺消息*/
                     case 6012: return '/store/brand-management?from=mes'; break;  

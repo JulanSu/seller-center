@@ -59,10 +59,10 @@
 				</div>
 			</el-form-item>
 			<el-form-item label="运营人姓名" prop="contactName" label-width="120px">
-				<el-input :maxlength="30" v-model="ruleForm.contactName" placeholder="入驻时的姓名 " class="wid280"></el-input>
+				<el-input :maxlength="30" v-model="ruleForm.contactName" placeholder="请输入运营人姓名 " class="wid280"></el-input>
 			</el-form-item>
 			<el-form-item label="运营人手机号" prop="contactMobile" label-width="120px">
-				<el-input :maxlength="11" v-model="ruleForm.contactMobile" name="username" placeholder="入驻时的手机号" class="wid280"></el-input>
+				<el-input :maxlength="11" v-model="ruleForm.contactMobile" name="username" placeholder="请输入运营人手机号" class="wid280"></el-input>
 			</el-form-item>		
 			<el-form-item label="合作有效期" label-width="120px">
 				<div class="exhibition">
@@ -104,7 +104,7 @@ export default {
 	        	//next()
 	        	next()
 	      	}).catch(() => {
-	      		
+	      		//this.delClass();
 	      	});
 	    }else{
 	    	next(); 
@@ -260,7 +260,7 @@ export default {
     },
 
 	methods: {
-
+		
 		handleScroll () {
 			var arr=document.getElementsByClassName("tangram-suggestion-main");
 
@@ -271,9 +271,9 @@ export default {
 		fillOut(key){
 			if(this.biaoji[key]!=this.ruleForm[key]){
 				this.flag=true;
+			}else{
+				this.flag=false;
 			}
-			
-
 		},
 		//判断店铺名是否重名
 		findName(){

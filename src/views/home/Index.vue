@@ -1,5 +1,6 @@
 <template>
   <section class="home">
+  <div class="gotoPrev">店铺首页</div>
   <div class="indexHezi">
     <div class='indexLeft' v-loading="listLoading1">
       <div class="top">
@@ -131,7 +132,17 @@ export default {
 <style lang="scss">
 
 .home{
-
+  .gotoPrev{
+    width:300px;
+    background:#fff;
+    height:60px;
+    line-height:60px;
+    position:fixed;
+    top:0;
+    left: 240px;
+    font-size:14px;
+    color:#666666;
+  }
   position:absolute;
   background: #F1F2F7;
   bottom:0;
@@ -147,7 +158,7 @@ export default {
   .indexHezi{
     width:1000px;
     height:280px;
-    margin-top:40px;
+    margin:40px 0 0 40px;
     .indexLeft{
       width:550px;
       height:280px;

@@ -1,5 +1,6 @@
 <template>
   <div class="goods-form" style="height: 1200px">
+    <category-bar title="商品创建"></category-bar>
     <template v-if="initForm.finished">
       <el-form :model="goodsForm" :rules="goodsFormRules" ref="goodsForm" label-width="120px">
         
@@ -24,7 +25,10 @@
         </el-form-item> 
 
       <el-form-item label="商品规格">
-        <product-sku-options v-if="initForm.productSkuProperty.length" :skuData="initForm.productSkuProperty"></product-sku-options>
+        <product-sku-options 
+        v-if="initForm.productSkuProperty.length" 
+        :editorStatus="editorStatus"
+        :skuData="initForm.productSkuProperty"></product-sku-options>
       </el-form-item>
 
       <el-form-item label="商品销售规格" style="margin-bottom: 30px;" prop="productSkuTable" class="sellFormat-sku">
@@ -237,6 +241,7 @@
         }
       }
       return {
+        editorStatus: false,
         //物流模板
         template: {
           templateValueList: [{
@@ -362,12 +367,7 @@
           productSellPrice: [
             {required: true,message: '展示价格不能为空！', trigger: 'change, blur' }
           ],
-          // productCateProperty: [
-          //   { required: true, message: '请选择类目属性', trigger: 'blur' }
-          // ],         
-          // productSkuTable: [
-          //   {required: true, message: '请先选择商品销售规格', trigger: 'blur'}
-          // ],
+
           // 上架时间
           publishTime: [
             {required: true, message: '请选择商品上架时间', trigger: 'change, blur' },
@@ -507,7 +507,7 @@
         let initForm = this.initForm
         //判断是否编辑页面，是否存在店铺ID，是否存在商品ID
         if(route.name == '编辑商品' && storeId && route.query.productId &&route.query.productStatus || route.query.productStatus == 0 || route.query.productStatus == -1){
-
+          self.editorStatus = true
           self.getEditorFormdata(storeId, route.query.productId, route.query.productStatus)
           goodsForm.productId = route.query.productId
           return 
@@ -636,10 +636,17 @@
           self.catePropertyValidStatus = true
         }
         console.log('表单提交', self.goodsForm, self.applicableShopStatus, self.catePropertyValidStatus)
-        // if(!statusVal) {
-        //   self.submitProductFormData(statusVal)
-        //   return 
-        // }
+        if(!statusVal) {
+          if(!self.goodsForm.productTitle) {
+            self.$message({
+              message: '填写标题后方可以放入草稿箱！',
+              type: 'warning'
+            });
+            return
+          }
+          self.submitProductFormData(statusVal)
+          return
+        }
         self.$refs[formName].validate((valid) => {
           if(!self.applicableShopStatus){
             return false;

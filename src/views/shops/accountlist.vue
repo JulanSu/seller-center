@@ -162,6 +162,7 @@ import {operatorList,operatorChangeStatus,operatorGetNum} from '@/api/shopApi';
             this.listLoading = false;
             this.$message.error('接口建立连接失败');
           });
+        }).catch(() => {
         });
       },
       //分页
@@ -179,7 +180,7 @@ import {operatorList,operatorChangeStatus,operatorGetNum} from '@/api/shopApi';
 
 <style lang="scss">
 .account-list{
-  padding:40px 40px 0 20px;
+  padding:20px 40px 0 20px;
   a{
     text-decoration:none;
   }

@@ -4,11 +4,11 @@
 		<div style="min-width:980px">
 	        <el-row>
 		      <el-col :span="8" style="width:240px;">
-		        <category-menu title="一级行业" :categoryData="categoryData" @categoryClick="firstHandle" :arrKey="secondIndustryList">
+		        <category-menu title="一级行业" :categoryData="categoryData" :ind="index1" @categoryClick="firstHandle" :arrKey="secondIndustryList">
 		        </category-menu>
 		      </el-col>
-		      <el-col :span="8" style="width:240px;" class="no-bor">
-		        <category-menu title="二级行业" v-if="secoundCategoryData.length" :categoryData="secoundCategoryData" @categoryClick="secondHandle" :arrKey="brandList"></category-menu>
+		      <el-col :span="8" style="width:240px;" class="no-bor" id="erji">
+		        <category-menu title="二级行业" v-if="secoundCategoryData.length" :ind="index2" :categoryData="secoundCategoryData" @categoryClick="secondHandle" :arrKey="brandList"></category-menu>
 		      </el-col>
           <el-col v-if="logos.length||allBrand.length" :span="8" style="min-width:240px;" class="all-logo">
             <ul>
@@ -57,6 +57,8 @@ export default {
 
     data() {
       return {
+        index1:"",
+        index2:"",
         categoryBarTitle: '选择品牌',
         secondIndustryList:'secondIndustryList',
         brandList:'brandList',
@@ -89,6 +91,15 @@ export default {
         this.secoundCategoryData = row.secondIndustryList;
         this.thirstCategoryData = [];
         this.logos = [];
+
+        //删除刚才二级选中的状态
+        var o=document.querySelector("#erji").querySelectorAll(".is-active")
+        console.log(o)
+        for(var i=0;i<o.length;i++){
+          var cla=o[i].getAttribute("class");
+          cla=cla.replace("is-active",'');
+          o[i].setAttribute("class",cla);
+        }
       },
 
       //二级类目选择事件
@@ -183,7 +194,7 @@ export default {
 </script>
 <style lang="scss">
 .sel-brand{
-  padding:20px 0 0 20px;
+  padding:0px 0 0 20px;
 	a{
 		text-decoration:none;
 		color:#333;
