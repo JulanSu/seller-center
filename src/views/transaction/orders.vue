@@ -291,7 +291,6 @@
         $color: #45cdb6;
         width: 100%;
         float: left;
-        padding: 40px;
         box-sizing: border-box !important;
         p{
             margin: 0;

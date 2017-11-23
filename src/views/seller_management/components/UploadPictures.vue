@@ -81,7 +81,7 @@ export default {
     return {
       fileList: [],
       picLimit: 9,
-      imageUrl: this.value,
+      imageUrl: this.value || [],
       dialogImageUrl: '',
       dialogVisible: false,
     }
@@ -128,6 +128,7 @@ export default {
       }else {
         this.$message.warning('上传商品图片失败！请重新尝试。');
       }
+      console.log(this.imageUrl)
       this.$emit('input', this.imageUrl);
       //传递值给父组件
     },
@@ -163,6 +164,7 @@ export default {
     //line-height: 98px;
   }
 
+
 }
 .picbox {
   overflow: hidden;
@@ -179,6 +181,9 @@ export default {
     .el-icon-plus {
       color: #41CAC0;
     }
+  }
+    .list-group{
+    margin: 0;
   }
   .el-upload-list {
     float: left;

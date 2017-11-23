@@ -42,9 +42,6 @@
         width: 100%;
         float: left;
     }
-    .el-col {
-        padding: 20px 20px;
-    }
     .el-col img{
         width: 60px;
         height: 60px;

@@ -20,7 +20,7 @@
         <div class="category-nav-breadcrumb">
           <span class="icon-arrow-top arrow-top-a"><span class="icon-arrow-top arrow-top-b"></span></span>
           <el-breadcrumb separator=">">
-            <span class="breadcrumb-tips">你当前选择的是：</span>
+            <span class="breadcrumb-tips">您当前选择的是：</span>
             <template v-if="curCateGroup.length" v-for="item in curCateGroup">
               <el-breadcrumb-item>{{item.productCateName}}</el-breadcrumb-item>
             </template>

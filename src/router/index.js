@@ -113,10 +113,15 @@ const routers = new VueRouter({
         hidden: true
     },
     {
-        path: '*',
+        path: '/404',
         component: FullNoLeft,
         name: '',
         children:NotFound,
+        hidden: true
+    },
+    {
+        path: '*',
+        redirect: '/404',
         hidden: true
     }
 

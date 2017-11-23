@@ -16,7 +16,7 @@ export const updateShopMessage = params => { return axios.post(`${base}/store/up
 export const storeCheckname = params => { return axios.get(`${base}/store/checkname`, { params: params }); };
 
 //查看店铺资质信息
-export const storeGetMerchant = params => { return axios.get(`${base}/store/get_merchant`, { params: params }); };
+export const storeGetMerchant = params => { return axios.get(`${base}/store/getmerchant`, { params: params }); };
 export const merchantUpdate = params => { return axios.post(`${base}/merchant/update`,params); };
 
 //获取行业分类
@@ -34,9 +34,9 @@ export const updateClassify = params => { return axios.post(`${base}/store/branc
 export const pageStoreCateProduct = params => { return axios.get(`${base}/product/pagestorecateproduct`, { params: params }); };
 
 //店铺子账号管理
-export const operatorChangeStatus = params => { return axios.post(`${base}/store/operator/change_status`, params); };
+export const operatorChangeStatus = params => { return axios.post(`${base}/store/operator/changestatus`, params); };
 export const operatorGet = params => { return axios.get(`${base}/store/operator/get`,  { params: params }); };
-export const operatorGetNum = params => { return axios.get(`${base}/store/operator/get_num`,{ params: params }); };
+export const operatorGetNum = params => { return axios.get(`${base}/store/operator/getnum`,{ params: params }); };
 export const operatorList = params => { return axios.get(`${base}/store/operator/list`, { params: params }); };
 export const operatorSave = params => { return axios.post(`${base}/store/operator/save`, params); };
 export const operatorUpdate = params => { return axios.post(`${base}/store/operator/update`, params); };
@@ -45,10 +45,10 @@ export const operatorRemove = params => { return axios.post(`${base}/store/opera
 export const operatorCheckaccount = params => { return axios.get(`${base}/store/operator/checkaccount`,  { params: params }); };
 
 //店铺子账号角色管理
-export const roleChangeStatus = params => { return axios.post(`${base}/store/operator/role/change_status`, params); };
+export const roleChangeStatus = params => { return axios.post(`${base}/store/operator/role/changestatus`, params); };
 export const roleGet = params => { return axios.get(`${base}/store/operator/role/get`, { params: params }); };
 export const roleList = params => { return axios.get(`${base}/store/operator/role/list`,{ params: params }); };
-export const roleGetAuthority = params => { return axios.get(`${base}/store/operator/role/get_authority`,  { params: params }); };
+export const roleGetAuthority = params => { return axios.get(`${base}/store/operator/role/getauthority`,  { params: params }); };
 export const roleSave = params => { return axios.post(`${base}/store/operator/role/save`, params); };
 export const roleUpdate = params => { return axios.post(`${base}/store/operator/role/update`, params); };
 //可用子帐号列表

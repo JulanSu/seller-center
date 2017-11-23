@@ -1,0 +1,16 @@
+.el-table th > .cell {
+  font-weight: 400;
+}
+
+.el-button--text:hover {
+  text-decoration: underline;
+}
+
+.el-form-item__label {
+  color: #666;
+  font-weight: 400;
+}
+
+.pagination-wrap {
+  padding: 30px 0 50px 0;
+}

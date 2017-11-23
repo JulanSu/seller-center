@@ -194,7 +194,6 @@
         $color: #45cdb6;
         width: 100%;
         float: left;
-        padding: 40px;
         p{
             margin: 0;
             padding: 0;

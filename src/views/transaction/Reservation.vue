@@ -145,7 +145,6 @@
         box-sizing: border-box !important;
         width: 100%;
         float: left;
-        padding: 40px;
         .w180{
             width: 180px;
         }
@@ -176,8 +175,10 @@
             margin-top: 30px;
             tr{
                 td:nth-of-type(1){
-                    color: $color;
-                    cursor: pointer;
+                    div{
+                        color: $color !important;
+                        cursor: pointer;
+                    }   
                 }
             }
         }

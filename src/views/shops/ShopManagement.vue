@@ -28,7 +28,7 @@
     </el-table>
 
     <!--工具条-->
-    <el-col :span="24" class="tool-bar">
+    <el-col :span="24" class="tool-bar pages-bar">
       <el-pagination
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
@@ -134,15 +134,18 @@ import {getClassifyList, updateClassify} from '@/api/shopApi';
 <style lang="scss">
 
 .shop-list{
-  padding:0 40px 0 20px;
   a{
     text-decoration:none;
   }
   .tool-bar{
     width:100%;
     background:none;
-    margin:20px 0;
+    margin:0 0 20px;
     position:relative;
+    /* .el-pagination{
+      margin:10px 0;
+    } */
+
   }
   .cell{
     a{

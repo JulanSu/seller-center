@@ -473,9 +473,6 @@ export default {
     	font-size:14px;
 		color:#333333;
     }
-    .category-bar{
-    	padding:20px 0 20px 20px;
-    }
     ol,ul,li{
     	padding:0;
     	margin:0;

@@ -194,7 +194,6 @@ export default {
 </script>
 <style lang="scss">
 .sel-brand{
-  padding:0px 0 0 20px;
 	a{
 		text-decoration:none;
 		color:#333;

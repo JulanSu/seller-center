@@ -284,7 +284,6 @@ export default {
 
 <style lang="scss">
 .qualification{
-	padding:20px 0 0 0;
 	.wid280{
     	width:280px;
     }
@@ -293,7 +292,6 @@ export default {
 	}
 
 	.category-bar{
-		padding-left:20px;
 		padding-top:0;
 	}
 	.unchangeable{

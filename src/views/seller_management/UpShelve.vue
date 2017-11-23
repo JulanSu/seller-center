@@ -4,7 +4,7 @@
       <el-table
         :data="tableData"
         style="width: 100%" 
-        class="seller-table" highlight-current-row v-loading="listLoading">
+        class="seller-table" v-loading="listLoading">
         <el-table-column
           prop="productId"
           label="ID"
@@ -57,13 +57,12 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="block" v-if="pagination.total > pagination.pageSize">
+      <template v-if="pagination.total > pagination.pageSize">
         <pagination 
           :paginationConfig="pagination"
           @handleSizeChange="handleSizeChange"
           @handleCurrentChange="handleCurrentChange"></pagination>
-      </div>
-
+      </template>
     <el-dialog
       :visible.sync="dialogVisible"
       size="tiny" width="300" class="dialog-wrap" :title="dialogConfig.title">

@@ -2,6 +2,7 @@
   <div>
     <search-nav @onSearchClick="searchSubmitHandle"></search-nav>
       <el-table
+      :highlight-current-row="false"
         :data="tableData"
         style="width: 100%" 
         class="seller-table" highlight-current-row v-loading="listLoading">
@@ -55,12 +56,12 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="block" v-if="pagination.total > pagination.pageSize">
+      <template v-if="pagination.total > pagination.pageSize">
         <pagination 
           :paginationConfig="pagination"
           @handleSizeChange="handleSizeChange"
           @handleCurrentChange="handleCurrentChange"></pagination>
-      </div>
+      </template>
 
     <el-dialog
       :visible.sync="dialogVisible"

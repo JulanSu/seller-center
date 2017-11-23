@@ -272,7 +272,6 @@ import crypto from 'crypto'
 
 <style lang="scss">
 .add-sub-account{
-  padding:20px 0 0 0;
   .wid280{
     width:280px;
   }

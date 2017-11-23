@@ -103,7 +103,6 @@ import { roleList,roleChangeStatus } from '@/api/shopApi';
 
 <style lang="scss">
 .role-list{
-  padding:20px 40px 0 20px;
   a{
     text-decoration:none;
   }

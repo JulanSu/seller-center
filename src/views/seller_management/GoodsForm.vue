@@ -2,8 +2,9 @@
   <div class="goods-form" style="height: 1200px">
     <category-bar title="商品创建"></category-bar>
     <template v-if="initForm.finished">
+      <el-row>
+         <el-col :md="24" :lg="16">
       <el-form :model="goodsForm" :rules="goodsFormRules" ref="goodsForm" label-width="120px">
-        
         <el-form-item label="当前类目" prop="cate">
           {{initForm.productCateName}}
         </el-form-item>
@@ -24,21 +25,21 @@
           <cate-property ref="subjectchildMethod"  v-model="goodsForm.catePropertyList"  :catePropertyData="initForm.productCateProperty" @onUploadStatus="uploadStatusHandle"></cate-property>
         </el-form-item> 
 
-      <el-form-item label="商品规格">
-        <product-sku-options 
-        v-if="initForm.productSkuProperty.length" 
-        :editorStatus="editorStatus"
-        :skuData="initForm.productSkuProperty"></product-sku-options>
-      </el-form-item>
+        <el-form-item label="商品规格">
+          <product-sku-options 
+          v-if="initForm.productSkuProperty.length" 
+          :editorStatus="editorStatus"
+          :skuData="initForm.productSkuProperty"></product-sku-options>
+        </el-form-item>
 
-      <el-form-item label="商品销售规格" style="margin-bottom: 30px;" prop="productSkuTable" class="sellFormat-sku">
-        <product-sku-table 
-        v-model="goodsForm.productSkuTable" 
-        :skuTableData="initForm.productSkuTable" 
-        :productSkuProperty="initForm.productSkuProperty"
-        @updateSkuTableError="updateSkuTableError"
-        @updateSkuQuantity="updateSkuQuantity"></product-sku-table>
-      </el-form-item>
+        <el-form-item label="商品销售规格" style="margin-bottom: 30px;" prop="productSkuTable" class="sellFormat-sku">
+          <product-sku-table 
+          v-model="goodsForm.productSkuTable" 
+          :skuTableData="initForm.productSkuTable" 
+          :productSkuProperty="initForm.productSkuProperty"
+          @updateSkuTableError="updateSkuTableError"
+          @updateSkuQuantity="updateSkuQuantity"></product-sku-table>
+        </el-form-item>
         <el-form-item label="展示价格及库存" prop="productSellPrice" class="sellFormat-sku">
           <div class="el-table el-table--fit el-table--striped el-table--enable-row-hover el-table--enable-row-transition" style="width: 100%;">
               <div class="el-table__header-wrapper">
@@ -183,7 +184,10 @@
           </template>
           <!-- <el-button @click="resetForm('goodsForm')">重置</el-button> -->
         </el-form-item>
+
       </el-form>
+      </el-col>
+      </el-row>
     </template>
 
   </div>
@@ -563,7 +567,7 @@
         goodsForm.catePropertyList =data.catePropertyList
         goodsForm.productCateId = data.productCateId
         goodsForm.storeCateProduct = data.storeCateProduct
-        goodsForm.productPicUrlList = data.productPicUrlList
+        goodsForm.productPicUrlList = data.productPicUrlList || []
         goodsForm.productVersionId = data.productVersionId
         goodsForm.shippingTemplateId = data.shippingTemplateId == 0 ? '' : data.shippingTemplateId
         initForm.storeShippingTemplate = data.storeShippingTemplate
@@ -708,6 +712,7 @@
         this.goodsForm.serviceArea = value
       },
       uploadHandle(value){
+        console.log('你好',value)
         this.$refs.goodsForm.validateField('productPicUrlList');
         
       },

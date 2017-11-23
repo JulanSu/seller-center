@@ -20,13 +20,13 @@
 				<i class="iconfont icon-zizhanghao"></i>
 				<span>新建子账号</span>
 			</li>
-			<li style="border-left:1px solid #ddd;border-right:1px solid #ddd;">
+			<li>
 				<router-link to="/store/bypass-management/role-list">
 					<i class="iconfont icon-gangweijiaose"></i>
 					<span>岗位角色</span>
 				</router-link>
 			</li>
-			<li style="width:326px;">
+			<li style="width:328px;">
 
 				<router-link to="/store/bypass-management/account-list">
 					<i class="iconfont icon-zizhanghaoliebiao"></i>
@@ -101,7 +101,6 @@ export default {
 <style lang="scss">
 .bypass-index{
 	width:962px;
-	padding:20px 0 0 20px;
 	a{
 	    text-decoration:none;
 	}
@@ -146,18 +145,22 @@ export default {
 		li:nth-of-type(1) b{
 			color:#6bcac9;;
 		}
+		li:nth-of-type(2){
+			border-left:1px solid #ddd;
+			border-right:1px solid #ddd;
+		}
 		li:nth-of-type(3) b{
 			color:#56c8f2;
 		}
 	}
 	.bapass-btn{
 		cursor:pointer;
-		background:#f5f7fa;
+		background:#fff;
 		height:80px;
 		line-height:80px;
 
 		li:hover{
-			background:#fff;
+			background:#f5f7fa;
 			span{
 				color:#41cac0 !important;
 			}

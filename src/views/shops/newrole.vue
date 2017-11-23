@@ -170,7 +170,6 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority,roleCheckname} from '@/api/
 
 <style lang="scss">
 .new-role{
-  padding:20px 0 0 0px;
   .wid270{
     width:270px;
   }

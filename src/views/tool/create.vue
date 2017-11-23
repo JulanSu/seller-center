@@ -1,6 +1,6 @@
 <template>
     <section class="create-act">
-        <el-form ref="form" :model="form" label-width="130px" style='margin-top:30px'>
+        <el-form ref="form" :model="form" label-width="130px">
            
             <el-form-item label="现金券名称" prop='name'>
                 <el-input v-model="form.name" class='name' :maxlength='30' @input='btnChanges'></el-input>

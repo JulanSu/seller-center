@@ -339,12 +339,11 @@
     .table-container {
         width: 100%;
         float: left;
-        padding-top: 20px;
         .el-col {
         padding: 20px 20px;
         }
         .el-tabs__item{
-            vertical-align: bottom
+            vertical-align: bottom;
         }
         .is-active{
             border-top: 3px solid $color !important;

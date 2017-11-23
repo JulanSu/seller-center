@@ -1,7 +1,7 @@
 <template>
     <section class="cash-container" v-if="$route.name=='现金券'">
         <el-row>
-            <el-col :span="24" style="padding-left: 10px"><div class="name">{{toolName}}</div></el-col>
+            <el-col :span="24"><div class="name">{{toolName}}</div></el-col>
         </el-row>
         <el-row>
             <el-col :span="24" style="margin-top: 10px;font-size:14px;color:#333333;">工具使用规则
@@ -52,10 +52,10 @@
         float: left;
     }
     .el-col {
-        padding-left: 20px; 
+        /*padding-left: 20px; */
     }
     .name{
-        margin-top: 20px;
+        /*margin-top: 20px;*/
         font-size:16px;
         color:#333333;
         border-left: 3px solid #41cac0;
@@ -80,7 +80,7 @@
         font-size:14px;
     }
     .active{
-        margin-left: 20px;
+       /* margin-left: 20px;*/
         width:118px;
         border:1px solid #cccccc;
         color:#333333;

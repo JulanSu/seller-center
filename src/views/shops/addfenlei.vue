@@ -132,7 +132,6 @@ export default {
 
 <style lang="scss">
 .add-fenlei{
-  padding-top:20px;
   .wid280{
     width:280px;
   }

@@ -506,8 +506,6 @@ export default {
 
 <style lang="scss">
 .create-brand{
-	padding-top:10px;
-	padding-left:20px;
 	/* 公共样式 */
 	p,h2{
 		margin:0;

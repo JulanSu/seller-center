@@ -421,9 +421,7 @@ export default {
 	width:250px !important;
 }
 .add-account{
-	padding-top:20px;
 	overflow: hidden;
-	padding-left:20px;
 	/* 公共样式 */
 	.wid400{
     	width:400px;

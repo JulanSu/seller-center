@@ -118,7 +118,6 @@
         $color: #45cdb6;
         width: 100%;
         float: left;
-        padding: 20px;
         >p{
             font-size:16px;
             color:#333333;
@@ -185,6 +184,7 @@
             font-weight: 600;
             text-indent: 12px;
             border-left: 3px solid #45cdb6;
+            margin-bottom: 20px;
         }
     }
 </style>

@@ -158,7 +158,6 @@
         width: 100%;
         float: left;
         box-sizing: border-box !important;
-        padding: 40px;
         .message-item{
             font-size: 14px;
             color: #333333;

@@ -91,6 +91,7 @@
       position:absolute;
       width:100%;
       top:56px;
+      left:0;
       height:4px;
       z-index:999;
       box-shadow: 0 2px 5px 0 rgba(204, 204, 204, 0.5);
@@ -113,7 +114,6 @@
       height:60px;
       float:right;
       line-height:60px;
-
       .logos{
         width:104px;
         height:60px;
@@ -133,7 +133,6 @@
 
       }
     }
-
   }
   .el-menu--collapse {
     width: 64px;
@@ -152,7 +151,6 @@
     .main {
       width: 100%;
       display: flex;
-      // background: #324057;
       bottom: 0px;
       overflow: hidden;
       position:absolute;
@@ -162,8 +160,6 @@
         width: 200px;
         .el-menu{
           height: 100%;
-       
-
         }
         .isCollapse{
           width:60px;
@@ -181,17 +177,9 @@
 
         }
       }
-
       .content-container {
-        padding-top:10px;
         position: relative;
-        // background: #f1f2f7;
         flex:1;
-        // position: absolute;
-        // right: 0px;
-        // top: 0px;
-        // bottom: 0px;
-        // left: 200px;
         overflow-y: scroll;
         .breadcrumb-container {
           //margin-bottom: 15px;
@@ -207,8 +195,6 @@
         .content-wrapper {
           background-color: #fff;
           box-sizing: border-box;
-          padding-left:20px;
-          margin-top:10px;
         }
         .breadcrumb-router{
           border:none;

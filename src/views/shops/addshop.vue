@@ -330,7 +330,6 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
     	margin:0;
     	list-style:none;
     }
-	padding-top:20px;
 	/* 公共样式 */
 	p{
 		margin: 0;

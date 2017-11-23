@@ -184,7 +184,6 @@
         $color: #45cdb6;
         width: 100%;
         float: left;
-        padding: 40px;
         .w180{
             width: 180px;
         }

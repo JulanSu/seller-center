@@ -228,7 +228,6 @@
         $color: #45cdb6;
         box-sizing: border-box !important;
         width: 100%;
-        padding: 40px;
         float: left;
         .title{
             font-size: 16px;

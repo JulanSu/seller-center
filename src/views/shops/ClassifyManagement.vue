@@ -25,7 +25,7 @@
     </el-table>
 
     <!--工具条-->
-    <el-col :span="24" class="tool-bar" style="margin-top:20px;">
+    <el-col :span="24" class="tool-bar pages-bar" style="margin-top:20px;">
       <el-pagination
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
@@ -165,7 +165,6 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
 
 <style lang="scss">
 .fenlei-list{
-  padding:20px 40px 0 20px;
   a{
   text-decoration:none;
   }
