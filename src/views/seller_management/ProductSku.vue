@@ -163,6 +163,7 @@
     },
     created(){
       this.formartSkuDataHandel()
+    
     },
     methods: {
       /**
@@ -179,7 +180,6 @@
         this.tableName = tableName
         this.sortByNameData = sortByNameData
         this.selectedSku = formartSelectSku
-
         //根据名称格式化数据
       },
       createTableName(sortByNameData){

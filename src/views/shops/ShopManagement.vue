@@ -28,12 +28,12 @@
     </el-table>
 
     <!--工具条-->
-    <el-col :span="24" class="tool-bar">
+    <el-col :span="24" class="tool-bar pages-bar">
       <el-pagination
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
       :page-sizes="[20, 50, 100]"
-      :current-page="page"
+      :current-page="pageNum"
       :page-size="pageSize"
       layout="sizes,prev, pager, next, jumper,total"
       :total="total" style="float:right;">
@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
+import {getClassifyList, updateClassify} from '@/api/shopApi';
 
 
   export default {
@@ -55,7 +55,7 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
         },
         users: [],
         total: 0,
-        page: 1,
+        pageNum: 1,
         pageSize:20,
         listLoading: false,
       }
@@ -72,18 +72,25 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
       getUsers() {
         let para = {
           storeId:config.storeId,
-          page: this.page,
+          pageNum: this.pageNum,
           pageSize: this.pageSize
         };
         this.listLoading = true;
         getClassifyList(para).then((res) => {
-          this.total = Number(res.data.data.total);
-          this.users = res.data.data.list;
           this.listLoading = false;
+          if(res.data.code==0){
+            this.total = Number(res.data.data.total);
+            this.users = res.data.data.list;
+          }else{
+            this.$message.error(res.data.message);
+          }  
+        }).catch((res)=> {
+          this.listLoading = false;
+          this.$message.error('接口建立连接失败');
         });
       },
       handleCurrentChange(val) {
-        this.page = val;
+        this.pageNum = val;
         this.getUsers();
       },
       //当选择每页多少条时触发
@@ -91,47 +98,30 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
         this.pageSize = val;
         this.getUsers();
       },
-      //禁用启用
       handleDel: function (index, row) {
-          const h = this.$createElement;
-          var isHead=row.isHead==0?1:0;
-          this.$msgbox({
-            title: "设为总店",
-            message: h('p', null, [
-              h('span', null, '确认要设为总店吗？ '),
-              h('i', { style: 'text-align: center' }, '')
-            ]),
-            showCancelButton: true,
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            beforeClose: (action, instance, done) => {
-              if (action === 'confirm') {
-                //instance.confirmButtonLoading = true;
-                //instance.confirmButtonText = '执行中...';
-                //编辑门店提交接口
-                var para = new URLSearchParams();
-                para.append('storeBranchId',row.storeBranchId);
-                para.append('isHead',isHead);
-                updateClassify(para).then((res) => {
-                  if(res.data.code==0){
-                    this.getUsers();
-                    //instance.confirmButtonLoading = false;
-                    done();
+        var isHead=row.isHead==0?1:0;
+        this.$confirm('确认要设为总店吗？', "设为总店", {
+          type: 'warning'
+        }).then(() => {
+         //编辑门店提交接口
+          var para = new URLSearchParams();
+          para.append('storeBranchId',row.storeBranchId);
+          para.append('isHead',isHead);
+          this.listLoading = true;
 
-                  }else{
-                    done();
-                    this.$message.error(res.data.message);
-
-                  }
-                  
-                }).catch((res)=> {
-                  //this.listLoading = false;
-                });
-              }else {
-                done();
-              }
+          updateClassify(para).then((res) => {
+            this.listLoading = false;
+            if(res.data.code==0){
+              this.getUsers(); 
+            }else{
+              this.$message.error(res.data.message);
             }
-          })
+          }).catch(()=> {
+            this.listLoading = false;
+            this.$message.error('接口建立连接失败');
+          });
+        }).catch(() => {
+        });
       }
     },
     mounted() {
@@ -144,15 +134,18 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
 <style lang="scss">
 
 .shop-list{
-  padding:0 40px 0 20px;
   a{
     text-decoration:none;
   }
   .tool-bar{
     width:100%;
     background:none;
-    margin:20px 0;
+    margin:0 0 20px;
     position:relative;
+    /* .el-pagination{
+      margin:10px 0;
+    } */
+
   }
   .cell{
     a{
@@ -162,6 +155,27 @@ import {getClassifyList, saveClassify, updateClassify} from '@/api/shopApi';
       color:#45cdb6;
       padding-left:20px;
       cursor:pointer;
+    }
+  }
+  .el-table{
+    border:0;
+    table.el-table__header{
+      thead{
+        tr{
+          height:44px;
+          background:#f5f7fa;
+          box-shadow:0 1px 0 0 #eeeeee;
+        }
+      }
+    }
+    table.el-table__body{
+      tbody{
+        tr{
+          height:90px;
+          background:#ffffff;
+          box-shadow:0 1px 0 0 #eeeeee;
+        }
+      }
     }
   }
 }

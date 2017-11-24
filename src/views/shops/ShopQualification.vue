@@ -1,18 +1,20 @@
 <template>
-	<section class="qualification">
+	<section class="qualification" v-loading="listLoading">
 		<el-form :model="ruleForm" :rules="rules" ref="ruleForm">
 			<div v-if='shopStyle==1'>
 				<category-bar :title="categoryBarTitle1"></category-bar>
 				<el-form-item label="企业名称" label-width="200px" prop="enterpriseName">
 					<div class="only-ready">{{ruleForm.enterpriseName}}</div>
 				</el-form-item>
-				<el-form-item label="组织机构代码证/营业执照" label-width="200px">
-					<upload-pictures :note="uploadTishi" :url="ruleForm.enterpriseLicence" :listen="'listenToPic1'" @listenToPic1="sucpic1"></upload-pictures>
+				<el-form-item label="组织机构代码证/营业执照" label-width="200px" class="requireHezi">
+					<span class="require" style='left:-180px;'>*</span>
+					<upload-pictures :note="uploadTishi" :url="ruleForm.enterpriseLicence" :listen="'listenToPic1'" :picSize='"800.kB"' @listenToPic1="sucpic1"></upload-pictures>
 				</el-form-item>
-				<el-form-item label="" prop="enterpriseLicence"  label-width="120px" class='updata'>
+				<el-form-item label="" prop="enterpriseLicence"  label-width="200px" class='updata'>
 					<el-input v-model="ruleForm.enterpriseLicence" class="wid280"></el-input>
 				</el-form-item>
 				<el-form-item label="组织机构代码（注册号）" label-width="200px" prop="orgCode">
+
 					<el-input  :maxlength="18" v-model="ruleForm.orgCode" placeholder="请输入组织机构代码（注册号）" class="wid280"></el-input>
 				</el-form-item>
 				<el-form-item label="法人姓名" label-width="200px" prop="legalPerson">
@@ -25,22 +27,26 @@
 
 			<div v-else>		
 				<category-bar :title="categoryBarTitle2"></category-bar>
-				<el-form-item label="店主姓名" label-width="200px" prop="contactName">
-					<el-input :maxlength="30" v-model="ruleForm.contactName" placeholder="请输入店主姓名" class="wid280"></el-input>
+				<el-form-item label="店主姓名" label-width="200px" prop="legalPerson2">
+					<el-input :maxlength="30" v-model="ruleForm.legalPerson2" placeholder="请输入店主姓名" class="wid280"></el-input>
 				</el-form-item>
-				<el-form-item label="店主手机号" label-width="200px" prop="contactMobile">
-					<el-input :maxlength="11" v-model="ruleForm.contactMobile" placeholder="请输入店主手机号" class="wid280"></el-input>
+				<el-form-item label="店主手机号" label-width="200px" prop="legalMobile">
+					<el-input :maxlength="11" v-model="ruleForm.legalMobile" placeholder="请输入店主手机号" class="wid280"></el-input>
 				</el-form-item>
 			</div>
 
-			<el-form-item :label="ident1" label-width="200px">
-				<upload-pictures :note="uploadTishi" :url="ruleForm.identityPic1" :listen="'listenToPic2'" @listenToPic2="sucpic2"></upload-pictures>
+			<el-form-item :label="ident1" label-width="200px" class="requireHezi">
+				<span v-if="shopStyle==1" class="require" style='left:-120px;'>*</span>
+				<span v-else class="require" style='left:-92px;'>*</span>
+				<upload-pictures :note="uploadTishi" :url="ruleForm.identityPic1" :listen="'listenToPic2'" :picSize='"800.kB"' @listenToPic2="sucpic2"></upload-pictures>
 			</el-form-item>
 			<el-form-item label="" prop="identityPic1"  label-width="200px" class='updata'>
 				<el-input v-model="ruleForm.identityPic1" class="wid280"></el-input>
 			</el-form-item>
-			<el-form-item :label="ident2" label-width="200px">
-				<upload-pictures :note="uploadTishi" :url="ruleForm.identityPic2" :listen="'listenToPic3'" @listenToPic3="sucpic3"></upload-pictures>
+			<el-form-item :label="ident2" label-width="200px" class="requireHezi">
+				<span v-if="shopStyle==1" class="require" style='left:-120px;'>*</span>
+				<span v-else class="require" style='left:-92px;'>*</span>
+				<upload-pictures :note="uploadTishi" :url="ruleForm.identityPic2" :listen="'listenToPic3'" :picSize='"800.kB"' @listenToPic3="sucpic3"></upload-pictures>
 			</el-form-item>
 			<el-form-item label="" prop="identityPic2"  label-width="200px" class='updata'>
 				<el-input v-model="ruleForm.identityPic2" class="wid280"></el-input>
@@ -91,6 +97,34 @@ export default {
 		        }
 	        }
 	    };
+	   var validateNumber1= (rule, value, callback) => {
+          var reg =/^[0-9a-zA_Z]+$/g;
+          if (!value.match(reg)) {
+            callback(new Error('请输入正确的组织机构代码（注册码）'));
+          } else {
+            callback();
+          }
+	    };
+	    var validateNumber2= (rule, value, callback) => {
+	        var reg =/(^\d{0,18}$)|(^\d{17}(\d|X|x)$)/g;
+            if (!value.match(reg)) {
+	            callback(new Error('请输入正确身份证号'));
+	        } else {
+	            callback();
+	        }
+	    };
+	    var validateNumber3= (rule, value, callback) => {
+	        var reg =/^\d+$/g;
+	        if(!value){
+	        	callback();
+	        	return false;
+	        }
+            if (!value.match(reg)) {
+	            callback(new Error('请输入正确的手机号'));
+	        } else {
+	            callback();
+	        }
+	    };
 		return {
 		  	shopStyle:config.storeType,
 		  	categoryBarTitle1: '企业店铺资质',
@@ -98,6 +132,8 @@ export default {
 		  	ident1:'法人身份证正面',
 		  	ident2:'法人身份证反面',
 		  	uploadTishi:"请上传800px*800px以上，格式要求jpg、jpeg、png，不超过800k",
+
+		  	listLoading:false,
 
 		    ruleForm: {
 		      	enterpriseName: '',
@@ -111,7 +147,9 @@ export default {
 		      	identityPic2:'',
 		      	identityPic:'',
 		      	contactName:'',
-		      	contactMobile:''
+		      	contactMobile:'',
+		      	legalMobile:'',
+		      	legalPerson2:''
 		    },
 
 		    rules: {
@@ -128,22 +166,31 @@ export default {
 			        { required: true, message: '请输入法人姓名', trigger: 'blur' },
 			        { min:2, max: 30, message: '请输入正确的法人姓名', trigger: 'blur' }
 		      	],
+		      	legalPerson2: [
+			        { required: true, message: '请输入店主姓名', trigger: 'blur' },
+			        { min:2, max: 30, message: '请输入正确的店主姓名', trigger: 'blur' }
+		      	],
 		      	contactName: [
-			        { required: true, message: '请输入法人姓名', trigger: 'blur' },
-			        { min:2, max: 30, message: '请输入正确的法人姓名', trigger: 'blur' }
+			        { required: true, message: '请输入店主姓名', trigger: 'blur' },
+			        { min:2, max: 30, message: '请输入正确的店主姓名', trigger: 'blur' }
 		      	],
 		      	orgCode: [
 			        { required: true, message: '请输入组织机构代码（注册码）', trigger: 'blur' },
-			        { min:18, max: 18, message: '请输入正确组织机构代码（注册码）', trigger: 'blur' }
+			        { min: 1, max: 20, message: '请输入正确的组织机构代码（注册码）', trigger: 'blur' },
+			        { validator:validateNumber1,trigger: 'blur'},
+			        { validator:validateNumber1,trigger: 'change'}
 		      	],
 		      	identityNumber: [
 		        	{ required: true, message: '请输入法人身份证', trigger: 'blur' },
-		        	{ min:18, max: 18, message: '请输入正确身份证号', trigger: 'blur' }
+		        	{ min:18, max: 18, message: '请输入正确身份证号', trigger: 'blur' },
+		        	{ validator:validateNumber2,trigger: 'blur'},
+		        	{ validator:validateNumber2,trigger: 'change'}
 
 		      	],
-		      	contactMobile: [
-		        	{ validator: validatePhone,trigger: 'blur' }
-
+		      	legalMobile: [
+		        	{  required: true,validator: validatePhone,trigger: 'blur' },
+		        	{ validator:validateNumber3,trigger: 'blur'},
+		        	{ validator:validateNumber3,trigger: 'change'}
 		      	]
 		    }
 	  	};
@@ -162,10 +209,17 @@ export default {
         		this.ruleForm.identityPic1=identitys[0];
         		this.ruleForm.identityPic2=identitys[1];
 
+        		if(this.shopStyle!=1){//个人店铺
+					this.ruleForm.legalPerson2=this.ruleForm.legalPerson;
+				}
+
+        	}else{
+        		this.$message.error(res.data.message);
         	}
           	this.listLoading = false;
         }).catch((res)=> {
 	        this.listLoading = false;
+	        this.$message.error('接口建立连接失败');
 	    });
         if(config.storeType!=1){
         	this.ident1="身份证正面";
@@ -193,14 +247,16 @@ export default {
 				para.append('storeId',config.storeId);
 				para.append('enterpriseLicence',this.ruleForm.enterpriseLicence);
 				para.append('orgCode',this.ruleForm.orgCode);
-				para.append('legalPerson',this.ruleForm.legalPerson);
+				
 				para.append('identityPic',this.ruleForm.identityPic);
 				para.append('identityNumber',this.ruleForm.identityNumber);
 				
 
 				if(this.shopStyle!=1){//个人店铺
-					para.append('contactName',this.ruleForm.contactName);
-					para.append('contactMobile',this.ruleForm.contactMobile);
+					para.append('legalMobile',this.ruleForm.legalMobile);
+					para.append('legalPerson',this.ruleForm.legalPerson2);
+				}else{
+					para.append('legalPerson',this.ruleForm.legalPerson);
 				}
 
 	            merchantUpdate(para).then((res) => {
@@ -215,6 +271,7 @@ export default {
 		        	}
 		        }).catch((res)=> {
 			        this.listLoading = false;
+			        this.$message.error('接口建立连接失败');
 			    });
 		      } else {
 		        return false;
@@ -227,7 +284,6 @@ export default {
 
 <style lang="scss">
 .qualification{
-	padding:20px 0 0 0;
 	.wid280{
     	width:280px;
     }
@@ -236,7 +292,7 @@ export default {
 	}
 
 	.category-bar{
-		padding-left:40px;
+		padding-top:0;
 	}
 	.unchangeable{
 		width:100px;
@@ -245,7 +301,6 @@ export default {
 		line-height:100px;
 		overflow: hidden;
 		border: 1px dashed #c0ccda;
-   		border-radius: 6px;
 		img{
 			max-width:100%;
 			vertical-align: middle;

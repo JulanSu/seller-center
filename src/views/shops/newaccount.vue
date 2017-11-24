@@ -1,25 +1,24 @@
 <template>
-	<section class="add-sub-account">
-		<el-form v-loading="listLoading" :model="ruleForm" label-width="80px" :rules="rules" ref="ruleForm">
-			<el-form-item label="帐号名" label-width="100px" prop="account">
-				<el-input :maxlength="20" v-model="ruleForm.account" placeholder="请输入帐号名" class="wid280"></el-input>
+	<section class="add-sub-account" v-loading="listLoading">
+		<el-form :model="ruleForm" label-width="80px" :rules="rules" ref="ruleForm">
+			<el-form-item label="账号名" label-width="100px" prop="account">
+				<el-input :maxlength="20" v-model="ruleForm.account" placeholder="请输入账号名" class="wid280" @blur="findName"></el-input>
 			</el-form-item>
-			<el-form-item label="密码"  label-width="100px" prop="password">
-				<el-input type="password" v-model="ruleForm.password" placeholder="请输入密码"  class="wid280" auto-complete="off"></el-input>
+			<el-form-item label="密码"  label-width="100px" prop="password" class="passhezi">
+				<el-input :maxlength="20" :type="types" v-model="ruleForm.password" placeholder="请输入密码"  class="wid280" auto-complete="off"></el-input>
+        <span class="iconfont" :class="iconCls ? 'icon-yanjing' : 'icon-biyan1'" @click="switchs"></span>
 			</el-form-item>
-			<el-form-item label="确认密码"  label-width="100px" prop="againpass">
-				<el-input type="password" v-model="ruleForm.againpass" placeholder="再一次输入密码"  class="wid280" auto-complete="off"></el-input>
-			</el-form-item>		
 			<el-form-item label="姓名"  label-width="100px" prop="name">
 				<el-input :maxlength="30" v-model="ruleForm.name" placeholder="请输入姓名" class="wid280"></el-input>
 			</el-form-item>
-			<el-form-item label="性别" label-width="100px" prop="gender">
+			<el-form-item label="性别" label-width="100px" prop="gender" class="requireHezi">
+          <span class="require" style='left:-50px;'>*</span>
 			    <el-radio-group v-model="ruleForm.gender">
 			      <el-radio :label="1">男</el-radio>
 			      <el-radio :label="2">女</el-radio>
 			    </el-radio-group>
 			</el-form-item>
-      <el-form-item label="角色" prop="role" label-width="100px">
+      <el-form-item label="角色" prop="roleId" label-width="100px">
         <el-select v-model="ruleForm.roleId" placeholder="请选择角色">
           <el-option
             v-for="item in ruleForm.role"
@@ -45,7 +44,7 @@
 </template>
 
 <script>
-import {operatorGet,roleList,operatorUpdate,operatorSave} from '@/api/shopApi';
+import {operatorGet,roleList,operatorUpdate,operatorSave,operatorCheckaccount,roleUsedlist} from '@/api/shopApi';
 import md5 from 'js-md5';
 import crypto from 'crypto'
   export default {
@@ -62,29 +61,37 @@ import crypto from 'crypto'
             }
           }
       };
-      var validatePass = (rule, value, callback) => {
-        if (value.length<6||value.length>20) {
-          callback(new Error('密码必须大于6位，小于20位'));
-        } else {
-          if (this.ruleForm.againpass !== '') {
-            this.$refs.ruleForm.validateField('againpass');
+      var validatePassword= (rule, value, callback) => {
+          var reg = new RegExp("[\\u4E00-\\u9FFF]+","g");
+          if (reg.test(value)) {
+            callback(new Error('密码只能是字符、数字、特殊符号'));
+          } else {
+            callback();
           }
-          callback();
-        }
       };
-      var validatePass2 = (rule, value, callback) => {
-        if (value.length<6||value.length>20){
-          callback(new Error('确认密码必须大于6位，小于20位'));
-        } else if (value !== this.ruleForm.password) {
-          callback(new Error('密码和确认密码不一致，请重新填写'));
-        } else {
-          callback();
-        }
+      var validateNumber1= (rule, value, callback) => {
+          var reg =/^\d+$/g;
+          if (!value.match(reg)) {
+            callback(new Error('请输入正确的手机号'));
+          } else {
+            callback();
+          }
+      };
+      var validateNumber2= (rule, value, callback) => {
+          var reg =/(^\d{0,18}$)|(^\d{17}(\d|X|x)$)/g;
+          if (!value.match(reg)) {
+            callback(new Error('请输入正确的身份证号码'));
+          } else {
+            callback();
+          }
       };
       return {
+        iconCls:false,
+        types:"password",
         roleList:[],
         listLoading:false,
         isAdd:1,
+        csname:'',
         ruleForm: {
           storeOperatorId:'',
           account: '',
@@ -92,7 +99,7 @@ import crypto from 'crypto'
           againpass: '',
           name: '',
           gender: 1,
-          role:[],
+          role:'',
           roleId:'',
           mobile: '',
           identityNumber: ''
@@ -104,24 +111,28 @@ import crypto from 'crypto'
             { min: 1, max: 20, message: '长度在 1 到 20 位', trigger: 'blur' }
           ],
           password: [
-            { required: true, validator: validatePass, trigger: 'blur' }
-          ],
-          againpass: [
-            { required: true, validator: validatePass2, trigger: 'blur' }
+            { required: true, message: '请输入密码', trigger: 'blur' },
+            { min: 6, max: 20, message: '密码必须大于6位,小于20位', trigger: 'blur' },
+            {  validator: validatePassword, trigger: 'blur'},
+            {  validator: validatePassword, trigger: 'change'}
           ],
           name: [
             { required: true, message: '请输入姓名', trigger: 'blur' },
             { min:2, max: 30, message: '请输入正确的姓名', trigger: 'blur' }
           ],
-          /*role: [
+          roleId: [
             {  required: true, message: '请选择角色', trigger: 'change' }
-          ],*/
+          ],
           mobile: [
-            { validator: validatePhone,trigger: 'blur' }
+            { required: true,validator: validatePhone,trigger: 'blur' },
+            { validator:validateNumber1,trigger:'blur'},
+            { validator:validateNumber1,trigger: 'change'}
           ],
           identityNumber: [
             { required: true, message: '请输入身份证号码', trigger: 'blur' },
-            { min:18, max: 18, message: '身份证号码输入有误', trigger: 'blur' }
+            { min:18, max: 18, message: '身份证号码输入有误', trigger: 'blur' },
+            { validator:validateNumber2,trigger:'blur'},
+            { validator:validateNumber2,trigger:'change'}
           ]
         }
       };
@@ -131,34 +142,69 @@ import crypto from 'crypto'
       let para = {
         storeId:config.storeId
       };
-      roleList(para).then((res) => {
-        this.roleList=res.data.data;
-        this.ruleForm.role=res.data.data;
+      roleUsedlist(para).then((res) => {
+        if(res.data.code==0){
+          this.roleList=res.data.data;
+          this.ruleForm.role=res.data.data;
+          this.csname=this.ruleForm.account;
+        }
+        
       });
 
-      /*如果是编辑子帐号页面，需要取该子帐号的数据*/
-      var id=this.$route.params.id;
+      /*如果是编辑子账号页面，需要取该子账号的数据*/
+      var id=this.$route.query.id;
       if(id){
-        //获取子帐号信息
+        //获取子账号信息
         this.isAdd=2;
         this.dataFetch(id);
       }
     },
     methods: {
-      /*如果是编辑子帐号页面，需要取该子帐号的数据*/
+      //密码切换
+      switchs(){
+        if(this.types=="password"){
+          this.types='text';
+          this.iconCls=true;
+        }else{
+          this.types='password';
+           this.iconCls=false;
+        }
+        
+      },
+      /*查找账号是否已存在*/
+      findName(val){
+        if(!(this.ruleForm.account)||(this.ruleForm.account==this.csname)){
+          return false;
+        }
+        operatorCheckaccount({"account":this.ruleForm.account}).then((res) => {
+            if(res.data.code==1){
+              this.$message.error('用户名重复，请重新输入');
+            }
+        });
+      },
+      /*如果是编辑子账号页面，需要取该子账号的数据*/
       dataFetch(id){ 
         let para = {
           storeOperatorId:id
         };
         this.listLoading = true;
         operatorGet(para).then((res) => {
-          this.ruleForm= res.data.data;
-          this.ruleForm.againpass=this.ruleForm.password;
-          this.ruleForm.role=this.roleList;
-
+          if (res.data.code==0) {
+            this.ruleForm= res.data.data;
+            this.ruleForm.againpass=this.ruleForm.password;
+            this.ruleForm.role=this.roleList;
+            console.log(this.roleList)
+            this.ruleForm.password="********************";
+            if(res.data.data.roleName){
+              this.ruleForm.roleId=res.data.data.roleName;
+            }
+          }else{
+            this.$message.error(res.data.message);
+          }
           this.listLoading = false;
         }).catch((res)=> {
           this.listLoading = false;
+          this.$message.error('接口建立连接失败');
         });
 
       },
@@ -166,14 +212,15 @@ import crypto from 'crypto'
       sucFun(res){
         var that=this;
         this.listLoading = false;
+
         if(res.data.code==0){
-          this.$message({
-            message: '提交成功',
-            type: 'success',
+          this.$message({message: '提交成功',type: 'success',
             onClose:function(){
               that.$router.push({ path: '/store/bypass-management/account-list' });
             }
           });
+        }else{
+          this.$message.error(res.data.message);
         }
       },
 
@@ -182,14 +229,10 @@ import crypto from 'crypto'
         this.$refs[formName].validate((valid) => {
           if (valid) {
             this.listLoading = true;
-            //var a;
-            /*var md5 = crypto.createHash("md5");
-            //console.log(md5.update('aaa'));
-            var a = md5.digest('this.ruleForm.password');*/
-            
+    
             var para = new URLSearchParams();
             para.append('account',this.ruleForm.account);
-            para.append('password',md5(this.ruleForm.password));
+            
             para.append('name',this.ruleForm.name);
             para.append('gender',this.ruleForm.gender);
             para.append('roleId',this.ruleForm.roleId);
@@ -197,29 +240,24 @@ import crypto from 'crypto'
             para.append('identityNumber',this.ruleForm.identityNumber);
             
             if(this.isAdd==2){//2是编辑
+              if(this.ruleForm.password!="********************"){
+                para.append('password',md5(this.ruleForm.password));
+              }
               para.append('storeOperatorId',this.ruleForm.storeOperatorId);
-              operatorUpdate(para).then((res)=> {
-                if(res.data.code==0){
-                  this.sucFun(res);
-                }else{
-                  this.$message({message: res.data.message,type: 'warning'});
-                }
-                
+              operatorUpdate(para).then((res)=> { 
+                this.sucFun(res);  
               }).catch((res)=> {
                 this.listLoading = false;
-                this.$message({message: '接口建立连接失败',type: 'warning'});
+                this.$message.error('接口建立连接失败');
               });
             }else{
+              para.append('password',md5(this.ruleForm.password));
               para.append('storeId',config.storeId);
               operatorSave(para).then((res)=> {
-                if(res.data.code==0){
-                  this.sucFun(res);
-                }else{
-                  this.$message({message: res.data.message,type: 'warning'});
-                }
+                this.sucFun(res);
               }).catch((res)=> {
                 this.listLoading = false;
-                 this.$message({message: '接口建立连接失败',type: 'warning'});
+                this.$message.error('接口建立连接失败');
               });
             }
             
@@ -234,7 +272,6 @@ import crypto from 'crypto'
 
 <style lang="scss">
 .add-sub-account{
-  padding:40px 0 0 0;
   .wid280{
     width:280px;
   }
@@ -249,5 +286,22 @@ import crypto from 'crypto'
     padding:0;
     border-color:#41cac0;
   }
+  .passhezi{
+    position:relative;
+    .wid280{
+      input{
+        padding-right:25px;
+      }
+    }
+    .iconfont{
+      position:absolute;
+      left:255px;
+      top:2px;
+      color:rgb(191, 216, 217);
+      font-size:20px;
+      cursor:pointer;
+    }
+  }
+  
 }
 </style>

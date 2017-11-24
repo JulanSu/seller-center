@@ -4,9 +4,9 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="paginationConfig.curPage"
-      :page-sizes="[10, 30, 50]"
+      :page-sizes="[20, 50, 100]"
       :page-size="paginationConfig.pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
+      layout="sizes, prev, pager, next, jumper,total"
       :total="paginationConfig.total">
     </el-pagination>
   </div>
@@ -25,7 +25,7 @@
         default: function(){
           return {
             total: '',
-            pageSize: 10,
+            pageSize: 20,
             curPage: 1
           }
         }

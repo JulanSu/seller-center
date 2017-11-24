@@ -4,7 +4,7 @@
       <el-table
         :data="tableData"
         style="width: 100%" 
-        class="seller-table" highlight-current-row v-loading="listLoading">
+        class="seller-table" v-loading="listLoading">
         <el-table-column
           prop="productId"
           label="ID"
@@ -50,21 +50,19 @@
           prop="operational"
           label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="onEditorHandle(scope.row)">编辑</el-button>
             <el-button type="text" @click="onSoldOutHandle(scope.row)">下架</el-button>
-
+            <el-button type="text" @click="onEditorHandle(scope.row)">编辑</el-button>
             <el-button type="text" v-if="!scope.row.productRecommend" @click="onRecommendOnHandle(scope.row)">推荐</el-button>
             <el-button type="text" v-else @click="onRecommendOffHandle(scope.row)">取消推荐</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <div class="block" v-if="pagination.total > pagination.pageSize">
+      <template v-if="pagination.total">
         <pagination 
           :paginationConfig="pagination"
           @handleSizeChange="handleSizeChange"
           @handleCurrentChange="handleCurrentChange"></pagination>
-      </div>
-
+      </template>
     <el-dialog
       :visible.sync="dialogVisible"
       size="tiny" width="300" class="dialog-wrap" :title="dialogConfig.title">
@@ -106,12 +104,12 @@
               searchStartTime: '',
               searchEndTime: '',
               pageNum: 1,
-              pageSize: 10,
+              pageSize: 20,
               productStatus: 3
             },
             pagination: {
               total: '',
-              pageSize: 10,
+              pageSize: 20,
               curPage: 1
             },
             listLoading: true,
@@ -133,8 +131,8 @@
         },
         created(){
           this.getProductList({
-            pageNum: 1,
-            pageSize: 10
+            pageNum: this.pagination.curPage,
+            pageSize: this.pagination.pageSize
           })
         },
         methods: {
@@ -144,7 +142,6 @@
            * @return {[type]}     [description]
            */
           onEditorHandle (row){
-            console.log('编辑商品',row)
             this.$router.push({
               path: '/seller-management/goods/editor', 
               query:{productId: row.productId, productStatus: row.productStatus}
@@ -165,12 +162,11 @@
               theShelvestoSoldOut({
                 productId: row.productId
               }).then((res)=>{
-                console.log('商品下架',res)
                 self.listLoading = false;
                 self.messageHandle('商品下架成功！', 'success')
                 self.getProductList({
-                  pageNum: 1,
-                  pageSize: 10
+                  pageNum: self.pagination.curPage,
+                  pageSize: self.pagination.pageSize
                 })
               })
             })
@@ -193,8 +189,8 @@
                   self.listLoading = false;
                   self.messageHandle('商品推荐成功！', 'success')
                   self.getProductList({
-                    pageNum: 1,
-                    pageSize: 10
+                    pageNum: self.pagination.curPage,
+                    pageSize: self.pagination.pageSize
                   })
                   
 
@@ -222,8 +218,8 @@
                     self.listLoading = false;
                     self.messageHandle('商品取消推荐成功！', 'success')
                     self.getProductList({
-                      pageNum: 1,
-                      pageSize: 10
+                      pageNum: self.pagination.curPage,
+                      pageSize: self.pagination.pageSize
                     })                    
                   }
 
@@ -261,7 +257,6 @@
                 self.pagination.pageSize = formartData.pageSize
                 self.listLoading = false
               }
-              console.log('获取商品列表', res)
             })
           },
           handleSizeChange(pageSize) {
@@ -269,14 +264,12 @@
               pageNum:1, 
               pageSize: pageSize
             })
-            console.log(`每页 ${pageSize} 条`);
           },
           handleCurrentChange(pageNum) {
             this.getProductList({
               pageNum: pageNum, 
-              pageSize: 10              
+              pageSize: this.pagination.pageSize            
             })
-            console.log(`当前页: ${pageNum}`);
           },
           entryDialogHandle (row){
             let self = this;

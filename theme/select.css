@@ -330,13 +330,13 @@
     cursor: not-allowed;
 }
 .el-input.is-disabled .el-input__inner::-webkit-input-placeholder{
-    color: rgb(191, 216, 217);
+    color: #999;
 }
 .el-input.is-disabled .el-input__inner:-ms-input-placeholder{
-    color: rgb(191, 216, 217);
+    color: #999;
 }
 .el-input.is-disabled .el-input__inner::placeholder{
-    color: rgb(191, 216, 217);
+    color: #999;
 }
 .el-input.is-active .el-input__inner{
     outline: none;
@@ -349,7 +349,7 @@
     background-color: #fff;
     background-image: none;
     border-radius: 0px;
-    border: 1px solid rgb(191, 216, 217);
+    border: 1px solid #CCC;
     box-sizing: border-box;
     color: rgb(31, 60, 61);
     display: inline-block;
@@ -362,13 +362,13 @@
     width: 100%;
 }
 .el-input__inner::-webkit-input-placeholder{
-    color: rgb(151, 187, 190);
+    color: #999;
 }
 .el-input__inner:-ms-input-placeholder{
-    color: rgb(151, 187, 190);
+    color: #999;
 }
 .el-input__inner::placeholder{
-    color: rgb(151, 187, 190);
+    color: #999;
 }
 .el-input__inner:hover{
     border-color: rgb(131, 162, 165);
@@ -384,7 +384,7 @@
     right: 0;
     top: 0;
     text-align: center;
-    color: rgb(191, 216, 217);
+    color: #999;
     transition: all .3s;
 }
 .el-input__icon:after{
@@ -435,11 +435,11 @@
 }
 .el-input-group__append, .el-input-group__prepend{
     background-color: rgb(251, 254, 254);
-    color: rgb(151, 187, 190);
+    color: #999;
     vertical-align: middle;
     display: table-cell;
     position: relative;
-    border: 1px solid rgb(191, 216, 217);
+    border: 1px solid #CCC;
     border-radius: 0px;
     padding: 0 10px;
     width: 1px;
@@ -489,13 +489,13 @@
     cursor: not-allowed;
 }
 .el-textarea.is-disabled .el-textarea__inner::-webkit-input-placeholder{
-    color: rgb(191, 216, 217);
+    color: #999;
 }
 .el-textarea.is-disabled .el-textarea__inner:-ms-input-placeholder{
-    color: rgb(191, 216, 217);
+    color: #999;
 }
 .el-textarea.is-disabled .el-textarea__inner::placeholder{
-    color: rgb(191, 216, 217);
+    color: #999;
 }
 .el-textarea__inner{
     display: block;
@@ -508,18 +508,18 @@
     color: rgb(31, 60, 61);
     background-color: #fff;
     background-image: none;
-    border: 1px solid rgb(191, 216, 217);
+    border: 1px solid #CCC;
     border-radius: 0px;
     transition: border-color .2s cubic-bezier(.645,.045,.355,1);
 }
 .el-textarea__inner::-webkit-input-placeholder{
-    color: rgb(151, 187, 190);
+    color: #999;
 }
 .el-textarea__inner:-ms-input-placeholder{
-    color: rgb(151, 187, 190);
+    color: #999;
 }
 .el-textarea__inner::placeholder{
-    color: rgb(151, 187, 190);
+    color: #999;
 }
 .el-textarea__inner:hover{
     border-color: rgb(131, 162, 165);
@@ -829,7 +829,7 @@
     line-height: 1.5 !important;
 }
 .el-select-dropdown__item.is-disabled{
-    color: rgb(191, 216, 217);
+    color: #999;
     cursor: not-allowed;
 }
 .el-select-dropdown__item.is-disabled:hover{
@@ -1059,11 +1059,11 @@
     height: 0;
     cursor: pointer;
     border-radius: inherit;
-    background-color: rgba(151, 187, 190, 0.3);
+    background-color: rgba(153, 153, 153, 0.3);
     transition: .3s background-color;
 }
 .el-scrollbar__thumb:hover{
-    background-color: rgba(151, 187, 190, 0.5);
+    background-color: rgba(153, 153, 153, 0.5);
 }
 .el-scrollbar__bar{
     position: absolute;
@@ -1110,7 +1110,7 @@
 .el-select .el-input{}
 
 .el-select .el-input .el-input__icon{
-    color: rgb(191, 216, 217);
+    color: #999;
     font-size: 12px;
     transition: transform .3s;
     transform: translateY(-50%) rotateZ(180deg);
@@ -1128,11 +1128,11 @@
     text-align: center;
     transform: translateY(-50%) rotateZ(180deg);
     border-radius: 100%;
-    color: rgb(191, 216, 217);
+    color: #999;
 }
 
 .el-select .el-input .el-input__icon.is-show-close:hover{
-    color: rgb(151, 187, 190);
+    color: #999;
 }
 
 .el-select .el-input .el-input__icon.is-reverse{
@@ -1189,13 +1189,13 @@
     top: 8px;
     z-index: 1000;
     right: 25px;
-    color: rgb(191, 216, 217);
+    color: #999;
     line-height: 18px;
     font-size: 12px;
 }
 
 .el-select__close:hover{
-    color: rgb(151, 187, 190);
+    color: #999;
 }
 
 .el-select__tags{
@@ -1225,10 +1225,13 @@
   -------------------------- */
     /* Colors
   -------------------------- */
+    /*     --color-light-silver: color(var(--color-base-black) h(+3) s(23%) l(67%));
+  --color-extra-light-silver: color(var(--color-base-black) s(26%) l(80%)); */
     /* Link
   -------------------------- */
     /* Border
   -------------------------- */
+    /*   --border-color-base: var(--color-extra-light-silver); */
     /* Box-shadow
   -------------------------- */
     /* Fill
@@ -1275,6 +1278,8 @@
  -------------------------- */
     /* Table
  -------------------------- */
+    /*   --table-border-color: color(var(--border-color-base) h(-3) s(27%) l(90%)); */
+    /*   --table-header-background: var(--color-extra-light-gray); */
     /* Pagination
  -------------------------- */
     /* Popover

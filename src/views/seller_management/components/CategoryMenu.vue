@@ -11,19 +11,23 @@
             v-model="keywords">
           </el-input>
         </div>
-        <el-menu default-active="" unique-opened class="category-menu" v-if="categoryData.length">
-          <template  v-for="(item, index) in categoryData">
-            <el-menu-item :index="index+''" v-if="item.productCateName" class="sub-title" @click="selectproductCateName(item, index)">
-              <span class="first-letter" v-if="showLetterIcon">A</span>{{item.productCateName}}
+        <ul class="el-menu category-menu" v-if="categoryDataCache.length">
+          <template  v-for="(item, index) in categoryDataCache">
+            <li v-if="item.productCateName" :key="item.productCateName" class="el-menu-item sub-title" :class="{'is-active': activeIndex === index}" @click="selectproductCateName(item, index)">
+              <span class="first-letter" v-if="showLetterIcon">{{item.firstLetter}}</span>{{item.productCateName}}
               <i class="el-icon-arrow-right" v-if="item.child && item.child.length"></i>
-            </el-menu-item>
+            </li>
           </template>     
-        </el-menu>
-        <el-menu default-active="" unique-opened class="category-menu search-list" v-if="searchList.length">
-          <template  v-for="(item, index) in searchList">
-            <el-menu-item v-if="!item.child || !item.child.length && item.productCateName" :index="index+''" class="sub-title" @click="selectproductCateName(item, index)"><span class="first-letter" v-if="showLetterIcon">A</span>{{item.productCateName}}<i class="el-icon-arrow-right" v-if="item.child.length"></i></el-menu-item>
-          </template>     
-        </el-menu>
+        </ul>
+        <ul class="el-menu category-menu search-list" v-if="keywords">
+          <template v-if="!searchList.length">
+            <li class="el-menu-item sub-title">没有找到相关内容</li>
+          </template>
+          <template v-else v-for="(item, index) in searchList">
+            <li class="el-menu-item sub-title" :key="item.productCateName" :class="{'is-active': activeIndex === index}" @click="selectproductCateName(item, index)">
+              <span class="first-letter" v-if="showLetterIcon">{{item.firstLetter}}</span>{{item.productCateName}}<i class="el-icon-arrow-right" v-if="item.child && item.child.length"></i></li>
+          </template>
+        </ul>
       </div>
     </div>
   </div>
@@ -33,13 +37,13 @@
     export default {
         data() {
           return {
+            activeIndex: '',
             searchList: [],
             keywords: '',
             searchValue: '',
             curproductCateName: [],
             categoryNavIndex: 0,
-            categoryDataCache: [],
-            secoundCategoryData: []
+            categoryDataCache: []
           }
         },
         props: {
@@ -72,49 +76,55 @@
           }
         },
         watch: {
-          keywords (){
-            this.searchHandle();
+          keywords (newVal, oldVal){
+            this.searchHandle(newVal);
           },
           categoryData (){
-            console.log('监听变化')
+
             this.categoryDataCache = this.categoryData
           }
         },
-        mounted () {
-          console.log('计算数据',this.categoryData)
+        created () {
           this.categoryDataCache = this.categoryData
         },
         methods: {
-          searchHandle: function() {
-              var reg = new RegExp(this.keywords == '' ? 'xxyy' :
-                  this.keywords, 'ig');
-              if(!this.keywords) {
+          getFirstLetter(str){
+            if(str) {
+              return str.substring(0,1).toLocaleUpperCase()
+            }
+          },
+          searchHandle(keywords) {
+              var reg = new RegExp(keywords == '' ? 'xxyy' :
+                  keywords, 'ig')
+              if(!keywords) {
                  this.searchList = []
               }else {
               var _arr = [];
-              for(var i in this.categoryData){
-                console.log(this.categoryData[i])
+              for(var i in this.categoryDataCache){
+
                 if(
-                    reg.test(this.categoryData[i][
-                        'ename'
+                    reg.test(this.categoryDataCache[i][
+                        'productCateEname'
                     ]) ||
-                    reg.test(this.categoryData[i][
+                    reg.test(this.categoryDataCache[i][
                         'productCateName'
                     ])
                 ){
-                    _arr.push(this.categoryData[i]);
+                    _arr.push(this.categoryDataCache[i]);
                 }
               }
+
               this.searchList = _arr
             }  
           },
 
           selectproductCateName (row, index) {
             let self = this
+            this.activeIndex = index
             this.$emit('categoryClick', row, index)
           },
-          getproductCateName(){
-
+          updateActiveIndex(){
+            this.activeIndex = ''
           }
         }
 
@@ -176,7 +186,7 @@
     }
   }
   .category-menu {
-    background-color: #FFF;
+    background-color: #FFF !important;
 
     .el-menu-item {
       position: relative;

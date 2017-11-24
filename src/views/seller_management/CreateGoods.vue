@@ -2,18 +2,19 @@
   <div class="create-goods page-container">
     <loading-mask v-if="isLoading"></loading-mask>
     <template v-else>
-      <category-bar :title="categoryBarTitle"></category-bar>
       <template v-if="$route.name === '创建商品'">
+        <category-bar title="商品类目选择"></category-bar>
+        <template v-if="categoryData.length">
         <el-row>
           <el-col :span="8">
             <category-menu title="一级类目" v-if="categoryData.length" :categoryData="categoryData" @categoryClick="firstHandle">
             </category-menu>
           </el-col>
           <el-col :span="8">
-            <category-menu title="二级类目" v-if="secoundCategoryData.length" :categoryData="secoundCategoryData" @categoryClick="secondHandle"></category-menu>
+            <category-menu title="二级类目" ref="secoundCategory" v-if="secoundCategoryData.length" :categoryData="secoundCategoryData" @categoryClick="secondHandle"></category-menu>
           </el-col>
           <el-col :span="8">
-            <category-menu title="三级类目" v-if="thirstCategoryData.length" :categoryData="thirstCategoryData" @categoryClick="thirdHandle"></category-menu>
+            <category-menu title="三级类目" ref="thirstCategory" v-if="thirstCategoryData.length" :categoryData="thirstCategoryData" @categoryClick="thirdHandle"></category-menu>
           </el-col>
         </el-row>
         <div class="category-nav-breadcrumb">
@@ -29,10 +30,11 @@
           <div style="text-align: center" class="create-rule">
             <el-button type="primary" @click="linkGoodsForm" :class="{disabled: !hunbohuiRule || !cateSelected}">我已阅读以下规则，现在创建商品</el-button>
             <div class="block">
-              <el-checkbox v-model="hunbohuiRule">中国婚博会规则</el-checkbox>
+              <el-checkbox v-model="hunbohuiRule"><a href="https://wh.jiehun.com.cn/help/77272.html" target="_black">中国婚博会规则</a></el-checkbox>
             </div>
           </div>
-          <div class="guize">
+
+<!--           <div class="guize">
             <div class="guize-title">
               发布须知：禁止发布侵犯他人知识产权的商品，请确认商品符合只是产权保护的规定
             </div>
@@ -48,9 +50,16 @@
               <p>发布须知：禁止发布侵犯他人知识产权的商品，请确认商品符合只是产权保护的规定</p>
               <p>发布须知：禁止发布侵犯他人知识产权的商品，请确认商品符合只是产权保护的规定</p>
             </div>
-          </div>
+          </div> -->
         </div>
+        </template>
+        <template v-else>
+          <div class="">
+            目前还没有类目，请联系客服！
+          </div>
+        </template>
       </template>
+
       <router-view v-if="$route.name === '新建商品' || $route.name === '编辑商品'"></router-view>
     </template>
   </div>
@@ -122,16 +131,21 @@
         firstHandle (row, index){
           this.curCateGroup = []
           this.getcurCateGroup(0, row)
-          this.secoundCategoryData = []
+
           this.thirstCategoryData = []
           this.secoundCategoryData = row.child
           this.cateSelected = false
+          if(this.$refs.secoundCategory) {
+            this.$refs.secoundCategory.updateActiveIndex()
+          }
         },
         secondHandle (row, index) {
-          this.thirstCategoryData = []
           this.thirstCategoryData = row.child
           this.getcurCateGroup(1, row)
           this.cateSelected = false
+          if(this.$refs.thirstCategory) {
+            this.$refs.thirstCategory.updateActiveIndex()
+          }
         },
         thirdHandle (row, index){
           this.getcurCateGroup(2, row)
@@ -139,7 +153,6 @@
         },
         getcurCateGroup (index, row){
           this.curCateRow = row
-
           this.$set(this.curCateGroup, index, row)
           if(index === 1 && this.curCateGroup.length === 3) {
             this.curCateGroup.splice(index+1,1)

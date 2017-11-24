@@ -2,6 +2,7 @@
   <div>
     <search-nav @onSearchClick="searchSubmitHandle"></search-nav>
       <el-table
+        :highlight-current-row="false"
         :data="tableData"
         style="width: 100%" 
         class="seller-table" highlight-current-row v-loading="listLoading">
@@ -54,12 +55,12 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="block" v-if="pagination.total > pagination.pageSize">
+      <template v-if="pagination.total">
         <pagination 
           :paginationConfig="pagination"
           @handleSizeChange="handleSizeChange"
           @handleCurrentChange="handleCurrentChange"></pagination>
-      </div>
+      </template> 
 
     <el-dialog
       :visible.sync="dialogVisible"
@@ -97,12 +98,12 @@
                 searchStartTime: null,
                 searchEndTime: null,
                 pageNum: 1,
-                pageSize: 10,
+                pageSize: 20,
                 productStatus: 1
               },
               pagination: {
                 total: '',
-                pageSize: 10,
+                pageSize: 20,
                 curPage: 1
               },
               listLoading: true,
@@ -121,8 +122,8 @@
         },
         created(){
           this.getProductList({
-            pageNum: 1,
-            pageSize: 10
+            pageNum: this.pagination.curPage,
+            pageSize: this.pagination.pageSize
           })
         },
         methods: {
@@ -155,7 +156,6 @@
                 self.pagination.pageSize = formartData.pageSize
                 self.listLoading = false
               }
-              console.log('获取商品列表', res)
             })
           },
           handleSizeChange(pageSize) {
@@ -163,14 +163,12 @@
               pageNum:1, 
               pageSize: pageSize
             })
-            console.log(`每页 ${pageSize} 条`);
           },
           handleCurrentChange(pageNum) {
             this.getProductList({
               pageNum: pageNum, 
-              pageSize: 10              
+              pageSize: this.pagination.pageSize              
             })
-            console.log(`当前页: ${pageNum}`);
           },
 
           entryDialogHandle (row){
@@ -183,12 +181,10 @@
             });
           },
           searchSubmitHandle (value){
-            console.log(value)
             if(!value) {
               return 
             }
             this.getProductList(value)
-            console.log('商品查询后的', value)
           },
           /**
            * onCancelHandle 取消审核
@@ -207,10 +203,10 @@
                 var data = res.data.data
                 if(res.data.code == 0) {
                   self.listLoading = false;
-                  self.messageHandle('商品删除成功！', 'success')
+                  self.messageHandle('商品取消审核成功！', 'success')
                   self.getProductList({
-                    pageNum: 1,
-                    pageSize: 10
+                    pageNum: this.pagination.curPage,
+                    pageSize: this.pagination.pageSize
                   })                    
                 }
               })

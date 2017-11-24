@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <app-header :sysUserName="sysUserName"></app-header>
+    <div class='shadows'></div>
     <div class="main">
         <!--导航菜单-->
       <el-menu :default-active="$route.path" class="pro-sidebar" unique-opened router backgroundColor="#545c64"
@@ -45,6 +46,10 @@
             return this.$route.name !== undefined? this.$route.name +new Date(): this.$route +new Date();
         }
     },
+    watch: {
+     '$route' (to, from) {
+     }
+   },
     methods: {
       //退出登录
       logout: function () {
@@ -57,16 +62,7 @@
         }).catch(() => {
 
         });
-
-
-      },
-      //折叠导航栏
-      // collapse:function(){
-      //   this.isCollapse=!this.isCollapse;
-      // },
-      // showMenu(i,status){
-      //   this.$refs.menuisCollapse.getElementsByClassName('submenu-hook-'+i)[0].style.display=status?'block':'none';
-      // }
+      }
     },
     mounted() {
 
@@ -84,6 +80,16 @@
 
 <style lang="scss">
   @import '~scss_vars';
+  .shadows{
+    position:absolute;
+    width:calc(100% - 200px);
+    left:200px; 
+    top:56px;
+    height:4px;
+    z-index:999;
+    box-shadow: 0 2px 5px 0 rgba(204, 204, 204, 0.5);
+
+  }
   .el-menu--collapse {
     width: 64px;
   }
@@ -155,8 +161,7 @@
         .content-wrapper {
           background-color: #fff;
           box-sizing: border-box;
-          padding-left:20px;
-          margin-top:10px;
+          padding: 40px;
         }
         .breadcrumb-router{
           border:none;

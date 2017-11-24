@@ -91,7 +91,7 @@
 }
 
 .el-collapse{
-    border: 1px solid rgb(223, 236, 236);
+    border: 1px solid rgb(236, 223, 223);
     border-radius: 0;
 }
 
@@ -112,7 +112,7 @@
     background-color: #fff;
     color: rgb(72, 104, 106);
     cursor: pointer;
-    border-bottom: 1px solid rgb(223, 236, 236);
+    border-bottom: 1px solid rgb(236, 223, 223);
     font-size: 13px;
 }
 
@@ -126,7 +126,7 @@
     background-color: rgb(251, 254, 254);
     overflow: hidden;
     box-sizing: border-box;
-    border-bottom: 1px solid rgb(223, 236, 236);
+    border-bottom: 1px solid rgb(236, 223, 223);
 }
 
 .el-collapse-item__content{
@@ -140,10 +140,13 @@
   -------------------------- */
     /* Colors
   -------------------------- */
+    /*     --color-light-silver: color(var(--color-base-black) h(+3) s(23%) l(67%));
+  --color-extra-light-silver: color(var(--color-base-black) s(26%) l(80%)); */
     /* Link
   -------------------------- */
     /* Border
   -------------------------- */
+    /*   --border-color-base: var(--color-extra-light-silver); */
     /* Box-shadow
   -------------------------- */
     /* Fill
@@ -190,6 +193,8 @@
  -------------------------- */
     /* Table
  -------------------------- */
+    /*   --table-border-color: color(var(--border-color-base) h(-3) s(27%) l(90%)); */
+    /*   --table-header-background: var(--color-extra-light-gray); */
     /* Pagination
  -------------------------- */
     /* Popover

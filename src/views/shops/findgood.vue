@@ -21,7 +21,7 @@
     </el-table>
 
     <!--工具条-->
-    <el-col :span="24" class="tool-bar" style="margin-top:20px;">
+    <el-col :span="24" class="tool-bar pages-bar" style="margin-top:20px;">
       <el-pagination
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
@@ -53,7 +53,7 @@ import { productList,productRemove} from '@/api/shopApi';
       //关联其他商品按钮
       relevance(){
         //var parm={storeCateId:this.$route.query.id};
-        this.$router.push({ path: '/store/classify-management/find-good/all-good'});
+        this.$router.push({ path: '/store/classify-management/all-good'});
       },
       //转换状态
       formatUsed(row){
@@ -84,11 +84,17 @@ import { productList,productRemove} from '@/api/shopApi';
         this.listLoading = true;
 
         productList(para).then((res) => {
-          this.total = Number(res.data.data.total);
-          this.datas = res.data.data.list;
+          if (res.data.code==0) {
+            this.total = Number(res.data.data.total);
+            this.datas = res.data.data.list;
+          }else{
+            this.$message.error(res.data.message);
+          }
+          
 
           this.listLoading = false;
         }).catch((res)=> {
+          this.$message.error('建立连接失败');
           this.listLoading = false;
         });
       },
@@ -102,11 +108,19 @@ import { productList,productRemove} from '@/api/shopApi';
           para.append('storeCateProductId',row.storeCateProductId);
           
           productRemove(para).then((res) => {
+            if(res.data.code==0){
+              this.getProductList();//更新列表
+
+            }else{
+              this.$message.error(res.data.message);
+            }
             this.listLoading = false;
-            this.getProductList();//更新列表
+            
           }).catch((res)=> {
             this.listLoading = false;
+            this.$message.error('建立连接失败');
           });
+        }).catch(() => {
         });
       },
       //分页
@@ -124,7 +138,6 @@ import { productList,productRemove} from '@/api/shopApi';
 
 <style lang="scss">
 .find-good{
-  padding:40px 40px 0 20px;
   a{
     text-decoration:none;
   }

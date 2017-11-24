@@ -1,5 +1,5 @@
 /*商家管理 =S */
-const CreateGoods =  resolve => require(['@/views/seller_management/CreateGoods.vue'],resolve) 
+const CateSelection =  resolve => require(['@/views/seller_management/CateSelection.vue'],resolve) 
 const Logistics = resolve => require(['@/views/seller_management/Logistics.vue'],resolve) 
 const GoodsForm = resolve => require(['@/views/seller_management/GoodsForm.vue'],resolve) 
 const UnderReview = resolve => require(['@/views/seller_management/UnderReview.vue'],resolve) 
@@ -14,12 +14,12 @@ const RecycleBin = resolve => require(['@/views/seller_management/RecycleBin.vue
 /*商家管理 =E */
 const routers = [{ 
         path: '/seller-management/goods', 
-        component: CreateGoods, 
+        component: CateSelection, 
         name: '创建商品',
         showChildrenName: true,
         children:[
 
-            { path: '/seller-management/goods/create', component: CreateGoods, name: '选择类目' },
+            { path: '/seller-management/goods/create', component: CateSelection, name: '选择类目' },
             { path: '/seller-management/goods/form', component: GoodsForm, name: '新建商品' },
             { path: '/seller-management/goods/editor', component: GoodsForm, name: '编辑商品' }
         ]

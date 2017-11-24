@@ -5,9 +5,10 @@
         <el-input :maxlength="10" v-model="ruleForm.cateName" placeholder="请输入店铺名称" class="wid280"></el-input>
       </el-form-item>
       <el-form-item label="店铺LOGO" label-width="100px">
-        <upload-pictures :note="uploadLogo" :url="ruleForm.catePic" :listen="'listenToPic1'" @listenToPic1="sucpic1"></upload-pictures>
+        <upload-pictures :note="uploadLogo" :url="ruleForm.catePic" :listen="'listenToPic1'" :picSize='"10.MB"' @listenToPic1="sucpic1"></upload-pictures>
       </el-form-item>
-      <el-form-item label="显示" label-width="100px" prop="isUsed">
+      <el-form-item label="显示" label-width="100px" prop="isUsed" class="requireHezi">
+          <span class="require" style='left:-50px;'>*</span>
           <el-radio-group v-model="ruleForm.isUsed">
             <el-radio :label="1">是</el-radio>
             <el-radio :label="0">否</el-radio>
@@ -66,13 +67,17 @@ export default {
     },
     /*如果是编辑分类页面，需要取该分类的数据*/
     dataFetch(id){
-      var para = new URLSearchParams();
-      para.append('storeCateId',id);
-
+      let para = {
+        storeCateId:id
+      };
       this.listLoading = true;
       cateGet(para).then((res) => {
-        this.ruleForm= res.data.data;
         this.listLoading = false;
+
+        if(res.data.code==0){
+          this.ruleForm= res.data.data;
+        }
+        
       }).catch((res)=> {
         this.listLoading = false;
       });
@@ -127,7 +132,6 @@ export default {
 
 <style lang="scss">
 .add-fenlei{
-  padding-top:30px;
   .wid280{
     width:280px;
   }

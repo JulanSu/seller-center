@@ -9,7 +9,11 @@ import transaction from './transactionRoutes.js'
 
 /*营销路由管理*/
 import marketingCenter from './marketingCenterRoutes.js'
+
+//首页路由
+import home from './home.js'
 const asyncRouterArr =  [
+   
 	{
 
         path: '/seller-management',
@@ -33,6 +37,7 @@ const asyncRouterArr =  [
         iconCls: 'iconfont icon-shangpinguanli',
         children:shopsManagementRoutes 
     },
+    
     {   path: '/marketing-center',
         component: Full,
         name: '营销中心',

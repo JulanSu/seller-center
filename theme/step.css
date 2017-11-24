@@ -117,7 +117,7 @@
     display: inline-block;
     position: absolute;
     border-color: inherit;
-    background-color: rgb(191, 216, 217);
+    background-color: #999;
 }
 
 .el-step__line.is-vertical{
@@ -190,13 +190,13 @@
 }
 
 .el-step__head.is-wait{
-    color: rgb(191, 216, 217);
-    border-color: rgb(191, 216, 217);
+    color: #999;
+    border-color: #999;
 }
 
 .el-step__head.is-process{
-    color: rgb(191, 216, 217);
-    border-color: rgb(191, 216, 217);
+    color: #999;
+    border-color: #999;
 }
 
 .el-step__head.is-text{
@@ -224,15 +224,15 @@
 }
 
 .el-step__head.is-text.is-wait{
-    color: rgb(191, 216, 217);
+    color: #999;
     background-color: #fff;
-    border-color: rgb(191, 216, 217);
+    border-color: #999;
 }
 
 .el-step__head.is-text.is-process{
     color: #fff;
-    background-color: rgb(191, 216, 217);
-    border-color: rgb(191, 216, 217);
+    background-color: #999;
+    border-color: #999;
 }
 
 .el-step__main{
@@ -264,7 +264,7 @@
 
 .el-step__title.is-wait{
     font-weight: 400;
-    color: rgb(151, 187, 190);
+    color: #999;
 }
 
 .el-step__title.is-process{
@@ -291,7 +291,7 @@
 }
 
 .el-step__description.is-wait{
-    color: rgb(191, 216, 217);
+    color: #999;
 }
 
 .el-step__description.is-process{
@@ -302,10 +302,13 @@
   -------------------------- */
     /* Colors
   -------------------------- */
+    /*     --color-light-silver: color(var(--color-base-black) h(+3) s(23%) l(67%));
+  --color-extra-light-silver: color(var(--color-base-black) s(26%) l(80%)); */
     /* Link
   -------------------------- */
     /* Border
   -------------------------- */
+    /*   --border-color-base: var(--color-extra-light-silver); */
     /* Box-shadow
   -------------------------- */
     /* Fill
@@ -352,6 +355,8 @@
  -------------------------- */
     /* Table
  -------------------------- */
+    /*   --table-border-color: color(var(--border-color-base) h(-3) s(27%) l(90%)); */
+    /*   --table-header-background: var(--color-extra-light-gray); */
     /* Pagination
  -------------------------- */
     /* Popover

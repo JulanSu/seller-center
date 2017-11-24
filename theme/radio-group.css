@@ -105,10 +105,13 @@
   -------------------------- */
     /* Colors
   -------------------------- */
+    /*     --color-light-silver: color(var(--color-base-black) h(+3) s(23%) l(67%));
+  --color-extra-light-silver: color(var(--color-base-black) s(26%) l(80%)); */
     /* Link
   -------------------------- */
     /* Border
   -------------------------- */
+    /*   --border-color-base: var(--color-extra-light-silver); */
     /* Box-shadow
   -------------------------- */
     /* Fill
@@ -155,6 +158,8 @@
  -------------------------- */
     /* Table
  -------------------------- */
+    /*   --table-border-color: color(var(--border-color-base) h(-3) s(27%) l(90%)); */
+    /*   --table-header-background: var(--color-extra-light-gray); */
     /* Pagination
  -------------------------- */
     /* Popover

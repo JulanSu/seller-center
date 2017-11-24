@@ -152,7 +152,7 @@
   margin-left: 10px;
   border: 6px solid transparent;
   border-right-width: 0;
-  border-left-color: rgb(151, 187, 190);
+  border-left-color: #999;
   border-left-width: 7px;
   transform: rotate(0deg);
   transition: transform 0.3s ease-in-out;
@@ -182,7 +182,7 @@
   vertical-align: middle;
   margin-right: 4px;
   font-size: 14px;
-  color: rgb(151, 187, 190);
+  color: #999;
 }
 
 .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
@@ -193,10 +193,13 @@
   -------------------------- */
   /* Colors
   -------------------------- */
+  /*     --color-light-silver: color(var(--color-base-black) h(+3) s(23%) l(67%));
+  --color-extra-light-silver: color(var(--color-base-black) s(26%) l(80%)); */
   /* Link
   -------------------------- */
   /* Border
   -------------------------- */
+  /*   --border-color-base: var(--color-extra-light-silver); */
   /* Box-shadow
   -------------------------- */
   /* Fill
@@ -243,6 +246,8 @@
  -------------------------- */
   /* Table
  -------------------------- */
+  /*   --table-border-color: color(var(--border-color-base) h(-3) s(27%) l(90%)); */
+  /*   --table-header-background: var(--color-extra-light-gray); */
   /* Pagination
  -------------------------- */
   /* Popover

@@ -1,35 +1,152 @@
-@import "vars.scss";
+@import "./vars.scss";
+@import "./reset-element.scss";
+@import "./sellerMangement.scss";
+
+.pb30 {
+  padding-bottom: 30px;
+}
+.pb20 {
+  padding-bottom: 20px;
+}
+.pt0 {
+  padding-top: 0 !important;
+}
+
+.updata{
+  .el-input{
+    display:none;
+  }
+}
+.requireHezi{
+  position:relative;
+  .require{
+    position:absolute;
+    color:#ff4949;
+  }
+}
+#ser{
+  margin-right:20px;
+}
+
+.pages-bar{
+  width:100%;
+  background:none;
+  margin:30px 0 !important;
+  position:relative;
+}
+/* 表格公共样式 */
+.el-table--enable-row-hover{
+  .el-table__body{
+     tr:hover {
+      box-shadow: 0 2px 8px 0 #eeeeee;
+      & > td{
+        background-color:#fff !important;
+      }
+     }
+  }
+}
+.el-table--enable-row-transition{
+  .el-table__body{
+    td{
+      transition:all .25s ease !important;
+    }
+  }
+} 
+
+.el-table{
+  tr{
+    background-color:transparent;
+  }
+  border:0;
+  table.el-table__header{
+    thead{
+      tr{
+        height:44px;
+        background:#f5f7fa;
+        box-shadow:0 1px 0 0 #eeeeee;
+        div{
+          color:#333;
+          font-weight:normal;
+        }
+      }
+    }
+  }
+  table.el-table__body{
+    tbody{
+      tr{
+        height:90px;
+        background:#ffffff;
+        box-shadow:0 1px 0 0 #eeeeee;
+        td{
+          div{
+             color:#666;
+             a:hover,span:hover{
+              text-decoration: underline;
+             }
+          }
+         
+        }
+      }
+    }
+  }
+  .el-table__header-wrapper{
+    thead{
+      div{
+        background:none;
+      }
+      th{
+        background:none;
+      }
+    }
+  }
+}
 
 label {
   font-weight: 400;
 }
+//去除类型为number的上下箭头
+input[type=number] {  
+    -moz-appearance:textfield;  
+}
+ 
+input[type=number]::-webkit-inner-spin-button,  
+input[type=number]::-webkit-outer-spin-button {  
+    -webkit-appearance: none;  
+    margin: 0;  
+} 
 .block {
   padding: 30px 0;
   .desc {
     color: #999;
   }
 }
-.wuliu {
+.el-breadcrumb{
+  b{
+    font-weight:100;
+    color:#999;
+  }
+  .el-breadcrumb__separator{
+    margin:0 3px;
+  }
+}
+.logistics-block {
     ul,li {
       margin: 0;
       padding: 0;
       list-style: none;
       
     }
-  .area {
+  .area-list {
   
-    li {
+    .area-list-wrap {
       margin-bottom: 20px;
       overflow: hidden;
     }
     .area-item {
       float: left;
       padding: 0 5px;
-    }
-    
-
+    }   
   }
-
 }
 .area-selection {
   ul, li {
@@ -73,20 +190,48 @@ input[type=file].el-upload__input{
   width:6px;
   height:50px;
 } 
+/* 类目选择后的提示样式 */
+.category-nav-breadcrumb {
+  position: relative;
+  border: 1px solid #FAD29A;
+  padding: 7px 20px;
+  margin-top: 20px;
+  position: relative;
+  background: #FFFAF2;
+  .icon-arrow-top {
+position: absolute;
+    left: 30px;
+    top: -15px;
+    border-width: 7px;
+    border-style: solid;
 
+  }
+  .arrow-top-a {
+    border-color: #fff #fff #FAD29A #fff;
+  }
+  .arrow-top-b {
+    left: -7px;
+    top: -6px;
+    width: 4px;
+    border-color: transparent transparent #FFFAF2 transparent;
+
+    
+  }
+  .breadcrumb-tips {
+    color: #333;
+    float: left;
+  }
+}
 /* 三级联动公共样式 */ 
 div.address{
   select{
     border-radius: 0;
     height:36px;
     font-size:14px;
-    border-color:rgb(191, 216, 217) !important;
+    border-color:#ccc !important;
     option{
       font-size:14px;
     }
-  }
-  select:selected{
-    border-color:red!important;
   }
 }
 
@@ -94,6 +239,7 @@ div.address{
 /* 商家入驻 */
 .merchant-enter{
   position:relative;
+  width:960px;
   /* 公共样式 */
   p,ul,ol,li,h4{
     margin: 0;
@@ -102,7 +248,27 @@ div.address{
   ol,ul{
     list-style: none;
   }
-
+  .wid400{
+    width:400px !important;
+  }
+  .wid280{
+    width:280px !important;
+  }
+  form{
+    margin:20px 0 0 40px;
+  }
+  .search-hezi{
+    position:relative;
+    .search-ol{
+      border:1px solid rgb(191, 216, 217);
+      position:absolute;
+      top:36px;
+      width:280px;
+      background:#fff;
+      z-index:999;
+      padding-left:10px;
+    }
+  }
   .big-img{
     width:480px;
     height:360px;
@@ -141,8 +307,11 @@ div.address{
       overflow: hidden;
       line-height:100px;
       text-align:center;
+      background:#d7d7d7;
+      text-align:center;
       img{
         max-width:100%;
+        vertical-align: middle;
       }
     }
   }
@@ -158,7 +327,7 @@ div.address{
     color:#41cac0;
   }
   .category-bar{
-    padding:40px 0 20px 40px;
+    padding:40px 0 20px 20px;
   }
 
   .selIndustryBtn{
@@ -197,8 +366,55 @@ div.address{
 
     }   
   }
+  /* 选择行业弹框 */
+  .relevance-good{
+    min-width:680px !important;
+    .el-dialog__header{
+      background:#f5f7fa;
+      box-shadow:inset 0 -1px 0 0 #dddddd;
+      padding:15px 20px;
+    }
+   
+    .el-col-8{
+      width:50%;
+    }
+    .category-nav{
+        border-bottom:0;
+      }
+    .el-col:nth-of-type(2){
+      .category-nav{
+        border-left:0;
+      }
+    }
+    .category-nav-breadcrumb{
+      margin:0;
+      border-color:#ddd;
+      .arrow-top-a{
+        display:none;
+      }
+      .el-breadcrumb{
+        height:14px;
+        line-height:14px;
+        overflow: hidden;
+        text-overflow:ellipsis;
+        white-space: nowrap;
+        .breadcrumb-tips{
+          color:#999;
+        }
+        span{
+          b{
+            color:#333;
+          }
+        }
+        .el-breadcrumb__separator{
+          color:#333;
+        }
+      }
+    }
+    
+  }
   /* 成功弹框样式 */
-  .el-dialog--tiny{
+  .suc{
     min-width:490px;
     .el-dialog__footer{
       padding-bottom:50px;
@@ -209,7 +425,7 @@ div.address{
     }
     .el-dialog__body{
       padding:40px 20px;
-      .suc{
+      .suc-string{
         width:340px;
         height:50px;
         margin:0 auto;
@@ -258,10 +474,119 @@ div.address{
   width: 6px;
   background-color: #F5F5F5;
 }  
+
 .scorllbar::-webkit-scrollbar-thumb  {  
   background:$color-primary;
   width:6px;
   height:50px;
 }  
 
+
+/* 品牌管理列表页 */
+.brand{
+  /*公共样式*/
+  a{
+    text-decoration:none;
+  }
+  ul,ol{
+    list-style:none;
+  }
+  h3,p,ul,ol,li{
+    margin:0;
+  }
+
+  /* 创建商品按钮 */
+  .tool-bar{
+    background:none;
+    padding:0;
+    margin:0 0 20px 0;
+  }
+
+  /* 列表样式 */
+  ul{
+    width:100%;
+    overflow:hidden;
+    padding:0;
+    li{
+      float:left;
+      width:480px;
+      height:160px;
+      margin-bottom:30px;
+      cursor:pointer;
+      .brandlogo{
+        width:158px;
+        height:158px;
+        line-height:158px;
+        text-align:center;
+        overflow: hidden;
+        float:left;
+        border:1px solid #ccc;
+        img{
+          max-width:100%;
+        }
+      }
+      .brandlist{
+        float:left;
+        padding-left:20px;
+        h3{
+          font-size:16px;
+          color:#333333;
+          height:22px;
+          line-height:22px;
+          margin-bottom:10px;
+          b{
+            float:left;
+            height:22px;
+            line-height:22px;
+            max-width:200px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            font-size:16px;
+            color:#333;
+            font-weight:normal;
+          }
+          span{
+            font-size:14px;
+            float:left;
+            height:22px;
+            line-height:22px;
+            padding-left:15px;
+          }
+        }
+        p{
+          font-size:14px;
+          color:#666666;
+          height:20px;
+          line-height:20px;
+          margin-bottom:10px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          width: 260px;
+        }
+        .btns{
+          margin-top:15px;
+          span{
+            display:inline-block;
+            width:60px;
+            height:30px;
+            line-height:30px;
+            text-align:center;
+            margin-right:20px;
+            color:#666666;;
+            font-size:12px;
+            border:1px solid #ccc;
+            cursor: pointer;
+          }
+          .forbidden{
+            background:#45cdb6;
+            color:#fff !important;
+            border:1px solid #45cdb6 !important;
+          }
+        }
+      }
+    }
+  }
+}
 

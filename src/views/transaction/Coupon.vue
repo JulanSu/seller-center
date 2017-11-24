@@ -13,24 +13,28 @@
             <el-button type="primary" class='search-btn' @click="searchParams">查询</el-button>
         </el-row>
         <el-table :data="tableData" class='table-con' align='center' :row-style="{height:'100px'}">
-            <el-table-column prop="voucherFromOrder" label="订单编号" align='center'></el-table-column>
-            <el-table-column prop="userVoucherId" label="点券编号" align='center'></el-table-column>
-            <el-table-column prop="createdAt" label="生成时间" align='center'></el-table-column>
+            <el-table-column prop="orderSerialNumber" label="订单编号" align='center'></el-table-column>
+            <el-table-column prop="userVoucherNumber" label="点券编号" align='center'></el-table-column>
+            <el-table-column label="生成时间" align='center'>
+                <template slot-scope="scope">
+                    <div>{{switchTime(scope.row.createdAt)}}</div>
+                </template>
+            </el-table-column>
             <el-table-column prop="voucherProductTitle" label="商品名称" align='center'></el-table-column>
-            <el-table-column prop="mobile" label="用户手机号" align='center'></el-table-column>
-            <el-table-column prop="useVoucherTimes" label="已核销" align='center' >
+            <el-table-column prop="infoTelephone" label="用户手机号" align='center'></el-table-column>
+            <el-table-column label="已核销" align='center' >
                 <template slot-scope="scope">
                     <el-popover trigger="hover" placement="bottom" popper-class='pop-time'>
-                        <p v-for="item in scope.row.voucherRecordList"><i class="el-icon-time"></i>{{ item }}</p>
+                        <p v-for="item in scope.row.voucherRecordList"><i class="el-icon-time"></i>{{ switchTime(item) }}</p>
                         <div slot="reference">
-                            <el-tag>{{ scope.row.uesrPhone }}</el-tag>
+                            <el-tag>{{ scope.row.voucherUseTimes }}</el-tag>
                         </div>
                     </el-popover>
               </template>
             </el-table-column>
             <el-table-column prop="voucherTimes" label="总次数" align='center'></el-table-column>
         </el-table>
-        <div class="block">
+        <div class="block" v-if="total > pageSize">
             <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[20, 50, 100]" :page-size="pageSize" layout="sizes, prev, pager, next, jumper,total" :total="total">
                 </el-pagination>
         </div>
@@ -49,7 +53,7 @@
                 form: {
                     orderNumber: null,
                     userPhone: null,
-                    planCheck: null,
+                    planCheck: '',
                     orderPlan: [
                             {label: '全部', value: -1},
                             {label: '未核销', value: 0},
@@ -109,9 +113,9 @@
                 params.userMobile = self.form.userPhone;
                 params.userVoucherId = self.form.cashNumber;
                 params.voucherFromOrder = self.form.orderNumber;
-                params.voucherStatus = self.form.planCheck ? self.form.planCheck : -1;
-                params.createBeginTime = self.form.startTime;
-                params.createEndTime = self.form.endTime;          
+                params.voucherStatus = self.form.planCheck === '' ? -1 : self.form.planCheck;
+                params.createBeginTime = self.form.startTime ? self.timeFormat(self.form.startTime) : null;
+                params.createEndTime = self.form.endTime ? self.timeFormat(self.form.endTime) + " 23:59:59" : null;
                 params.pageNum = self.currentPage;
                 params.pageSize = self.pageSize;
                 return params;
@@ -122,7 +126,7 @@
                 cashList(obj).then(res => {
                     if(res.data.data.list){
                         self.tableData = res.data.data.list;
-                        self.total = Number(res.data.data.total)
+                        self.total = Number(res.data.data.total);
                     }
                 })
             },
@@ -142,8 +146,27 @@
                     message: str,
                     type: 'warning'
                 })
+            },
+            /*时间戳转换*/
+            switchTime(val){
+                function add0(m){return m<10?'0'+m:m }
+                let time = new Date(val),
+                    y = time.getFullYear(),
+                    m = time.getMonth()+1,
+                    d = time.getDate(),
+                    h = time.getHours(),
+                    mm = time.getMinutes(),
+                    s = time.getSeconds();
+                return y+'/'+add0(m)+'/'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
+            },
+            /*格式化时间*/
+            timeFormat(time){
+                let m = (time.getMonth() + 1) > 9 ? time.getMonth() + 1 : '0' +  (time.getMonth() + 1),
+                    d = time.getDate() > 9 ? time.getDate()  : '0' +  time.getDate();
+                let cTime = time.getFullYear() + '-' + m + '-' + d;
+                return cTime;
             }
-        }   
+        }
     }
 
 </script>
@@ -159,9 +182,6 @@
         }
         box-sizing: border-box !important;
         $color: #45cdb6;
-        width: 100%;
-        float: left;
-        padding: 40px;
         .w180{
             width: 180px;
         }

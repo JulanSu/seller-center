@@ -28,7 +28,6 @@
       }
     },
     created (){
-      console.log('dadad', this.value)
       if(this.value) {
         this.citySite = this.value.split(',')
       }

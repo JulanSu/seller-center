@@ -1,16 +1,18 @@
 <template>
     <section class="create-act">
-        <el-form ref="form" :model="form" label-width="130px" style='margin-top:30px' :rules="rules">
+        <el-form ref="form" :model="form" label-width="130px">
            
             <el-form-item label="现金券名称" prop='name'>
-                <el-input v-model="form.name" class='name' :maxlength='20'></el-input>
+                <el-input v-model="form.name" class='name' :maxlength='30' @input='btnChanges'></el-input>
+                <strong v-if='tipArray[0]'>请输入现金券名称</strong>
             </el-form-item>
 
             <el-form-item label="现金券领取时间">
                 <el-row style='padding-left:10px'>
-                    <el-date-picker type="datetime" placeholder="选择日期时间" v-model="form.getTime[0]" class='w180' :picker-options="pickerOptions0"></el-date-picker>
+                    <el-date-picker type="datetime" placeholder="选择日期时间" v-model="form.getTime[0]" class='w180' :picker-options="pickerOptions0" @input='btnChanges' :editable='false'></el-date-picker>
                     <span style="margin:0 8px">至</span>
-                    <el-date-picker type="datetime" placeholder="选择日期时间" v-model="form.getTime[1]" class='w180' :picker-options="pickerOptions0"></el-date-picker>
+                    <el-date-picker type="datetime" placeholder="选择日期时间" v-model="form.getTime[1]" class='w180' :picker-options="pickerOptions0" @input='btnChanges' :editable='false'></el-date-picker >
+                    <strong v-if='tipArray[1]'>{{tipText[1]}}</strong>
                 </el-row>
             </el-form-item>
 
@@ -20,47 +22,50 @@
                     <el-radio label="领取后有效天数"></el-radio>
                 </el-radio-group>
                 <el-row style='margin-top: 10px;padding:0 10px;' v-if="userTime.type =='有效时间段'">
-                    <el-date-picker type="datetime" placeholder="选择日期" v-model="userTime.timeSection[0]" class='w180' :picker-options="pickerOptions0"></el-date-picker>
+                    <el-date-picker type="datetime" placeholder="选择日期" v-model="userTime.timeSection[0]" class='w180' :picker-options="pickerOptions0" @input='btnChanges' :editable='false'></el-date-picker>
                     <span style="margin:0 8px">至</span>
-                    <el-date-picker type="datetime" placeholder="选择时间" v-model="userTime.timeSection[1]" class='w180' :picker-options="pickerOptions0"></el-date-picker>
+                    <el-date-picker type="datetime" placeholder="选择时间" v-model="userTime.timeSection[1]" class='w180' :picker-options="pickerOptions0" @input='btnChanges' :editable='false'></el-date-picker>
+                    <strong v-if='tipArray[2]'>请输入有效时间段</strong>
                 </el-row>
                 <el-row style='margin-top: 10px;padding:0 10px;' v-else>
-                    <el-input v-model="userTime.timeNumber" class='w180' placeholder="请输入天数" :maxlength='10' @blur='isNumber($event)'></el-input>
+                    <el-input v-model="userTime.timeNumber" class='w180' placeholder="请输入天数" :maxlength='10' @change='isNumber($event,"init",2)' @input='btnChanges'></el-input>
                     <span style="margin:0 8px">天</span>
+                    <strong v-if='tipArray[2]'>{{tipText[2]}}</strong>
                 </el-row>
             </el-form-item>
                 
             <el-form-item label="现金券面值与数量">
-                <el-radio-group v-model="cashType.type" style="padding-left:10px;" :disabled='disabled'>
+                <el-radio-group v-model="cashType.type" style="padding-left:10px;" :disabled='disabled' @change='selectType'>
                     <el-radio label="会员等级券"></el-radio>
                     <el-radio label="固定金额券"></el-radio>
                     <el-radio label="满减券"></el-radio>
                     <el-radio label="折扣券"></el-radio>
                 </el-radio-group>
                 <section class="cash" v-if="cashType.type=='会员等级券'">
-                    <el-row style='margin-top: 10px;' v-for="item in cashType.huiYuan" :key="item.name">
+                    <el-row style='margin-top: 10px;' v-for="(item,index) in cashType.huiYuan" :key="item.name">
                         <span class="cash-name">{{item.name}}</span>
-                        <el-input placeholder='请输入' style='width:210px' v-model='item.money'  @blur='isNumber($event, item.money)' :maxlength="10"></el-input>
+                        <el-input placeholder='请输入' style='width:210px' v-model='item.money'  @change='isNumber($event,"flaot",3)' :maxlength="10" @input='btnChanges'></el-input>
                         <span style="margin:0 8px">元</span>
-                        <el-input placeholder='发放数量' style='width:120px'  v-model='item.count'  @blur='isNumber($event)' :maxlength="10"></el-input>
-                        <span style="margin:0 8px">张</span>
+                        <el-input v-if='index == 0' placeholder='发放数量' style='width:120px'  v-model='item.count'  @change='isNumber($event,"init",3)' :maxlength="10" @input='btnChanges'></el-input>
+                        <span style="margin:0 8px" v-if='index == 0'>张</span>
                     </el-row>
+                        
                 </section>
                 <section class="cash" v-if="cashType.type=='固定金额券'">
                     <el-row style='margin-top: 10px;padding-left: 10px'>
-                        <el-input placeholder='请输入' style='width:210px' v-model="cashType.guDing.money"  @blur='isNumber($event)' :maxlength="10"></el-input>
+                        <el-input placeholder='请输入' style='width:210px' v-model="cashType.guDing.money"  @change='isNumber($event,"float",3)' :maxlength="10" @input='btnChanges'></el-input >
                         <span style="margin:0 8px" >元</span>
-                        <el-input placeholder='发放数量' style='width:120px' v-model="cashType.guDing.count"  @blur='isNumber($event)' :maxlength="10"></el-input>
+                        <el-input placeholder='发放数量' style='width:120px' v-model="cashType.guDing.count"  @change='isNumber($event,"init",3)' :maxlength="10" @input='btnChanges'></el-input>
                         <span style="margin:0 8px">张</span>
                     </el-row>
                 </section>
                 <section class="cash" v-if="cashType.type=='满减券'">
                     <el-row style='margin-top: 10px;padding-left: 10px' v-for='(item,index) in cashType.manJian' :key="">
-                        <el-input placeholder='现金券面值' style='width:210px' v-model='item.smallPrice' :maxlength="10" @blur='isNumber($event)'></el-input>
+                        <el-input placeholder='现金券面值' style='width:210px' v-model='item.smallPrice' :maxlength="10" @change='isNumber($event,"float",3)' @input='btnChanges'></el-input>
                         <span style="margin:0 8px">————</span>
-                        <el-input placeholder='消费满足金额' style='width:210px' :maxlength="10" @blur='isNumber($event)'  v-model='item.largePrice'></el-input>
+                        <el-input placeholder='消费满足金额' style='width:210px' :maxlength="10" @change='isNumber($event,"float",3)'  v-model='item.largePrice' @input='btnChanges'></el-input>
                         <span style="margin:0 8px">元</span>
-                        <el-input placeholder='发放数量' style='width:120px' v-if="index == 0" :maxlength="10" @blur='isNumber($event)' v-model='item.count'></el-input>
+                        <el-input placeholder='发放数量' style='width:120px' v-if="index == 0" :maxlength="10" @change='isNumber($event,"init",3)' v-model='item.count' @input='btnChanges'></el-input>
                         <span style="margin:0 8px" v-if="index == 0">张</span>
                     </el-row>
                     <el-row style='margin-top: 10px;padding-left: 10px' class='add' v-if="cashType.manJian.length < 4" >
@@ -69,20 +74,21 @@
                 </section>
                 <section class="cash" v-if="cashType.type=='折扣券'">
                     <el-row style='margin-top: 10px;padding-left: 10px'>
-                        <el-input placeholder='请输入' style='width:210px' :maxlength="2" @blur='isNumber($event)' v-model="cashType.zheKou.percent"></el-input>
+                        <el-input placeholder='请输入' style='width:210px' :maxlength="2" @change='isNumber($event,"init",3)'v-model="cashType.zheKou.percent" @input='btnChanges'></el-input>
                         <span style="margin:0 8px">%</span>
-                        <el-input placeholder='发放数量' style='width:120px' :maxlength="10" @blur='isNumber($event)' v-model="cashType.zheKou.count"></el-input>
+                        <el-input placeholder='发放数量' style='width:120px' :maxlength="10" @change='isNumber($event,"init",3)' v-model="cashType.zheKou.count" @input='btnChanges'></el-input>
                         <span style="margin:0 8px">张</span>
                     </el-row>
                     <el-row style='margin-top: 10px;padding-left: 10px'>
-                        <el-input placeholder='请输入' style='width:210px' :maxlength="10" @blur='isNumber($event)' v-model="cashType.zheKou.min"></el-input>
+                        <el-input placeholder='请输入' style='width:210px' :maxlength="10" @change='isNumber($event,"float",3)' v-model="cashType.zheKou.min" @input='btnChanges'></el-input>
                         <span style="margin:0 8px">元起用</span>
                     </el-row>
                     <el-row style='margin-top: 10px;padding-left: 10px'>
-                        <el-input placeholder='请输入' style='width:210px' :maxlength="10" @blur='isNumber($event)' v-model="cashType.zheKou.max"></el-input>
+                        <el-input placeholder='请输入' style='width:210px' :maxlength="10" @change='isNumber($event,"float",3)' v-model="cashType.zheKou.max" @input='btnChanges'></el-input>
                         <span style="margin:0 8px">最多抵扣金额元</span>
                     </el-row>
                 </section>
+                <strong v-if='tipArray[3]'>{{tipText[3]}}</strong>
               </el-form-item>
 
             <el-form-item label="抵扣券价格">
@@ -91,9 +97,11 @@
                   <el-radio label="付费"></el-radio>
                 </el-radio-group>
                 <el-row style='margin-top: 10px;padding-left:10px' v-if='cashFree.type =="付费"'>
-                    <el-input placeholder='现金值' style='width:210px' v-model='cashFree.count' :maxlength="10" @blur='isNumber($event,"cashFree","count")'></el-input>
+                    <el-input placeholder='现金值' style='width:210px' v-model='cashFree.count' :maxlength="10" @change='isNumber($event,"float",4)' @input='btnChanges'></el-input>
                     <span style="margin:0 8px">元</span>
+                    <strong v-if='tipArray[4]'>{{tipText[4]}}</strong>
                 </el-row>
+
             </el-form-item>
 
             <el-form-item label="适用商品范围">
@@ -114,20 +122,22 @@
                         </div>
                     </div>
                 </el-row>
+                <strong v-if='tipArray[5]'>请选择商品</strong>
             </el-form-item>
 
             <el-form-item label="领取成功后提示" style="padding-left:10px">
-                <el-input style='width:520px' v-model='form.tips' :maxlength="30"></el-input>
+                <el-input style='width:520px' v-model='form.tips' :maxlength="30" @input='btnChanges'></el-input>
                 <el-row class="tips">
                     如无特殊说明，一律默认为“先谈单再出示现金券，可直接抵扣订单合同金额”，不能超过30个汉字
                 </el-row>
+                <strong style="left:0" v-if='tipArray[6]'>请输入提示</strong>
             </el-form-item>
 
             <el-form-item label="现金券详情页图" style="padding-left:10px">
                 <el-row class="tips">
                    图片尺寸200px*200px以上，大小800k以内，格式要求jpg、jpeg、png
                 </el-row>
-                <el-upload class="img-uploader" action="http://gss.dmp.hzjiehun.bid/gss/upload" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+                <el-upload class="img-uploader" action="http://gss.dmp.hzjiehun.bid/gss/upload" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" >
                     <div class="picture" v-if="imageUrl" @mouseenter='showAgainBtn=true' @mouseleave='showAgainBtn=false'>
                         <img :src="imageUrl" class="avatar">
                         <p v-if='showAgainBtn'>重新上传</p>
@@ -137,10 +147,12 @@
                         <span>添加上传图片</span>
                     </div>
                 </el-upload>
+                <strong style="left:0" v-if='tipArray[7]'>请上传图片</strong>
             </el-form-item>
 
             <el-form-item label="现金券使用规则" style="padding-left:10px" class='textarea-con'>
-                <el-input type="textarea" v-model="form.rule" :maxlength='300'></el-input>
+                <el-input type="textarea" v-model="form.rule" :maxlength='1000' @input='btnChanges'></el-input>
+                <strong style="left:0" v-if='tipArray[8]'>请输入使用规则</strong>
             </el-form-item>
 
             <el-form-item>
@@ -166,6 +178,7 @@
 
 <script>
     import qs from 'qs';
+    import rules from './components/rules.js';
     import { productList , createAct, attendAct, actLastData, changeAct, changeAttendAct} from '@/api/toolApi';
     export default {
         data() {
@@ -176,8 +189,10 @@
                 btnText: '立即创建',
                 marketingCouponId: '',
                 imageUrl: '',
+                imgUrl: '',
                 showAgainBtn: false,
                 beginTime: null,
+                ajaxDone: false,
                 userTime: {
                     type: '有效时间段',
                     timeSection: [null, null],
@@ -198,9 +213,9 @@
                     type: '会员等级券',
                     huiYuan: [
                         {name: '新会员', money: '', count: ''},
-                        {name: '老会员', money: '', count: ''},
-                        {name: 'VIP会员', money: '', count: ''},
-                        {name: '金卡会员', money: '', count: ''}
+                        {name: '老会员', money: '', count: 2},
+                        {name: 'VIP会员', money: '', count: 2},
+                        {name: '金卡会员', money: '', count: 2}
                     ],
                     guDing:{money: '', count: ''},
                     manJian:[
@@ -209,7 +224,7 @@
                     zheKou: {percent: '', count: '', min: '', max: ''}
                 },
                 cashFree: {
-                    type: '免费',
+                    type: '付费',
                     count: '' 
                 },
                 forProduct: {
@@ -217,36 +232,15 @@
                     product: []
                 },
                 allProduct: null,
-                rules: {
-                    name: [
-                        { required: true, message: '请输入活动名称', trigger: 'blur' }
-                      ],
-                    region: [
-                        { required: true, message: '请选择活动区域', trigger: 'change' }
-                      ],
-                    date1: [
-                        { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
-                      ],
-                    date2: [
-                        { type: 'date', required: true, message: '请选择时间', trigger: 'change' }
-                      ],
-                    type: [
-                        { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
-                      ],
-                    resource: [
-                        { required: true, message: '请选择活动资源', trigger: 'change' }
-                      ],
-                    desc: [
-                        { required: true, message: '请填写活动形式', trigger: 'blur' }
-                  ]
-                }
+                tipArray: []
             }
         }, 
         props:[
-            'bTime','eTime'
+            'bTime','eTime','actbTime','acteTime'
         ],
         created(){
-            this.typeFrom()
+            this.typeFrom();
+            rules.init(this);
             productList({'storeId':config.storeId}).then(res => {
                 this.allProduct = res.data.data;
                 for(let i=0; i<this.allProduct.length; i++){
@@ -258,7 +252,7 @@
         watch:{
             form:{
                 handler(val){
-                    this.getTimeChange(val)
+                    this.getTimeChange(val) 
                 },
                 deep:true
             },
@@ -267,8 +261,7 @@
                     this.userTimeChange(val)
                 },
                 deep:true
-            }
-            
+            }  
         },
         methods: {
             /*判断来自那个页面*/
@@ -310,6 +303,10 @@
                     }
                 self.disabled = true;
                 actLastData(params).then(res => {
+                    if(!res.data.data){
+                        self.warn('返回的数据有误');
+                        return false;
+                    }
                     let cBase = res.data.data,
                         cMoney = res.data.data.couponDeliveryTypeList,
                         cRange = res.data.data.rangeIdList;
@@ -329,14 +326,14 @@
                         self.userTime.timeNumber = cBase.couponUseDays;
                     }
                     if(cBase.couponUseType == 0){
-                        self.cashType.type = '会员等级券'
+                        self.cashType.type = '会员等级券';
+                        self.cashType.huiYuan[0].count = cBase.couponDeliveryNum;
                         for(let i=0; i<cMoney.length; i++){
                             self.cashType.huiYuan[i].money = cMoney[i].couponUseMoney
-                            self.cashType.huiYuan[i].count = cMoney[i].couponDeliveryNum
                         }
                     }else if(cBase.couponUseType == 1){
                         self.cashType.type = '固定金额券';
-                        self.cashType.guDing.count = cMoney[0].couponDeliveryNum;
+                        self.cashType.guDing.count = cBase.couponDeliveryNum;
                         self.cashType.guDing.money = cMoney[0].couponUseMoney;
                     }else if(cBase.couponUseType == 2){
                         self.cashType.type = '满减券'
@@ -345,16 +342,16 @@
                             let prm = {
                                 smallPrice: cMoney[i].couponUseMoney, 
                                 largePrice: cMoney[i].couponMinMoney, 
-                                count: cMoney[i].couponDeliveryNum
+                                count: cBase.couponDeliveryNum
                             }
                             self.cashType.manJian.push(prm)
                         }
                     }else{
                         self.cashType.type = '折扣券'
-                        self.cashType.zheKou.count = cMoney[0].couponDeliveryNum
-                        self.cashType.zheKou.percent = cMoney[0].couponUseMoney
-                        self.cashType.zheKou.max = cMoney[0].couponMaxMoney
-                        self.cashType.zheKou.min = cMoney[0].couponMinMoney
+                        self.cashType.zheKou.count = cBase.couponDeliveryNum;
+                        self.cashType.zheKou.percent = cMoney[0].couponUseMoney;
+                        self.cashType.zheKou.max = cMoney[0].couponMaxMoney;
+                        self.cashType.zheKou.min = cMoney[0].couponMinMoney;
                     }
                     if(cBase.couponAmount == 0){
                         self.cashFree.type = '免费'
@@ -392,7 +389,17 @@
                 let self = this;
                 let startTime = Date.parse(val.getTime[0]); 
                 let endTime = Date.parse(val.getTime[1]); 
-                let localDayEnd = new Date(new Date().toLocaleDateString()).getTime() + 24*60*60*1000 -1;  
+                let localDayEnd = new Date(new Date().toLocaleDateString()).getTime() + 24*60*60*1000 -1;
+                if(self.$route.query.type && self.$route.query.type == 'platform'){
+                    if(startTime < self.actbTime){
+                        self.form.getTime[0] = '';
+                        self.warn('不可小于活动开始时间')
+                    }
+                    if(endTime > self.acteTime){
+                        self.form.getTime[1] = '';
+                        self.warn('不可大于活动结束时间')
+                    }
+                }
                 if(startTime < localDayEnd){
                     self.form.getTime[0] = '';
                     self.warn('不可小于今天的23:59:59')
@@ -418,7 +425,7 @@
                     self.warn('不可小于开始时间')
                 }
             },
-            addCash(){
+            addCash(){ 
                 let self = this,
                     addObject = {smallPrice: '', largePrice: '', count: ''};
                 self.cashType.manJian.push(addObject);
@@ -426,9 +433,7 @@
             /*选取商品*/
             checkProduct(item){
                 let self = this;
-                console.log(item.checked)
                 item.checked = !item.checked;
-                console.log(55)
             },
             sureCheck(){
                 let self = this;
@@ -475,6 +480,10 @@
                     }
                 }
             },
+            /*修改现金券类类型*/
+            selectType(){
+                this.$set(this.tipArray,3,false);
+            },
             /*消息警告*/
             warn(str){
                 this.$message({
@@ -482,82 +491,21 @@
                     type: 'warning'
                 })
             },
-            /*校验数字*/
-            isNumber(e){
-                let self = this;
-                let flag = /^[0-9]{1,10}$/.test(e.target.value)
-                if(!flag){
-                    e.target.value = '';
-                    if(e.target.attributes["maxlength"].value == 2){
-                        self.warn('请输入1-99的整数');
-                        return false;
-                    }
-                    self.warn('请输入数字')
+            /*控制提交次数*/
+            btnChanges(){
+                if(this.ajaxDone){
+                    this.status = false;
                 }
+            },
+            /*校验数字*/
+            isNumber(e, t, i){
+                let self = this;
+                rules.numberCorrect(e, t, i, self)
             },
             /*提交表单数据*/
             onSubmit(){
                 let self = this;
-                // if(self.form.name == '' || !self.form.getTime[0] || !self.form.getTime[1] || self.form.tips == '' || self.form.rule == ''){
-                //     self.warn('请把内容输入完整')
-                //     return false;
-                // }
-                // if(self.userTime.type == "有效时间段"){
-                //     if(!self.userTime.timeSection[0] || !self.userTime.timeSection[1]){
-                //         self.warn('请输入现金券使用期限')
-                //         return false;
-                //     }
-                // }
-                // if(self.userTime.type == "领取后有效天数"){
-                //     if(self.userTime.timeNumber == ''){
-                //         self.warn('请输入现金券使用期限')
-                //         return false;
-                //     }
-                // }
-                // if(self.cashType.type == "会员等级券"){
-                //     for(let i=0; i<self.cashType.huiYuan.length; i++){
-                //         let that = self.cashType.huiYuan[i];
-                //         if(that.money == '' || that.count == ''){
-                //             self.warn('请输入现金券面值')
-                //             return false;
-                //         }
-                //     }
-                // }
-                // if(self.cashType.type == "固定金额券"){
-                //    if(self.cashType.guDing.money == '' || self.cashType.guDing.count== ''){
-                //         self.warn('请输入现金券面值')
-                //         return false;
-                //    }
-                // }
-                // if(self.cashType.type == "满减券"){
-                //     if(self.cashType.manJian[0].smallPrice == '' || self.cashType.manJian[0].largePrice == '' || self.cashType.manJian[0].count == ''){
-                //             self.warn('请输入现金券面值')
-                //             return false;
-                //     }
-                // }
-                // if(self.cashType.type == "折扣券"){
-                //     if(self.cashType.zheKou.percent == '' || self.cashType.zheKou.count == '' || self.cashType.zheKou.min == '' || self.cashType.zheKou.max == '' ){
-                //             self.warn('请输入现金券面值')
-                //             return false;
-                //     }
-                // }
-                // if(self.cashFree.type == '付费'){
-                //     if(self.cashFree.count == ''){
-                //         self.warn('请输入抵扣券价格')
-                //         return false;
-                //     }
-                // }
-                // if(self.forProduct.type == '部分商品可用'){
-                //     if(self.forProduct.product.length == 0){
-                //         self.warn('请选择商品')
-                //         return false;
-                //     }
-                // }
-                // if(self.imageUrl == ''){
-                //     self.warn('请选择现金券详情图')
-                //     return false;
-                // }
-                self.postData()
+                rules.allRight(self) ? self.postData() : '';
             },
             postData(){
                 let self = this,params = {};  
@@ -579,29 +527,29 @@
                     params.couponUseDays = self.userTime.timeNumber;
                 }
                 if(self.cashType.type == '会员等级券'){
-                    params.couponUseType = 0;       //现金券使用类型 0:会员等级，1固定金额，2，满减券，3折扣券            
+                    params.couponUseType = 0;       //现金券使用类型 0:会员等级，1固定金额，2，满减券，3折扣券      
+                    params.couponDeliveryNum = self.cashType.huiYuan[0].count;
                     for(let i=0; i<self.cashType.huiYuan.length; i++){
                         let that = self.cashType.huiYuan[i],
                             cash = {
-                                couponDeliveryNum: that.count,      //现金券领取数量:'0'
                                 couponUseMoney: that.money,          //现金券金额
-                                couponUserLevel: i  //会员等级 0:新会员，1老会员，2，VIP会员，3金卡会员
+                                couponUserLevel: i+1  //会员等级 0:新会员，1老会员，2，VIP会员，3金卡会员
                             };
                         params.marketingCouponDeliveryTypeList.push(cash);
                     }
                 }else if(self.cashType.type == '固定金额券'){
                     params.couponUseType = 1;
+                    params.couponDeliveryNum = self.cashType.guDing.count;
                     let cash = {
-                        couponDeliveryNum: self.cashType.guDing.count,
                         couponUseMoney: self.cashType.guDing.money,
                     }
                     params.marketingCouponDeliveryTypeList.push(cash);
                 }else if(self.cashType.type == '满减券'){
                     params.couponUseType = 2;
+                    params.couponDeliveryNum = self.cashType.manJian[0].count;
                     for(let i=0; i<self.cashType.manJian.length; i++){
                         let that = self.cashType.manJian[i],
                         cash = {
-                            couponDeliveryNum: that.count,
                             couponMinMoney: that.largePrice,
                             couponUseMoney: that.smallPrice
                         }
@@ -609,8 +557,8 @@
                     }
                 }else{
                     params.couponUseType = 3;
-                    let cash = {
-                        couponDeliveryNum: self.cashType.zheKou.count,
+                    params.couponDeliveryNum = self.cashType.zheKou.count;
+                    let cash = {     
                         couponUseMoney: self.cashType.zheKou.percent,
                         couponMaxMoney: self.cashType.zheKou.max,
                         couponMinMoney: self.cashType.zheKou.min
@@ -653,6 +601,8 @@
                         });
                     }else{
                         self.warn(res.data.message)
+                        self.status = true;
+                        self.ajaxDone = true;
                     }
                 })
             }, 
@@ -671,6 +621,8 @@
                         });
                     }else{
                         self.warn(res.data.message)
+                        self.status = true;
+                        self.ajaxDone = true;
                     }
                 })
             },
@@ -688,6 +640,8 @@
                         });
                     }else{
                         self.warn(res.data.message)
+                        self.status = true;
+                        self.ajaxDone = true;
                     }
                 })
             },
@@ -706,6 +660,8 @@
                         })
                     }else{
                         self.warn(res.data.message)
+                        self.status = true;
+                        self.ajaxDone = true;
                     }
                 })
             },
@@ -729,307 +685,320 @@
 <style lang="scss">
     $color: #45cdb6;
     .create-act {
-        width: 100%;
-        float: left;
-         .name{
-        margin-left: 10px;
-        width: 280px;
-    }
-    .cash{
-        .el-col{
-            padding: 0;
-        }
-        .cash-name{
-            display: inline-block;
-            width: 70px;
-            text-align: right;
-            margin-right: 8px;
-        }
-        .add{
-            font-size:25px;
-            overflow: hidden;
-            height: 30px;
+        section{
             position: relative;
-            color:#41cac0;
-            div{
-                width: 80px;
-                cursor: pointer;
-                 b{
-                    position: absolute;
-                    display: inline-block;
-                    height: 30px;
-                    line-height: 37px;
-                    font-weight: 400;
-                    font-size: 14px;
-                    margin-left: 10px;
+        }
+        strong{
+            font-weight: 400;
+            color: #f00;
+            position: absolute;
+            left:10px;
+            // top: 30px;
+            bottom: -28px;
+        }
+        .name{
+            margin-left: 10px;
+            width: 280px;
+        }
+        .el-form-item__error{
+            margin-left: 10px ;
+        }
+        .cash{
+            .el-col{
+                padding: 0;
+            }
+            .cash-name{
+                display: inline-block;
+                width: 70px;
+                text-align: right;
+                margin-right: 8px;
+            }
+            .add{
+                font-size:25px;
+                overflow: hidden;
+                height: 30px;
+                position: relative;
+                color:#41cac0;
+                div{
+                    width: 80px;
+                    cursor: pointer;
+                     b{
+                        position: absolute;
+                        display: inline-block;
+                        height: 30px;
+                        line-height: 37px;
+                        font-weight: 400;
+                        font-size: 14px;
+                        margin-left: 10px;
+                    }
                 }
             }
         }
-    }
-    .area{
-        margin: 10px 0 0 10px;
-        width: 820px;
-        height:184px;
-        background:#f5f7fa;
-        padding: 20px;
-        overflow-x: hidden;
-        overflow-y: auto;
-        .add-pro{
-            float: left;
-            width: 100px;
-            height: 100px;
-            border:1px dashed #cccccc;
-            background: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            p{
-                margin:18px 0 5px;
-                font-size: 80px;
-                color:#41cac0;
-            }
-            span{
-                font-size:14px;
-                color:#666666;
-            }
-        }
-        .img-con{
-            display: inline-block;
-            vertical-align: top;
-            width: 100px;
-            position: relative;
-            img{
+        .area{
+            margin: 10px 0 0 10px;
+            width: 820px;
+            height:184px;
+            background:#f5f7fa;
+            padding: 20px;
+            overflow-x: hidden;
+            overflow-y: auto;
+            .add-pro{
+                float: left;
                 width: 100px;
                 height: 100px;
-            }
-            i{
-                position: absolute;
-                top: 5px;
-                right: 5px;
-                font-size: 16px;
-                cursor:pointer;
-                color: $color;
+                border:1px dashed #cccccc;
                 background: #fff;
-                border-radius: 8px;
-            }
-            p{
-                width: 100px;
-                font-size: 12px;
-                color: #666666;
-                line-height: 150%;
-                overflow:hidden; 
-                text-overflow:ellipsis;
-                display:-webkit-box; 
-                -webkit-line-clamp:2; 
-                /* autoprefixer: off*/
-                -webkit-box-orient: vertical;
-                /* autoprefixer: on*/
-            }
-        }
-        .img-con:nth-of-type(n+2){
-            margin-left: 10px;
-        }
-        .img-con:nth-of-type(n+8){
-            margin-top: 10px;
-        }
-        .img-con:nth-of-type(7n+1){
-            margin-left: 0;
-        }
-    }
-    .area::-webkit-scrollbar{
-        width: 4px;
-        background-color: #ddd;
-    }
-    .area::-webkit-scrollbar-track-piece{
-        background: #ddd;
-    }
-    .area::-webkit-scrollbar-thumb{
-        background-color: #41CAC0;  
-    }
-    .grade{
-        text-align: right;
-        margin-right: 10px;
-    }
-    .w180{
-        width:180px;
-    }
-    .tips{
-        font-size:12px;
-        color:#999999;
-    }
-    .img-uploader{
-        .el-upload--text{
-            width: 100px;
-            height: 100px;
-            border:1px dashed #cccccc;
-            background: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            border-radius: none;
-            p{
-                margin:18px 0 5px;
-                font-size: 80px;
-                color:#41cac0;
-            }
-            span{
-                font-size:14px;
-                color:#666666;
-            }
-            input{
-                display: none;
-            }
-            .picture{
-                width:100%;
-                height: 100%;
-                position: relative;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                cursor: pointer;
                 p{
-                    position: absolute;
-                    bottom: 0;
-                    background: rgba(0,0,0,0.40);
-                    height: 24px;
-                    line-height: 24px;
-                    font-size: 12px;
-                    color: #FFFFFF;
-                    margin:0;
-                    width: 100%;
+                    margin:18px 0 5px;
+                    font-size: 80px;
+                    color:#41cac0;
                 }
+                span{
+                    font-size:14px;
+                    color:#666666;
+                }
+            }
+            .img-con{
+                display: inline-block;
+                vertical-align: top;
+                width: 100px;
+                position: relative;
                 img{
-                    width: 100%;
-                    height: 100%;
+                    width: 100px;
+                    height: 100px;
                 }
-            }  
-        }   
-    }
-    .textarea-con{
-        .el-textarea{
-            padding-top:10px;
-            textarea{
-                width: 520px;
-                height: 150px;
-                resize: none;
+                i{
+                    position: absolute;
+                    top: 5px;
+                    right: 5px;
+                    font-size: 16px;
+                    cursor:pointer;
+                    color: $color;
+                    background: #fff;
+                    border-radius: 8px;
+                }
+                p{
+                    width: 100px;
+                    font-size: 12px;
+                    color: #666666;
+                    line-height: 150%;
+                    overflow:hidden; 
+                    text-overflow:ellipsis;
+                    display:-webkit-box; 
+                    -webkit-line-clamp:2; 
+                    /* autoprefixer: off*/
+                    -webkit-box-orient: vertical;
+                    /* autoprefixer: on*/
+                }
+            }
+            .img-con:nth-of-type(n+2){
+                margin-left: 10px;
+            }
+            .img-con:nth-of-type(n+8){
+                margin-top: 10px;
+            }
+            .img-con:nth-of-type(7n+1){
+                margin-left: 0;
             }
         }
-    }
-    .btn{
-        margin-left: 10px;
-        width: 100px;
-        height: 34px;
-    }
-    /*弹窗样式*/
-    .pro-dialog{
-        width: 750px;
-        height: 580px;
-        .el-dialog__header{
-            padding: 0;
-            background: $color;
-            height: 52px;
-            line-height: 52px;
-            padding: 0 20px;
-            font-size: 16px;
-            span{
-                color: #fff;
+        .area::-webkit-scrollbar{
+            width: 4px;
+            background-color: #ddd;
+        }
+        .area::-webkit-scrollbar-track-piece{
+            background: #ddd;
+        }
+        .area::-webkit-scrollbar-thumb{
+            background-color: #41CAC0;  
+        }
+        .grade{
+            text-align: right;
+            margin-right: 10px;
+        }
+        .w180{
+            width:180px;
+        }
+        .tips{
+            font-size:12px;
+            color:#999999;
+        }
+        .img-uploader{
+            .el-upload--text{
+                width: 100px;
+                height: 100px;
+                border:1px dashed #cccccc;
+                background: #fff;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                cursor: pointer;
+                border-radius: none;
+                p{
+                    margin:18px 0 5px;
+                    font-size: 80px;
+                    color:#41cac0;
+                }
+                span{
+                    font-size:14px;
+                    color:#666666;
+                }
+                input{
+                    display: none;
+                }
+                .picture{
+                    width:100%;
+                    height: 100%;
+                    position: relative;
+                    p{
+                        position: absolute;
+                        bottom: 0;
+                        background: rgba(0,0,0,0.40);
+                        height: 24px;
+                        line-height: 24px;
+                        font-size: 12px;
+                        color: #FFFFFF;
+                        margin:0;
+                        width: 100%;
+                    }
+                    img{
+                        width: 100%;
+                        height: 100%;
+                    }
+                }  
+            }   
+        }
+        .textarea-con{
+            .el-textarea{
+                padding-top:10px;
+                textarea{
+                    width: 520px;
+                    height: 150px;
+                    resize: none;
+                }
             }
-            .el-dialog__headerbtn{
-                font-size: 14px;
-                i{
+        }
+        .btn{
+            margin-left: 10px;
+            width: 100px;
+            height: 34px;
+        }
+        /*弹窗样式*/
+        .pro-dialog{
+            width: 750px;
+            height: 580px;
+            z-index: 2001;
+            .el-dialog__header{
+                padding: 0;
+                background: $color;
+                height: 52px;
+                line-height: 52px;
+                padding: 0 20px;
+                font-size: 16px;
+                span{
                     color: #fff;
                 }
+                .el-dialog__headerbtn{
+                    font-size: 14px;
+                    i{
+                        color: #fff;
+                    }
+                }
             }
-        }
-        .el-dialog__body{
-            padding: 20px;
-            .pro-container{
-                height: 408px;
-                background: #F5F7FA;
-                border: 1px solid #DDDDDD;
+            .el-dialog__body{
                 padding: 20px;
-                overflow-x: hidden;
-                .pro-item{
-                    width: 100px;
-                    display: inline-block;
-                    vertical-align: top;
-                    flex-direction: column;
-                    align-items: center;
-                    overflow: hidden;
-                    cursor: pointer;
-                    .img-con{
+                .pro-container{
+                    height: 408px;
+                    background: #F5F7FA;
+                    border: 1px solid #DDDDDD;
+                    padding: 20px;
+                    overflow-x: hidden;
+                    .pro-item{
                         width: 100px;
-                        height: 100px;
-                        position: relative;
-                        img{
-                            width: 100%;
-                            height: 100%
-                        }
-                        .mask{
-                            position: absolute;
+                        display: inline-block;
+                        vertical-align: top;
+                        flex-direction: column;
+                        align-items: center;
+                        overflow: hidden;
+                        cursor: pointer;
+                        .img-con{
                             width: 100px;
                             height: 100px;
-                            top: 0;
-                            background: rgba(51,51,51,0.49);
+                            position: relative;
+                            img{
+                                width: 100%;
+                                height: 100%
+                            }
+                            .mask{
+                                position: absolute;
+                                width: 100px;
+                                height: 100px;
+                                top: 0;
+                                background: rgba(51,51,51,0.49);
+                            }
+                            i{
+                                color: $color;
+                                font-size: 16px;
+                                position: absolute;
+                                right: 5px;
+                                top: 5px;
+                                background: #fff;
+                                border-radius: 7px 7px 8px 8px;
+                            }
                         }
-                        i{
-                            color: $color;
-                            font-size: 16px;
-                            position: absolute;
-                            right: 5px;
-                            top: 5px;
-                            background: #fff;
-                            border-radius: 7px 7px 8px 8px;
+                        p{
+                            width: 100px;
+                            font-size: 12px;
+                            color: #666666;
+                            margin-top: 10px;
+                            overflow:hidden; 
+                            text-overflow:ellipsis;
+                            display:-webkit-box; 
+                            -webkit-line-clamp:2; 
+                            /* autoprefixer: off*/
+                            -webkit-box-orient: vertical;
+                            /* autoprefixer: on*/
                         }
                     }
-                    p{
-                        width: 100px;
-                        font-size: 12px;
-                        color: #666666;
-                        margin-top: 10px;
-                        overflow:hidden; 
-                        text-overflow:ellipsis;
-                        display:-webkit-box; 
-                        -webkit-line-clamp:2; 
-                        /* autoprefixer: off*/
-                        -webkit-box-orient: vertical;
-                        /* autoprefixer: on*/
+                    .pro-item:nth-of-type(n+2){
+                        margin-left: 10px;
+                    }
+                    .pro-item:nth-of-type(6n+1){
+                        margin-left: 0;
+                    }
+                    .pro-item:nth-of-type(n+7){
+                        margin-top: 20px;
                     }
                 }
-                .pro-item:nth-of-type(n+2){
-                    margin-left: 10px;
+                .pro-container::-webkit-scrollbar{
+                    width: 4px;
+                    background-color: #ddd;
                 }
-                .pro-item:nth-of-type(6n+1){
-                    margin-left: 0;
+                .pro-container::-webkit-scrollbar-track-piece{
+                    background: #ddd;
                 }
-                .pro-item:nth-of-type(n+7){
+                .pro-container::-webkit-scrollbar-thumb{
+                    background-color: #41CAC0;  
+                }
+                .check-btn{
+                    width: 90px;
+                    height:34px;
+                    color: #fff;
+                    font-size: 14px;
                     margin-top: 20px;
+                    float: right;
                 }
-            }
-            .pro-container::-webkit-scrollbar{
-                width: 4px;
-                background-color: #ddd;
-            }
-            .pro-container::-webkit-scrollbar-track-piece{
-                background: #ddd;
-            }
-            .pro-container::-webkit-scrollbar-thumb{
-                background-color: #41CAC0;  
-            }
-            .check-btn{
-                width: 90px;
-                height:34px;
-                color: #fff;
-                font-size: 14px;
-                margin-top: 20px;
-                float: right;
             }
         }
     }
-    .el-time-spinner{
+    .el-time-panel__content{
         box-sizing: content-box !important;
         *{
             box-sizing: content-box !important;
         }
-    }
     }
    
 </style>

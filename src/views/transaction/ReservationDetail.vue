@@ -80,9 +80,6 @@
         }
         $color: #45cdb6;
         box-sizing: border-box !important;
-        width: 100%;
-        float: left;
-        padding: 40px;
         .detail-row{
             background: #F5F7FA;
             height:40px;

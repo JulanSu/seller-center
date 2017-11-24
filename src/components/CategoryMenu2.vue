@@ -11,7 +11,7 @@
             v-model="keywords">
           </el-input>
         </div>
-        <el-menu default-active="" unique-opened class="category-menu" v-if="categoryData.length">
+        <el-menu :default-active="ind" unique-opened class="category-menu" v-if="categoryData.length">
           <template  v-for="(item, index) in categoryData">
             <el-menu-item :index="index+''" class="sub-title" @click="selectproductCateName(item, index)">
               {{item.industryCateName}}
@@ -37,6 +37,7 @@
     export default {
         data() {
           return {
+            num:1,
             searchList: [],
             keywords: '',
             searchValue: '',
@@ -48,6 +49,10 @@
           }
         },
         props: {
+          ind:{
+            type: String,
+            default: "-1"
+          },
           title: {
             type: String,
             default: ''
@@ -81,11 +86,13 @@
           }
         },
         watch: {
+          ind(){
+            console.log(this.ind)
+          },
           keywords (){
             this.searchHandle();
           },
           categoryData (){
-            console.log('监听变化')
             this.categoryDataCache = this.categoryData;
           }
         },
@@ -180,7 +187,7 @@
     }
   }
   .category-menu {
-    background-color: #FFF;
+    background-color: #FFF !important;
 
     .el-menu-item {
       position: relative;

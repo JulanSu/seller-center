@@ -44,6 +44,10 @@ export default {
     url:{
       type: String,
       default: ''
+    },
+    picSize:{
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -60,15 +64,25 @@ export default {
   },
   methods: {
     beforeAvatarUpload(file){
+        var sizes=this.picSize;
+        var isTrue=false;
+        var sizeArr=sizes.split(".");
+
+        if(sizeArr[1]=="MB"){//判断图片大小单位是kb还是mb
+          isTrue=file.size / 1024 / 1024 < sizeArr[0];
+        }else{
+          isTrue= file.size / 1024<sizeArr[0];
+        }
+
         const isUpload =/(jpg|jpeg|png)$/.test(file.type);
-        const isLt2M = file.size / 1024 / 1024 < 2;
+
         if(!isUpload){
           this.$message.error('上传头像图片只能是 JPG、JPEG、PNG 格式!');
         }
-        if (!isLt2M) {
-          this.$message.error('上传头像图片大小不能超过 2MB!');
+        if (!isTrue) {
+          this.$message.error('上传头像图片大小不能超过 '+sizeArr[0]+sizeArr[1]+'!');
         }
-        return isUpload && isLt2M;
+        return isUpload && isTrue;
       },
 
     handleAvatarSuccess(res, file) {
@@ -131,7 +145,7 @@ export default {
       height:100%;
     }
   }
-  .el-upload--text img:hover ~ .btn{
+  .el-upload--text:hover > .btn{
     display:block;
   } 
 
@@ -147,6 +161,7 @@ export default {
     width:100px;
     font-size:12px;
     padding:0;
+    border-radius: 0;
   }
 
 }
@@ -161,7 +176,6 @@ export default {
 
 .avatar-uploader .el-upload {
   border: 1px dashed #d9d9d9;
-  border-radius: 6px;
   cursor: pointer;
   position: relative;
   overflow: hidden;

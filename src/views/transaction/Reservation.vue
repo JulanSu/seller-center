@@ -24,7 +24,7 @@
             <el-table-column prop="settledAmount" label="已收入金额" align='center'></el-table-column>
             <el-table-column prop="settleAmount" label="结算金额" align='center'></el-table-column>
         </el-table>
-        <div class="block">
+        <div class="block" v-if="total > pageSize">
             <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[20,50,100]" :page-size="pageSize" layout="sizes, prev, pager, next, jumper,total" :total="total">
                 </el-pagination>
         </div>
@@ -112,7 +112,7 @@
             /*页面页数*/
             handleCurrentChange(val) {
                 let self = this;
-                self.pageSize = val
+                self.currentPage = val
                 self.getData(self.getParams())
             },
             directionGo(row){
@@ -143,9 +143,6 @@
         }
         $color: #45cdb6;
         box-sizing: border-box !important;
-        width: 100%;
-        float: left;
-        padding: 40px;
         .w180{
             width: 180px;
         }
@@ -176,8 +173,10 @@
             margin-top: 30px;
             tr{
                 td:nth-of-type(1){
-                    color: $color;
-                    cursor: pointer;
+                    div{
+                        color: $color !important;
+                        cursor: pointer;
+                    }   
                 }
             }
         }

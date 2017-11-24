@@ -2,6 +2,7 @@
   <div>
     <search-nav @onSearchClick="searchSubmitHandle"></search-nav>
       <el-table
+      :highlight-current-row="false"
         :data="tableData"
         style="width: 100%" 
         class="seller-table" highlight-current-row v-loading="listLoading">
@@ -50,19 +51,18 @@
           prop="operational"
           label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="onEditorHandle(scope.row)">编辑</el-button>
             <el-button type="text" @click="onSoldOutHandle(scope.row)">上架</el-button>
-
+            <el-button type="text" @click="onEditorHandle(scope.row)">编辑</el-button>
             <el-button type="text" @click="onDelHandle(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <div class="block" v-if="pagination.total > pagination.pageSize">
+      <template v-if="pagination.total">
         <pagination 
           :paginationConfig="pagination"
           @handleSizeChange="handleSizeChange"
           @handleCurrentChange="handleCurrentChange"></pagination>
-      </div>
+      </template>
 
     <el-dialog
       :visible.sync="dialogVisible"
@@ -100,12 +100,12 @@
               searchStartTime: '',
               searchEndTime: '',
               pageNum: 1,
-              pageSize: 10,
+              pageSize: 20,
               productStatus: 4
             },
             pagination: {
               total: '',
-              pageSize: 10,
+              pageSize: 20,
               curPage: 1
             },
             listLoading: true,
@@ -127,8 +127,8 @@
         },
         created(){
           this.getProductList({
-            pageNum: 1,
-            pageSize: 10
+            pageNum: this.pagination.curPage,
+            pageSize: this.pagination.pageSize
           })
         },
         methods: {
@@ -138,7 +138,6 @@
            * @return {[type]}     [description]
            */
           onEditorHandle (row){
-            console.log('编辑商品',row)
             this.$router.push({
               path: '/seller-management/goods/editor', 
               query:{productId: row.productId, productStatus: row.productStatus}
@@ -170,8 +169,8 @@
                   });
                 }
                 self.getProductList({
-                  pageNum: 1,
-                  pageSize: 10
+                  pageNum: self.pagination.curPage,
+                  pageSize: self.pagination.pageSize
                 })   
               })
             })
@@ -213,7 +212,6 @@
                 self.pagination.pageSize = formartData.pageSize
                 self.listLoading = false
               }
-              console.log('获取商品列表', res)
             })
           },
           onDelHandle (row){
@@ -228,8 +226,8 @@
                 self.listLoading = false;
                 self.messageHandle('商品删除成功！', 'success')
                 self.getProductList({
-                  pageNum: 1,
-                  pageSize: 10
+                  pageNum: self.pagination.curPage,
+                  pageSize: self.pagination.pageSize
                 })
                 
               })
@@ -237,17 +235,15 @@
           },
           handleSizeChange(pageSize) {
             this.getProductList({
-              pageNum:1, 
-              pageSize: pageSize
+                pageNum: 1,
+                pageSize: pageSize
             })
-            console.log(`每页 ${pageSize} 条`);
           },
           handleCurrentChange(pageNum) {
             this.getProductList({
               pageNum: pageNum, 
-              pageSize: 10              
+              pageSize: this.pagination.pageSize         
             })
-            console.log(`当前页: ${pageNum}`);
           },
 
           entryDialogHandle (row){
@@ -260,12 +256,10 @@
             });
           },
           searchSubmitHandle (value){
-            console.log(value)
             if(!value) {
               return 
             }
             this.getProductList(value)
-            console.log('商品查询后的', value)
           },
 
           messageHandle (message, type){

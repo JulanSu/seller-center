@@ -28,7 +28,7 @@
                   </template>
             </el-table-column>
         </el-table>
-        <div class="block">
+        <div class="block" v-if="total > pageSize">
             <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[20,50,100]" :page-size="pageSize" layout="sizes, prev, pager, next, jumper,total" :total="total">
                 </el-pagination>
         </div>
@@ -57,10 +57,10 @@
                     ],
                     orderPlan:[
                             {label: '全部', statusId: null},
-                            {label: '待处理', statusId: 5},
-                            {label: '待平台审核', statusId: 6},
-                            {label: '售后完成', statusId: 7},
-                            {label: '取消售后', statusId: 8},
+                            {label: '待商家处理', statusId: 1},
+                            {label: '待平台审核', statusId: 2},
+                            {label: '售后完成', statusId: 3},
+                            {label: '售后取消', statusId: 4},
                     ],
                     orderNumber: '',
                     startTime: '',
@@ -87,11 +87,6 @@
                     self.warn('请输入正确的手机号')
                     return false;
                 }
-                if(a != 1 && self.form.orderNumber != ''){
-                    self.form.orderNumber = '';
-                    self.warn('请输入正确的订单号')
-                    return false;
-                }
             },
             /*日期选择限制*/
             chooseTime(){
@@ -107,15 +102,10 @@
             switchStatus(a) {
                 let st = ''
                 switch(a) {
-                    case 1:st = '待用户支付'; break;
-                    case 2:st = '待发货';break;
-                    case 3:st = '待收货';break;
-                    case 4:st = '交易成功';break;
-                    case 5:st = '待处理';break;
-                    case 6:st = '待平台审核';break;
-                    case 7:st = '售后完成';break;
-                    case 8:st = '取消售后';break;
-                    case 9:st = '订单关闭';break;
+                    case 1:st = '待商家处理'; break;
+                    case 2:st = '待平台审核';break;
+                    case 3:st = '售后完成';break;
+                    case 4:st = '售后取消';break;
                 }
                 return st;
             },
@@ -136,17 +126,8 @@
                 let self = this,params = {};
                 params.storeId = config.storeId;
                 params.infoTelephone = self.form.userPhone == '' ? null : self.form.userPhone;
-                params.orderStoreType = self.form.typeCheck == '' ? null : self.form.typeCheck
-                params.orderStoreStatus = [];
-                if(self.form.statusCheck == undefined){
-                    params.orderStoreStatus = null
-                }else{
-                    if(self.form.typeCheck == 3 && self.form.statusCheck == 34){
-                        params.orderStoreStatus = [...[3,4]]
-                    }else{
-                        params.orderStoreStatus.push(self.form.statusCheck)
-                    }
-                }
+                params.orderStoreType = self.form.typeCheck == '' ? null : self.form.typeCheck;
+                params.orderStoreStatus = self.form.planCheck == '' ? null : self.form.planCheck;
                 params.orderNumber = self.form.orderNumber == '' ? null : self.form.orderNumber;
                 params.orderStartTime = self.form.startTime == '' ? null : self.timeFormat(self.form.startTime);
                 params.orderEndTime = self.form.endTime == '' ? null : self.timeFormat(self.form.endTime);
@@ -211,9 +192,6 @@
             box-sizing: border-box !important;
         }
         $color: #45cdb6;
-        width: 100%;
-        float: left;
-        padding: 40px;
         p{
             margin: 0;
             padding: 0;

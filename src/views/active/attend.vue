@@ -12,7 +12,7 @@
             </tr>
             <tr>
                 <td>活动终端</td>
-                <td>{{switchType(detail.activityTerminal)}}</td>
+                <td>{{detail.activityTerminal}}</td>
             </tr>
             <tr>
                 <td>营销工具</td>
@@ -28,13 +28,13 @@
             </tr>
         </table>
         <el-row style="margin-top:28px;" v-if='!showAct'>
-            <router-link to="/marketing-center/management" class="return">返回</router-link>
+            <router-link to="/marketing-center/management?name=platformActive" class="return">返回</router-link>
             <el-button class="goto" type="primary" :disabled='btnNotClick' @click='attendAct'>立即参与</el-button>
         </el-row>
         <section v-if='showAct'class='atd-con'>
             <div class="atd-title">参与活动</div>
              <section class="create-act" >
-                <createAct :bTime="detail.signUpBeginTime" :eTime="detail.signUpEndTime"></createAct>
+                <createAct :bTime="detail.signUpBeginTime" :eTime="detail.signUpEndTime" :actbTime="detail.activityBeginTime" :acteTime="detail.activityEndTime"></createAct>
             </section>
         </section>
     </section>
@@ -116,9 +116,6 @@
 <style lang="scss">
     .attend{
         $color: #45cdb6;
-        width: 100%;
-        float: left;
-        padding: 20px;
         >p{
             font-size:16px;
             color:#333333;
@@ -185,6 +182,7 @@
             font-weight: 600;
             text-indent: 12px;
             border-left: 3px solid #45cdb6;
+            margin-bottom: 20px;
         }
     }
 </style>

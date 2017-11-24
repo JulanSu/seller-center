@@ -1,4 +1,3 @@
-
 'use strict'
 // Template version: 1.1.3
 // see http://vuejs-templates.github.io/webpack for documentation.
@@ -11,7 +10,7 @@ module.exports = {
     index: path.resolve(__dirname, '../dist/index.html'),
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: 'http://static.dmpseller.hzjiehun.bid/',
     productionSourceMap: true,
     // Gzip off by default as many popular static hosts such as
     // Surge or Netlify already gzip all static assets for you.
@@ -31,24 +30,42 @@ module.exports = {
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {
-        /*'/store': {
-            //target:'http://192.168.89.26:8083',//拣难
-            target:'http://192.168.88.42:8083',//力丰
-            changeOrigin: true,
-            pathRewrite: {
-                '^/store': '/store',
-            }
-        }*/
-        '/merchant': {
-            //target:'http://192.168.89.26:8083',//拣难
-            target:'http://192.168.88.42:8083',//力丰
-            changeOrigin: true,
-            pathRewrite: {
-                '^/merchant': '/merchant',
-            }
-        }
-    },
+    proxyTable: {},
+    // proxyTable: {
+    //     '/store': {
+    //         //target:'http://shop.dmp.hzjiehun.bid',//拣难
+    //         target:'http://shop.dmp.hzjiehun.bid',//力丰
+    //         changeOrigin: true,
+    //         pathRewrite: {
+    //             '^/store': '/store',
+    //         }
+    //     },
+    //     '/merchant': {
+    //         //target:'http://shop.dmp.hzjiehun.bid',//拣难
+    //         target:'http://shop.dmp.hzjiehun.bid',//力丰
+    //         changeOrigin: true,
+    //         pathRewrite: {
+    //             '^/merchant': '/merchant',
+    //         }
+    //     },
+    //     '/product': {
+    //         target:'http://shop.dmp.hzjiehun.bid',//拣难
+    //         //target:'http://192.168.88.42:8083',//力丰
+    //         changeOrigin: true,
+    //         pathRewrite: {
+    //             '^/marketing-center': '/marketing-center',
+    //         }
+    //     },
+    //     '/order': {
+    //         target:'http://shop.dmp.hzjiehun.bid',//拣难
+    //         //target:'http://192.168.88.42:8083',//力丰
+    //         changeOrigin: true,
+    //         secure: false,
+    //         pathRewrite: {
+    //             '^/order': '/order',
+    //         }
+    //     }
+    // },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
     // (https://github.com/webpack/css-loader#sourcemaps)

@@ -20,14 +20,14 @@
                 <el-col :span="5" v-if="detail.shippingWay == '配送'">
                     备注：<span>{{detail.remark}}</span>
                 </el-col>
-                <el-col :span="5">
+                <el-col :span="5" v-if="allPay">
                     收货人：<span>{{detail.receiverName}}</span>
                 </el-col>
-                <el-col :span="5">
+                <el-col :span="5" v-if="allPay">
                     收货人手机号：<span>{{detail.receiverPhone}}</span>
                 </el-col>
             </el-row>
-            <el-row class='send-addres'>
+            <el-row class='send-addres' v-if="allPay">
                 收货地址：<span>{{detail.receiverAddr}}</span>
             </el-row>
         </div>
@@ -73,7 +73,7 @@
                 </el-row>
                 <div class="service" v-if='item.orderProductAfterId'>
                     <el-row class='table-detail'>
-                        <el-col :span="5">售后单编号：{{item.orderProductAfterId}}</el-col>
+                        <el-col :span="5">售后单编号：{{item.orderAfterSerialNumber}}</el-col>
                         <el-col :span="3"></el-col>
                         <el-col :span="3"></el-col>
                         <el-col :span="4">售后单</el-col>
@@ -141,6 +141,7 @@
                 serviceText: '',
                 detail:'',
                 after: {},
+                allPay: false,
                 disabled: true,
                 /*弹窗数据*/
                 dialogFormVisible: false,
@@ -153,11 +154,14 @@
         beforeCreate(){
         },
         created(){
-            let orderId = this.$route.query.orderId;
+            let orderId = this.$route.query.orderId ? this.$route.query.orderId : this.$route.query.id;
             orderDetail({orderStoreId: orderId}).then(res => {
                 this.detail = res.data.data;
+                this.allPay = this.detail.orderType == 1 ? true : false; 
+                this.detail.shippingWay = this.detail.orderType == 1 ? '配送' : '无需配送';
                 for(let i=0; i<this.detail.productList.length; i++){
                     let that = this.detail.productList[i];
+                    that.orderProductStatus == 1 ? this.detail.tradeId = '用户未支付' : '';
                     that.orderProductStatus = this.switchStatus(that.orderProductStatus)
                     that.proPri = [];
                     for(let key in that.productPrivileges){
@@ -165,7 +169,7 @@
                         that.proPri.push(money)
                     }
                 }
-                this.detail.productList[0].orderProductStatus == '待发货' ? this.btnStatus = true : '';
+                (this.detail.productList[0].orderProductStatus == '待发货' && this.detail.productList[0].orderProductAfterStatus == 0) ? this.btnStatus = true : '';
             })
         },
         methods: {
@@ -175,13 +179,9 @@
                 switch(a) {
                     case 1:st = '待用户支付'; break;
                     case 2:st = '待发货';break;
-                    case 3:st = '待收货';break;
+                    case 3:st = '待用户收货';break;
                     case 4:st = '交易成功';break;
-                    case 5:st = '待处理';break;
-                    case 6:st = '待平台审核';break;
-                    case 7:st = '售后完成';break;
-                    case 8:st = '取消售后';break;
-                    case 9:st = '订单关闭';break;
+                    case 5:st = '订单关闭';break;
                 }
                 return st;
             },
@@ -189,10 +189,10 @@
             switchAfter(a){
                 let st = '';
                 switch(a) {
-                    case 1:st = '待处理'; break;
+                    case 1:st = '待商家处理'; break;
                     case 2:st = '待平台审核';break;
                     case 3:st = '售后完成';break;
-                    case 4:st = '已取消';break;
+                    case 4:st = '售后取消';break;
                 }
                 return st;
             },
@@ -240,7 +240,11 @@
                 sendProduct(qs.stringify(params)).then( res => {
                     if(res.data.data){
                         self.btnStatus = false;
-                        
+                        self.dialogFormVisible = false;
+                        this.$message({
+                            message: '发货成功',
+                            type: 'success'
+                        });
                     }else{
                         self.warn(res.data.message)
                     }
@@ -269,9 +273,6 @@
         }
         $color: #45cdb6;
         box-sizing: border-box !important;
-        width: 100%;
-        padding: 40px;
-        float: left;
         .title{
             font-size: 16px;
             color: #333333;

@@ -5,19 +5,19 @@
 			<div v-if="isShop==1">				
 				<category-bar :title="categoryBarTitle1"></category-bar>
 				<el-form-item label="企业名称" prop="enterpriseName"  label-width="200px">
-					<el-input :maxlength="30" v-model="ruleForm.enterpriseName" placeholder="请输入企业名称"  class="wid400"></el-input>
+					<el-input :maxlength="30" v-model="ruleForm.enterpriseName" placeholder="请输入企业名称"  class="wid400"  ></el-input>
 				</el-form-item>
-				<el-form-item label="组织机构代码证/营业执照" label-width="200px">
-					<upload-pictures :note="uploadTishi1" :url="ruleForm.enterpriseLicence" :listen="'listenToPic1'" @listenToPic1="sucpic1"></upload-pictures>
+				<el-form-item label="组织机构代码证/营业执照" label-width="200px" class='requireHezi'>
+					<span class="require" style='left:-180px;'>*</span>
+					<upload-pictures :note="uploadTishi1" :url="ruleForm.enterpriseLicence" :listen="'listenToPic1'" :picSize='"5.MB"' @listenToPic1="sucpic1"  ref="uploadPic1"></upload-pictures>
 				</el-form-item>
 				<el-form-item label="" prop="enterpriseLicence"  label-width="200px" class='updata'>
 					<el-input v-model="ruleForm.enterpriseLicence" class="wid280"></el-input>
 				</el-form-item>
 				<el-form-item label="组织机构代码（注册号）" label-width="200px" prop="orgCode">
-					<el-input :maxlength="18" v-model="ruleForm.orgCode" placeholder="请输入组织机构代码（注册号）" class="wid400"></el-input>
+					<el-input :maxlength="20" v-model="ruleForm.orgCode" placeholder="请输入组织机构代码（注册号）" class="wid400"></el-input>
 				</el-form-item>
 			</div>
-
 			<div v-if="isShop==1">	
 				<category-bar :title="categoryBarTitle2"></category-bar>
 			</div>
@@ -33,19 +33,25 @@
 				</el-form-item>
 			</div>
 			<div v-else>
-				<el-form-item label="联系人姓名" label-width="200px" prop="contactName">
-					<el-input :maxlength="30" v-model="ruleForm.contactName" placeholder="请输入联系人姓名" class="wid400"></el-input>
+				<el-form-item label="联系人姓名" label-width="200px" prop="legalPerson">
+					<el-input :maxlength="30" v-model="ruleForm.legalPerson" placeholder="请输入联系人姓名" class="wid400"></el-input>
 				</el-form-item>
-				<el-form-item label="联系人手机号" prop="contactMobile" label-width="200px">
-					<el-input :maxlength="11" v-model="ruleForm.contactMobile" placeholder="请输入联系人手机号" class="wid400"></el-input>
+				<el-form-item label="联系人手机号" prop="legalMobile" label-width="200px">
+					<el-input :maxlength="11" v-model="ruleForm.legalMobile" placeholder="请输入联系人手机号" class="wid400"></el-input>
 				</el-form-item>
 				
 				<el-form-item label="身份证号" label-width="200px" prop="identityNumber">
 					<el-input :maxlength="18" v-model="ruleForm.identityNumber"  placeholder="请输入身份证" class="wid400"></el-input>
 				</el-form-item>
 			</div>
-			<el-form-item :label="ident1" label-width="200px">
-				<upload-pictures :note="uploadTishi2" :url="ruleForm.identityPic1" :listen="'listenToPic2'" @listenToPic2="sucpic2"></upload-pictures>
+			<el-form-item :label="ident1" label-width="200px"  class="requireHezi">
+				<div v-if="isShop==1">
+					<span class="require" style='left:-120px;'>*</span>
+				</div>
+				<div v-else>
+					<span class="require" style='left:-90px;'>*</span>
+				</div>
+				<upload-pictures :note="uploadTishi2" :url="ruleForm.identityPic1" :listen="'listenToPic2'" :picSize='"800.KB"' @listenToPic2="sucpic2" ref="uploadPic2"></upload-pictures>
 				<div class="example">
 					<div @click="iconSimple(2)"><img :src='identPic2'/></div>
 					<span>参考示例</span>
@@ -55,8 +61,14 @@
 			<el-form-item label="" prop="identityPic1"  label-width="200px" class='updata'>
 				<el-input v-model="ruleForm.identityPic1" class="wid280"></el-input>
 			</el-form-item>
-			<el-form-item :label="ident2" label-width="200px">
-				<upload-pictures :note="uploadTishi2" :url="ruleForm.identityPic2" :listen="'listenToPic3'" @listenToPic3="sucpic3"></upload-pictures>
+			<el-form-item :label="ident2" label-width="200px" class="requireHezi">
+				<div v-if="isShop==1">
+					<span class="require" style='left:-120px;'>*</span>
+				</div>
+				<div v-else>
+					<span class="require" style='left:-90px;'>*</span>
+				</div>
+				<upload-pictures :note="uploadTishi2" :url="ruleForm.identityPic2" :listen="'listenToPic3'" :picSize='"800.KB"' @listenToPic3="sucpic3"  ref="uploadPic3"></upload-pictures>
 
 				<div class="example">
 					<div @click="iconSimple(1)"><img :src='identPic1' /></div>
@@ -80,9 +92,10 @@
 
 			<category-bar :title="categoryBarTitle4"></category-bar>
 			<el-form-item  label="店铺名称" prop="name"  label-width="200px">
-				<el-input :maxlength="20" v-model="ruleForm.name" placeholder="请输入店铺名称"  class="wid400"></el-input>
+				<el-input :maxlength="20" v-model="ruleForm.name" placeholder="请输入店铺名称"  class="wid400" @blur="findName"></el-input>
 			</el-form-item>
-			<el-form-item label="选择您的主营行业 "  prop="selIndustry" label-width="200px">
+			<el-form-item label="选择您的主营行业 "  label-width="200px" class="requireHezi">
+				<span class="require" style='left:-133px;'>*</span>
 				<el-button class='selIndustryBtn' @click="selCategory">选择主营行业</el-button>
 				<div class="myIndustry" v-if="ruleForm.selIndustry.length">
 					<h4>已选：</h4>
@@ -94,12 +107,15 @@
 					</ul>
 				</div>
 			</el-form-item>
+			<!-- <el-form-item label="" label-width="200px"  prop="selIndustry">
+				<el-input  :maxlength="11" v-model="ruleForm.selIndustry" name="username" placeholder="请输入联系人手机号" class="wid400"></el-input>
+			</el-form-item> -->
 			
-			<el-form-item label="门店地址"  label-width="200px">
+			<el-form-item label="门店地址"  label-width="200px" prop="address">
 				<v-distpicker :province="select.province" :city="select.city" :area="select.area" @province="onProvince" @city="onCity" @selected="onSelected"></v-distpicker>
 			</el-form-item>
 			<el-form-item label="" label-width="200px" prop="address" class="search-hezi">
-				<el-input v-model="ruleForm.address" id="ser" placeholder="输入详细地址" class="wid280" @change="searchDetail" @focus="searchFocus"></el-input>
+				<el-input v-model="ruleForm.address" id="ser" placeholder="输入详细地址" class="wid280"></el-input>
 				<el-button type="primary" class="mapbtn" @click="searchbtn">搜索地图</el-button>
 				<ol class="search-ol" v-if="searchKeyArr.length">
 					<li>123</li>
@@ -107,10 +123,10 @@
 			</el-form-item>
 
 			<el-form-item label="经纬坐标" label-width="200px">
-				<p>{{ ruleForm.latitude+","+ruleForm.longitude}}</p>
+				<p>{{ ruleForm.longitude+","+ruleForm.latitude}}</p>
 			</el-form-item>
 			<el-form-item label="" label-width="200px">
-				<map-view :height="height" :longitude="ruleForm.longitude" :latitude="ruleForm.latitude" @listenToChildEvent="showsite" @listenToSel="showKey" ref="MapView">
+				<map-view :longitude="ruleForm.longitude" :latitude="ruleForm.latitude" @listenToChildEvent="showsite" @listenTolongitude="getResult" ref="MapView">
 				</map-view>
 			</el-form-item>
 			<el-form-item label="" label-width="200px">
@@ -130,6 +146,8 @@
 		<el-dialog
 		    title=""
 		    top="30%"
+		    :show-close='false'
+		    :close-on-click-modal='false'
 			:visible.sync="dialogVisible1"
 			custom-class="suc"
 			size="tiny">
@@ -156,11 +174,11 @@
 	      <div class="">
 	        <el-row>
 		      <el-col :span="8">
-		        <category-menu title="一级行业" v-if="categoryData.length" :categoryData="categoryData" @categoryClick="firstHandle" :arrKey="'secondIndustryList'">
+		        <category-menu title="一级行业" v-if="categoryData.length" :ind="index1" :categoryData="categoryData" @categoryClick="firstHandle" :arrKey="'secondIndustryList'">
 		        </category-menu>
 		      </el-col>
-		      <el-col :span="8">
-		        <category-menu title="二级行业" v-if="secoundCategoryData.length" :categoryData="secoundCategoryData" @categoryClick="secondHandle" :arrKey="'catePath'"></category-menu>
+		      <el-col :span="8" id="erji">
+		        <category-menu title="二级行业" v-if="secoundCategoryData.length" :ind="index2" :categoryData="secoundCategoryData" @categoryClick="secondHandle" :arrKey="'catePath'" ref="secMenu"></category-menu>
 		      </el-col>
 		    </el-row>
 		    <div class="category-nav-breadcrumb">
@@ -193,12 +211,8 @@ import CategoryBar from '@/components/CategoryBar.vue'/*标题*/
 import CategoryMenu from '@/components/CategoryMenu2.vue'/*类目选择*/
 import UploadPictures from '@/components/UploadPictures.vue'/*上传图片组件*/
 import VDistpicker from 'v-distpicker';/*城市三级联动*/
-import MapView from '@/components/Map';/*地图组件*/
-import { merchantSave,industryListall,gssUpload } from '@/api/shopApi';
-// 注册
-/*Vue.filter('onlyNumber', function (value) {
-  return value.replace(/[^/d]/g,''); 
-});*/
+import MapView from '@/components/Map1';/*地图组件*/
+import { merchantSave,industryListall,gssUpload,storeCheckname} from '@/api/shopApi';
 export default {
 	components: {
 		CategoryBar,
@@ -220,7 +234,34 @@ export default {
 		        }
 	        }
 	    };
+	    var validateNumber1= (rule, value, callback) => {
+          var reg =/^[0-9a-zA_Z]+$/g;
+          if (!value.match(reg)) {
+            callback(new Error('请输入正确的组织机构代码（注册码）'));
+          } else {
+            callback();
+          }
+	    };
+	    var validateNumber2= (rule, value, callback) => {
+	        var reg =/(^\d{0,18}$)|(^\d{17}(\d|X|x)$)/g;
+            if (!value.match(reg)) {
+	            callback(new Error('请输入正确身份证号'));
+	        } else {
+	            callback();
+	        }
+	    };
+	    var validateNumber3= (rule, value, callback) => {
+	        var reg =/^\d+$/g;
+            if (!value.match(reg)) {
+	            callback(new Error('请输入正确的手机号'));
+	        } else {
+	            callback();
+	        }
+	    };
 		return {
+			index1:"-1",
+			index2:"-1",
+
 			identPic1:config.ident1,
 			identPic2:config.ident2,
 			//类目选择
@@ -255,7 +296,7 @@ export default {
 			categoryBarTitle3: '联系人信息',
 			categoryBarTitle4: '店铺信息',
 			categoryBarTitle5: '个人信息',
-			uploadTishi1:"请上传800*800px以上，格式要求jpg、jpeg、png,不超过5MB",
+			uploadTishi1:"请上传800*800px以上，格式要求jpg、jpeg、png，不超过5MB",
 			uploadTishi2:"",
 			exampleSrc:'',
 			dialogVisible:false,
@@ -267,6 +308,7 @@ export default {
 			searchKeyArr:[],
 
 			ruleForm: {
+				industry:'',
 				industryCateIdList:[],
 				identityPic1:'',
 				identityPic2:'',
@@ -282,9 +324,10 @@ export default {
 				contactName:'',
 			    contactMobile:'',
 			    identityPic:'',
-			    longitude:120.186535,
-	　　　　	latitude:30.310288,
-			    address:''
+			    longitude:'',
+	　　　　	latitude:'',
+			    address:'',
+			    legalMobile:'',
 				
 			},
 	        rules: {
@@ -302,8 +345,10 @@ export default {
 	            	{ min: 1, max: 30, message: '长度为 1 到 30 位', trigger: 'blur' }
 	          	],
 	          	orgCode: [
-	            	{ required: true, message: '请输入组织机构代码/注册号', trigger: 'blur' },
-	            	{ min: 18, max: 18, message: '请输入正确的组织机构代码（注册码）', trigger: 'blur' }
+	            	{ required: true, message: '请输入组织机构代码（注册码）', trigger: 'blur' },
+	            	{ min: 1, max: 20, message: '请输入正确的组织机构代码（注册码）', trigger: 'blur' },
+	            	{ validator:validateNumber1,trigger: 'blur'},
+	            	{ validator:validateNumber1,trigger: 'change'}
 	          	],
 	          	legalPerson: [
 	            	{ required: true, message: '请输入姓名', trigger: 'blur' },
@@ -311,7 +356,9 @@ export default {
 	          	],
 		        identityNumber: [
 		            { required: true, message: '请输入身份证号', trigger: 'blur' },
-	            	{ min: 18, max: 18, message: '请输入正确身份证号', trigger: 'blur' }
+	            	{ min: 18, max: 18, message: '请输入正确身份证号', trigger: 'blur' },
+	            	 { validator:validateNumber2,trigger: 'blur'},
+	            	 { validator:validateNumber2,trigger: 'change'}
 		        ],
 	          	name: [
 	            	{ required: true, message: '请输入店铺名称', trigger: 'blur' },
@@ -325,58 +372,68 @@ export default {
 	            	{ min: 2, max: 30, message: '请输入正确的姓名', trigger: 'blur' }
 	          	],
 		        contactMobile: [
-		        	{ validator: validatePhone,trigger: 'blur' }
+		        	{ required: true,validator: validatePhone,trigger: 'blur' },
+		        	{ validator:validateNumber3,trigger: 'blur'},
+		        	{ validator:validateNumber3,trigger: 'change'}
+
+	          	],
+		        legalMobile: [
+		        	{ required: true,validator: validatePhone,trigger: 'blur' },
+		        	{ validator:validateNumber3,trigger: 'blur'},
+		        	{ validator:validateNumber3,trigger: 'change'}
+
 	          	],
 		        address:[
 		           { required: true, message: '请输入详细地址', trigger: 'blur' }
+		        ],
+		        industry:[
+		          { required: true, message: '请选择主营行业', trigger: 'blur' },
 		        ]
 	          	
 	        }
 
 		}
 	},
-/*	watch:{
-		'ruleForm.searcBarCode':function(){
-			
-            this.ruleForm.searcBarCode=this.ruleForm.searcBarCode.replace(/\W/g,'');
-            var newVal=this.ruleForm.searcBarCode;
-            console.log(newVal)
-            this.$set(this.ruleForm,'searcBarCode',newVal);
-            console.log(this.ruleForm.searcBarCode)
-        },
 
-		'ruleForm.orgCode':function(){
-			this.ruleForm.orgCode=this.ruleForm.orgCode.replace(/[\d]/g,'');
-			console.log(this.ruleForm.orgCode)
-		}
-		'ruleForm.orgCode':function(){
-            this.ruleForm.orgCode=this.ruleForm.orgCode.replace(/\D/g,'');
-            console.log(this.ruleForm.orgCode)
-        }
-	},*/
     mounted:function(){
     	if(localStorage.getItem('merchant')==1){
     		this.$router.push({ path: '/store/message'});
     	}
 
-
-		//调用地图
-	    this.$refs.MapView.creatmap(this.ruleForm.longitude,this.ruleForm.latitude);
-
 	    //获取行业数据
 	    industryListall({}).then((res) => {
-	        this.categoryData = res.data.data;
-	    });
-
-	    var that=this;
-	    var o= document.getElementById("merchant-enter");
-	    o.onclick=function(){
-		    that.$refs.MapView.clearKey();
-	    };
-	    
+	    	if(res.data.code==0){
+	    		this.categoryData = res.data.data;
+	    	}   
+	    })    
 
     },
 	methods: {
+		/*地图组件更改后传递数据到父组件*/
+		showsite(lng,lat){
+			this.ruleForm.longitude=lng;
+			this.ruleForm.latitude=lat;
+		},
+		/*点击搜索地图调用map子组件里面的地图事件*/
+		searchbtn(){
+			var addr=this.ruleForm.address;
+			this.$refs.MapView.searchMap(addr);
+		},
+		//子组件里面的input内容传递给父组件的搜索框
+		getResult:function(h){
+			this.ruleForm.address=h;
+		},
+		/*查找账号是否已存在*/
+	    findName(val){
+	        if(!this.ruleForm.name){
+	          return false;
+	        }
+	        storeCheckname({"storeName":this.ruleForm.name}).then((res) => {
+	            if(res.data.code==1){
+	              this.$message.error('店铺重名，请重新填写');
+	            }
+	        });
+	    },
 		//组织机构代码证／营业执照上传成功之后
 		sucpic1(url){
 			this.ruleForm.enterpriseLicence=url;
@@ -389,59 +446,64 @@ export default {
 		sucpic3(url){
 			this.ruleForm.identityPic2=url;
 		},
-		//搜索关键字后点击筛选下拉结果，点击的元素的值传给父元素的input输入框
-		showKey(key){
-			this.ruleForm.address=key;
-		},
-		searchFocus(){
-			var addr=this.selProvince+this.selCity+this.selArea+this.ruleForm.address;
-			if(!addr){
-				this.$message({
-		          message: '请先选择省市区',
-		          type: 'warning'
-		        });
-			}
-		},
-		//地图输入框输入时匹配地址
-		searchDetail(){
-			var addr=this.selProvince+this.selCity+this.selArea+this.ruleForm.address;
-			this.$refs.MapView.againmap(this.ruleForm.longitude,this.ruleForm.latitude,addr,this.ruleForm.address);
 
-		},
-		/*filterNumber(value){
-			this.ruleForm.orgCode=this.ruleForm.orgCode.replace(/[^/d]/g,'');
-		},*/
 		//选择行业
 		selCategory(){
+			//删除刚才一级选中的状态
+	        var o=document.querySelectorAll(".is-active")[0];
+	        if(o){
+	        	var cla=o.getAttribute("class");
+	        	cla=cla.replace("is-active",'');
+	        	o.setAttribute("class",cla);
+	        }
+        	
 			this.dialogVisible2=true;
 			this.curCateName=[];
 			this.secoundCategoryData=[];
+			this.industryCateId=[];
+
 		},
+
 		//一级类目选择事件
 		firstHandle (row, index){
-
+			this.index2="";
 			this.stCateName='';
 			this.stCateName=row.industryCateName;
+			this.secoundCategoryData = [];
 	        if(row.secondIndustryList.length) {
 	            this.secoundCategoryData = row.secondIndustryList;
-	        }else {
-	            this.secoundCategoryData = [];
+	        }
+
+	        //删除刚才二级选中的状态
+	        var o=document.querySelector("#erji").querySelectorAll(".is-active")
+	        console.log(o)
+	        for(var i=0;i<o.length;i++){
+	        	var cla=o[i].getAttribute("class");
+	        	cla=cla.replace("is-active",'');
+	        	o[i].setAttribute("class",cla);
 	        }
         },
+
         //二级类目选择事件
         secondHandle (row, index) {
         	var maxArr=this.ruleForm.selIndustry.concat(this.curCateName);
-   			this.industryCateId.push(row.industryCateId);
+   			
         	if(maxArr.length>9){
-        		this.$message({
-		          message: '主营行业不能超过10个哦',
-		          type: 'warning'
-		        });
+        		this.$message({message: '主营行业不能超过10个哦',type: 'warning'});
 		        return false;
         	}
+        	
+        	var strJson=this.curCateName.join(",");
+        	var str=this.stCateName+","+row.industryCateName;
 
-        	this.curCateName.push([this.stCateName,row.industryCateName]);
-
+        	var selIndustryJson =this.ruleForm.selIndustry.join(",");
+        	if((strJson.indexOf(str)>=0)||(selIndustryJson.indexOf(str)>=0)){
+        		this.$message({message: '该主营行业已选过',type: 'warning'});
+        	}else{
+        		this.curCateName.push([this.stCateName,row.industryCateName]);
+        		this.industryCateId.push(row.industryCateId);
+        	}
+        	
 
         },
         //选择行业的确定按钮
@@ -452,18 +514,17 @@ export default {
         		this.ruleForm.selIndustry=this.ruleForm.selIndustry.concat(this.curCateName);
         		this.ruleForm.industryCateIdList=this.ruleForm.industryCateIdList.concat(this.industryCateId);
 
+
+
         		this.dialogVisible2=false;
+
         	}
         },
         //删除所选行业
         delIndustry(index){
-        	Array.prototype.baoremove = function(dx) 
-			{ 
-			  if(isNaN(dx)||dx>this.length){return false;} 
-			  this.splice(dx,1); 
-			} 
-        	this.ruleForm.selIndustry.baoremove(index);
-        	this.ruleForm.industryCateIdList.baoremove(index);
+        	console.log(index);
+			this.$delete(this.ruleForm.selIndustry, index);
+			this.$delete(this.ruleForm.industryCateIdList, index);
         },
 		/*查看示例图*/
 		iconSimple(v){
@@ -505,8 +566,8 @@ export default {
 	    },
 	    /*点击搜索地图调用map子组件里面的地图事件*/
 		searchbtn(){
-			var addr=this.selProvince+this.selCity+this.selArea+this.ruleForm.address
-			this.$refs.MapView.againmap(this.ruleForm.longitude,this.ruleForm.latitude,addr);
+			var addr=this.ruleForm.address;
+			this.$refs.MapView.searchMap(addr);
 		},
 		/*地图组件更改后传递数据到父组件*/
 		showsite(lng,lat){
@@ -515,13 +576,19 @@ export default {
 		},
 		/*点击切换企业和个人店铺*/
 		selector(formName){
-			//this.$refs[formName].resetFields();/*清空输入的内容*/
+			this.$refs[formName].resetFields();/*清空输入的内容*/
+			
+			this.$refs.uploadPic2.revise("");//修改图片的值
+			this.$refs.uploadPic3.revise("");//修改图片的值
+			this.ruleForm.selIndustry=[];
+			this.ruleForm.industryCateIdList=[];
 			//this.select= { province: '选择省',city: '选择市',area: '选择区'};
 			if(this.isShop==1){/*isShop为1是企业店铺*/
 				this.isShop=0;
 				this.shopHtml="企业身份入驻请点击这里";
 				this.ident1='身份证正面';
 				this.ident2="身份证反面";
+				this.$refs.uploadPic1.revise("");//修改图片的值
 				
 			}else{
 				this.isShop=1;
@@ -536,7 +603,7 @@ export default {
 			};
 		},
 		/*保存按钮*/
-		submitForm(formName) {console.log(this.ruleForm.industryCateIdList)
+		submitForm(formName) {
 		    this.$refs[formName].validate((valid) => {
 	            if (valid) {
 	            	if(!this.ruleForm.industryCateIdList.length){
@@ -584,17 +651,22 @@ export default {
 		            para.append('longitude',Number(this.ruleForm.longitude*1000000));
 					para.append('latitude',Number(this.ruleForm.latitude*1000000));
 
+					if(this.isShop!=1){//个人
+						para.append('legalMobile',this.ruleForm.legalMobile);
+						
+					}
+
 		            merchantSave(para).then((res)=> {
 		            	this.listLoading = false;
 		            	if(res.data.code==0){
 		            		this.dialogVisible1=true;
 		            	}else{
-		            		this.$message({message:res.data.message,type: 'warning'});
+		            		this.$message.error(res.data.message);
 		            	}
 		                
 		            }).catch((res)=> {
 		                this.listLoading = false;
-		                this.$message({message:"接口建立连接失败",type: 'warning'});
+		                this.$message.error('接口建立连接失败');
 		            });
 		      	}else {
 		        	return false;
@@ -613,4 +685,16 @@ export default {
 }
 </script>
 <style lang="scss">
+.merchant-enter{
+	.address + .el-form-item__error{
+		display:none;
+	}
+	/* .hangye{
+		.el-input__inner{
+			display: none;
+		}
+	} */
+	
+}
+
 </style>

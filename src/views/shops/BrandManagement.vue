@@ -8,26 +8,25 @@
 		<ul v-loading="listLoading">
 			<li  v-for="(myBrand,index) in myBrands" @click="jump(myBrand)">
 				<div class="brandlogo">
-					<img :src="myBrand.authorizationUrl">
+					<img :src="myBrand.logo">
 				</div>
 				<div class="brandlist">
 					<h3><!-- 已过期 已禁用 -->
 						<b>{{myBrand.nameCn}}</b>
-						<span v-if="pastDue(myBrand)" style="color:#ff0201;">(已过期)</span>
+						<span v-if="myBrand.isVerified==2"  style="color:#ff0201;">(未通过)</span>
+						<span v-else-if="myBrand.isVerified==0" style="color:#41cac0;">(审核中)</span>
+						
 						<span v-else-if="myBrand.isUsed==0" style="color:#ff0201;">(已禁用)</span>
-						<span v-else>
-							<span v-if="myBrand.isVerified==1"  style="color:#41cac0;">(审核通过)</span>
-							<span v-else-if="myBrand.isVerified==2"  style="color:#ff0201;">(未通过)</span>
-							<span v-else-if="myBrand.isVerified==0" style="color:#41cac0;">(审核中)</span>
-							<span v-else-if="myBrand.isVerified==3" style="color:#ff0201;">(已取消)</span> 
-						</span>
+						<span v-else-if="myBrand.isVerified==4" style="color:#ff0201;">(已过期)</span>
+						<!-- <span v-else-if="pastDue(myBrand)" style="color:#ff0201;">(已过期)</span> -->
+						<span v-else="myBrand.isVerified==1"  style="color:#41cac0;">(审核通过)</span>
 						
 					</h3>
 					<p>渠道：{{myBrand.ways}}</p>
 					<p>授权城市：{{myBrand.cityNames}}</p>
-					<p>截止时间：{{time(myBrand)}}</p>
+					<p>有效时间：{{time(myBrand)}}</p>
 
-					<div class="btns" v-if="!pastDue(myBrand)&&(myBrand.isVerified==0)&&(myBrand.isUsed!=0)">
+					<div class="btns" v-if="myBrand.isVerified==0">
 						<span class="cancel" @click.stop="cancel(myBrand.storeBrandId)">取消</span>
 					</div>			
 				</div>
@@ -79,7 +78,8 @@ import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 
 				}else{
 					var parm={storeBrandId:row.storeBrandId,compile:1};
-					if(this.pastDue(row)){
+
+					if((row.isVerified==4)||(row.isVerified==2)||(row.isVerified==0)){
 						parm.noClick=false;
 					}else{
 						if(row.isUsed==0){
@@ -88,8 +88,8 @@ import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 							parm.noClick=false;
 						}
 					}
-					
-					this.$router.push({ path: 'brand-management/compile-brand', query:parm });
+					/*parm.noClick=true;*/
+					this.$router.push({ path: '/store/brand-management/compile-brand', query:parm });
 				}
 			},
 
@@ -101,10 +101,13 @@ import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 		        brandCancelverify(para).then((res) => {
 		        	if(res.data.code==0){
 		        		this.getBrandList();
+		        	}else{
+		        		this.$message.error(res.data.message);
 		        	}
 		          	this.listLoading = false;
 		        }).catch((res)=> {
 		          	this.listLoading = false;
+		          	this.$message.error('接口建立连接失败');
 		        });
 			},
 
@@ -112,7 +115,8 @@ import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 			pastDue(myBrand){
 				var flag=false;
 				var nowData=new Date().getTime();
-				if(nowData>myBrand.endValidTime){
+				var end=myBrand.endValidTime+Number(24*60*60*1000)
+				if(nowData>end){
 					flag=true;
 				}
 				return flag;

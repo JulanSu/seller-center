@@ -8,7 +8,7 @@
             <el-select v-model="form.statusCheck" placeholder="订单状态" class='w180'>
                 <el-option v-for="item in form.orderStatus" :key="item.statusId" :label="item.label" :value="item.statusId"></el-option>
             </el-select>
-            <el-input v-model="form.orderNumber" class='w180' placeholder='请输入订单号' :maxlength='15' @blur="numberIsRight(2)"></el-input>
+            <el-input v-model="form.orderNumber" class='w180' placeholder='请输入订单号'  @blur="numberIsRight(2)"></el-input>
             <el-date-picker type="date" v-model="form.startTime" class='w120' @change='chooseTime' placeholder='订单时间'></el-date-picker>
             <span>—</span>
             <el-date-picker type="date" v-model="form.endTime" class='w120' @change='chooseTime' placeholder='订单时间'></el-date-picker>
@@ -28,7 +28,7 @@
                   </template>
             </el-table-column>
         </el-table>
-        <div class="block">
+        <div class="block" v-if="total > pageSize">
             <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[20, 50, 100]" :page-size="pageSize" layout="sizes, prev, pager, next, jumper,total" :total="total">
                 </el-pagination>
         </div>
@@ -57,37 +57,59 @@
                             {label: '全部', statusId: null},
                             {label: '待用户支付', statusId: 1},
                             {label: '待发货', statusId: 2},
-                            {label: '待收货', statusId: 3},
-                            {label: '待自提', statusId: 3.1},
-                            {label: '待核销', statusId: 3.2},
-                            {label: '交易成功', statusId: 4}
+                            {label: '待用户收货', statusId: 3},
+                            {label: '待用户自提', statusId: 3.1},
+                            {label: '待用户核销', statusId: 3.2},
+                            {label: '交易成功', statusId: 4},
+                            {label: '待商家处理', statusId: 6},
+                            {label: '待平台审核', statusId: 7},
+                            {label: '售后完成', statusId: 8},
+                            {label: '订单关闭', statusId: 5},
+
                         ]},
                         {id: 1, status:[                        //全款
                             {label: '全部', statusId: null},
                             {label: '待用户支付', statusId: 1},
                             {label: '待发货', statusId: 2},
-                            {label: '待收货', statusId: 3},
-                            {label: '交易成功', statusId: 4}
+                            {label: '待用户收货', statusId: 3},
+                            {label: '待用户自提', statusId: 3.1},  
+                            {label: '交易成功', statusId: 4},
+                            {label: '待商家处理', statusId: 6},
+                            {label: '待平台审核', statusId: 7},
+                            {label: '售后完成', statusId: 8},
+                            {label: '订单关闭', statusId: 5},
+
                         ]},
                         {id: 2, status:[                        //定金
                             {label: '全部', statusId: null},
                             {label: '待用户支付', statusId: 1},
                             {label: '待发货', statusId: 2},
-                            {label: '待核销', statusId: 3},
-                            {label: '交易成功', statusId: 4}
+                            {label: '待用户核销', statusId: 3},
+                            {label: '交易成功', statusId: 4},
+                            {label: '待商家处理', statusId: 6},
+                            {label: '待平台审核', statusId: 7},
+                            {label: '售后完成', statusId: 8},
+                            {label: '订单关闭', statusId: 5},
+
                         ]},
                         {id: 3, status:[                        //点券
                             {label: '全部', statusId: null},
                             {label: '待用户支付', statusId: 1},
                             {label: '待发货', statusId: 2},
-                            {label: '交易成功', statusId: 34}
+                            {label: '交易成功', statusId: 34},
+                            {label: '待商家处理', statusId: 6},
+                            {label: '待平台审核', statusId: 7},
+                            {label: '售后完成', statusId: 8},
+                            {label: '订单关闭', statusId: 5},
+
                         ]},
                         {id: 4, status:[
                             {label: '全部', statusId: null},      //现金券
                             {label: '待用户支付', statusId: 1},
                             {label: '待发货', statusId: 2},
-                            {label: '待收货', statusId: 3},
-                            {label: '交易成功', statusId: 4}
+                            {label: '待用户收货', statusId: 3},
+                            {label: '交易成功', statusId: 4},
+                            {label: '订单关闭', statusId: 5},
                         ]}
                     ],
                     orderNumber: '',
@@ -140,13 +162,14 @@
                 switch(a) {
                     case 1:st = '待用户支付'; break;
                     case 2:st = '待发货';break;
-                    case 3:st = '待收货';break;
+                    case 3:st = '待用户收货';break;
                     case 4:st = '交易成功';break;
-                    case 5:st = '待处理';break;
-                    case 6:st = '待平台审核';break;
-                    case 7:st = '售后完成';break;
-                    case 8:st = '取消售后';break;
-                    case 9:st = '订单关闭';break;
+                    case 5:st = '订单关闭';break;
+                    case 6:st = '待商家处理';break;
+                    case 7:st = '待平台审核';break;
+                    case 8:st = '售后完成';break;
+                    case 9:st = '取消售后';break;
+                    
                 }
                 return st;
             },
@@ -157,11 +180,6 @@
                 if(!flag && self.form.userPhone != '' && a == 1){
                     self.form.userPhone = '';
                     self.warn('请输入正确的手机号')
-                    return false;
-                }
-                if(a != 1 && self.form.orderNumber != ''){
-                    self.form.orderNumber = '';
-                    self.warn('请输入正确的订单号')
                     return false;
                 }
             },
@@ -208,21 +226,33 @@
             getTableData(obj){
                 let self = this;
                 orderStore(obj).then(res => {
-                    console.log(res)
                     let moc = res.data
                     if(!moc.data){
                         this.tableData = [];
                         this.total = 0;
                         return false;
                     }
-                    for(let i=0; i<moc.data.list.length; i++) {
-                        let that = moc.data.list[i];
-                        that.pName = that.productNames.join('')
-                        that.orderStoreStatus = this.switchStatus(that.orderStoreStatus)
-                    }
+                    if(moc.data.list){
+                       for(let i=0; i<moc.data.list.length; i++) {
+                            let that = moc.data.list[i];
+                            that.pName = self.textSubstr(that.productNames.join(''), that.productNames.length);
+                            that.orderStoreStatus = this.switchStatus(that.orderStoreStatus)
+                        }
+                    } 
                     this.total = Number(moc.data.total);
                     this.tableData = moc.data.list
                 })
+            },
+             /*字数控制*/
+            textSubstr(a, len){
+                if(a.length > 20){
+                    a = a.substr(0,20) + '...'
+                }
+                if(len > 1){
+                    return a = a + `等${len}件`;
+                }else{
+                    return a;
+                }
             },
             /*页面条数*/
             handleSizeChange(val) {
@@ -259,9 +289,6 @@
             box-sizing: border-box !important;
         }
         $color: #45cdb6;
-        width: 100%;
-        float: left;
-        padding: 40px;
         box-sizing: border-box !important;
         p{
             margin: 0;

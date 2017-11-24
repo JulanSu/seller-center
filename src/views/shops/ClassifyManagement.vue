@@ -1,5 +1,5 @@
 <template>
-  <section class="fenlei-list" v-if='$route.name=="分类管理"'>
+  <section class="fenlei-list" v-if='$route.name=="分类管理"'  v-loading="listLoading">
     <!--工具条-->
     <el-col :span="24" class="tool-bar" style="padding-bottom: 0px;">
       <router-link to="/store/classify-management/add-fen-lei">
@@ -7,7 +7,7 @@
       </router-link>
     </el-col>
     <!--列表-->
-    <el-table :data="datas" v-loading="listLoading">
+    <el-table :data="datas">
       <el-table-column prop="cateName" label="分类名称" min-width="190" align="center">
       </el-table-column>
       <el-table-column prop="productNum" label="商品数量" min-width="190" align="center">
@@ -25,7 +25,7 @@
     </el-table>
 
     <!--工具条-->
-    <el-col :span="24" class="tool-bar" style="margin-top:20px;">
+    <el-col :span="24" class="tool-bar pages-bar" style="margin-top:20px;">
       <el-pagination
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
@@ -73,11 +73,17 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
         };
         this.listLoading = true;
         cateList(para).then((res) => {
-          this.total = Number(res.data.data.total);
-          this.datas = res.data.data.list;
+          if(res.data.code==0){
+            this.total = Number(res.data.data.total);
+            this.datas = res.data.data.list;
+          }else{
+            this.$message.error(res.data.message);
+          }
+          
           this.listLoading = false;
         }).catch((res)=> {
           this.listLoading = false;
+          this.$message.error('接口建立连接失败');
         });
       },
       //转换显示状态
@@ -100,13 +106,19 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
           var para = new URLSearchParams();
           para.append('storeCateId',row.storeCateId);
           para.append('isUsed',isUsed);
-          isUsed
           cateUpdate(para).then((res) => {
+            if(res.data.code==0){
+              this.getCateList();//更新列表
+            }else{
+              this.$message.error(res.data.message);
+            }
             this.listLoading = false;
-            this.getCateList();//更新列表
+
           }).catch((res)=> {
             this.listLoading = false;
+            this.$message.error('接口建立连接失败');
           });
+        }).catch(() => {
         });
       },
        //删除子帐号
@@ -120,16 +132,23 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
 
           cateRemove(para).then((res) => {
             this.listLoading = false;
-            this.getCateList();//更新列表
+            if(res.data.code==0){
+              this.getCateList();//更新列表
+            }else{
+              this.$message.error(res.data.message);
+            }
+            
           }).catch((res)=> {
             this.listLoading = false;
+            this.$message.error('接口建立连接失败');
           });
+        }).catch(() => {
         });
       },
        //产看商品
       handleSee: function (row) {
         var parm={id:row.storeCateId};
-        this.$router.push({ path: '/store/classify-management/find-good/', query:parm });
+        this.$router.push({ path: '/store/classify-management/find-good', query:parm });
       },
       //分页
       handleCurrentChange:function(val){
@@ -146,7 +165,6 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
 
 <style lang="scss">
 .fenlei-list{
-  padding:40px 40px 0 20px;
   a{
   text-decoration:none;
   }

@@ -1,8 +1,11 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Full from '@/components/Full.vue'
+import FullNoLeft from '@/components/FullNoLeft.vue'
+
 
 import MerchantEnter from '@/views/shops//MerchantEnter.vue'
+import MerchantEnter1 from '@/views/shops//MerchantEnter1.vue'
 
 //import mendian from '@/views/charts/mendian.vue'
 import PersonMessage from '@/views/message/PersonMessage.vue'
@@ -10,6 +13,13 @@ import PersonMessage from '@/views/message/PersonMessage.vue'
 //商品管理路由
 import goodsManagementRoutes from './goodsManagementRoutes.js'
 import ProductSku from '@/views/seller_management/ProductSku.vue'
+
+//首页路由
+import home from './home.js'
+
+/*404*/
+import NotFound from './404.js'
+
 //店铺管理路由
 import shopsManagementRoutes from './shopsManagementRoutes.js'
 
@@ -18,6 +28,8 @@ import transaction from './transactionRoutes.js'
 
 /*营销路由管理*/
 import marketingCenter from './marketingCenterRoutes.js'
+
+
 
 Vue.use(VueRouter)
 
@@ -37,19 +49,28 @@ const routers = new VueRouter({
     //     name: '',
     //     hidden: true
     // },
-    {
-        path: '/productsku',
-        component: ProductSku,
-        name: '',
-        hidden: true
-    },
+
     {
         path: '/',
         component: Full,
         name: '',
-        redirect: '/seller-management/goods',
-        hidden: true
+        hidden: true,
+        redirect: '/home/index',
+    },    
+    {
+        path: '/home',
+        component: Full,
+        name: '',
+        hidden:true,
+        redirect: '/home/index',
+        children: home
     },
+    // {
+    //     path: '/productsku',
+    //     component: ProductSku,
+    //     name: '',
+    //     hidden: true
+    // },
     // {
 
     //     path: '/seller-management',
@@ -90,7 +111,20 @@ const routers = new VueRouter({
         component: MerchantEnter,
         name: '',
         hidden: true
+    },
+    {
+        path: '/404',
+        component: FullNoLeft,
+        name: '',
+        children:NotFound,
+        hidden: true
+    },
+    {
+        path: '*',
+        redirect: '/404',
+        hidden: true
     }
+
     // {   path: '/marketing-center',
     //     component: Full,
     //     name: '营销中心',

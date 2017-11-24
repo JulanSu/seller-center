@@ -10,11 +10,11 @@
                     <el-select v-model="toolCheck" placeholder="营销工具" style='width:120px;margin-left:20px;'>
                         <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value"></el-option>
                     </el-select>
-                    <el-input v-model="storeKeyword" placeholder='输入活动名称/ID查询' class='search-input'></el-input>
+                    <el-input v-model="storeKeyword" placeholder='输入活动名称/ID查询' class='search-input' :maxlength='18'></el-input>
                     <el-button type="primary" class='search-btn' @click='searchStore'>查询</el-button>
                 </el-row>
 
-                <el-table :data="storeTable" class='table-con' align='center' :row-style="{height:'100px'}">
+                <el-table :data="storeTable" class='table-con' align='center' :default-sort = "{prop: 'createdAt',order: 'descending'}" :row-style="{height:'100px'}">
                     <el-table-column prop="marketingActivityId" label="活动ID" align='center'></el-table-column>
                     <el-table-column prop="activityName" label="活动名称" align='center'></el-table-column>
                     <el-table-column prop="toolsName" label="营销工具" align='center'></el-table-column>
@@ -23,7 +23,7 @@
                             <div>{{switchTime(scope.row.activityBeginTime)}} 至 {{switchTime(scope.row.activityEndTime)}}</div>
                         </template>
                     </el-table-column>
-                    <el-table-column label="创建时间" align='center'>
+                    <el-table-column label="创建时间" align='center' prop='createdAt'>
                          <template slot-scope="scope">
                             <div>{{switchTime(scope.row.createdAt)}}</div>
                         </template>
@@ -40,7 +40,7 @@
                     </el-table-column>
                 </el-table>
 
-                <div class="block">
+                <div class="block" v-if="totalStore > pageSizeStore">
                     <el-pagination @size-change="storeSizeChange" @current-change="storeCurrentChange" :current-page="currentPageStore" :page-sizes="[20, 50, 100]" :page-size="pageSizeStore" layout="sizes, prev, pager, next, jumper,total" :total="totalStore">
                     </el-pagination>
                 </div>
@@ -57,13 +57,13 @@
                     <el-select v-model="auditStatus" placeholder="审核状态" style='width:120px;margin-left:20px;'>
                         <el-option v-for="item in options5" :key="item.value" :label="item.label" :value="item.value"></el-option>
                     </el-select>
-                    <el-input v-model="platKeyword" placeholder='输入活动名称/ID查询' class='search-input'></el-input>
+                    <el-input v-model="platKeyword" placeholder='输入活动名称/ID查询' class='search-input' :maxlength='18'></el-input>
                     <el-button type="primary" class='search-btn' @click='searchPlat'>查询</el-button>
                 </el-row>
-                <el-table :data="platTable" class='table-con' align='center' :row-style="{height:'100px'}">
+                <el-table :data="platTable" class='table-con' align='center' :row-style="{height:'100px'}" :default-sort = "{prop: 'signUpBeginTime',order: 'descending'}">
                     <el-table-column prop="marketingActivityId" label="活动ID" align='center'></el-table-column>
                     <el-table-column prop="activityName" label="活动名称" align='center'></el-table-column>
-                    <el-table-column label="活动时间" align='center'>
+                    <el-table-column label="活动时间" align='center' prop='signUpBeginTime'>
                          <template slot-scope="scope">
                             <div>{{switchTime(scope.row.activityBeginTime)}} 至 {{switchTime(scope.row.activityEndTime)}}</div>
                         </template>
@@ -89,7 +89,7 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <div class="block">
+                <div class="block" v-if="totalPlat > pageSizePlat">
                     <el-pagination @size-change="platSizeChange" @current-change="platCurrentChange" :current-page="currentPagePlat" :page-sizes="[20,50, 100]" :page-size="pageSizePlat" layout="sizes, prev, pager, next, jumper,total" :total="totalPlat">
                     </el-pagination>
               </div>
@@ -157,8 +157,8 @@
                 storeId: config.storeId,
                 toolsId: 1,
                 activityStatus: 0,
-                page: 1,
-                size: 20
+                pageNum: 1,
+                pageSize: 20
             };
             this.getStoreData(params1)
             /*获取平台活动*/
@@ -167,8 +167,8 @@
                 activityStatus: 0,
                 signStatus: 0,
                 auditStatus: 0,
-                page: 1,
-                size: 20
+                pageNum: 1,
+                pageSize: 20
             };
             this.getPlatData(params2)
         },
@@ -184,8 +184,8 @@
                         storeId: config.storeId,
                         toolsId: 1,
                         activityStatus: self.storeStatus,
-                        page: self.currentPageStore,
-                        size: self.pageSizeStore,
+                        pageNum: self.currentPageStore,
+                        pageSize: self.pageSizeStore,
                         keyword: self.storeKeyword
                     }
                 return params;
@@ -255,8 +255,8 @@
                         activityStatus: self.platStatus,
                         signStatus: self.signStatus,
                         auditStatus: self.auditStatus,
-                        page: self.currentPagePlat,
-                        size: self.pageSizePlat,
+                        pageNum: self.currentPagePlat,
+                        pageSize: self.pageSizePlat,
                         keyword: self.platKeyword
                     }
                 return params;
@@ -337,14 +337,14 @@
 <style lang="scss">
     $color: #45cdb6;
     .table-container {
-        width: 100%;
-        float: left;
-        padding-top: 20px;
         .el-col {
         padding: 20px 20px;
         }
         .el-tabs__item{
-            vertical-align: bottom
+            vertical-align: bottom;
+        }
+        .el-tabs__header{
+            margin: 0;
         }
         .is-active{
             border-top: 3px solid $color !important;
@@ -374,7 +374,6 @@
             text-align: center;
         }
         .block{
-            margin-top:30px;
             float: right;
         }
     }
