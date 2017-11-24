@@ -47,15 +47,7 @@
 </script>
 
 <style scoped>
-    .cash-container {
-        width: 100%;
-        float: left;
-    }
-    .el-col {
-        /*padding-left: 20px; */
-    }
     .name{
-        /*margin-top: 20px;*/
         font-size:16px;
         color:#333333;
         border-left: 3px solid #41cac0;

@@ -273,8 +273,6 @@
         }
         $color: #45cdb6;
         box-sizing: border-box !important;
-        width: 100%;
-        float: left;
         .title{
             font-size: 16px;
             color: #333333;

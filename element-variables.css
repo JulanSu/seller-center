@@ -27,10 +27,11 @@
   --color-light-black: color(var(--color-base-black) h(+5) s(27%) l(27%));
   --color-extra-light-black: color(var(--color-base-black) h(+2) s(19%) l(35%));
 
-  --color-base-silver: color(var(--color-base-black) h(+3) s(16%) l(58%));
-  --color-light-silver: color(var(--color-base-black) h(+3) s(23%) l(67%));
-  --color-extra-light-silver: color(var(--color-base-black) s(26%) l(80%));
-
+--color-base-silver: color(var(--color-base-black) h(+3) s(16%) l(58%));
+/*     --color-light-silver: color(var(--color-base-black) h(+3) s(23%) l(67%));
+  --color-extra-light-silver: color(var(--color-base-black) s(26%) l(80%)); */
+  --color-light-silver: #999;
+  --color-extra-light-silver: #999;
   --color-base-gray: color(var(--color-base-black) s(28%) l(86%));
   --color-light-gray: color(var(--color-base-black) h(+10) s(33%) l(92%));
   --color-extra-light-gray: color(var(--color-base-black) h(+6) s(33%) l(95%));
@@ -44,7 +45,8 @@
   -------------------------- */
   --border-width-base: 1px;
   --border-style-base: solid;
-  --border-color-base: var(--color-extra-light-silver);
+/*   --border-color-base: var(--color-extra-light-silver); */
+  --border-color-base: #CCC;
   --border-color-hover: var(--color-base-silver);
   --border-base: var(--border-width-base) var(--border-style-base) var(--border-color-base);
   --border-radius-base: 0px;
@@ -123,8 +125,8 @@
   -------------------------- */
   --radio-font-size: 14px;
   --radio-color: var(--color-base-black);
-  --radio-input-height: 18px;
-  --radio-input-width: 18px;
+  --radio-input-height: 14px;
+  --radio-input-width: 14px;
   --radio-input-border-radius: var(--border-radius-circle);
   --radio-input-fill: var(--color-white);
   --radio-input-border: var(--border-base);
@@ -416,9 +418,12 @@
 
   /* Table
  -------------------------- */
-  --table-border-color: color(var(--border-color-base) h(-3) s(27%) l(90%));
+/*   --table-border-color: color(var(--border-color-base) h(-3) s(27%) l(90%)); */
+  --table-border-color: #EEE;
   --table-text-color: var(--color-base-black);
-  --table-header-background: var(--color-extra-light-gray);
+/*   --table-header-background: var(--color-extra-light-gray); */
+  --table-header-background: #F5F7FA;
+  
   --table-footer-background: var(--color-dark-white);
 
   /* Pagination

@@ -1,13 +1,62 @@
 @import "./vars.scss";
+@import "./reset-element.scss";
 @import "./sellerMangement.scss";
+
+.pb30 {
+  padding-bottom: 30px;
+}
+.pb20 {
+  padding-bottom: 20px;
+}
+.pt0 {
+  padding-top: 0 !important;
+}
+
 .updata{
   .el-input{
     display:none;
   }
 }
+.requireHezi{
+  position:relative;
+  .require{
+    position:absolute;
+    color:#ff4949;
+  }
+}
+#ser{
+  margin-right:20px;
+}
 
+.pages-bar{
+  width:100%;
+  background:none;
+  margin:30px 0 !important;
+  position:relative;
+}
 /* 表格公共样式 */
+.el-table--enable-row-hover{
+  .el-table__body{
+     tr:hover {
+      box-shadow: 0 2px 8px 0 #eeeeee;
+      & > td{
+        background-color:#fff !important;
+      }
+     }
+  }
+}
+.el-table--enable-row-transition{
+  .el-table__body{
+    td{
+      transition:all .25s ease !important;
+    }
+  }
+} 
+
 .el-table{
+  tr{
+    background-color:transparent;
+  }
   border:0;
   table.el-table__header{
     thead{
@@ -15,6 +64,10 @@
         height:44px;
         background:#f5f7fa;
         box-shadow:0 1px 0 0 #eeeeee;
+        div{
+          color:#333;
+          font-weight:normal;
+        }
       }
     }
   }
@@ -24,6 +77,25 @@
         height:90px;
         background:#ffffff;
         box-shadow:0 1px 0 0 #eeeeee;
+        td{
+          div{
+             color:#666;
+             a:hover,span:hover{
+              text-decoration: underline;
+             }
+          }
+         
+        }
+      }
+    }
+  }
+  .el-table__header-wrapper{
+    thead{
+      div{
+        background:none;
+      }
+      th{
+        background:none;
       }
     }
   }
@@ -57,7 +129,7 @@ input[type=number]::-webkit-outer-spin-button {
     margin:0 3px;
   }
 }
-.wuliu {
+.logistics-block {
     ul,li {
       margin: 0;
       padding: 0;
@@ -73,11 +145,8 @@ input[type=number]::-webkit-outer-spin-button {
     .area-item {
       float: left;
       padding: 0 5px;
-    }
-    
-
+    }   
   }
-
 }
 .area-selection {
   ul, li {
@@ -124,26 +193,28 @@ input[type=file].el-upload__input{
 /* 类目选择后的提示样式 */
 .category-nav-breadcrumb {
   position: relative;
-  border: 1px solid $color-primary;
+  border: 1px solid #FAD29A;
   padding: 7px 20px;
   margin-top: 20px;
   position: relative;
-  background: #F5F7FA;
+  background: #FFFAF2;
   .icon-arrow-top {
-    position: absolute;
+position: absolute;
     left: 30px;
-    top: -17px;
-    border-width: 8px;
+    top: -15px;
+    border-width: 7px;
     border-style: solid;
 
   }
   .arrow-top-a {
-    border-color: #fff #fff #F5F7FA #fff
+    border-color: #fff #fff #FAD29A #fff;
   }
   .arrow-top-b {
-    left: -8px;
-    top: -8px; 
-          border-color: #fff #fff $color-primary #fff
+    left: -7px;
+    top: -6px;
+    width: 4px;
+    border-color: transparent transparent #FFFAF2 transparent;
+
     
   }
   .breadcrumb-tips {
@@ -157,13 +228,10 @@ div.address{
     border-radius: 0;
     height:36px;
     font-size:14px;
-    border-color:rgb(191, 216, 217) !important;
+    border-color:#ccc !important;
     option{
       font-size:14px;
     }
-  }
-  select:selected{
-    border-color:red!important;
   }
 }
 
@@ -259,7 +327,7 @@ div.address{
     color:#41cac0;
   }
   .category-bar{
-    padding:40px 0 20px 40px;
+    padding:40px 0 20px 20px;
   }
 
   .selIndustryBtn{
@@ -274,7 +342,7 @@ div.address{
     color:#333333;
     h4{
       background:#f5f7fa;
-      width:378px;
+      width:398px;
       height:38px;
       line-height:38px;
       padding-left:20px;
@@ -406,6 +474,7 @@ div.address{
   width: 6px;
   background-color: #F5F5F5;
 }  
+
 .scorllbar::-webkit-scrollbar-thumb  {  
   background:$color-primary;
   width:6px;
@@ -415,7 +484,6 @@ div.address{
 
 /* 品牌管理列表页 */
 .brand{
-  margin:40px 0 0 40px;
   /*公共样式*/
   a{
     text-decoration:none;
@@ -492,6 +560,10 @@ div.address{
           height:20px;
           line-height:20px;
           margin-bottom:10px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          width: 260px;
         }
         .btns{
           margin-top:15px;
@@ -517,3 +589,4 @@ div.address{
     }
   }
 }
+

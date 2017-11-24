@@ -28,7 +28,7 @@
                   </template>
             </el-table-column>
         </el-table>
-        <div class="block">
+        <div class="block" v-if="total > pageSize">
             <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[20,50,100]" :page-size="pageSize" layout="sizes, prev, pager, next, jumper,total" :total="total">
                 </el-pagination>
         </div>
@@ -192,8 +192,6 @@
             box-sizing: border-box !important;
         }
         $color: #45cdb6;
-        width: 100%;
-        float: left;
         p{
             margin: 0;
             padding: 0;

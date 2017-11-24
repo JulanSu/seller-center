@@ -116,8 +116,6 @@
 <style lang="scss">
     .attend{
         $color: #45cdb6;
-        width: 100%;
-        float: left;
         >p{
             font-size:16px;
             color:#333333;

@@ -199,7 +199,7 @@ export default{
 	    width: 280px;
 	    height: 36px;
 	    padding-left: 10px;
-	    border:1px solid #bfd8d9;
+	    border:1px solid #ccc;
 	}
 	#suggestId:focus{
 		outline:none;

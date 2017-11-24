@@ -6,15 +6,34 @@
 	<title>商户中心</title>
 </head>
 <script>
-	var storeId=10;
+
+	/*var storeId=10;
 	var shopType=1;
-	var userId="111";
+	var userId="111";*/
+	var storeInfo = {};	
+	var config = {
+		userId:'926378761102819328',
+		uid:'929172703506595840',
+		// storeId:'10049',  //活动
+
+		storeId: '10048',
+		storeType:'1',//1企业店铺,2个人店铺
+
+		apiHost: 'http://shop.dmp.hzjiehun.bid',
+		userName: '15900000001',
+		toolsStoreId: 1, 
+		ident1:'http://ikz2ydxo.gic.bgp.cnbj01.cdsgss.com/rest/926374646008250368ident1.png',//参考示例身份证正面
+		ident2:'http://ikz2ydxo.gic.bgp.cnbj01.cdsgss.com/rest/926374521714245632ident2.png',//参考示例身份证反面
+		customsDeclaration:"http://9gz846cx.gic.bgp.cnbj01.cdsgss.com/rest/928101959427162112.png",//报关单参考示例
+		err404:"http://9gz846cx.gic.bgp.cnbj01.cdsgss.com/rest/932549578920558592.jpg"
+	};
+
+
 </script>
-<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=nA2qHeb3Znj4AWI6YiI799AMfRLkrRc0"></script>
 
 <body>
 	<div id="app"></div>
+	<script type=text/javascript src="http://api.map.baidu.com/api?v=2.0&ak=nA2qHeb3Znj4AWI6YiI799AMfRLkrRc0"></script>
 	<!-- built files will be auto injected -->
 </body>
-
 </html>

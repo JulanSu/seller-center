@@ -42,7 +42,7 @@
 					<el-input :maxlength="20" v-model="ruleForm.cityNames" placeholder="请输入授权城市" class="wid400"></el-input>
 				</el-form-item>
 				<el-form-item label="有效截止时间"  label-width="120px" prop="endValidTime"  class="timers">
-				    <el-date-picker type="date" v-model="ruleForm.endValidTime" :editable="false" placeholder="请输入有效结束时间" style="width: 100%;"></el-date-picker>
+				    <el-date-picker type="date" v-model="ruleForm.endValidTime" :editable="false" placeholder="请选择有效截止时间" style="width: 100%;"></el-date-picker>
 				</el-form-item>
 				<el-form-item prop="contactMobile" label="联系电话"  label-width="120px">
 					<el-input :maxlength="11" v-model="ruleForm.contactMobile" placeholder="请输入联系电话" class="wid400"></el-input>
@@ -144,7 +144,7 @@ export default {
 		          	{ max: 20, message: '长度最多 20 位', trigger: 'blur' }
 		        ],
 		        endValidTime: [
-		         	{ required: true,type: 'date', message: '请选择有效结束时间', trigger: 'blur' }
+		         	{ required: true,type: 'date', message: '请选择有效截止时间', trigger: 'blur' }
 		        ],
 		        contactMobile: [
 	                { required: true,validator: validatePhone,trigger: 'blur' },

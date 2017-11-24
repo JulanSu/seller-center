@@ -56,7 +56,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <template v-if="pagination.total > pagination.pageSize">
+      <template v-if="pagination.total">
         <pagination 
           :paginationConfig="pagination"
           @handleSizeChange="handleSizeChange"
@@ -99,12 +99,12 @@
               searchStartTime: '',
               searchEndTime: '',
               pageNum: 1,
-              pageSize: 10,
+              pageSize: 20,
               productStatus: 2
             },
             pagination: {
               total: '',
-              pageSize: 10,
+              pageSize: 20,
               curPage: 1
             },
             listLoading: true,
@@ -126,8 +126,8 @@
         },
         created(){
           this.getProductList({
-            pageNum: 1,
-            pageSize: 10
+            pageNum: this.pagination.curPage,
+            pageSize: this.pagination.pageSize
           })
         },
         methods: {
@@ -145,8 +145,8 @@
                   self.listLoading = false;
                   self.messageHandle('商品取消推荐成功！', 'success')
                   self.getProductList({
-                    pageNum: 1,
-                    pageSize: 10
+                    pageNum: self.pagination.curPage,
+                    pageSize: self.pagination.pageSize
                   })                    
                 }
               })
@@ -166,8 +166,8 @@
                   self.listLoading = false;
                   self.messageHandle('商品取消上架成功！', 'success')
                   self.getProductList({
-                    pageNum: 1,
-                    pageSize: 10
+                    pageNum: self.pagination.curPage,
+                    pageSize: self.pagination.pageSize
                   })                    
                 }
               })
@@ -232,7 +232,7 @@
           handleCurrentChange(pageNum) {
             this.getProductList({
               pageNum: pageNum, 
-              pageSize: 10              
+              pageSize: this.pagination.pageSize             
             })
           },
 

@@ -285,7 +285,7 @@ export default {
 	            { max: 20, message: '长度最多 20 位', trigger: 'blur' }
 	        ],
 	        endValidTime: [
-	            { type: 'date', required: true, message: '请选择有效结束时间', trigger: 'blur' }
+	            { type: 'date', required: true, message: '请选择有效截止时间', trigger: 'blur' }
 	        ],
 	        domesticOperator: [
 	            { required: true, message: '国内经营人姓名', trigger: 'blur' },

@@ -16,7 +16,7 @@
                 <router-link :to="item.jumpLink" v-if='item.jumpNot != ""'>查看详情</router-link>
             </div>
         </div>
-        <div class="block">
+        <div class="block" v-if="total > pageSize">
             <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[20,50,100]" :page-size="pageSize" layout="sizes, prev, pager, next, jumper,total" :total="total">
             </el-pagination>
         </div>
@@ -155,8 +155,6 @@
                 margin: 0;
             }
         }
-        width: 100%;
-        float: left;
         box-sizing: border-box !important;
         .message-item{
             font-size: 14px;

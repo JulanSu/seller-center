@@ -55,7 +55,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <template v-if="pagination.total > pagination.pageSize">
+      <template v-if="pagination.total">
         <pagination 
           :paginationConfig="pagination"
           @handleSizeChange="handleSizeChange"
@@ -98,12 +98,12 @@
                 searchStartTime: null,
                 searchEndTime: null,
                 pageNum: 1,
-                pageSize: 10,
+                pageSize: 20,
                 productStatus: 1
               },
               pagination: {
                 total: '',
-                pageSize: 10,
+                pageSize: 20,
                 curPage: 1
               },
               listLoading: true,
@@ -122,8 +122,8 @@
         },
         created(){
           this.getProductList({
-            pageNum: 1,
-            pageSize: 10
+            pageNum: this.pagination.curPage,
+            pageSize: this.pagination.pageSize
           })
         },
         methods: {
@@ -167,7 +167,7 @@
           handleCurrentChange(pageNum) {
             this.getProductList({
               pageNum: pageNum, 
-              pageSize: 10              
+              pageSize: this.pagination.pageSize              
             })
           },
 
@@ -205,8 +205,8 @@
                   self.listLoading = false;
                   self.messageHandle('商品取消审核成功！', 'success')
                   self.getProductList({
-                    pageNum: 1,
-                    pageSize: 10
+                    pageNum: this.pagination.curPage,
+                    pageSize: this.pagination.pageSize
                   })                    
                 }
               })

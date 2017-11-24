@@ -38,10 +38,6 @@
 </script>
 
 <style scoped>
-    .cash-container {
-        width: 100%;
-        float: left;
-    }
     .el-col img{
         width: 60px;
         height: 60px;

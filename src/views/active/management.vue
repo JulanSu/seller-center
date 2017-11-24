@@ -40,7 +40,7 @@
                     </el-table-column>
                 </el-table>
 
-                <div class="block">
+                <div class="block" v-if="totalStore > pageSizeStore">
                     <el-pagination @size-change="storeSizeChange" @current-change="storeCurrentChange" :current-page="currentPageStore" :page-sizes="[20, 50, 100]" :page-size="pageSizeStore" layout="sizes, prev, pager, next, jumper,total" :total="totalStore">
                     </el-pagination>
                 </div>
@@ -89,7 +89,7 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <div class="block">
+                <div class="block" v-if="totalPlat > pageSizePlat">
                     <el-pagination @size-change="platSizeChange" @current-change="platCurrentChange" :current-page="currentPagePlat" :page-sizes="[20,50, 100]" :page-size="pageSizePlat" layout="sizes, prev, pager, next, jumper,total" :total="totalPlat">
                     </el-pagination>
               </div>
@@ -337,13 +337,14 @@
 <style lang="scss">
     $color: #45cdb6;
     .table-container {
-        width: 100%;
-        float: left;
         .el-col {
         padding: 20px 20px;
         }
         .el-tabs__item{
             vertical-align: bottom;
+        }
+        .el-tabs__header{
+            margin: 0;
         }
         .is-active{
             border-top: 3px solid $color !important;
@@ -373,7 +374,6 @@
             text-align: center;
         }
         .block{
-            margin-top:30px;
             float: right;
         }
     }

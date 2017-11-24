@@ -96,7 +96,7 @@
     white-space: nowrap;
     cursor: pointer;
     background: #fff;
-    border: 1px solid rgb(191, 216, 217);
+    border: 1px solid #CCC;
     border-color: #c4c4c4;
     color: rgb(31, 60, 61);
     -webkit-appearance: none;
@@ -157,7 +157,7 @@
 .el-button.is-disabled{}
 
 .el-button.is-disabled, .el-button.is-disabled:hover, .el-button.is-disabled:focus{
-    color: rgb(191, 216, 217);
+    color: #999;
     cursor: not-allowed;
     background-image: none;
     background-color: rgb(238, 245, 246);
@@ -173,7 +173,7 @@
 .el-button.is-disabled.is-plain, .el-button.is-disabled.is-plain:hover, .el-button.is-disabled.is-plain:focus{
     background-color: #fff;
     border-color: rgb(209, 229, 229);
-    color: rgb(191, 216, 217);
+    color: #999;
 }
 
 .el-button.is-active{
@@ -223,7 +223,7 @@
 
 .el-button--primary.is-plain{
     background: #fff;
-    border: 1px solid rgb(191, 216, 217);
+    border: 1px solid #CCC;
     color: rgb(31, 60, 61);
 }
 
@@ -267,7 +267,7 @@
 
 .el-button--success.is-plain{
     background: #fff;
-    border: 1px solid rgb(191, 216, 217);
+    border: 1px solid #CCC;
     color: rgb(31, 60, 61);
 }
 
@@ -311,7 +311,7 @@
 
 .el-button--warning.is-plain{
     background: #fff;
-    border: 1px solid rgb(191, 216, 217);
+    border: 1px solid #CCC;
     color: rgb(31, 60, 61);
 }
 
@@ -355,7 +355,7 @@
 
 .el-button--danger.is-plain{
     background: #fff;
-    border: 1px solid rgb(191, 216, 217);
+    border: 1px solid #CCC;
     color: rgb(31, 60, 61);
 }
 
@@ -399,7 +399,7 @@
 
 .el-button--info.is-plain{
     background: #fff;
-    border: 1px solid rgb(191, 216, 217);
+    border: 1px solid #CCC;
     color: rgb(31, 60, 61);
 }
 
@@ -578,10 +578,13 @@
   -------------------------- */
     /* Colors
   -------------------------- */
+    /*     --color-light-silver: color(var(--color-base-black) h(+3) s(23%) l(67%));
+  --color-extra-light-silver: color(var(--color-base-black) s(26%) l(80%)); */
     /* Link
   -------------------------- */
     /* Border
   -------------------------- */
+    /*   --border-color-base: var(--color-extra-light-silver); */
     /* Box-shadow
   -------------------------- */
     /* Fill
@@ -628,6 +631,8 @@
  -------------------------- */
     /* Table
  -------------------------- */
+    /*   --table-border-color: color(var(--border-color-base) h(-3) s(27%) l(90%)); */
+    /*   --table-header-background: var(--color-extra-light-gray); */
     /* Pagination
  -------------------------- */
     /* Popover

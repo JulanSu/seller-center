@@ -301,7 +301,6 @@ export default {
 		line-height:100px;
 		overflow: hidden;
 		border: 1px dashed #c0ccda;
-   		border-radius: 6px;
 		img{
 			max-width:100%;
 			vertical-align: middle;

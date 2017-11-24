@@ -12,5 +12,6 @@
 }
 
 .pagination-wrap {
+  float: right;
   padding: 30px 0 50px 0;
 }

@@ -13,6 +13,7 @@
 }
 
 .pagination-wrap {
+  float: right;
   padding: 30px 0 50px 0;
 }
 
@@ -314,15 +315,11 @@ div.address select {
   border-radius: 0;
   height: 36px;
   font-size: 14px;
-  border-color: #bfd8d9 !important;
+  border-color: #ccc !important;
 }
 
 div.address select option {
   font-size: 14px;
-}
-
-div.address select:selected {
-  border-color: red !important;
 }
 
 /* 商家入驻 */

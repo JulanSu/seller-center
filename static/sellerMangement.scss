@@ -1,5 +1,16 @@
   $color-primary: #41cac0;//#18c79c
   .seller-table {
+    th {
+
+      .cell {
+        padding: 0;
+      height: 40px;
+      line-height: 40px;
+      }
+    }
+    th,td {
+      text-align: center;
+    }
     .table-pic {
       width: 60px;
       height: 60px;

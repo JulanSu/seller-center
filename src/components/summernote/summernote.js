@@ -7226,7 +7226,7 @@
       var dmRegExp = /.+dailymotion.com\/(video|hub)\/([^_]+)[^#]*(#video=([^_&]+))?/;
       var dmMatch = url.match(dmRegExp);
 
-      var youkuRegExp = /\/\/v\.youku\.com\/v_show\/id_(\w+)=*\.html/;
+      var youkuRegExp = /\/\/player\.youku\.com\/embed\/(.*)/;
       var youkuMatch = url.match(youkuRegExp);
 
       var qqRegExp = /\/\/v\.qq\.com.*?vid=(.+)/;
@@ -7234,6 +7234,9 @@
 
       var qqRegExp2 = /\/\/v\.qq\.com\/x?\/?(page|cover).*?\/([^\/]+)\.html\??.*/;
       var qqMatch2 = url.match(qqRegExp2);
+      //2017/11/24
+      var qqRegExp3 = /\/\/imgcache\.qq\.com.*/;
+      var qqMatch3 = url.match(qqRegExp3);
 
       var mp4RegExp = /^.+.(mp4|m4v)$/;
       var mp4Match = url.match(mp4RegExp);
@@ -7244,12 +7247,87 @@
       var webmRegExp = /^.+.(webm)$/;
       var webmMatch = url.match(webmRegExp);
 
+      //2017/11/24新增
+      //爱奇艺
+      var iqiyiRegExp = /\/\/player\.video\.qiyi\.com\/(.*)/;
+      var iqiyiMatch = url.match(iqiyiRegExp)
+      var iqiyiRegExp2 = /\/\/open\.iqiyi\.com\/developer\/player\_js\/(.*)/;
+      var iqiyiMatch2 = url.match(iqiyiRegExp2)
+      //芒果TV
+      var mgtvRegExp = /\/\/player\.mgtv\.com\/mgtv_v5_main\/main\.swf\?play_type\=1\&video\_id\=(\d+)/;
+      var mgtvMatch = url.match(mgtvRegExp);
+      //新浪视频
+      var sinaRegExp = /\/\/video\.sina\.com\.cn\/share\/video\/(\d+)\.swf\&topBar\=1\&autoplay\=false\&plid\=(\d+)/;
+      var singMatch = url.match(sinaRegExp);
+      //凤凰视频;
+      var ifengRegExp = /\/\/v\.ifeng\.com\/include\/exterior\.swf\?guid\=(.*)\&AutoPlay\=false/;
+      var ifengMatch = url.match(ifengRegExp);
+      //搜狐
+      var sohuRegExp = /\/\/share\.vrs\.sohu\.com\/(\d+)\/v\.swf/;
+      var sohuMatch = url.match(sohuRegExp);
+      var sohuRegExp2 = /\/\/tv\.sohu\.com\/upload\/static\/share\/share\_play\.html\#(.*)/;
+      var sohuMatch2 = url.match(sohuRegExp2);
+      //乐视
+      var leRegExp = /\/\/(.*)\.letv\.com\/ptv\/player\/swfPlayer\.swf\?autoPlay\=0\&id\=(\d+)/;
+      var leMatch = url.match(leRegExp);
+      //bilibili
+      var bilibiliRegExp = /static\.hdslb\.com\/miniloader\.swf\?aid\=(\d+)\&page/;
+      var bilibiliMatch = url.match(bilibiliRegExp);
+
       var $video;
+      var $embed = $('<embed allowFullScreen="true" quality="high" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash">')
       if (ytMatch && ytMatch[1].length === 11) {
         var youtubeId = ytMatch[1];
         $video = $('<iframe>')
             .attr('frameborder', 0)
             .attr('src', '//www.youtube.com/embed/' + youtubeId)
+            .attr('width', '640').attr('height', '360');
+      } else if(bilibiliMatch && bilibiliMatch[1].length){
+        $video = $embed
+            .attr('height', '425')
+            .attr('width', '580')
+            .attr('src', '//static.hdslb.com/miniloader.swf?aid='+ bilibiliMatch[1] +'&page=1');         
+      } else if(leMatch && leMatch[1].length){
+        $video = $embed
+            .attr('height', '425')
+            .attr('width', '580')
+            .attr('src', '//'+ leMatch[1] +'.letv.com/ptv/player/swfPlayer.swf?autoPlay=0&id='+ leMatch[2]); 
+      } else if(sohuMatch2 && sohuMatch2[1].length){
+        $video = $('<iframe webkitallowfullscreen mozallowfullscreen allowfullscreen>')
+            .attr('frameborder', 0)
+            .attr('height', '425')
+            .attr('width', '580')
+            .attr('src', '//tv.sohu.com/upload/static/share/share_play.html#'+ sohuMatch2[1]);   
+      } else if(sohuMatch && sohuMatch[1].length){
+        $video = $embed
+            .attr('height', '425')
+            .attr('width', '580')
+            .attr('src', '//share.vrs.sohu.com/'+ sohuMatch[1] +'/v.swf&topBar=1&autoplay=false&plid='+ sohuMatch[2] +'&pub_catecode=0&from=page');            
+      } else if(ifengMatch && ifengMatch[1].length){
+        $video = $embed
+            .attr('height', '425')
+            .attr('width', '580')
+            .attr('src', '//v.ifeng.com/include/exterior.swf?guid=' + ifengMatch[1] + '&AutoPlay=false');       
+
+      } else if(singMatch && singMatch[1].length){
+        $video = $embed
+            .attr('height', '425')
+            .attr('width', '580')
+            .attr('src', '//video.sina.com.cn/share/video/' + singMatch[1] + '.swf');          
+      } else if(mgtvMatch && mgtvMatch[1].length){
+        $video = $embed
+            .attr('height', '425')
+            .attr('width', '580')
+            .attr('src', '//player.mgtv.com/mgtv_v5_main/main.swf?play_type=1&video_id=' + mgtvMatch[1]);        
+      } else if(iqiyiMatch && iqiyiMatch[1].length){
+        $video = $embed
+            .attr('height', '360')
+            .attr('width', '640')
+            .attr('src', '//player.video.qiyi.com/' + iqiyiMatch[1]);
+      } else if(iqiyiMatch2 && iqiyiMatch2[1].length){
+        $video = $('<iframe webkitallowfullscreen mozallowfullscreen allowfullscreen>')
+            .attr('frameborder', 0)
+            .attr('src', '//open.iqiyi.com/developer/player_js/' + iqiyiMatch2[1])
             .attr('width', '640').attr('height', '360');
       } else if (igMatch && igMatch[0].length) {
         $video = $('<iframe>')
@@ -7280,9 +7358,14 @@
             .attr('height', '498')
             .attr('width', '510')
             .attr('src', '//player.youku.com/embed/' + youkuMatch[1]);
+      } else if(qqMatch3 && qqMatch3[0].length){
+        $video = $('<embed allowFullScreen="true" quality="high" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash">')
+            .attr('height', '498')
+            .attr('width', '640')
+            .attr('src', qqMatch3[0]);
       } else if ((qqMatch && qqMatch[1].length) || (qqMatch2 && qqMatch2[2].length)) {
         var vid = ((qqMatch && qqMatch[1].length) ? qqMatch[1]:qqMatch2[2]);
-        $video = $('<iframe webkitallowfullscreen mozallowfullscreen allowfullscreen>')
+        $video = $('<embed webkitallowfullscreen mozallowfullscreen allowfullscreen>')
             .attr('frameborder', 0)
             .attr('height', '310')
             .attr('width', '500')

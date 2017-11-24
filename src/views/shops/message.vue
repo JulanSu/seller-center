@@ -83,7 +83,7 @@ import CategoryBar from '@/components/CategoryBar.vue'/*标题*/
 import UploadPictures from '@/components/UploadPictures.vue'/*上传图片组件*/
 import VDistpicker from 'v-distpicker';/*城市三级联动*/
 import MapView from '@/components/Map1';/*地图组件*/
-import { getShopMessage,updateShopMessage,storeCheckname } from '@/api/shopApi';
+import { getShopMessage,updateShopMessage,storeCheckname } from '@/api/shopApi';/*接口*/
 
 
 export default {
@@ -94,17 +94,13 @@ export default {
 		MapView	
 	},
 	beforeRouteLeave (to, from, next) {
-	    // 导航离开该组件的对应路由时调用
-	    // 可以访问组件实例 `this`
+	    /*导航离开该组件的对应路由时调用*/
 	    if(this.flag){
 	      	this.$confirm('您还未保存，是否去其他页面?', '提示', {
 	        	type: 'warning'
 	      	}).then(() => {
-	        	//next();
-	        	//next()
 	        	next()
 	      	}).catch(() => {
-	      		//this.delClass();
 	      	});
 	    }else{
 	    	next(); 
@@ -137,7 +133,7 @@ export default {
 			listLoading:false,
 			flag:false,
 			categoryBarTitle: '店铺基本信息',
-			uploadTishi1:"请传160*160,格式要求jpg,jpeg,png,不超过10MB",
+			uploadTishi1:"请传160*160，格式要求jpg、jpeg、png，不超过10MB",
 			uploadTishi2:"请上传750*320，格式要求jpg、jpeg、png，不超过10MB",
 
 	　　　　longitude:"",

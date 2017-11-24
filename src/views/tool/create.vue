@@ -533,7 +533,7 @@
                         let that = self.cashType.huiYuan[i],
                             cash = {
                                 couponUseMoney: that.money,          //现金券金额
-                                couponUserLevel: i  //会员等级 0:新会员，1老会员，2，VIP会员，3金卡会员
+                                couponUserLevel: i+1  //会员等级 0:新会员，1老会员，2，VIP会员，3金卡会员
                             };
                         params.marketingCouponDeliveryTypeList.push(cash);
                     }
@@ -685,8 +685,6 @@
 <style lang="scss">
     $color: #45cdb6;
     .create-act {
-        width: 100%;
-        float: left;
         section{
             position: relative;
         }

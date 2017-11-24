@@ -161,6 +161,7 @@ export default {
     width:100px;
     font-size:12px;
     padding:0;
+    border-radius: 0;
   }
 
 }

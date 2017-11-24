@@ -1,49 +1,42 @@
-### 该项目为多页面应用
-* 如果需要使用多页面，请在modules里创建，
+### 该项目为单页应用
 
-## Install
+## 安装
 
 ``` bash
-# install dependencies
+# 安装项目依赖
 npm install
 
-# serve with hot reload at localhost:8088
+# 运行开发环境
 npm run dev
 
-# build for production with minification
+# 运行生产环境
 npm run build
 
 ```
 
-启动服务后请使用如此路径访问`http://localhost:8088/modules/`路径访问html资源
-PC端 [http://localhost:8088/modules/index.html][1]
+在开发环境下，启动服务后访问`http://localhost:8080/`
+在测试服环境下，请使用 `http://shop.dmp.hzjiehun.bid/` 访问，如果未登录请先到 `http://shop.dmp.hzjiehun.bid/login` 登录，测试账号1590000002 密码123456
 
 
-## 多页面配置
-vue2.0版本多页面入口,是由webpack配置来完成的，我的项目文件结构如下
+## 项目目录结构
 ```
     webpack
-      |---build 构建配置
+      |---build 服务及构建配置
       |---config 启动配置
       |---dist 生产环境
-      |---route 路由配置，如果是多页，也请在这里配置路由
+      |---route 路由配置
       |---src
         |---api axios请求
         |---assets 静态资源
         |---common 公共js资源目录
         |---components 共有组件
-        |---modules各个模块
-          |---index    index模块
-            |---views 组件
-            |---index.html
-            |---index.js
-            |---index.vue
+        |---views 各模板业务/视图
+        |---vuex 状态管理
+        |---styles 样式管理
+        |---util 自定义工具
+        |---APP.vue 主要视图
+        |---main.js 主要入口
+
   ```
 
-
-### Browser Support
-
-Modern browsers and Internet Explorer 10+.
-
-### License
 [MIT](http://opensource.org/licenses/MIT)

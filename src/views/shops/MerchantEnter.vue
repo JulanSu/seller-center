@@ -18,7 +18,6 @@
 					<el-input :maxlength="20" v-model="ruleForm.orgCode" placeholder="请输入组织机构代码（注册号）" class="wid400"></el-input>
 				</el-form-item>
 			</div>
-
 			<div v-if="isShop==1">	
 				<category-bar :title="categoryBarTitle2"></category-bar>
 			</div>
@@ -297,7 +296,7 @@ export default {
 			categoryBarTitle3: '联系人信息',
 			categoryBarTitle4: '店铺信息',
 			categoryBarTitle5: '个人信息',
-			uploadTishi1:"请上传800*800px以上，格式要求jpg、jpeg、png,不超过5MB",
+			uploadTishi1:"请上传800*800px以上，格式要求jpg、jpeg、png，不超过5MB",
 			uploadTishi2:"",
 			exampleSrc:'',
 			dialogVisible:false,

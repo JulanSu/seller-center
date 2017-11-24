@@ -39,7 +39,7 @@ import jQuery from 'jquery'
         videoLink: '视频链接',
         insert: '插入视频',
         url: '视频地址',
-        providers: '(支持腾讯、优酷、爱奇艺、芒果tv、搜狐、百度、土豆、哔哩哔哩、乐视、新浪等)'
+        providers: '(支持腾讯、优酷、爱奇艺、芒果tv、搜狐、百度、土豆、乐视、新浪等)'
       },
       link: {
         link: '链接',
