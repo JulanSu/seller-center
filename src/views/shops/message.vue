@@ -30,7 +30,7 @@
 			<el-form-item label="门店地址"  label-width="120px" prop="address">
 				<v-distpicker :province="select.province" :city="select.city" :area="select.area" @province="onProvince" @city="onCity" @selected="onSelected"></v-distpicker>
 			</el-form-item>
-			<el-form-item label="" label-width="120px" prop="address">
+			<el-form-item label="" label-width="120px" prop="address" class="xxAddress">
 				<el-input v-model="ruleForm.address" id="ser" placeholder="输入详细地址" class="wid280"></el-input>
 				<el-button type="primary" class="mapbtn" @click="searchbtn">搜索地图</el-button>
 			</el-form-item>
@@ -144,9 +144,9 @@ export default {
 			csname:'',
 
 			select: { 
-				province: '省',
-			    city: '市',
-			    area: '区'
+				province: '',
+			    city: '',
+			    area: ''
 			},
 			ruleForm: {
 				storeId:'',
@@ -449,35 +449,3 @@ export default {
 }
 
 </script>
-
-<style lang="scss">
-.shop-message{
-	/* 公共样式 */
-	p{
-		margin: 0;
-	}
-    .wid280{
-    	width:280px;
-    }
-    .wid400{
-    	width:400px;
-    }
-
-    /* 只读样式 */
-    .exhibition{
-    	padding-left:10px;
-    	font-size:14px;
-		color:#333333;
-    }
-    ol,ul,li{
-    	padding:0;
-    	margin:0;
-    	list-style:none;
-    }
-    .address + .el-form-item__error{
-    	display:none;
-    }
-    
-}
-    
-</style>

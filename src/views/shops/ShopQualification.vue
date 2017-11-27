@@ -100,7 +100,7 @@ export default {
 	   var validateNumber1= (rule, value, callback) => {
           var reg =/^[0-9a-zA_Z]+$/g;
           if (!value.match(reg)) {
-            callback(new Error('请输入正确的组织机构代码（注册码）'));
+            callback(new Error('请输入正确的组织机构代码（注册号）'));
           } else {
             callback();
           }
@@ -175,8 +175,8 @@ export default {
 			        { min:2, max: 30, message: '请输入正确的店主姓名', trigger: 'blur' }
 		      	],
 		      	orgCode: [
-			        { required: true, message: '请输入组织机构代码（注册码）', trigger: 'blur' },
-			        { min: 1, max: 20, message: '请输入正确的组织机构代码（注册码）', trigger: 'blur' },
+			        { required: true, message: '请输入组织机构代码（注册号）', trigger: 'blur' },
+			        { min: 1, max: 20, message: '请输入正确的组织机构代码（注册号）', trigger: 'blur' },
 			        { validator:validateNumber1,trigger: 'blur'},
 			        { validator:validateNumber1,trigger: 'change'}
 		      	],
@@ -281,31 +281,3 @@ export default {
 }
 }
 </script>
-
-<style lang="scss">
-.qualification{
-	.wid280{
-    	width:280px;
-    }
-    p{
-		margin:0;
-	}
-
-	.category-bar{
-		padding-top:0;
-	}
-	.unchangeable{
-		width:100px;
-		height:100px;
-		text-align:center;
-		line-height:100px;
-		overflow: hidden;
-		border: 1px dashed #c0ccda;
-		img{
-			max-width:100%;
-			vertical-align: middle;
-		}
-	}
-}
-
-</style>

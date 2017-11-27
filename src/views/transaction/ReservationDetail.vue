@@ -3,7 +3,7 @@
         <el-row class='detail-row'>
             <el-col :span='5'>订单编号：{{form.serialNumber}}</el-col>
             <el-col :span='5'>买家：{{form.buyerPhone}}</el-col>
-            <el-col :span='5'>是否展会订单：否</el-col>
+            <el-col :span='5'>是否展会订单：{{orderType}}</el-col>
         </el-row>
         <el-table :data="tableData" class='table-con' align='center' :row-style="{height:'100px'}">
             <el-table-column prop="createdAt" label="时间" align='center'></el-table-column>
@@ -14,19 +14,17 @@
                 <template slot-scope="scope">
                     <div class="store-count">
                         <p>-{{scope.row.storePrivilege}}</p>
-                        <p v-for="item in scope.row.proPri">{{item.mes}}：-￥{{item.count}}</p>
+                        <p v-if='scope.row.storeDetail.val != ""'>{{scope.row.storeDetail.key}}：-{{scope.row.storeDetail.val}}</p>
                     </div>
-                    <!-- <div class="platform-count"></div> -->
                 </template>
             </el-table-column>
-            <el-table-column prop="platformSubsidy" label="平台补贴" align='center'>
-                 <!-- <template slot-scope="scope">
-                    <div class="platform-count">
-                        <p>-100.00</p> -->
-                       <!--  <p>会员节优惠：-￥{{scope.row.youhui[0]}}</p>
-                        <p>商家现金券：-￥{{scope.row.youhui[1]}}</p> -->
-                    <!-- </div>
-                </template> -->
+            <el-table-column label="平台补贴" align='center'>
+                <template slot-scope="scope">
+                    <div class="store-count">
+                        <p>-{{scope.row.platformSubsidy}}</p>
+                        <p  v-if='scope.row.platformDetail.val != ""'>{{scope.row.platformDetail.key}}：-{{scope.row.platformDetail.val}}</p>
+                    </div>
+                </template>
             </el-table-column>
             <el-table-column prop="userCost" label="用户实付" align='center' ></el-table-column>
             <el-table-column prop="platformCommission" label="平台分润" align='center'></el-table-column>
@@ -45,19 +43,25 @@
                 tableData: null,
                 form: {},
                 value1: '',
+                orderType: '',
             }
         },
         created(){
             let orderId = this.$route.query.orderId;
             accountDetail({orderStoreId: orderId}).then( res => {
                 this.form = res.data.data;
+                this.orderType = this.form.orderStoreType == 1 ? '是' : '否';
                 this.tableData = res.data.data.accountProductList;
                 for(let i=0; i<this.tableData.length; i++){
                     let that = this.tableData[i];
-                    that.proPri = [];
+                    that.storeDetail = that.platformDetail = {key:'',val:''};
                     for(let key in that.privileges){
-                        let money = {mes: key,count: that.privileges[key]}
-                        that.proPri.push(money)
+                        if(that.privileges[key] == that.storePrivilege) {
+                            that.storeDetail = {key:key,val:that.privileges[key]}
+                        }
+                        if(that.privileges[key] == that.platformSubsidy) {
+                           that.platformDetail = {key:key,val:that.privileges[key]}
+                        }
                     }
                 }
             })
@@ -96,7 +100,7 @@
                 p:nth-of-type(n+2){
                     font-size: 12px;
                     color: #666666;
-                    text-align: left;
+                    text-align: center;
                 }
             }
         }

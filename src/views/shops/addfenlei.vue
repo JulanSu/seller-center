@@ -129,11 +129,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.add-fenlei{
-  .wid280{
-    width:280px;
-  }
-}
-</style>

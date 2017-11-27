@@ -6,7 +6,7 @@
     </el-col>
 
     <!--列表-->
-    <el-table :data="datas" style="width: 100%;">
+    <el-table :data="datas" style="width: 100%;"  class="hover-style">
       <el-table-column prop="productId" label="ID" min-width="200" align="center">
       </el-table-column>
       <el-table-column prop="productTitle" label="商品名称" min-width="200" align="center">
@@ -21,7 +21,7 @@
     </el-table>
 
     <!--工具条-->
-    <el-col :span="24" class="tool-bar pages-bar" style="margin-top:20px;">
+    <el-col :span="24" class="tool-bar pages-bar" style="margin-top:20px;" v-if="total">
       <el-pagination
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
@@ -135,26 +135,3 @@ import { productList,productRemove} from '@/api/shopApi';
   }
 
 </script>
-
-<style lang="scss">
-.find-good{
-  a{
-    text-decoration:none;
-  }
-  .tool-bar{
-    margin-bottom:20px;
-    background:none;
-    padding:0;
-  }
-  .cell{
-    a{
-      color:#45cdb6;
-    }
-    span{
-      color:#45cdb6;
-      padding-left:20px;
-      cursor:pointer;
-    }
-  }
-}
-</style>

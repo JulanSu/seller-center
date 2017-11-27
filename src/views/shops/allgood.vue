@@ -20,7 +20,7 @@
       <el-button type="primary" class='search-btn' @click="findGood">查询</el-button>
     </el-row>
     <!--列表-->
-    <el-table :data="datas"  style="width: 100%;">
+    <el-table :data="datas"  style="width: 100%;"  class="hover-style">
       <el-table-column prop="productId" label="ID" min-width="120" align="center">
       </el-table-column>
       <el-table-column prop="productTitle" label="商品名称" min-width="120" align="center">
@@ -46,7 +46,7 @@
     </el-table>
 
      <!--工具条-->
-    <el-col :span="24" class="tool-bar pages-bar" style="margin-top:20px;">
+    <el-col :span="24" class="tool-bar pages-bar" style="margin-top:20px;" v-if="total">
       <el-pagination
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
@@ -275,105 +275,3 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
   }
 
 </script>
-<style lang="scss">
-
-.all-good{
-  a{
-    text-decoration:none;
-  }
-  .tool-bar{
-    background:none;
-    padding:0;
-    margin:20px 0;
-  }
-  .search-row{
-    padding-bottom:40px;
-    .search-btn{
-        width: 60px;
-        span{
-            color: #fff;
-        }
-    }
-  }
-  .w180{
-    width:180px ;
-  }
-  .w160{
-    width:160px !important;
-    margin-right:10px;
-  }
-  .search-row{
-    .el-select{
-      width:160px;
-    }
-  }
-  
-  .cell{
-    a{
-      color:#45cdb6; 
-    }
-    span{
-      color:#45cdb6;
-      padding-left:20px;
-      cursor:pointer;
-    }
-  }
-  .table-pic {
-      width: 60px;
-      height: 60px;
-      overflow: hidden;
-      line-height:60px;
-      margin:10px auto;
-      img {
-        width: 100%;
-        vertical-align: middle;
-      }
-    }
-  .el-dialog--tiny{
-    width:362px;
-    .el-dialog__header{
-      border-bottom:1px solid #ddd;
-      padding:15px 20px;
-      span{
-        font-size:14px;
-        color:#333333;
-        font-weight: normal;
-      }
-      .el-dialog__headerbtn{
-        font-size:12px;
-        color:#666;
-      }
-    }
-    .el-dialog__body{
-      padding:20px;
-      .relevanceGood{
-        width:342px;
-        .el-checkbox-group{
-          width:320px;
-          height:280px;
-          overflow-y: auto;
-          overflow-x: hidden;
-          border:1px solid #dddddd;
-          padding:10px 0;
-          label.el-checkbox{
-            padding-left:20px;
-            margin :0;
-            width:285px;
-            height:34px;
-            line-height:34px;
-            color:#333;
-            font-size:14px;
-          }
-        }
-      } 
-    }
-    .el-dialog__footer{
-      padding:10px 20px 50px;
-      button{
-        padding:10px 30px;
-      }
-    }
-    
-  } 
-}
-</style>

@@ -114,12 +114,10 @@
 			<el-form-item label="门店地址"  label-width="200px" prop="address">
 				<v-distpicker :province="select.province" :city="select.city" :area="select.area" @province="onProvince" @city="onCity" @selected="onSelected"></v-distpicker>
 			</el-form-item>
-			<el-form-item label="" label-width="200px" prop="address" class="search-hezi">
+			<el-form-item label="" label-width="200px" prop="address" class="search-hezi xxAddress">
 				<el-input v-model="ruleForm.address" id="ser" placeholder="输入详细地址" class="wid280"></el-input>
 				<el-button type="primary" class="mapbtn" @click="searchbtn">搜索地图</el-button>
-				<ol class="search-ol" v-if="searchKeyArr.length">
-					<li>123</li>
-				</ol>
+
 			</el-form-item>
 
 			<el-form-item label="经纬坐标" label-width="200px">
@@ -285,9 +283,9 @@ export default {
 			sel:'',
 			isAdd:1,
 			select: { 
-				province: '省',
-			    city: '市',
-			    area: '区'
+				province: '',
+			    city: '',
+			    area: ''
 			},
 			isShop:1,
 			shopHtml:'个人身份入驻请点击这里',
@@ -684,17 +682,3 @@ export default {
 	}
 }
 </script>
-<style lang="scss">
-.merchant-enter{
-	.address + .el-form-item__error{
-		display:none;
-	}
-	/* .hangye{
-		.el-input__inner{
-			display: none;
-		}
-	} */
-	
-}
-
-</style>

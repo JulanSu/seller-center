@@ -92,6 +92,10 @@
       // this.storeShippingTemplateId = this.logisticsData[0].storeShippingTemplateId
     },
     methods: {
+      /**
+       * createLogisticsTemplate 创建物流模板
+       * @return {[type]} [description]
+       */
       createLogisticsTemplate(){
         let self = this
         self.$confirm('新建物流模板将会离开当前操作，你是否需要离开？', '提示', {
@@ -105,9 +109,19 @@
         });
         
       },
+      /**
+       * selectChange 切换物流模板时的回调方法
+       * @param  { Object } value 物流模板list
+       * @return {[type]}       [description]
+       */
       selectChange(value){
         this.$emit('logisticsTemplateType', this.template.templateType)
       },
+      /**
+       * changeTemplate 物流模板改变时的回调方法
+       * @param  { String } tid 物流模板ID
+       * @return {[type]}     [description]
+       */
       changeTemplate(tid){
         let logisticsData = this.logisticsData
         for(var i=0; i<logisticsData.length;i++) {

@@ -1,6 +1,5 @@
 import Full from '@/components/Full.vue'
 import goodsManagementRoutes from './goodsManagementRoutes.js'
-import ProductSku from '@/views/seller_management/ProductSku.vue'
 //店铺管理路由
 import shopsManagementRoutes from './shopsManagementRoutes.js'
 

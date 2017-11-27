@@ -75,19 +75,17 @@
     },
     watch: {
       userSelectedTheSku(newVal, oldVal){
-
         if(newVal && newVal.length) {
           var genData = this.gen(newVal)
           var result  = this.getProductSkuProperty(genData)
           var resultById = this.formartByIdSku(result)
           var resultBySerialId = this.getProductSkuSerialId(resultById)
-          
-          if(!this.skuData) {
-            this.skuData = resultBySerialId
-          }else {
-            this.skuData = this.selectedSkuChange(resultBySerialId)
-
-          }
+          // if(!this.skuData) {
+          //   this.skuData = resultBySerialId
+          // }else {
+          //   this.skuData = resultBySerialId
+          // }
+          this.skuData = resultBySerialId
           this.inputChangeHandle()
         }else {
           this.skuData = null
@@ -104,14 +102,16 @@
       var skuProperty = this.productSkuProperty
       var skuTableList = this.value
       var skuPropertyMap = this.getSkuProperty(skuProperty)
-      //判断类目是否完整，商品规格组书否有增删
+      //判断类目是否完整，商品规格组是否有增删
       var isCateIntegrity = this.validCateIntegrity(skuPropertyMap, skuTableList)
       
       if(!isCateIntegrity) {
         this.skuData = []
         return
       }
-      this.getTableList()
+      
+      this.skuData = this.formartByIdSku(skuTableList)
+      this.editorSkuListCache = this.formartByIdSku(skuTableList)
     },
     /**
      * validCateIntegrity 判断类目是否完整，对比用户已保存的商品销售规格的名称和商品规格的品牌
@@ -158,19 +158,12 @@
         for(var item in data){
           if(this.editorSkuListCache[item]) {
             data[item].productSkuSerialId = this.editorSkuListCache[item].productSkuSerialId
+            data[item].productSkuQuantity = this.editorSkuListCache[item].productSkuQuantity
+            data[item].productPrice = this.editorSkuListCache[item].productPrice
           }
         }
       }
       return data
-    },
-    /**
-     * getTableList 生成maps，通过valueId创建唯一的Key
-     * @return {[type]} [description]
-     */
-    getTableList(){
-      var resultById = this.formartByIdSku(this.value)
-      this.skuData = resultById
-      this.editorSkuListCache = resultById
     },
     /**
      * selectedSkuChange 获取用户已组合出来的项，并把其值赋值给最新的项 this.skuData 商品销售规格数据
@@ -178,13 +171,15 @@
      * @return {[type]}         [description]
      */
     selectedSkuChange(options){
-      var skuData = this.skuData
-      
+      var skuData = this.editorSkuListCache
       for(var key in skuData) {
         if(options[key]) {
+          //obj[key] = skuData[key]
           options[key] = skuData[key]
-          var data = this.validValuesIntegrity(skuData[key].data, options[key].data)
-          options[key].data = data
+          //obj[key].data = this.validValuesIntegrity(skuData[key].data, options[key].data)
+          options[key].data.productPrice = skuData[key].data.productPrice
+          options[key].data.productPrice = skuData[key].data.productPrice
+          //options[key].data = data
         }
       }
       return options
@@ -199,7 +194,7 @@
       var arr = []
       for(var i=0;i<skuData.length;i++) {
         for(var j=0;j<options.length;j++) {
-          if(skuData[i].value == options[j].value) {
+          if(skuData[i].name ==  options[j].name && skuData[i].value == options[j].value) {
             arr.push(skuData[i])
           }
         }
@@ -212,12 +207,14 @@
      */
       inputChangeHandle(){
         var data = this.getFormartSkuData()
+        
         this.$emit('input', data)
         this.$emit('updateSkuQuantity', data)
         this.$emit('updateSkuTableError')
       },
       getFormartSkuData(){
         var skuData = this.skuData
+
         var arr = []
         for(var item in skuData) {
           arr.push(skuData[item])
@@ -229,11 +226,15 @@
        * @param  {[type]} list [description]
        * @return {[type]}      [description]
        */
-      formartByIdSku(list){
-        var obj = {}
+      formartByIdSku(data){
+        var json = JSON.stringify(data)
+        var list = JSON.parse(json)
+        var obj = new Object()
+
         for(var i=0;i<list.length;i++){
           var str = ""
           for(var j=0;j < list[i].data.length; j++) {
+            
             if(j) {
               str += '-' + list[i].data[j].valueId
             }else {
@@ -242,6 +243,8 @@
           }
           obj[str] = list[i]
         }
+
+
         return obj
       },
       /**

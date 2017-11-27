@@ -2,7 +2,7 @@
   font-weight: 400;
 }
 
-.el-button--text:hover {
+.el-table .el-button--text:hover {
   text-decoration: underline;
 }
 

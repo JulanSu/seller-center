@@ -90,15 +90,35 @@ export default {
   //   console.log('图片组件',this.value, this.imageUrl)
   // },
   methods: {
+    /**
+     * datadragEnd 拖拽方法
+     * @return {[type]} [description]
+     */
     datadragEnd(){
       this.$emit('input', this.imageUrl);
     },
+    /**
+     * delPicHandel 删除图片回调方法
+     * @param  { Array } row   图片list
+     * @param  { Number } index 当前所删除图片的下标
+     * @return {[type]}       [description]
+     */
     delPicHandel (row, index) {
       row.splice(index, 1)
     },
+    /**
+     * errorHandle 
+     * @param  {[type]} value [description]
+     * @return {[type]}       [description]
+     */
     errorHandle(value){
       this.$message.warning('上传商品图片失败！请重新尝试。');
     },
+    /**
+     * beforeAvatarUpload 图片上传成功之前
+     * @param  { Object } file 图片Object
+     * @return {[type]}      [description]
+     */
     beforeAvatarUpload(file){
       let isWarning = true
 
@@ -119,8 +139,12 @@ export default {
         } 
         return isJPG && isLt2M && isWarning;
       },
-
-    handleAvatarSuccess(res, file, fileList) {
+    /**
+     * handleAvatarSuccess 图片上传成功后
+     * @param  { Object } res    respons
+     * @return {[type]}          [description]
+     */
+    handleAvatarSuccess(res) {
 
       if(res.code === 0) {
         this.imageUrl.push(res.data);
@@ -128,7 +152,6 @@ export default {
       }else {
         this.$message.warning('上传商品图片失败！请重新尝试。');
       }
-      console.log(this.imageUrl)
       this.$emit('input', this.imageUrl);
       //传递值给父组件
     },

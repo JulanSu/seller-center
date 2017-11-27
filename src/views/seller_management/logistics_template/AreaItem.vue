@@ -33,7 +33,6 @@
     },
     created (){
       this.templateItem = this.templateValue
-      console.log('area-item',this.templateItem)
     },
     methods: {
       /**

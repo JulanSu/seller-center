@@ -154,25 +154,29 @@
         beforeCreate(){
         },
         created(){
-            let orderId = this.$route.query.orderId ? this.$route.query.orderId : this.$route.query.id;
-            orderDetail({orderStoreId: orderId}).then(res => {
-                this.detail = res.data.data;
-                this.allPay = this.detail.orderType == 1 ? true : false; 
-                this.detail.shippingWay = this.detail.orderType == 1 ? '配送' : '无需配送';
-                for(let i=0; i<this.detail.productList.length; i++){
-                    let that = this.detail.productList[i];
-                    that.orderProductStatus == 1 ? this.detail.tradeId = '用户未支付' : '';
-                    that.orderProductStatus = this.switchStatus(that.orderProductStatus)
-                    that.proPri = [];
-                    for(let key in that.productPrivileges){
-                        let money = {mes: key,count: that.productPrivileges[key]}
-                        that.proPri.push(money)
-                    }
-                }
-                (this.detail.productList[0].orderProductStatus == '待发货' && this.detail.productList[0].orderProductAfterStatus == 0) ? this.btnStatus = true : '';
-            })
+            this.getOrderDetial();
         },
         methods: {
+            /*获取订单数据*/
+            getOrderDetial(){
+                let orderId = this.$route.query.orderId ? this.$route.query.orderId : this.$route.query.id;
+                orderDetail({orderStoreId: orderId}).then(res => {
+                    this.detail = res.data.data;
+                    this.allPay = this.detail.orderType == 1 ? true : false; 
+                    this.detail.shippingWay = this.detail.orderType == 1 ? '配送' : '无需配送';
+                    for(let i=0; i<this.detail.productList.length; i++){
+                        let that = this.detail.productList[i];
+                        that.orderProductStatus == 1 ? this.detail.tradeId = '用户未支付' : '';
+                        that.orderProductStatus = this.switchStatus(that.orderProductStatus)
+                        that.proPri = [];
+                        for(let key in that.productPrivileges){
+                            let money = {mes: key,count: that.productPrivileges[key]}
+                            that.proPri.push(money)
+                        }
+                    }
+                    (this.detail.productList[0].orderProductStatus == '待发货' && this.detail.productList[0].orderProductAfterStatus == 0) ? this.btnStatus = true : '';
+                })
+            },
             /*订单状态转换*/
             switchStatus(a) {
                 let st = ''
@@ -239,8 +243,9 @@
                 }
                 sendProduct(qs.stringify(params)).then( res => {
                     if(res.data.data){
-                        self.btnStatus = false;
-                        self.dialogFormVisible = false;
+                        this.dialogFormVisible = false;
+                        this.btnStatus = false;
+                        this.getOrderDetial();
                         this.$message({
                             message: '发货成功',
                             type: 'success'

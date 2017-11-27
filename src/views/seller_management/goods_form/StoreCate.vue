@@ -42,6 +42,11 @@
       // console.log('店铺中分类',this.storeCateArr)
     },
     methods: {
+      /**
+       * formartData 格式化数据
+       * @param  { Object } newVal [description]
+       * @return {[type]}        [description]
+       */
       formartData (newVal){
         var arr = []
         for(var i=0; i < this.storeCateList.length;i++) {
@@ -52,9 +57,6 @@
           }
         }
         return arr
-      },
-      changeHandle(val) {
-        console.log(val)
       }
     }
   }

@@ -7,7 +7,7 @@
       </router-link>
     </el-col>
     <!--列表-->
-    <el-table :data="users" width="100%;">
+    <el-table :data="users" width="100%;"  class="hover-style">
       <el-table-column prop="roleName" label="角色名称" min-width="180"  align="center">
       </el-table-column>
       <el-table-column prop="isUsed" label="状态" :formatter="formatUsed" min-width="180"  align="center">
@@ -100,26 +100,3 @@ import { roleList,roleChangeStatus } from '@/api/shopApi';
   }
 
 </script>
-
-<style lang="scss">
-.role-list{
-  a{
-    text-decoration:none;
-  }
-  .tool-bar{
-    background:none;
-    padding:0;
-    margin:0 0 20px;
-  }
-  .cell{
-    a{
-      color:#45cdb6;
-    }
-    span{
-      color:#45cdb6;
-      padding-left:20px;
-      cursor:pointer;
-    }
-  }
-}
-</style>

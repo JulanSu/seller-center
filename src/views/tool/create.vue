@@ -329,18 +329,18 @@
                         self.cashType.type = '会员等级券';
                         self.cashType.huiYuan[0].count = cBase.couponDeliveryNum;
                         for(let i=0; i<cMoney.length; i++){
-                            self.cashType.huiYuan[i].money = cMoney[i].couponUseMoney
+                            self.cashType.huiYuan[i].money = cMoney[i].couponShowUseMoney
                         }
                     }else if(cBase.couponUseType == 1){
                         self.cashType.type = '固定金额券';
                         self.cashType.guDing.count = cBase.couponDeliveryNum;
-                        self.cashType.guDing.money = cMoney[0].couponUseMoney;
+                        self.cashType.guDing.money = cMoney[0].couponShowUseMoney;
                     }else if(cBase.couponUseType == 2){
                         self.cashType.type = '满减券'
                         self.cashType.manJian = [];
                         for(let i=0; i<cMoney.length; i++){
                             let prm = {
-                                smallPrice: cMoney[i].couponUseMoney, 
+                                smallPrice: cMoney[i].couponShowUseMoney, 
                                 largePrice: cMoney[i].couponMinMoney, 
                                 count: cBase.couponDeliveryNum
                             }
@@ -349,7 +349,7 @@
                     }else{
                         self.cashType.type = '折扣券'
                         self.cashType.zheKou.count = cBase.couponDeliveryNum;
-                        self.cashType.zheKou.percent = cMoney[0].couponUseMoney;
+                        self.cashType.zheKou.percent = cMoney[0].couponShowUseMoney;
                         self.cashType.zheKou.max = cMoney[0].couponMaxMoney;
                         self.cashType.zheKou.min = cMoney[0].couponMinMoney;
                     }

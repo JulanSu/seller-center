@@ -12,7 +12,6 @@ import PersonMessage from '@/views/message/PersonMessage.vue'
 
 //商品管理路由
 import goodsManagementRoutes from './goodsManagementRoutes.js'
-import ProductSku from '@/views/seller_management/ProductSku.vue'
 
 //首页路由
 import home from './home.js'

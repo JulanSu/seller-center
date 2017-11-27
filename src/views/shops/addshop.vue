@@ -16,7 +16,7 @@
 			<el-form-item label="门店地址"  label-width="120px" prop="address">
 				<v-distpicker :province="select.province" :city="select.city" :area="select.area" @province="onProvince" @city="onCity" @selected="onSelected"></v-distpicker>
 			</el-form-item>
-			<el-form-item label="" label-width="120px" prop="address">
+			<el-form-item label="" label-width="120px" prop="address" class="xxAddress">
 				<el-input v-model="ruleForm.address" id="ser" placeholder="输入详细地址" class="wid280"></el-input>
 				<el-button type="primary" class="mapbtn" @click="searchbtn">搜索地图</el-button>
 			</el-form-item>
@@ -81,9 +81,9 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 		sel:'',
 		isAdd:1,
 		select: { 
-			province: '省',
-		    city: '市',
-		    area: '区'
+			province: '',
+		    city: '',
+		    area: ''
 		},
 
         ruleForm: {
@@ -322,83 +322,3 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
     }
   }
 </script>
-
-<style lang="scss">
-.add-store{
-	ol,ul,li{
-    	padding:0;
-    	margin:0;
-    	list-style:none;
-    }
-	/* 公共样式 */
-	p{
-		margin: 0;
-	}
-    .wid280{
-    	width:280px;
-    }
-    .wid400{
-    	width:400px;
-    }
-
-    /* 只读样式 */
-    .exhibition{
-    	font-size:14px;
-		color:#333333;
-    }
-    .address + .el-form-item__error{
-    	display:none;
-    }
-    /* 成功弹框样式 */
-	.el-dialog--tiny{
-		min-width:490px;
-		.el-dialog__footer{
-			padding-bottom:50px;
-			.dialog-footer{
-				display:block;
-				text-align:center;
-			}
-		}
-		.el-dialog__body{
-			padding:40px 20px;
-			.suc{
-				width:340px;
-				height:50px;
-				margin:0 auto;
-				
-				span{
-					float:left;
-					display:inline-block;
-					width:50px;
-					height:50px;
-					font-size: 46px;
-		    		margin-top: 3px;
-		    		color:#41cac0;
-		    		padding-right:10px;
-				}
-				div{
-					float:left;
-					width:280px;
-					h2{
-						font-size: 18px;
-						color: #333333;
-						height:50px;
-						line-height:50px;
-						margin:0;
-						margin-left:15px;
-					}
-					p{
-						font-size: 14px;
-						color: #999999;
-						height:20px;
-						line-height:20px;
-						padding-top:5px;
-					}
-				}
-			}
-		}
-		
-	}
-}
-
-</style>

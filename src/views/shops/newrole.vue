@@ -167,20 +167,3 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority,roleCheckname} from '@/api/
     }
   }
 </script>
-
-<style lang="scss">
-.new-role{
-  .wid270{
-    width:270px;
-  }
-  .el-button{
-    width:100px;
-    height:34px;
-    line-height:34px;
-    background:#41cac0;
-    padding:0;
-    border-color:#41cac0;
-    border-radius:0;
-  }
-} 
-</style>

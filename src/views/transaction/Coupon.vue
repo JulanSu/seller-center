@@ -20,7 +20,7 @@
                     <div>{{switchTime(scope.row.createdAt)}}</div>
                 </template>
             </el-table-column>
-            <el-table-column prop="voucherProductTitle" label="商品名称" align='center'></el-table-column>
+            <el-table-column prop="productTitle" label="商品名称" align='center'></el-table-column>
             <el-table-column prop="infoTelephone" label="用户手机号" align='center'></el-table-column>
             <el-table-column label="已核销" align='center' >
                 <template slot-scope="scope">

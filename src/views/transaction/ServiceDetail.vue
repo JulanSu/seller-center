@@ -135,7 +135,7 @@
                 this.detail = res.data.data;
                 this.detail.proPri = [],this.detail.priMoney = 0;
                 for(let key in this.detail.productPrivileges){
-                    let money = {mes: key,count: that.productPrivileges[key]}
+                    let money = {mes: key,count: this.detail.productPrivileges[key]}
                     this.detail.proPri.push(money)
                 }
                 this.detail.orderProductAfterProof = this.detail.orderProductAfterProof.split(',')

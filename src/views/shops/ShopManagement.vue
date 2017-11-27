@@ -8,7 +8,7 @@
     </el-col>
 
     <!--列表-->
-    <el-table :data="users" style="width: 100%;">
+    <el-table :data="users" style="width: 100%;"  class="hover-style">
       <el-table-column prop="name" label="门店名称" min-width="150" align="center">
       </el-table-column>
       <el-table-column prop="address" label="门店地址" min-width="150" align="center">
@@ -28,7 +28,7 @@
     </el-table>
 
     <!--工具条-->
-    <el-col :span="24" class="tool-bar pages-bar">
+    <el-col :span="24" class="tool-bar pages-bar" v-if="total">
       <el-pagination
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
@@ -130,53 +130,3 @@ import {getClassifyList, updateClassify} from '@/api/shopApi';
   }
 
 </script>
-
-<style lang="scss">
-
-.shop-list{
-  a{
-    text-decoration:none;
-  }
-  .tool-bar{
-    width:100%;
-    background:none;
-    margin:0 0 20px;
-    position:relative;
-    /* .el-pagination{
-      margin:10px 0;
-    } */
-
-  }
-  .cell{
-    a{
-      color:#45cdb6;
-    }
-    span{
-      color:#45cdb6;
-      padding-left:20px;
-      cursor:pointer;
-    }
-  }
-  .el-table{
-    border:0;
-    table.el-table__header{
-      thead{
-        tr{
-          height:44px;
-          background:#f5f7fa;
-          box-shadow:0 1px 0 0 #eeeeee;
-        }
-      }
-    }
-    table.el-table__body{
-      tbody{
-        tr{
-          height:90px;
-          background:#ffffff;
-          box-shadow:0 1px 0 0 #eeeeee;
-        }
-      }
-    }
-  }
-}
-</style>

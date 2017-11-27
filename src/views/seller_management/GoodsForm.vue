@@ -540,7 +540,7 @@
         }).then((res) => {
           let data = res.data.data
           if(res.data.code === 0) {
-            self.initForm = merge(self.initForm, data)
+           self.initForm = merge(self.initForm, data)
             self.formartEditorData(data)
           }
           self.validField()
@@ -552,6 +552,9 @@
         let self = this
         let goodsForm = self.goodsForm
         let initForm = self.initForm
+        // initForm.brandDTOList = data.brandDTOList
+        // initForm.productSkuProperty = data.productSkuProperty
+        // initForm.productCateProperty = data.productCateProperty
         goodsForm.productTitle = data.productTitle
         goodsForm.brandId = data.brandId
         goodsForm.productId = data.productId
@@ -634,12 +637,13 @@
         var goodsForm = self.goodsForm
         var initForm = self.initForm
         goodsForm.productStatus = statusVal
+        console.log('表单提交', self.goodsForm, self.applicableShopStatus, self.catePropertyValidStatus)
         if(initForm.productCateProperty && initForm.productCateProperty.length) {
           self.$refs.subjectchildMethod.submitForm();
         }else {
           self.catePropertyValidStatus = true
         }
-        console.log('表单提交', self.goodsForm, self.applicableShopStatus, self.catePropertyValidStatus)
+        
         if(!statusVal) {
           if(!self.goodsForm.productTitle) {
             self.$message({
@@ -712,7 +716,6 @@
         this.goodsForm.serviceArea = value
       },
       uploadHandle(value){
-        console.log('你好',value)
         this.$refs.goodsForm.validateField('productPicUrlList');
         
       },

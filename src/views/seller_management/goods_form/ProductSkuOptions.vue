@@ -141,7 +141,6 @@
        */
       updateUserSelectSku(){
         var sku = this.getUserSelectedSku()
-
         this.$store.dispatch('updateUserSelectedSku', sku)
       },
       /**

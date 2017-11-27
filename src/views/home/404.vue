@@ -14,61 +14,54 @@
     	</div>
     </section>
 </template>
-
-
 <style lang="scss">
- /*    .page-container {
-        font-size: 20px;
-        text-align: center;
-        color: rgb(192, 204, 218);
-    } */
-    /* 404页面 */
-	.error{
-		position:absolute;
-		left:0;
-		top:0;
-		right:0;
-		bottom:0;
-		background:#f5f5f5;
-	    .errContent{
-		  	.pic{
-		  		width:725px;
-			    height:290px;
-			    background:url(../../assets/404.jpg) no-repeat center;
-			    background-size:100%;
-			    margin:178px  auto 65px;
-		  	}
-		    
-		  	p{
-		  		text-align:center;
-		  	}
-		  	.gotoIndextBtn{
-		  		display:block;
-		  		margin:30px auto 0;
-		  		button{
-		  			border-radius:20px;
-		  			span{
-			  			font-size: 18px;
-			  		}
-		  		}
-		  		
-		  	}
-	    }
-	  .tishi{
-	  	font-size: 24px;
-		color: #333333;
-		height:33px;
-		line-height: 33px;
-	  }
-	  .footWord{
-	  	width:100%;
-	  	
-	  	margin-top:140px;
-	  	p{
-	  		text-align:center;
-	  		font-size: 12px;
-			color: #333333;
-	  	}
-	  }
-	}
+    
+.error{
+    position:absolute;
+    left:0;
+    top:0;
+    right:0;
+    bottom:0;
+    background:#f5f5f5;
+    .errContent{
+        .pic{
+            width:725px;
+            height:290px;
+            background:url(../../assets/404.jpg) no-repeat center;
+            background-size:100%;
+            margin:178px  auto 65px;
+        }
+        
+        p{
+            text-align:center;
+        }
+        .gotoIndextBtn{
+            display:block;
+            margin:30px auto 0;
+            button{
+                border-radius:20px;
+                span{
+                    font-size: 18px;
+                }
+            }
+            
+        }
+    }
+  .tishi{
+    font-size: 24px;
+    color: #333333;
+    height:33px;
+    line-height: 33px;
+  }
+  .footWord{
+    width:100%;
+    
+    margin-top:140px;
+    p{
+        text-align:center;
+        font-size: 12px;
+        color: #333333;
+    }
+  }
+}
 </style>

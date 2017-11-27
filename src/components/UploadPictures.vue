@@ -3,7 +3,7 @@
     <div class="load_hezi">
       <p>{{note}}</p>
         <el-upload
-          class="avatar-uploader"
+          :class="{ 'avatar-uploader': true, 'picSuc': url}"
           action="http://gss.dmp.hzjiehun.bid/gss/upload/"
           :show-file-list="false"
           :on-success="handleAvatarSuccess"
@@ -180,8 +180,11 @@ export default {
   position: relative;
   overflow: hidden;
 }
+.picSuc .el-upload{
+  border-style:solid;
+}
 .avatar-uploader .el-upload:hover {
-  border-color: #409EFF;
+  border-color: #41cac0;
 }
 .avatar-uploader-icon {
   font-size: 28px;

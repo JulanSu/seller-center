@@ -26,7 +26,7 @@
 					<span>岗位角色</span>
 				</router-link>
 			</li>
-			<li style="width:328px;">
+			<li style="width:347px;">
 
 				<router-link to="/store/bypass-management/account-list">
 					<i class="iconfont icon-zizhanghaoliebiao"></i>
@@ -92,89 +92,4 @@ export default {
       this.getNum();
     }
 }
-
-
-
-
 </script>
-
-<style lang="scss">
-.bypass-index{
-	width:962px;
-	a{
-	    text-decoration:none;
-	}
-	
-	h2{
-		margin:0;
-		font-size:14px;
-		color:#333333;
-		height:44px;
-		line-height:44px;
-		padding-left:20px;
-		font-weight:100;
-		background:#f5f7fa;
-		box-shadow:0 1px 0 0 #dddddd;
-	}
-	ul{
-		padding:0;
-		margin-top:0;
-		height: 95px;
-		line-height:95px;
-		border:1px solid #ddd;
-		margin-bottom:30px;
-		list-style: none;
-		li{
-			float:left;
-			width:306px;
-			height:93px;
-			text-align:center;
-			span{
-				font-size:14px;
-				color:#666666;
-				padding-right:15px;
-			}
-			b{
-				font-size:30px;
-				color:#ff6c60;
-			}
-			a{
-				display:block;
-			}
-		}
-		li:nth-of-type(1) b{
-			color:#6bcac9;;
-		}
-		li:nth-of-type(2){
-			border-left:1px solid #ddd;
-			border-right:1px solid #ddd;
-		}
-		li:nth-of-type(3) b{
-			color:#56c8f2;
-		}
-	}
-	.bapass-btn{
-		cursor:pointer;
-		background:#fff;
-		height:80px;
-		line-height:80px;
-
-		li:hover{
-			background:#f5f7fa;
-			span{
-				color:#41cac0 !important;
-			}
-		}
-		li{
-			height:78px;
-
-			i{
-				font-size: 24px;
-				color:#41cac0;
-				padding-right:10px;
-				vertical-align: middle;
-			}
-		}
-	}
-}
-</style>

@@ -7,7 +7,7 @@
       </router-link>
     </el-col>
     <!--列表-->
-    <el-table :data="datas">
+    <el-table :data="datas"  class="hover-style">
       <el-table-column prop="cateName" label="分类名称" min-width="190" align="center">
       </el-table-column>
       <el-table-column prop="productNum" label="商品数量" min-width="190" align="center">
@@ -25,7 +25,7 @@
     </el-table>
 
     <!--工具条-->
-    <el-col :span="24" class="tool-bar pages-bar" style="margin-top:20px;">
+    <el-col :span="24" class="tool-bar pages-bar" style="margin-top:20px;" v-if="total">
       <el-pagination
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
@@ -99,7 +99,7 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
             isUsed=0;
         }
 
-        this.$confirm('确定要'+tit+row.cateName+'该分类?', "提示", {
+        this.$confirm('确定要'+tit+'“'+row.cateName+'”'+'该分类?', "提示", {
           type: 'warning'
         }).then(() => {
           this.listLoading = true;
@@ -123,7 +123,7 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
       },
        //删除子帐号
       handleDel: function (row) {
-        this.$confirm('确定要删除'+row.cateName+'该分类吗?', "提示", {
+        this.$confirm('确定要删除“'+row.cateName+'”该分类吗?', "提示", {
           type: 'warning'
         }).then(() => {
           this.listLoading = true;
@@ -162,27 +162,3 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
   }
 
 </script>
-
-<style lang="scss">
-.fenlei-list{
-  a{
-  text-decoration:none;
-  }
-  .tool-bar{
-    background:none;
-    padding:0;
-    margin-bottom:20px;
-  }
-  .cell{
-    a{
-      color:#45cdb6;
-      padding-right:20px;
-    }
-    span{
-      color:#45cdb6;
-      padding-right:20px;
-      cursor:pointer;
-    }
-  }
-}
-</style>

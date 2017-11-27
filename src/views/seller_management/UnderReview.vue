@@ -205,8 +205,8 @@
                   self.listLoading = false;
                   self.messageHandle('商品取消审核成功！', 'success')
                   self.getProductList({
-                    pageNum: this.pagination.curPage,
-                    pageSize: this.pagination.pageSize
+                    pageNum: self.pagination.curPage,
+                    pageSize: self.pagination.pageSize
                   })                    
                 }
               })

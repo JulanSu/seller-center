@@ -481,7 +481,6 @@
             return 
         }
         let tData = self.formartSaveData(templateValueList)
-        console.log('提交物流模板数据', tData)
         self.submitFormData(tData)
       },
       /**

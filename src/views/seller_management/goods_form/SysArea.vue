@@ -28,9 +28,13 @@
       
     },
     created (){
-      console.log(citySiteList)
     },
     methods: {
+      /**
+       * citySiteHandel 城市选择后的回调方法
+       * @param  { String } value 城市名称
+       * @return {[type]}       [description]
+       */
       citySiteHandel (value){
         const citySiteStr = this.updateSysArea(value)
         this.$emit('change', citySiteStr)

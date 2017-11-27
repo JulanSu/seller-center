@@ -43,7 +43,6 @@ export default{
 				p1=lng;
 				p2=lat;
 			}
-
 			if(!p1&&!p2){//如果没有传 经纬度，就是新建，地图默认定位为北京
 				p1='116.404';
 				p2='39.915';
@@ -195,7 +194,7 @@ export default{
 	}
 	#suggestId{
 		position:absolute;
-		top: -121px;
+		top: -120px;
 	    width: 280px;
 	    height: 36px;
 	    padding-left: 10px;
