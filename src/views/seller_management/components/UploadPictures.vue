@@ -29,9 +29,11 @@
             action="http://gss.dmp.hzjiehun.bid/gss/upload/"
             list-type="picture-card"
             :before-upload="beforeAvatarUpload"
+            :on-progress="progressHandle"
             :on-success="handleAvatarSuccess"
             :file-list="fileList"
             :on-error="errorHandle"
+            :disabled="isDisabled"
             :show-file-list="false">
             <i class="el-icon-plus"></i>
             <p class="desc">添加上传图片</p>
@@ -79,6 +81,8 @@ export default {
   },
   data () {
     return {
+      isDisabled: false,
+      isUpload: false,
       fileList: [],
       picLimit: 9,
       imageUrl: this.value || [],
@@ -90,6 +94,9 @@ export default {
   //   console.log('图片组件',this.value, this.imageUrl)
   // },
   methods: {
+    progressHandle(event, file, fileList){
+      //console.log(event, file, fileList)
+    },
     /**
      * datadragEnd 拖拽方法
      * @return {[type]} [description]
@@ -121,7 +128,7 @@ export default {
      */
     beforeAvatarUpload(file){
       let isWarning = true
-
+        this.isDisabled = true
         const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
         const isLt2M = file.size / 1024 / 1024 < 10;
 
@@ -145,13 +152,14 @@ export default {
      * @return {[type]}          [description]
      */
     handleAvatarSuccess(res) {
-
+      this.isDisabled = false
       if(res.code === 0) {
         this.imageUrl.push(res.data);
         this.$emit('change', res.data)
       }else {
         this.$message.warning('上传商品图片失败！请重新尝试。');
       }
+      
       this.$emit('input', this.imageUrl);
       //传递值给父组件
     },

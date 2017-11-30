@@ -2,17 +2,14 @@
 	<div class="maps-hezi">
 		<div id="maps" style="width:400px;height:300px;"></div>
 		<input type="text" id="suggestId" v-model="inputHtml" @input="detailed"/>
-		<div id="searchResultPanel" style="border:1px solid #c0c0c0;width:150px;height:auto;display:none">
+		<div id="searchResultPanel">
 			{{resultHtml}}
 		</div>
-		<!-- <el-form-item label="" label-width="200px" class="search-hezi">
-			<el-input v-model="ruleForm.address" id="ser" placeholder="输入详细地址" class="wid280"></el-input>
-		</el-form-item> -->
-		<div id="r-result" v-if="searchResult.length">
+		<!-- <div id="r-result" v-if="searchResult.length">
 			<ol>
 				<li v-for="item in searchResult" @click="clickKeys(item)">{{item}}</li>
 			</ol>
-		</div>
+		</div> -->
 		
 	</div>
 　　
@@ -127,6 +124,9 @@ export default{
 
 		againAddr(addr){
 			this.inputHtml=addr;
+			/*if(arguments.length==2){
+				this.resultHtml='';console.log(this.searchResult)
+			}*/
 		}
 
 	},
@@ -197,7 +197,7 @@ export default{
 		top: -120px;
 	    width: 280px;
 	    height: 36px;
-	    padding-left: 10px;
+	    padding:0 10px;
 	    border:1px solid #ccc;
 	}
 	#suggestId:focus{
@@ -210,6 +210,9 @@ export default{
 	#searchResultPanel{
 		position:absolute !important;
 		top:0;
+		border:1px solid #c0c0c0;
+		width:150px;height:auto;
+		display:none;
 	}
 
 }

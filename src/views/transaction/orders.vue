@@ -125,7 +125,9 @@
         },
         created(){ 
             /*获取订单类型和状态*/
-            orderStatus().then(res => {
+            orderStatus({
+                storeId: config.storeId
+            }).then(res => {
                 if(res.data.data){
                     this.form.orderType = [...this.form.orderType,...res.data.data];
                     this.form.orderStatus = [...this.form.statusArr[0].status]
@@ -322,6 +324,14 @@
         }
         .table-con{
             margin-top: 40px;
+        }
+        .el-button{
+            span{
+                font-size: 14px;
+            }
+        }
+        .el-table::after{
+            width: 0;
         }
         .block{
             float: right;

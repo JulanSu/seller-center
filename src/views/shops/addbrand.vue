@@ -49,7 +49,7 @@
 					<p class="tishi">审核同学有疑问时，会通过此联系方式联系您</p>
 				</el-form-item>
 				<el-form-item label="" label-width="120px">
-					<el-button :class="{notclick:btnClick}" type="primary" @click="submitForm('ruleForm')">提交审核</el-button>
+					<el-button :class="{notclick:btnClick,wid100:true}" type="primary" @click="submitForm('ruleForm')">提交审核</el-button>
 				</el-form-item>
 				
 			</el-form>
@@ -170,7 +170,8 @@ export default {
 	    	this.isCompile=false;
 	    	//获取品牌信息
 	    	let para = {
-		          storeBrandId:storeBrandId
+	    			storeId:config.storeId,
+		            storeBrandId:storeBrandId
 		        };
 
 	        this.listLoading = true;
@@ -387,7 +388,7 @@ export default {
 		          	this.ruleForm.endValidTime=this.transitionTime(this.ruleForm.endValidTime);
 
 		            var para = new URLSearchParams();
-			       
+			       	para.append('storeId', config.storeId);
 			        para.append('authorizationUrl',this.ruleForm.authorizationUrl);
 			        para.append('trademarkCertificate',this.ruleForm.authorizationUrl);
 			        para.append('ways',this.ruleForm.ways);

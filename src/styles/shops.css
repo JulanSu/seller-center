@@ -23,6 +23,31 @@
   color: #333333;
 }
 
+.mapbtn {
+  width: 76px;
+  border-radius: 5px;
+  padding: 10px 0;
+}
+
+/* 三级联动公共样式 */
+div.address {
+  /* select:nth-of-type(2){
+  	margin:0 18px;
+  } */
+}
+
+div.address select {
+  border-radius: 0;
+  height: 36px;
+  font-size: 14px;
+  border-color: #ccc !important;
+  min-width: 155px;
+}
+
+div.address select option {
+  font-size: 14px;
+}
+
 /* 1店铺信息页 */
 .shop-message p {
   margin: 0;
@@ -642,7 +667,7 @@
   text-align: center;
   line-height: 100px;
   overflow: hidden;
-  border: 1px dashed #c0ccda;
+  border: 1px solid #c0ccda;
 }
 
 .qualification .unchangeable img {
@@ -707,10 +732,6 @@
 .all-good .search-row {
   padding-bottom: 40px;
   min-width: 960px;
-}
-
-.all-good .search-row .search-btn {
-  width: 60px;
 }
 
 .all-good .search-row .search-btn span {
@@ -907,15 +928,6 @@
   width: 130px;
 }
 
-.add-sub-account .el-button {
-  width: 100px;
-  height: 34px;
-  line-height: 34px;
-  background: #41cac0;
-  padding: 0;
-  border-color: #41cac0;
-}
-
 .add-sub-account .passhezi {
   position: relative;
 }
@@ -952,17 +964,6 @@
   color: #45cdb6;
   padding-left: 20px;
   cursor: pointer;
-}
-
-/* 13.新建角色 */
-.new-role .el-button {
-  width: 100px;
-  height: 34px;
-  line-height: 34px;
-  background: #41cac0;
-  padding: 0;
-  border-color: #41cac0;
-  border-radius: 0;
 }
 
 /* 14.子账号列表 */
@@ -1120,6 +1121,268 @@
 }
 
 /* 17.商家入驻 */
+.merchant-enter {
+  position: relative;
+  width: 960px;
+  /* 公共样式 */
+  /* 选择行业弹框 */
+  /* 成功弹框样式 */
+}
+
 .merchant-enter .address + .el-form-item__error {
   display: none;
+}
+
+.merchant-enter p, .merchant-enter ul, .merchant-enter ol, .merchant-enter li, .merchant-enter h4 {
+  margin: 0;
+  padding: 0;
+}
+
+.merchant-enter ol, .merchant-enter ul {
+  list-style: none;
+}
+
+.merchant-enter .wid400 {
+  width: 400px !important;
+}
+
+.merchant-enter .wid280 {
+  width: 280px !important;
+}
+
+.merchant-enter form {
+  margin: 20px 0 0 40px;
+}
+
+.merchant-enter .search-hezi {
+  position: relative;
+}
+
+.merchant-enter .search-hezi .search-ol {
+  border: 1px solid #bfd8d9;
+  position: absolute;
+  top: 36px;
+  width: 280px;
+  background: #fff;
+  z-index: 999;
+  padding-left: 10px;
+}
+
+.merchant-enter .big-img {
+  width: 480px;
+  height: 360px;
+  margin-bottom: 0;
+  background: transparent;
+  -webkit-box-shadow: 0 0 0;
+  box-shadow: 0 0 0;
+}
+
+.merchant-enter .big-img .el-dialog__body {
+  width: 430px;
+  height: 270px;
+  text-align: center;
+  line-height: 270px;
+  padding: 0;
+}
+
+.merchant-enter .big-img .el-dialog__body img {
+  width: 430px;
+}
+
+.merchant-enter .example {
+  position: absolute;
+  width: 200px;
+  height: 100px;
+  bottom: 0px;
+  left: 195px;
+}
+
+.merchant-enter .example span {
+  float: right;
+  font-size: 14px;
+  color: #666666;
+  line-height: 40px;
+  padding-right: 20px;
+}
+
+.merchant-enter .example div {
+  cursor: pointer;
+  float: right;
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  line-height: 100px;
+  text-align: center;
+  background: #d7d7d7;
+  text-align: center;
+}
+
+.merchant-enter .example div img {
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+.merchant-enter .selector-btn {
+  padding: 0;
+  position: absolute;
+  right: 20px;
+  top: 40px;
+  height: 22px;
+  line-height: 22px;
+  font-size: 16px;
+  color: #41cac0;
+}
+
+.merchant-enter .category-bar {
+  padding: 40px 0 20px 20px;
+}
+
+.merchant-enter .selIndustryBtn {
+  background: #eeeeee;
+  width: 118px;
+}
+
+.merchant-enter .myIndustry {
+  width: 398px;
+  border: 1px solid #eee;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #333333;
+}
+
+.merchant-enter .myIndustry h4 {
+  background: #f5f7fa;
+  width: 398px;
+  height: 38px;
+  line-height: 38px;
+  padding-left: 20px;
+  font-weight: normal;
+}
+
+.merchant-enter .myIndustry li {
+  border-top: 1px solid #eee;
+  padding: 0 20px;
+}
+
+.merchant-enter .myIndustry li b {
+  font-weight: normal;
+}
+
+.merchant-enter .myIndustry li .el-button--text {
+  float: right;
+}
+
+.merchant-enter .myIndustry li .el-button--text span {
+  color: #ff0201;
+}
+
+.merchant-enter .myIndustry li .el-button--text span:hover {
+  text-decoration: underline;
+}
+
+.merchant-enter .relevance-good {
+  min-width: 680px !important;
+}
+
+.merchant-enter .relevance-good .el-dialog__header {
+  background: #f5f7fa;
+  -webkit-box-shadow: inset 0 -1px 0 0 #dddddd;
+  box-shadow: inset 0 -1px 0 0 #dddddd;
+  padding: 15px 20px;
+}
+
+.merchant-enter .relevance-good .el-col-8 {
+  width: 50%;
+}
+
+.merchant-enter .relevance-good .category-nav {
+  border-bottom: 0;
+}
+
+.merchant-enter .relevance-good .el-col:nth-of-type(2) .category-nav {
+  border-left: 0;
+}
+
+.merchant-enter .relevance-good .category-nav-breadcrumb {
+  margin: 0;
+  border-color: #ddd;
+}
+
+.merchant-enter .relevance-good .category-nav-breadcrumb .arrow-top-a {
+  display: none;
+}
+
+.merchant-enter .relevance-good .category-nav-breadcrumb .el-breadcrumb {
+  height: 14px;
+  line-height: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.merchant-enter .relevance-good .category-nav-breadcrumb .el-breadcrumb .breadcrumb-tips {
+  color: #999;
+}
+
+.merchant-enter .relevance-good .category-nav-breadcrumb .el-breadcrumb span b {
+  color: #333;
+}
+
+.merchant-enter .relevance-good .category-nav-breadcrumb .el-breadcrumb .el-breadcrumb__separator {
+  color: #333;
+}
+
+.merchant-enter .suc {
+  min-width: 490px;
+}
+
+.merchant-enter .suc .el-dialog__footer {
+  padding-bottom: 50px;
+}
+
+.merchant-enter .suc .el-dialog__footer .dialog-footer {
+  display: block;
+  text-align: center;
+}
+
+.merchant-enter .suc .el-dialog__body {
+  padding: 40px 20px;
+}
+
+.merchant-enter .suc .el-dialog__body .suc-string {
+  width: 340px;
+  height: 50px;
+  margin: 0 auto;
+}
+
+.merchant-enter .suc .el-dialog__body .suc-string span {
+  float: left;
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  font-size: 46px;
+  margin-top: 3px;
+  color: #41cac0;
+  padding-right: 10px;
+}
+
+.merchant-enter .suc .el-dialog__body .suc-string div {
+  float: left;
+  width: 280px;
+}
+
+.merchant-enter .suc .el-dialog__body .suc-string div h2 {
+  font-size: 18px;
+  color: #333333;
+  height: 25px;
+  line-height: 25px;
+  margin: 0;
+}
+
+.merchant-enter .suc .el-dialog__body .suc-string div p {
+  font-size: 14px;
+  color: #999999;
+  height: 20px;
+  line-height: 20px;
+  padding-top: 5px;
 }

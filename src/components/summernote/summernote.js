@@ -7180,7 +7180,7 @@
       var $container = options.dialogsInBody ? $(document.body) : $editor;
 
       var body = '<div class="form-group note-form-group row-fluid">' +
-          '<label class="note-form-label">' + lang.video.url + ' <small class="text-muted">' + lang.video.providers + '</small></label>' +
+          '<label class="note-form-label">' + lang.video.url + ' <small class="text-muted">' + lang.video.providers.toString() + '</small></label>' +
           '<input class="note-video-url form-control  note-form-control note-input span12" ' + 
           ' type="text" />' +
           '</div><div class="alert alert-danger note-video-danger hidden" style="padding:0px 15px" role="alert">'+
@@ -7209,181 +7209,194 @@
       });
     };
 
-    this.createVideoNode = function (url) {
-      // video url patterns(youtube, instagram, vimeo, dailymotion, youku, mp4, ogg, webm)
-      var ytRegExp = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
-      var ytMatch = url.match(ytRegExp);
-
-      var igRegExp = /(?:www\.|\/\/)instagram\.com\/p\/(.[a-zA-Z0-9_-]*)/;
-      var igMatch = url.match(igRegExp);
-
-      var vRegExp = /\/\/vine\.co\/v\/([a-zA-Z0-9]+)/;
-      var vMatch = url.match(vRegExp);
-
-      var vimRegExp = /\/\/(player\.)?vimeo\.com\/([a-z]*\/)*(\d+)[?]?.*/;
-      var vimMatch = url.match(vimRegExp);
-
-      var dmRegExp = /.+dailymotion.com\/(video|hub)\/([^_]+)[^#]*(#video=([^_&]+))?/;
-      var dmMatch = url.match(dmRegExp);
-
-      var youkuRegExp = /\/\/player\.youku\.com\/embed\/(.*)/;
-      var youkuMatch = url.match(youkuRegExp);
-
-      var qqRegExp = /\/\/v\.qq\.com.*?vid=(.+)/;
-      var qqMatch = url.match(qqRegExp);
-
-      var qqRegExp2 = /\/\/v\.qq\.com\/x?\/?(page|cover).*?\/([^\/]+)\.html\??.*/;
-      var qqMatch2 = url.match(qqRegExp2);
-      //2017/11/24
-      var qqRegExp3 = /\/\/imgcache\.qq\.com.*/;
-      var qqMatch3 = url.match(qqRegExp3);
-
-      var mp4RegExp = /^.+.(mp4|m4v)$/;
-      var mp4Match = url.match(mp4RegExp);
-
-      var oggRegExp = /^.+.(ogg|ogv)$/;
-      var oggMatch = url.match(oggRegExp);
-
-      var webmRegExp = /^.+.(webm)$/;
-      var webmMatch = url.match(webmRegExp);
-
-      //2017/11/24新增
-      //爱奇艺
-      var iqiyiRegExp = /\/\/player\.video\.qiyi\.com\/(.*)/;
-      var iqiyiMatch = url.match(iqiyiRegExp)
-      var iqiyiRegExp2 = /\/\/open\.iqiyi\.com\/developer\/player\_js\/(.*)/;
-      var iqiyiMatch2 = url.match(iqiyiRegExp2)
-      //芒果TV
-      var mgtvRegExp = /\/\/player\.mgtv\.com\/mgtv_v5_main\/main\.swf\?play_type\=1\&video\_id\=(\d+)/;
-      var mgtvMatch = url.match(mgtvRegExp);
-      //新浪视频
-      var sinaRegExp = /\/\/video\.sina\.com\.cn\/share\/video\/(\d+)\.swf\&topBar\=1\&autoplay\=false\&plid\=(\d+)/;
-      var singMatch = url.match(sinaRegExp);
-      //凤凰视频;
-      var ifengRegExp = /\/\/v\.ifeng\.com\/include\/exterior\.swf\?guid\=(.*)\&AutoPlay\=false/;
-      var ifengMatch = url.match(ifengRegExp);
-      //搜狐
-      var sohuRegExp = /\/\/share\.vrs\.sohu\.com\/(\d+)\/v\.swf/;
-      var sohuMatch = url.match(sohuRegExp);
-      var sohuRegExp2 = /\/\/tv\.sohu\.com\/upload\/static\/share\/share\_play\.html\#(.*)/;
-      var sohuMatch2 = url.match(sohuRegExp2);
-      //乐视
-      var leRegExp = /\/\/(.*)\.letv\.com\/ptv\/player\/swfPlayer\.swf\?autoPlay\=0\&id\=(\d+)/;
-      var leMatch = url.match(leRegExp);
-      //bilibili
-      var bilibiliRegExp = /static\.hdslb\.com\/miniloader\.swf\?aid\=(\d+)\&page/;
-      var bilibiliMatch = url.match(bilibiliRegExp);
-
-      var $video;
-      var $embed = $('<embed allowFullScreen="true" quality="high" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash">')
-      if (ytMatch && ytMatch[1].length === 11) {
-        var youtubeId = ytMatch[1];
-        $video = $('<iframe>')
-            .attr('frameborder', 0)
-            .attr('src', '//www.youtube.com/embed/' + youtubeId)
-            .attr('width', '640').attr('height', '360');
-      } else if(bilibiliMatch && bilibiliMatch[1].length){
-        $video = $embed
-            .attr('height', '425')
-            .attr('width', '580')
-            .attr('src', '//static.hdslb.com/miniloader.swf?aid='+ bilibiliMatch[1] +'&page=1');         
-      } else if(leMatch && leMatch[1].length){
-        $video = $embed
-            .attr('height', '425')
-            .attr('width', '580')
-            .attr('src', '//'+ leMatch[1] +'.letv.com/ptv/player/swfPlayer.swf?autoPlay=0&id='+ leMatch[2]); 
-      } else if(sohuMatch2 && sohuMatch2[1].length){
-        $video = $('<iframe webkitallowfullscreen mozallowfullscreen allowfullscreen>')
-            .attr('frameborder', 0)
-            .attr('height', '425')
-            .attr('width', '580')
-            .attr('src', '//tv.sohu.com/upload/static/share/share_play.html#'+ sohuMatch2[1]);   
-      } else if(sohuMatch && sohuMatch[1].length){
-        $video = $embed
-            .attr('height', '425')
-            .attr('width', '580')
-            .attr('src', '//share.vrs.sohu.com/'+ sohuMatch[1] +'/v.swf&topBar=1&autoplay=false&plid='+ sohuMatch[2] +'&pub_catecode=0&from=page');            
-      } else if(ifengMatch && ifengMatch[1].length){
-        $video = $embed
-            .attr('height', '425')
-            .attr('width', '580')
-            .attr('src', '//v.ifeng.com/include/exterior.swf?guid=' + ifengMatch[1] + '&AutoPlay=false');       
-
-      } else if(singMatch && singMatch[1].length){
-        $video = $embed
-            .attr('height', '425')
-            .attr('width', '580')
-            .attr('src', '//video.sina.com.cn/share/video/' + singMatch[1] + '.swf');          
-      } else if(mgtvMatch && mgtvMatch[1].length){
-        $video = $embed
-            .attr('height', '425')
-            .attr('width', '580')
-            .attr('src', '//player.mgtv.com/mgtv_v5_main/main.swf?play_type=1&video_id=' + mgtvMatch[1]);        
-      } else if(iqiyiMatch && iqiyiMatch[1].length){
-        $video = $embed
-            .attr('height', '360')
-            .attr('width', '640')
-            .attr('src', '//player.video.qiyi.com/' + iqiyiMatch[1]);
-      } else if(iqiyiMatch2 && iqiyiMatch2[1].length){
-        $video = $('<iframe webkitallowfullscreen mozallowfullscreen allowfullscreen>')
-            .attr('frameborder', 0)
-            .attr('src', '//open.iqiyi.com/developer/player_js/' + iqiyiMatch2[1])
-            .attr('width', '640').attr('height', '360');
-      } else if (igMatch && igMatch[0].length) {
-        $video = $('<iframe>')
-            .attr('frameborder', 0)
-            .attr('src', 'https://instagram.com/p/' + igMatch[1] + '/embed/')
-            .attr('width', '612').attr('height', '710')
-            .attr('scrolling', 'no')
-            .attr('allowtransparency', 'true');
-      } else if (vMatch && vMatch[0].length) {
-        $video = $('<iframe>')
-            .attr('frameborder', 0)
-            .attr('src', vMatch[0] + '/embed/simple')
-            .attr('width', '600').attr('height', '600')
-            .attr('class', 'vine-embed');
-      } else if (vimMatch && vimMatch[3].length) {
-        $video = $('<iframe webkitallowfullscreen mozallowfullscreen allowfullscreen>')
-            .attr('frameborder', 0)
-            .attr('src', '//player.vimeo.com/video/' + vimMatch[3])
-            .attr('width', '640').attr('height', '360');
-      } else if (dmMatch && dmMatch[2].length) {
-        $video = $('<iframe>')
-            .attr('frameborder', 0)
-            .attr('src', '//www.dailymotion.com/embed/video/' + dmMatch[2])
-            .attr('width', '640').attr('height', '360');
-      } else if (youkuMatch && youkuMatch[1].length) {
-        $video = $('<iframe webkitallowfullscreen mozallowfullscreen allowfullscreen>')
-            .attr('frameborder', 0)
-            .attr('height', '498')
-            .attr('width', '510')
-            .attr('src', '//player.youku.com/embed/' + youkuMatch[1]);
-      } else if(qqMatch3 && qqMatch3[0].length){
-        $video = $('<embed allowFullScreen="true" quality="high" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash">')
-            .attr('height', '498')
-            .attr('width', '640')
-            .attr('src', qqMatch3[0]);
-      } else if ((qqMatch && qqMatch[1].length) || (qqMatch2 && qqMatch2[2].length)) {
-        var vid = ((qqMatch && qqMatch[1].length) ? qqMatch[1]:qqMatch2[2]);
-        $video = $('<embed webkitallowfullscreen mozallowfullscreen allowfullscreen>')
-            .attr('frameborder', 0)
-            .attr('height', '310')
-            .attr('width', '500')
-            .attr('src', 'http://v.qq.com/iframe/player.html?vid=' + vid + '&amp;auto=0');
-      } else if (mp4Match || oggMatch || webmMatch) {
-        $video = $('<video controls>')
-            .attr('src', url)
-            .attr('width', '640').attr('height', '360');
-      } else {
-        // this is not a known video link. Now what, Cat? Now what?
-        return false;
-      }
-
+    /**
+     * createVideoNode 创建视频
+     * @update 2017/11/30
+     * @param  { String } str 用户填入视频元素可能是iframe、oject等
+     * @return {[type]}     [description]
+     */
+    this.createVideoNode = function (str) {
+      
+      var $video = $(str);
       $video.addClass('note-video-clip');
-
+      console.log($video)
       return $video[0];
-    };
+      
+    }
+    // this.createVideoNode = function (url) {
+    //   // video url patterns(youtube, instagram, vimeo, dailymotion, youku, mp4, ogg, webm)
+    //   var ytRegExp = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+    //   var ytMatch = url.match(ytRegExp);
 
+    //   var igRegExp = /(?:www\.|\/\/)instagram\.com\/p\/(.[a-zA-Z0-9_-]*)/;
+    //   var igMatch = url.match(igRegExp);
+
+    //   var vRegExp = /\/\/vine\.co\/v\/([a-zA-Z0-9]+)/;
+    //   var vMatch = url.match(vRegExp);
+
+    //   var vimRegExp = /\/\/(player\.)?vimeo\.com\/([a-z]*\/)*(\d+)[?]?.*/;
+    //   var vimMatch = url.match(vimRegExp);
+
+    //   var dmRegExp = /.+dailymotion.com\/(video|hub)\/([^_]+)[^#]*(#video=([^_&]+))?/;
+    //   var dmMatch = url.match(dmRegExp);
+
+    //   var youkuRegExp = /\/\/player\.youku\.com\/embed\/(.*)/;
+    //   var youkuMatch = url.match(youkuRegExp);
+
+    //   var qqRegExp = /\/\/v\.qq\.com.*?vid=(.+)/;
+    //   var qqMatch = url.match(qqRegExp);
+
+    //   var qqRegExp2 = /\/\/v\.qq\.com\/x?\/?(page|cover).*?\/([^\/]+)\.html\??.*/;
+    //   var qqMatch2 = url.match(qqRegExp2);
+    //   //2017/11/24
+    //   var qqRegExp3 = /\/\/imgcache\.qq\.com.*/;
+    //   var qqMatch3 = url.match(qqRegExp3);
+
+    //   var mp4RegExp = /^.+.(mp4|m4v)$/;
+    //   var mp4Match = url.match(mp4RegExp);
+
+    //   var oggRegExp = /^.+.(ogg|ogv)$/;
+    //   var oggMatch = url.match(oggRegExp);
+
+    //   var webmRegExp = /^.+.(webm)$/;
+    //   var webmMatch = url.match(webmRegExp);
+
+    //   //2017/11/24新增
+    //   //爱奇艺
+    //   var iqiyiRegExp = /\/\/player\.video\.qiyi\.com\/(.*)/;
+    //   var iqiyiMatch = url.match(iqiyiRegExp)
+    //   var iqiyiRegExp2 = /\/\/open\.iqiyi\.com\/developer\/player\_js\/(.*)/;
+    //   var iqiyiMatch2 = url.match(iqiyiRegExp2)
+    //   //芒果TV
+    //   var mgtvRegExp = /\/\/player\.mgtv\.com\/mgtv_v5_main\/main\.swf\?play_type\=1\&video\_id\=(\d+)/;
+    //   var mgtvMatch = url.match(mgtvRegExp);
+    //   //新浪视频
+    //   var sinaRegExp = /\/\/video\.sina\.com\.cn\/share\/video\/(\d+)\.swf\&topBar\=1\&autoplay\=false\&plid\=(\d+)/;
+    //   var singMatch = url.match(sinaRegExp);
+    //   //凤凰视频;
+    //   var ifengRegExp = /\/\/v\.ifeng\.com\/include\/exterior\.swf\?guid\=(.*)\&AutoPlay\=false/;
+    //   var ifengMatch = url.match(ifengRegExp);
+    //   //搜狐
+    //   var sohuRegExp = /\/\/share\.vrs\.sohu\.com\/(\d+)\/v\.swf/;
+    //   var sohuMatch = url.match(sohuRegExp);
+    //   var sohuRegExp2 = /\/\/tv\.sohu\.com\/upload\/static\/share\/share\_play\.html\#(.*)/;
+    //   var sohuMatch2 = url.match(sohuRegExp2);
+    //   //乐视
+    //   var leRegExp = /\/\/(.*)\.letv\.com\/ptv\/player\/swfPlayer\.swf\?autoPlay\=0\&id\=(\d+)/;
+    //   var leMatch = url.match(leRegExp);
+    //   //bilibili
+    //   var bilibiliRegExp = /static\.hdslb\.com\/miniloader\.swf\?aid\=(\d+)\&page/;
+    //   var bilibiliMatch = url.match(bilibiliRegExp);
+
+    //   var $video;
+    //   var $embed = $('<embed allowFullScreen="true" quality="high" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash">')
+    //   if (ytMatch && ytMatch[1].length === 11) {
+    //     var youtubeId = ytMatch[1];
+    //     $video = $('<iframe>')
+    //         .attr('frameborder', 0)
+    //         .attr('src', '//www.youtube.com/embed/' + youtubeId)
+    //         .attr('width', '640').attr('height', '360');
+    //   } else if(bilibiliMatch && bilibiliMatch[1].length){
+    //     $video = $embed
+    //         .attr('height', '425')
+    //         .attr('width', '580')
+    //         .attr('src', '//static.hdslb.com/miniloader.swf?aid='+ bilibiliMatch[1] +'&page=1');         
+    //   } else if(leMatch && leMatch[1].length){
+    //     $video = $embed
+    //         .attr('height', '425')
+    //         .attr('width', '580')
+    //         .attr('src', '//'+ leMatch[1] +'.letv.com/ptv/player/swfPlayer.swf?autoPlay=0&id='+ leMatch[2]); 
+    //   } else if(sohuMatch2 && sohuMatch2[1].length){
+    //     $video = $('<iframe webkitallowfullscreen mozallowfullscreen allowfullscreen>')
+    //         .attr('frameborder', 0)
+    //         .attr('height', '425')
+    //         .attr('width', '580')
+    //         .attr('src', '//tv.sohu.com/upload/static/share/share_play.html#'+ sohuMatch2[1]);   
+    //   } else if(sohuMatch && sohuMatch[1].length){
+    //     $video = $embed
+    //         .attr('height', '425')
+    //         .attr('width', '580')
+    //         .attr('src', '//share.vrs.sohu.com/'+ sohuMatch[1] +'/v.swf&topBar=1&autoplay=false&plid='+ sohuMatch[2] +'&pub_catecode=0&from=page');            
+    //   } else if(ifengMatch && ifengMatch[1].length){
+    //     $video = $embed
+    //         .attr('height', '425')
+    //         .attr('width', '580')
+    //         .attr('src', '//v.ifeng.com/include/exterior.swf?guid=' + ifengMatch[1] + '&AutoPlay=false');       
+
+    //   } else if(singMatch && singMatch[1].length){
+    //     $video = $embed
+    //         .attr('height', '425')
+    //         .attr('width', '580')
+    //         .attr('src', '//video.sina.com.cn/share/video/' + singMatch[1] + '.swf');          
+    //   } else if(mgtvMatch && mgtvMatch[1].length){
+    //     $video = $embed
+    //         .attr('height', '425')
+    //         .attr('width', '580')
+    //         .attr('src', '//player.mgtv.com/mgtv_v5_main/main.swf?play_type=1&video_id=' + mgtvMatch[1]);        
+    //   } else if(iqiyiMatch && iqiyiMatch[1].length){
+    //     $video = $embed
+    //         .attr('height', '360')
+    //         .attr('width', '640')
+    //         .attr('src', '//player.video.qiyi.com/' + iqiyiMatch[1]);
+    //   } else if(iqiyiMatch2 && iqiyiMatch2[1].length){
+    //     $video = $('<iframe webkitallowfullscreen mozallowfullscreen allowfullscreen>')
+    //         .attr('frameborder', 0)
+    //         .attr('src', '//open.iqiyi.com/developer/player_js/' + iqiyiMatch2[1])
+    //         .attr('width', '640').attr('height', '360');
+    //   } else if (igMatch && igMatch[0].length) {
+    //     $video = $('<iframe>')
+    //         .attr('frameborder', 0)
+    //         .attr('src', 'https://instagram.com/p/' + igMatch[1] + '/embed/')
+    //         .attr('width', '612').attr('height', '710')
+    //         .attr('scrolling', 'no')
+    //         .attr('allowtransparency', 'true');
+    //   } else if (vMatch && vMatch[0].length) {
+    //     $video = $('<iframe>')
+    //         .attr('frameborder', 0)
+    //         .attr('src', vMatch[0] + '/embed/simple')
+    //         .attr('width', '600').attr('height', '600')
+    //         .attr('class', 'vine-embed');
+    //   } else if (vimMatch && vimMatch[3].length) {
+    //     $video = $('<iframe webkitallowfullscreen mozallowfullscreen allowfullscreen>')
+    //         .attr('frameborder', 0)
+    //         .attr('src', '//player.vimeo.com/video/' + vimMatch[3])
+    //         .attr('width', '640').attr('height', '360');
+    //   } else if (dmMatch && dmMatch[2].length) {
+    //     $video = $('<iframe>')
+    //         .attr('frameborder', 0)
+    //         .attr('src', '//www.dailymotion.com/embed/video/' + dmMatch[2])
+    //         .attr('width', '640').attr('height', '360');
+    //   } else if (youkuMatch && youkuMatch[1].length) {
+    //     $video = $('<iframe webkitallowfullscreen mozallowfullscreen allowfullscreen>')
+    //         .attr('frameborder', 0)
+    //         .attr('height', '498')
+    //         .attr('width', '510')
+    //         .attr('src', '//player.youku.com/embed/' + youkuMatch[1]);
+    //   } else if(qqMatch3 && qqMatch3[0].length){
+    //     $video = $('<embed allowFullScreen="true" quality="high" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash">')
+    //         .attr('height', '498')
+    //         .attr('width', '640')
+    //         .attr('src', qqMatch3[0]);
+    //   } else if ((qqMatch && qqMatch[1].length) || (qqMatch2 && qqMatch2[2].length)) {
+    //     var vid = ((qqMatch && qqMatch[1].length) ? qqMatch[1]:qqMatch2[2]);
+    //     $video = $('<embed webkitallowfullscreen mozallowfullscreen allowfullscreen>')
+    //         .attr('frameborder', 0)
+    //         .attr('height', '310')
+    //         .attr('width', '500')
+    //         .attr('src', 'http://v.qq.com/iframe/player.html?vid=' + vid + '&amp;auto=0');
+    //   } else if (mp4Match || oggMatch || webmMatch) {
+    //     $video = $('<video controls>')
+    //         .attr('src', url)
+    //         .attr('width', '640').attr('height', '360');
+    //   } else {
+    //     // this is not a known video link. Now what, Cat? Now what?
+    //     return false;
+    //   }
+
+    //   $video.addClass('note-video-clip');
+
+    //   return $video[0];
+    // };
     this.show = function () {
       var text = context.invoke('editor.getSelectedText');
       context.invoke('editor.saveRange');

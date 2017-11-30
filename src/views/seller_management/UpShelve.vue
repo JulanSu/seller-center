@@ -160,14 +160,19 @@
               content: '确定要下架这个商品吗'
             }, function(){
               theShelvestoSoldOut({
-                productId: row.productId
+                productId: row.productId,
+                storeId: storeId
               }).then((res)=>{
-                self.listLoading = false;
-                self.messageHandle('商品下架成功！', 'success')
-                self.getProductList({
-                  pageNum: self.pagination.curPage,
-                  pageSize: self.pagination.pageSize
-                })
+                if(res.data.code == 0) {
+                  self.listLoading = false;
+                  self.messageHandle('商品下架成功！', 'success')
+                  self.getProductList({
+                    pageNum: self.pagination.curPage,
+                    pageSize: self.pagination.pageSize
+                  })
+                }else {
+                  self.messageHandle(res.data.message, 'warning')
+                }
               })
             })
           },
@@ -184,15 +189,19 @@
                 content: '确定要推荐这个商品吗？'
               }, function(){
                 onTheShelvesRecommendOn({
-                  productId: row.productId
+                  productId: row.productId,
+                  storeId: storeId
                 }).then((res)=>{
-                  self.listLoading = false;
-                  self.messageHandle('商品推荐成功！', 'success')
-                  self.getProductList({
-                    pageNum: self.pagination.curPage,
-                    pageSize: self.pagination.pageSize
-                  })
-                  
+                  if(res.data.code == 0) {
+                    self.listLoading = false
+                    self.messageHandle('商品推荐成功！', 'success')
+                    self.getProductList({
+                      pageNum: self.pagination.curPage,
+                      pageSize: self.pagination.pageSize
+                    })
+                  }else {
+                    self.messageHandle(res.data.message, 'warning')
+                  }
 
                 })
               })
@@ -211,7 +220,8 @@
                 content: '确定要取消推荐这个商品吗？'
               }, function(){
                 onTheShelvesRecommendOff({
-                  productId: row.productId
+                  productId: row.productId,
+                  storeId: storeId
                 }).then((res)=>{
                   var data = res.data.data
                   if(res.data.code == 0) {
@@ -221,6 +231,8 @@
                       pageNum: self.pagination.curPage,
                       pageSize: self.pagination.pageSize
                     })                    
+                  }else {
+                    self.messageHandle(res.data.message, 'warning')
                   }
 
 

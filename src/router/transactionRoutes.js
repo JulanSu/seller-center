@@ -7,6 +7,7 @@ const ServiceDetail =  resolve => require(['@/views/transaction/ServiceDetail.vu
 const Coupon =  resolve => require(['@/views/transaction/Coupon.vue'],resolve)
 const Reservation =  resolve => require(['@/views/transaction/Reservation.vue'],resolve)
 const ReservationDetail =  resolve => require(['@/views/transaction/ReservationDetail.vue'],resolve)
+const Bind =  resolve => require(['@/views/transaction/Bind.vue'],resolve)
 
 const routers = [
         { path: '/transaction/orders', component: Orders, name: '订单查询' ,
@@ -24,7 +25,8 @@ const routers = [
             children: [
                 { path: '/transaction/reservation/reservation-detail', component: ReservationDetail, name: '结算明细' },
             ]
-        }
+        },
+        { path: '/transaction/bind', component: Bind, name: '绑定支付宝' },
 ]
 
 

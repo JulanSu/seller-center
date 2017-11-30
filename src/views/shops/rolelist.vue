@@ -1,9 +1,9 @@
 <template>
   <section class="role-list"  v-loading="listLoading">
     <!--工具条-->
-    <el-col :span="24" class="tool-bar" style="padding-bottom: 0px;">
+    <el-col class="tool-bar" style="padding-bottom: 0px;">
       <router-link to="/store/bypass-management/new-role" class="add-role">
-          <el-button type="primary" icon="plus">新建角色</el-button>
+          <el-button class="wid125" type="primary" icon="plus">新建角色</el-button>
       </router-link>
     </el-col>
     <!--列表-->
@@ -54,6 +54,7 @@ import { roleList,roleChangeStatus } from '@/api/shopApi';
           this.listLoading = true;
 
           var para = new URLSearchParams();
+          para.append('storeId',config.storeId);
           para.append('storeOperatorRoleId',row.storeOperatorRoleId);
           para.append('isUsed',isUsed);
 

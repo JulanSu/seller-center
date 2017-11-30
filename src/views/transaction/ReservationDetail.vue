@@ -48,7 +48,7 @@
         },
         created(){
             let orderId = this.$route.query.orderId;
-            accountDetail({orderStoreId: orderId}).then( res => {
+            accountDetail({orderStoreId: orderId, storeId: config.storeId}).then( res => {
                 this.form = res.data.data;
                 this.orderType = this.form.orderStoreType == 1 ? '是' : '否';
                 this.tableData = res.data.data.accountProductList;
@@ -102,6 +102,9 @@
                     color: #666666;
                     text-align: center;
                 }
+            }
+            .cell{
+                text-overflow: clip;
             }
         }
     }

@@ -36,9 +36,9 @@
 			</div>
 		</div>
 		<div class="btns">
-      <el-button type="primary" @click="addBrandBtn">确定</el-button>
+      <el-button type="primary" @click="addBrandBtn" class="wid100">确定</el-button>
 			<router-link to="/store/brand-management">
-        <el-button>取消</el-button>   
+        <el-button class="wid100">取消</el-button>   
       </router-link>
 		</div>
 	</section>

@@ -210,7 +210,7 @@ import CategoryMenu from '@/components/CategoryMenu2.vue'/*类目选择*/
 import UploadPictures from '@/components/UploadPictures.vue'/*上传图片组件*/
 import VDistpicker from 'v-distpicker';/*城市三级联动*/
 import MapView from '@/components/Map1';/*地图组件*/
-import { merchantSave,industryListall,gssUpload,storeCheckname} from '@/api/shopApi';
+import { merchantSave,industryListall,storeCheckname} from '@/api/shopApi';
 export default {
 	components: {
 		CategoryBar,
@@ -235,7 +235,7 @@ export default {
 	    var validateNumber1= (rule, value, callback) => {
           var reg =/^[0-9a-zA_Z]+$/g;
           if (!value.match(reg)) {
-            callback(new Error('请输入正确的组织机构代码（注册码）'));
+            callback(new Error('请输入正确的组织机构代码（注册号）'));
           } else {
             callback();
           }
@@ -343,8 +343,8 @@ export default {
 	            	{ min: 1, max: 30, message: '长度为 1 到 30 位', trigger: 'blur' }
 	          	],
 	          	orgCode: [
-	            	{ required: true, message: '请输入组织机构代码（注册码）', trigger: 'blur' },
-	            	{ min: 1, max: 20, message: '请输入正确的组织机构代码（注册码）', trigger: 'blur' },
+	            	{ required: true, message: '请输入组织机构代码（注册号）', trigger: 'blur' },
+	            	{ min: 1, max: 20, message: '请输入正确的组织机构代码（注册号）', trigger: 'blur' },
 	            	{ validator:validateNumber1,trigger: 'blur'},
 	            	{ validator:validateNumber1,trigger: 'change'}
 	          	],
@@ -399,7 +399,7 @@ export default {
     	}
 
 	    //获取行业数据
-	    industryListall({}).then((res) => {
+	    industryListall({storeId: config.storeId}).then((res) => {
 	    	if(res.data.code==0){
 	    		this.categoryData = res.data.data;
 	    	}   
@@ -426,7 +426,7 @@ export default {
 	        if(!this.ruleForm.name){
 	          return false;
 	        }
-	        storeCheckname({"storeName":this.ruleForm.name}).then((res) => {
+	        storeCheckname({"storeName":this.ruleForm.name,storeId: config.storeId}).then((res) => {
 	            if(res.data.code==1){
 	              this.$message.error('店铺重名，请重新填写');
 	            }
@@ -613,11 +613,11 @@ export default {
 	            	}
 
 		      		if(!this.selProvince){//如果没有选择省，提示选择省市区
-						this.$message({
+						/*this.$message({
 				          message: '请选择省市区',
 				          type: 'warning'
 				        });
-				        return false;
+				        return false;*/
 					}else{//选择了城市，将选择的城市拼接
 						this.sel=this.selProvince;
 						if(this.selCity){
@@ -626,6 +626,7 @@ export default {
 						if(this.selArea){
 							this.sel+="*"+this.selArea;
 						}
+						this.sel=this.sel+"*";
 					}
 
 					var storeType=this.isShop==1?1:2;
@@ -633,6 +634,7 @@ export default {
 
 
 		            var para = new URLSearchParams();
+		            para.append('storeId',config.storeId);
 		            para.append('userId',config.uid);
 		            para.append('shopType',storeType);
 		            para.append('enterpriseName',this.ruleForm.enterpriseName);
@@ -645,7 +647,7 @@ export default {
 		            para.append('contactMobile',this.ruleForm.contactMobile);
 		            para.append('name',this.ruleForm.name);
 		            para.append('industryCateIdList',this.ruleForm.industryCateIdList);
-		            para.append('address',this.sel+'*'+this.ruleForm.address);
+		            para.append('address',this.sel+this.ruleForm.address);
 		            para.append('longitude',Number(this.ruleForm.longitude*1000000));
 					para.append('latitude',Number(this.ruleForm.latitude*1000000));
 

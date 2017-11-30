@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Full from '@/components/Full.vue'
 import FullNoLeft from '@/components/FullNoLeft.vue'
-
+import Demo from '@/views/Demo'
 
 import MerchantEnter from '@/views/shops//MerchantEnter.vue'
 import MerchantEnter1 from '@/views/shops//MerchantEnter1.vue'
@@ -55,7 +55,13 @@ const routers = new VueRouter({
         name: '',
         hidden: true,
         redirect: '/home/index',
-    },    
+    },   
+    {
+        path: '/demo',
+        component: Demo,
+        name: 'demo',
+        hidden: true
+    }, 
     {
         path: '/home',
         component: Full,

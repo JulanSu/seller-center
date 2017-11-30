@@ -128,7 +128,7 @@
 				<p class="tishi">审核同学有疑问时，会通过此联系方式联系您</p>
 			</el-form-item>
 			<el-form-item label="" label-width="200px">
-				<el-button type="primary" @click="submitForm('ruleForm')">提交审核</el-button>
+				<el-button class="wid100" type="primary" @click="submitForm('ruleForm')">提交审核</el-button>
 			</el-form-item>
 			<el-dialog
 			    title=""
@@ -318,7 +318,7 @@ export default {
     	}
     },
    	mounted(){
-    	//测试品牌2 更新
+    	//编辑页面
     	if(this.$route.query.brandId){
     		this.isCreat=false;//标记是编辑页面
     		var parm={
@@ -335,7 +335,7 @@ export default {
 	        		this.ruleForm.endValidTime=new Date(this.ruleForm.endValidTime);
 	        		this.ruleForm.trademarkType=Number(this.ruleForm.trademarkType);
 	        		this.csname=this.ruleForm.nameCn;
-	        		this.ecsname=this.ruleForm.nameEn
+	        		this.ecsname=this.ruleForm.nameEn;
 	        	}else{
 	        		this.$message({message: res.data.message,type: 'warning'});
 	        	}
@@ -373,7 +373,7 @@ export default {
     		if(!(names)||(names==this.csname)){
 		            return false;
 		        }
-	        brandCheckbrandname({"name":names}).then((res) => {
+	        brandCheckbrandname({"name":names,storeId: config.storeId}).then((res) => {
 	          	if((res.data.code==1)&&(res.data.message=='品牌名称重复')){
 
 	          		this.$message({
@@ -466,11 +466,13 @@ export default {
         	
 
         	if(this.ruleForm.registerLocation=="中国大陆"){
+        		console.log(this.ruleForm.trademarkCertificate)
         		if(this.ruleForm.trademarkCertificate){
         			this.$refs.uploadPic1.revise("");//修改图片的值
-        		}	
+        		}
 
         	}else{
+        		
         		if(this.ruleForm.customsDeclaration){
         			this.$refs.uploadPic3.revise("");//修改图片的值
         		}
@@ -497,8 +499,6 @@ export default {
 		//品牌LOGO上传成功之后
 		sucpic4(url){
 			this.ruleForm.logo=url;
-			console.log(url)
-			console.log(this.ruleForm.logo)
 		}
     }
 }

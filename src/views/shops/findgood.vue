@@ -1,8 +1,8 @@
 <template>
   <section  class="find-good" v-loading="listLoading" v-if='$route.name=="查看商品"'>
     <!--工具条-->
-    <el-col :span="24" class="tool-bar" style="padding-bottom: 0px;">
-      <el-button type="primary" @click="relevance">关联其他商品</el-button>
+    <el-col class="tool-bar" style="padding-bottom: 0px;">
+      <el-button class="wid125" type="primary" @click="relevance">关联其他商品</el-button>
     </el-col>
 
     <!--列表-->
@@ -77,6 +77,7 @@ import { productList,productRemove} from '@/api/shopApi';
       //获取用户列表
       getProductList() {
         let para = {
+          storeId: config.storeId,
           storeCateId:this.$route.query.id,
           pageNum: this.pageNum,
           pageSize: this.pageSize
@@ -105,6 +106,7 @@ import { productList,productRemove} from '@/api/shopApi';
         }).then(() => {
           this.listLoading = true;
           var para = new URLSearchParams();
+          para.append('storeId',config.storeId);
           para.append('storeCateProductId',row.storeCateProductId);
           
           productRemove(para).then((res) => {

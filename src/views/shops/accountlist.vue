@@ -1,8 +1,8 @@
 <template>
   <section class="account-list" v-loading="listLoading">
     <!--工具条-->
-    <el-col :span="24" class="tool-bar" style="padding-bottom: 0px;">
-      <el-button type="primary" icon="plus" @click="addAccount">新建子账号</el-button>
+    <el-col class="tool-bar" style="padding-bottom: 0px;">
+      <el-button class="wid140" type="primary" icon="plus" @click="addAccount">新建子账号</el-button>
     </el-col>
 
     <!--列表-->
@@ -144,6 +144,7 @@ import {operatorList,operatorChangeStatus,operatorGetNum} from '@/api/shopApi';
           this.listLoading = true;
           var para = new URLSearchParams();
           para.append('storeOperatorId',row.storeOperatorId);
+          para.append('storeId',config.storeId);
           para.append('isUsed',isUsed);
 
           operatorChangeStatus(para).then((res) => {

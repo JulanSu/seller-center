@@ -62,7 +62,7 @@
                       <tr class="el-table__row">
                         <td >
                           <div class="cell el-input el-input-group el-input-group--append">
-                            <input v-model="goodsForm.productSellPrice" @blur="blurValidHandle" class="el-input__inner" type="number" />
+                            <input :value="goodsForm.productSellPrice" @keyup="blurValidHandle($event, goodsForm)" @input="blurValidHandle($event, goodsForm)" @blur="blurValidHandle($event, goodsForm)" class="el-input__inner" type="text" />
                           </div>
                         </td>
                         <td>
@@ -209,6 +209,7 @@
   import UploadPictures from './components/UploadPictures.vue'/*上传图片组件*/
   import GoodsSummernote from './components/summernote.vue'
   import { getGoodsFormData, saveGoodsFormData} from '@/api/seller'
+  import { validInputIsNumber, validInputIsFloat } from '@/util/validator'
   import merge from 'merge'
   // import schema from 'async-validator'
   const win = window;
@@ -347,8 +348,8 @@
             { validator: (rule, value, callback) => {
               var len = getStrLength(value)
               var sellingPointRules = this.initForm.sellingPointRules;
-              if(len > 50){
-                callback(new Error('商品卖点字数最多不超过50个'))
+              if(len > 100){
+                callback(new Error('商品卖点字数最多不超过100个'))
               }else {
                 callback()
               }
@@ -369,7 +370,17 @@
             {required: true, type: 'array', message: '请上传商品图片', trigger: 'change, blur' }
           ],
           productSellPrice: [
-            {required: true,message: '展示价格不能为空！', trigger: 'change, blur' }
+            {required: true,validator: (rule, value, callback) => {
+              console.log('校验展示价格',value)
+              if(!value){
+                callback(new Error('展示价格不能为空！'))
+              }else {
+                if(!(/^\d+(\.\d{0,2})?$/.test(value))){
+                  callback(new Error('展示价格只能输入整数且最多2位小数！'))
+                }      
+              }
+              callback()
+            }, trigger: 'change, blur' }
           ],
 
           // 上架时间
@@ -380,19 +391,28 @@
           productSkuTable: [
             {required: true, validator: (rule, value, callback) => {
               var isFinished = true
+              console.log('你好',value)
               if(!value.length){
                 callback(new Error('请先选择商品规格！'))
               }
               if(value.length){
                 for(var i=0;i<value.length;i++) {
                   if(!value[i].productPrice || !value[i].productSkuQuantity){
-                    isFinished = false
                     callback(new Error('价格和库存不能为空！'))
                   }
+                  if(value[i].productPrice) {
+                    if(!(/^\d+(\.\d{0,2})?$/.test(value[i].productPrice))){
+                      callback(new Error('价格只能输入整数且最多2位小数！'))
+                    }
+                  }
+                  if(value[i].productSkuQuantity) {
+                    if(!(/^\d+$/.test(value[i].productSkuQuantity))){
+
+                      callback(new Error('库存只能为整数！'))
+                    }
+                  }
                 }
-                if(isFinished) {
-                  callback()
-                }
+                callback()
               }
             }, trigger: 'change'}
           ]
@@ -445,8 +465,20 @@
           this.applicableShopStatus = false
         }
       },
-      blurValidHandle(value){
+      blurValidHandle(event, obj){
+        var value = validInputIsNumber(event.target.value)
+        obj.productSellPrice = value
+        event.target.value = value
         this.$refs.goodsForm.validateField('productSellPrice')
+      },
+      validPriceHandle(){
+        var regExp =  /^\d+\.?\d{0,2}/
+        var value = event.target.value
+        if(regExp.test(value)) {
+          event.target.value = value.replace(/^(\d+)\.(\d\d).*$/,'$1.$2')
+        }else {
+          event.target.value = ''
+        }    
       },
       /**
        * createLogisticsTemplate 新建物流模板
@@ -637,7 +669,7 @@
         var goodsForm = self.goodsForm
         var initForm = self.initForm
         goodsForm.productStatus = statusVal
-        console.log('表单提交', self.goodsForm, self.applicableShopStatus, self.catePropertyValidStatus)
+
         if(initForm.productCateProperty && initForm.productCateProperty.length) {
           self.$refs.subjectchildMethod.submitForm();
         }else {
@@ -655,6 +687,7 @@
           self.submitProductFormData(statusVal)
           return
         }
+        console.log('表单提交', self.goodsForm, self.applicableShopStatus, self.catePropertyValidStatus)
         self.$refs[formName].validate((valid) => {
           if(!self.applicableShopStatus){
             return false;

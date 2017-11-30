@@ -4,7 +4,7 @@
       v-model="storeCateArr">
       <ul class="">
         <li v-for="storeCate in storeCateList">
-          <el-checkbox :label="storeCate.storeCateId" :key="storeCate.cateName" @change="changeHandle(storeCate)">{{storeCate.cateName}}</el-checkbox>
+          <el-checkbox :label="storeCate.storeCateId" :key="storeCate.cateName">{{storeCate.cateName}}</el-checkbox>
         </li>
       </ul>
     </el-checkbox-group>

@@ -62,7 +62,6 @@ export default {
 	methods:{
 		//新建子账号按钮
 		jump(){
-			this.getNum();
 			if(this.formList.usedNum>=5){
 				this.$message({message: '子账号使用数量已满，先去冻结子账号',type: 'warning'});
 				return false;
@@ -89,7 +88,10 @@ export default {
 		}
     },
     mounted() {
-      this.getNum();
+    	if(this.$route.name=="子账号管理"){
+    		this.getNum();
+    	}
+      
     }
 }
 </script>

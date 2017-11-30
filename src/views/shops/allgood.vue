@@ -181,7 +181,8 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
         this.productId=row.productId;
         this.roleAuthority=[];
         let para = {
-          productId:row.productId
+          productId:row.productId,
+          storeId: config.storeId
         };
         productListcate(para).then((res) => {
           if(res.data.code==0){
@@ -208,6 +209,7 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
         }
         this.flag=false;
         var para = new URLSearchParams();
+        para.append('storeId', config.storeId);
         para.append('productId',this.productId);
         para.append('storeCateIdList',this.roleAuthority);
 

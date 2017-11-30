@@ -80,6 +80,7 @@
   font-size: 16px;
   color: #333333;
   height: 22px;
+  margin: 0;
   line-height: 22px;
   margin-bottom: 5px;
 }
@@ -117,6 +118,7 @@
   font-size: 16px;
   color: #333333;
   padding-left: 32px;
+  margin: 0;
 }
 
 .home .indexHezi .indexRight ol {

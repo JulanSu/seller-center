@@ -1,9 +1,9 @@
 <template>
   <section class="fenlei-list" v-if='$route.name=="分类管理"'  v-loading="listLoading">
     <!--工具条-->
-    <el-col :span="24" class="tool-bar" style="padding-bottom: 0px;">
+    <el-col class="tool-bar" style="padding-bottom: 0px;">
       <router-link to="/store/classify-management/add-fen-lei">
-        <el-button type="primary" icon="plus">新增分类</el-button>
+        <el-button type="primary" icon="plus" class="wid125">新增分类</el-button>
       </router-link>
     </el-col>
     <!--列表-->
@@ -104,6 +104,7 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
         }).then(() => {
           this.listLoading = true;
           var para = new URLSearchParams();
+          para.append('storeId',config.storeId);
           para.append('storeCateId',row.storeCateId);
           para.append('isUsed',isUsed);
           cateUpdate(para).then((res) => {
@@ -129,6 +130,7 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
           this.listLoading = true;
           var para = new URLSearchParams();
           para.append('storeCateId',row.storeCateId);
+          para.append('storeId', config.storeId);
 
           cateRemove(para).then((res) => {
             this.listLoading = false;
@@ -157,7 +159,10 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
       }
     },
     mounted() {
-      this.getCateList();
+      if(this.$route.name=="分类管理"){
+        this.getCateList();
+      }
+      
     }
   }
 

@@ -1,9 +1,9 @@
 <template>
   <section class="shop-list" v-if='$route.name=="门店管理"'  v-loading="listLoading">
     <!--工具条-->
-    <el-col :span="24" class="tool-bar">
+    <el-col class="tool-bar">
       <router-link to="/store/shop-management/add"  icon="plus">
-        <el-button type="primary" icon="plus">添加门店</el-button>
+        <el-button class="wid125" type="primary" icon="plus">添加门店</el-button>
       </router-link>
     </el-col>
 
@@ -11,7 +11,7 @@
     <el-table :data="users" style="width: 100%;"  class="hover-style">
       <el-table-column prop="name" label="门店名称" min-width="150" align="center">
       </el-table-column>
-      <el-table-column prop="address" label="门店地址" min-width="150" align="center">
+      <el-table-column prop="address" label="门店地址" min-width="150" align="center" :formatter="formatAddress">
       </el-table-column>
       <el-table-column prop="workTime" label="营业时间" min-width="150" align="center">
       </el-table-column>
@@ -68,6 +68,10 @@ import {getClassifyList, updateClassify} from '@/api/shopApi';
      }
    },
     methods: {
+      //将省市区的*去掉
+      formatAddress(row){
+        return row.address=row.address.replace("*",'');
+      },
       //获取用户列表
       getUsers() {
         let para = {
@@ -105,6 +109,7 @@ import {getClassifyList, updateClassify} from '@/api/shopApi';
         }).then(() => {
          //编辑门店提交接口
           var para = new URLSearchParams();
+          para.append('storeId',config.storeId);
           para.append('storeBranchId',row.storeBranchId);
           para.append('isHead',isHead);
           this.listLoading = true;
@@ -125,7 +130,10 @@ import {getClassifyList, updateClassify} from '@/api/shopApi';
       }
     },
     mounted() {
-      this.getUsers();
+      if(this.$route.name=="门店管理"){
+        this.getUsers();
+      }
+      
     }
   }
 

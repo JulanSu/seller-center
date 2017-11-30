@@ -156,17 +156,15 @@
               content: '确定要上架这个商品吗'
             }, function(){
               soldouttotheshelves({
-                productId: row.productId
+                productId: row.productId,
+                storeId: storeId
               }).then((res)=>{
                 var code = res.data.code
                 if(code === 0) {
                   self.listLoading = false;
                   self.messageHandle('商品上架成功！', 'success')               
-                }else if(code === 1) {
-                  self.$message({
-                    message: res.data.message,
-                    type: 'warning'
-                  });
+                }else  {
+                  self.messageHandle(res.data.message, 'warning')
                 }
                 self.getProductList({
                   pageNum: self.pagination.curPage,
@@ -174,14 +172,6 @@
                 })   
               })
             })
-          },
-          /**
-           * onRecommendHandle 推荐/取消推荐回调方法
-           * @param  { Object } row 当前行的数据
-           * @return {[type]}     [description]
-           */
-          onRecommendHandle (row) {
-
           },
           getProductStatusValue(statusNumber){
             var statusValue = getProductStatus(statusNumber)
@@ -221,15 +211,19 @@
               content: '确定要删除这个商品吗'
             }, function(){
               soldOutToRecycleBin({
-                productId: row.productId
+                productId: row.productId,
+                storeId: storeId
               }).then((res)=>{
-                self.listLoading = false;
-                self.messageHandle('商品删除成功！', 'success')
-                self.getProductList({
-                  pageNum: self.pagination.curPage,
-                  pageSize: self.pagination.pageSize
-                })
-                
+                if(res.data.code === 0) {
+                  self.listLoading = false;
+                  self.messageHandle('商品删除成功！', 'success')
+                  self.getProductList({
+                    pageNum: self.pagination.curPage,
+                    pageSize: self.pagination.pageSize
+                  })
+                }else {
+                  self.messageHandle(res.data.message, 'warning')
+                }
               })
             })
           },

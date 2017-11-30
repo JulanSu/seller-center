@@ -36,7 +36,7 @@
             <el-form-item 
               :label="item.catePropertyName" 
               :key="item.catePropertyParentId">
-                <el-input  v-model="item.values[0].value" :value="item.values[0].value" placeholder="自定义内容" @change="changeHandle(item)">
+                <el-input  v-model="item.values[0].value" :value="item.values[0].value" placeholder="自定义内容" @change="changeHandle(item)" :maxlength="20">
                   <template slot="append" v-if="item.catePropertyUnit">
                     <span>{{item.catePropertyUnit}}</span>
                   </template>
@@ -48,6 +48,7 @@
             <el-form-item :label="item.catePropertyName">
                 <div class="el-input el-input-group el-input-group--append">
                   <input 
+                  :maxlength="20"
                   type="number" 
                   class="el-input__inner" 
                   v-model.number="item.values[0].value" 
@@ -65,6 +66,7 @@
               :label="item.catePropertyName" 
               :key="item.catePropertyParentId">
                 <el-date-picker
+                  :editable="false"
                   v-model="item.values[0].value"
                   type="date"
                   placeholder="选择日期"

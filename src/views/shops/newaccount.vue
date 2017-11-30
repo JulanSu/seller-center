@@ -35,7 +35,7 @@
 				<el-input :maxlength="18" v-model="ruleForm.identityNumber" placeholder="请输入身份证号码" class="wid280"></el-input>
 			</el-form-item> 
 			<el-form-item label="" label-width="100px">
-				<el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
+				<el-button class="wid100" type="primary" @click="submitForm('ruleForm')">保存</el-button>
 			</el-form-item>
 			
 		</el-form>
@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import {operatorGet,roleList,operatorUpdate,operatorSave,operatorCheckaccount,roleUsedlist} from '@/api/shopApi';
+import {operatorGet,operatorUpdate,operatorSave,operatorCheckaccount,roleUsedlist} from '@/api/shopApi';
 import md5 from 'js-md5';
 import crypto from 'crypto'
   export default {
@@ -148,7 +148,8 @@ import crypto from 'crypto'
         if(res.data.code==0){
           this.roleList=res.data.data;
           this.ruleForm.role=res.data.data;
-          this.csname=this.ruleForm.account;
+          
+
         }
         
       });
@@ -178,7 +179,7 @@ import crypto from 'crypto'
         if(!(this.ruleForm.account)||(this.ruleForm.account==this.csname)){
           return false;
         }
-        operatorCheckaccount({"account":this.ruleForm.account}).then((res) => {
+        operatorCheckaccount({"account":this.ruleForm.account,storeId: config.storeId}).then((res) => {
             if(res.data.code==1){
               this.$message.error('用户名重复，请重新输入');
             }
@@ -190,6 +191,7 @@ import crypto from 'crypto'
       /*如果是编辑子账号页面，需要取该子账号的数据*/
       dataFetch(id){ 
         let para = {
+          storeId: config.storeId,
           storeOperatorId:id
         };
         this.listLoading = true;
@@ -205,6 +207,7 @@ import crypto from 'crypto'
               this.ruleForm.roleId=res.data.data.roleName;
 
             }
+            this.csname=this.ruleForm.account;
           }else{
             this.$message.error(res.data.message);
           }
@@ -238,6 +241,7 @@ import crypto from 'crypto'
             this.listLoading = true;
     
             var para = new URLSearchParams();
+            para.append('storeId',config.storeId);
             para.append('account',this.ruleForm.account);
             
             para.append('name',this.ruleForm.name);

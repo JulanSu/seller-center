@@ -10,6 +10,12 @@
                   <div class="cell">{{title}}</div>
                 </th>
               </template>
+              <th colspan="1" rowspan="1" class="is-leaf" width="150px">
+                <div class="cell">价格</div>
+              </th>
+              <th colspan="1" rowspan="1" class="is-leaf" width="150px">
+                <div class="cell">库存</div>
+              </th>
             </tr>
           </thead>
         </table>
@@ -22,16 +28,21 @@
                   <td v-for="item in value.data">
                     <div class="cell">{{item.value}}</div>
                   </td>
-                <td>
+                <td width="150px">
                   <div class="cell cell el-input el-input-group el-input-group--append">
-                    <input type="number" class="el-input__inner" v-model="value.productPrice" @keyup="inputChangeHandle" @keydown="inputChangeHandle"  />
+                    <input type="text" class="el-input__inner" :value="value.productPrice" @keyup="inputChangeHandle($event, value, 'price')" @input="inputChangeHandle($event, value, 'price')" @blur="inputChangeHandle($event, value, 'price')" />
 <!--                     <div :class="!value.productPrice ? 'el-form-item__error' : 'hidden'">价格不能为空！</div> -->
                   </div>
-                    
+                     
                 </td>
-                <td>
+                <td width="150px">
                   <div class="cell cell el-input el-input-group el-input-group--append">
-                    <input type="number" class="el-input__inner"  v-model="value.productSkuQuantity" @keyup="inputChangeHandle" @keydown="inputChangeHandle" />
+                    <input 
+                    type="text" 
+                    class="el-input__inner"  
+                    :value="value.productSkuQuantity" 
+                    maxlength="9" 
+                    @keyup="inputChangeHandle($event, value, 'quantity')" @input="inputChangeHandle($event, value, 'quantity')" @blur="inputChangeHandle($event, value, 'quantity')" />
 <!--                     <div :class="!value.productSkuQuantity ? 'el-form-item__error' : 'hidden'">库存不能为空！</div> -->
                   </div>
                   
@@ -47,6 +58,7 @@
 
 <script>
   import merge from 'merge'
+  import { validInputIsNumber, validInputIsFloat } from '@/util/validator'
   export default {
     data() {
       return {
@@ -205,16 +217,25 @@
      * inputChangeHandle 向父组件传递数据
      * @return {[type]} [description]
      */
-      inputChangeHandle(){
+      inputChangeHandle(event, obj, type){
+        var value = ''
+        if(event) {
+          if(type == 'price') {
+            value = validInputIsNumber(event.target.value)
+            obj.productPrice = value
+          }else if(type == 'quantity') {
+            value = validInputIsFloat(event.target.value)
+            obj.productSkuQuantity = value
+          }
+          event.target.value = value
+        }
         var data = this.getFormartSkuData()
-        
         this.$emit('input', data)
         this.$emit('updateSkuQuantity', data)
         this.$emit('updateSkuTableError')
       },
       getFormartSkuData(){
         var skuData = this.skuData
-
         var arr = []
         for(var item in skuData) {
           arr.push(skuData[item])
@@ -298,8 +319,8 @@
         for(var i=0,len = productSkuProperty.length; i< len; i++) {
           this.tableTitle[i] = productSkuProperty[i].catePropertyName
         }
-        this.tableTitle.push('价格')
-        this.tableTitle.push('库存')
+        // this.tableTitle.push('价格')
+        // this.tableTitle.push('库存')
       }
     }
   }

@@ -14,13 +14,17 @@
                     <el-button type="primary" class='search-btn' @click='searchStore'>查询</el-button>
                 </el-row>
 
-                <el-table :data="storeTable" class='table-con' align='center' :default-sort = "{prop: 'createdAt',order: 'descending'}" :row-style="{height:'100px'}">
+                <el-table :data="storeTable" class='table-con' align='center' :default-sort = "{prop: 'createdAt',order: 'descending'}" :row-style="{height:'100px'}" >
                     <el-table-column prop="marketingActivityId" label="活动ID" align='center'></el-table-column>
                     <el-table-column prop="activityName" label="活动名称" align='center'></el-table-column>
                     <el-table-column prop="toolsName" label="营销工具" align='center'></el-table-column>
                     <el-table-column label="活动时间" align='center'>
                          <template slot-scope="scope">
-                            <div>{{switchTime(scope.row.activityBeginTime)}} 至 {{switchTime(scope.row.activityEndTime)}}</div>
+                            <div class="time-section">
+                                <p>{{switchTime(scope.row.activityBeginTime)}}</p>
+                                <p>至</p> 
+                                <p>{{switchTime(scope.row.activityEndTime)}}</p>
+                            </div>
                         </template>
                     </el-table-column>
                     <el-table-column label="创建时间" align='center' prop='createdAt'>
@@ -65,7 +69,11 @@
                     <el-table-column prop="activityName" label="活动名称" align='center'></el-table-column>
                     <el-table-column label="活动时间" align='center' prop='signUpBeginTime'>
                          <template slot-scope="scope">
-                            <div>{{switchTime(scope.row.activityBeginTime)}} 至 {{switchTime(scope.row.activityEndTime)}}</div>
+                            <div class="time-section">
+                                <p>{{switchTime(scope.row.activityBeginTime)}}</p>
+                                <p>至</p>
+                                <p>{{switchTime(scope.row.activityEndTime)}}</p>
+                            </div>
                         </template>
                     </el-table-column>
                     <el-table-column label="报名状态" align='center'>
@@ -75,7 +83,7 @@
                     </el-table-column>
                     <el-table-column label="审核状态" align='center'>
                         <template slot-scope="scope">
-                            <div>{{switchStatus(scope.row.auditStatus).audit}}</div>
+                            <div :class="{right: scope.row.auditStatus == 1, error:scope.row.auditStatus == 2}">{{switchStatus(scope.row.auditStatus).audit}}</div>
                         </template>
                     </el-table-column>
                     <el-table-column label="活动状态" align='center'>
@@ -342,6 +350,7 @@
         }
         .el-tabs__item{
             vertical-align: bottom;
+            border-radius: 0 !important;
         }
         .el-tabs__header{
             margin: 0;
@@ -375,6 +384,30 @@
         }
         .block{
             float: right;
+        }
+        .el-button{
+            span{
+                font-size: 14px;
+            }
+        }
+        .el-table::after{
+            width: 0;
+        }
+        .time-section{
+            p{
+                float:left;
+                display: inline-block;
+                width:44%;
+            }
+            p:nth-of-type(2){
+                width: 12%;
+            }
+        }
+        .right{
+            color: $color !important;
+        }
+        .error{
+            color: #f00 !important;
         }
     }
 </style>

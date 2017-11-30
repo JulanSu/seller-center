@@ -27,28 +27,28 @@
 
 			<div v-else>		
 				<category-bar :title="categoryBarTitle2"></category-bar>
-				<el-form-item label="店主姓名" label-width="200px" prop="legalPerson2">
+				<el-form-item label="店主姓名" label-width="100px" prop="legalPerson2">
 					<el-input :maxlength="30" v-model="ruleForm.legalPerson2" placeholder="请输入店主姓名" class="wid280"></el-input>
 				</el-form-item>
-				<el-form-item label="店主手机号" label-width="200px" prop="legalMobile">
+				<el-form-item label="店主手机号" label-width="100px" prop="legalMobile">
 					<el-input :maxlength="11" v-model="ruleForm.legalMobile" placeholder="请输入店主手机号" class="wid280"></el-input>
 				</el-form-item>
 			</div>
 
-			<el-form-item :label="ident1" label-width="200px" class="requireHezi">
+			<el-form-item :label="ident1" :label-width="wid" class="requireHezi">
 				<span v-if="shopStyle==1" class="require" style='left:-120px;'>*</span>
 				<span v-else class="require" style='left:-92px;'>*</span>
 				<upload-pictures :note="uploadTishi" :url="ruleForm.identityPic1" :listen="'listenToPic2'" :picSize='"800.kB"' @listenToPic2="sucpic2"></upload-pictures>
 			</el-form-item>
-			<el-form-item label="" prop="identityPic1"  label-width="200px" class='updata'>
+			<el-form-item label="" prop="identityPic1"  :label-width="wid" class='updata'>
 				<el-input v-model="ruleForm.identityPic1" class="wid280"></el-input>
 			</el-form-item>
-			<el-form-item :label="ident2" label-width="200px" class="requireHezi">
+			<el-form-item :label="ident2" :label-width="wid" class="requireHezi">
 				<span v-if="shopStyle==1" class="require" style='left:-120px;'>*</span>
 				<span v-else class="require" style='left:-92px;'>*</span>
 				<upload-pictures :note="uploadTishi" :url="ruleForm.identityPic2" :listen="'listenToPic3'" :picSize='"800.kB"' @listenToPic3="sucpic3"></upload-pictures>
 			</el-form-item>
-			<el-form-item label="" prop="identityPic2"  label-width="200px" class='updata'>
+			<el-form-item label="" prop="identityPic2"  :label-width="wid" class='updata'>
 				<el-input v-model="ruleForm.identityPic2" class="wid280"></el-input>
 			</el-form-item>
 
@@ -62,8 +62,8 @@
 					</div>
 				</el-form-item>
 			</div>
-			<el-form-item label="" label-width="200px">
-				<el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
+			<el-form-item label="" :label-width="wid">
+				<el-button class="wid100" type="primary" @click="submitForm('ruleForm')">保存</el-button>
 			</el-form-item>		
 		</el-form>
 		
@@ -131,6 +131,7 @@ export default {
 		  	categoryBarTitle2: '个人店铺资质',
 		  	ident1:'法人身份证正面',
 		  	ident2:'法人身份证反面',
+		  	wid:"200px",
 		  	uploadTishi:"请上传800px*800px以上，格式要求jpg、jpeg、png，不超过800k",
 
 		  	listLoading:false,
@@ -224,6 +225,7 @@ export default {
         if(config.storeType!=1){
         	this.ident1="身份证正面";
         	this.ident2="身份证反面";
+        	this.wid="100px";
         }
     },
 	methods: {
