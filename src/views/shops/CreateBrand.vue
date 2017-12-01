@@ -128,7 +128,7 @@
 				<p class="tishi">审核同学有疑问时，会通过此联系方式联系您</p>
 			</el-form-item>
 			<el-form-item label="" label-width="200px">
-				<el-button type="primary" @click="submitForm('ruleForm')">提交审核</el-button>
+				<el-button class="wid100" type="primary" @click="submitForm('ruleForm')">提交审核</el-button>
 			</el-form-item>
 			<el-dialog
 			    title=""
@@ -318,7 +318,7 @@ export default {
     	}
     },
    	mounted(){
-    	//测试品牌2 更新
+    	//编辑页面
     	if(this.$route.query.brandId){
     		this.isCreat=false;//标记是编辑页面
     		var parm={
@@ -335,7 +335,7 @@ export default {
 	        		this.ruleForm.endValidTime=new Date(this.ruleForm.endValidTime);
 	        		this.ruleForm.trademarkType=Number(this.ruleForm.trademarkType);
 	        		this.csname=this.ruleForm.nameCn;
-	        		this.ecsname=this.ruleForm.nameEn
+	        		this.ecsname=this.ruleForm.nameEn;
 	        	}else{
 	        		this.$message({message: res.data.message,type: 'warning'});
 	        	}
@@ -373,7 +373,7 @@ export default {
     		if(!(names)||(names==this.csname)){
 		            return false;
 		        }
-	        brandCheckbrandname({"name":names}).then((res) => {
+	        brandCheckbrandname({"name":names,storeId: config.storeId}).then((res) => {
 	          	if((res.data.code==1)&&(res.data.message=='品牌名称重复')){
 
 	          		this.$message({
@@ -466,11 +466,13 @@ export default {
         	
 
         	if(this.ruleForm.registerLocation=="中国大陆"){
+        		console.log(this.ruleForm.trademarkCertificate)
         		if(this.ruleForm.trademarkCertificate){
         			this.$refs.uploadPic1.revise("");//修改图片的值
-        		}	
+        		}
 
         	}else{
+        		
         		if(this.ruleForm.customsDeclaration){
         			this.$refs.uploadPic3.revise("");//修改图片的值
         		}
@@ -497,149 +499,7 @@ export default {
 		//品牌LOGO上传成功之后
 		sucpic4(url){
 			this.ruleForm.logo=url;
-			console.log(url)
-			console.log(this.ruleForm.logo)
 		}
     }
 }
 </script>
-
-<style lang="scss">
-.create-brand{
-	/* 公共样式 */
-	p,h2{
-		margin:0;
-	}
-	.wid400{
-    	width:400px;
-	}
-	.tishi{
-		font-size: 12px;
-		color: #999999;
-	}
-	h2{
-		font-size: 16px;
-		color: #333333;
-		font-weight:normal;
-		margin-bottom:20px;
-	}
-	.gotoPrev{
-		width:300px;
-		background:#fff;
-		height:60px;
-		line-height:60px;
-		position:fixed;
-		top:0;
-		left: 240px;
-		font-size:14px;
-		color:#666666;
-	}
-	/* 成功弹框样式 */
-	.el-dialog--tiny{
-		min-width:490px;
-		.el-dialog__footer{
-			padding-bottom:50px;
-			.dialog-footer{
-				display:block;
-				text-align:center;
-			}
-		}
-		.el-dialog__body{
-			padding:40px 20px;
-			.suc{
-				width:340px;
-				height:50px;
-				margin:0 auto;
-				
-				span{
-					float:left;
-					display:inline-block;
-					width:50px;
-					height:50px;
-					font-size: 46px;
-		    		margin-top: 3px;
-		    		color:#41cac0;
-		    		padding-right:10px;
-				}
-				div{
-					float:left;
-					width:280px;
-					h2{
-						font-size: 18px;
-						color: #333333;
-						height:25px;
-						line-height:25px;
-						margin:0;
-					}
-					p{
-						font-size: 14px;
-						color: #999999;
-						height:20px;
-						line-height:20px;
-						padding-top:5px;
-					}
-				}
-			}
-		}
-		
-	}
-	.timers{
-		.el-form-item__content{
-			width:400px;
-		}
-		.el-input__inner{
-			width:400px;
-		}
-	}
-	.category-bar{
-		padding-top:0;
-		margin:20px 0;
-	}
-	.big-img{
-    	width:480px;
-    	height:360px;
-    	margin-bottom:0;
-    	background:transparent;
-    	box-shadow:0 0 0;
-    	.el-dialog__body{
-    		width:430px;
-    		height:270px;
-    		text-align:center;
-    		line-height:270px;
-    		padding:0;
-    		img{
-    			width:430px;
-    		}
-    	}
-    }
-	.example{
-		position:absolute;
-		width:200px;
-		height:100px;
-		bottom:0px;
-		left:195px;
-		cursor: pointer;
-		span{
-			float:right;
-			font-size: 14px;
-			color: #666666;
-			line-height:40px;
-			padding-right:20px;
-		}
-		div{
-			float:right;
-			width:100px;
-			height:100px;
-			overflow: hidden;
-			line-height:100px;
-			text-align:center;
-			img{
-				max-width:100%;
-				max-height:100%;
-			}
-		}
-	}
-
-}
-  
-</style>

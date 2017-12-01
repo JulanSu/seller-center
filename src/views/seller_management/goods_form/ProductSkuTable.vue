@@ -10,6 +10,12 @@
                   <div class="cell">{{title}}</div>
                 </th>
               </template>
+              <th colspan="1" rowspan="1" class="is-leaf" width="150px">
+                <div class="cell">价格</div>
+              </th>
+              <th colspan="1" rowspan="1" class="is-leaf" width="150px">
+                <div class="cell">库存</div>
+              </th>
             </tr>
           </thead>
         </table>
@@ -22,16 +28,21 @@
                   <td v-for="item in value.data">
                     <div class="cell">{{item.value}}</div>
                   </td>
-                <td>
+                <td width="150px">
                   <div class="cell cell el-input el-input-group el-input-group--append">
-                    <input type="number" class="el-input__inner" v-model="value.productPrice" @keyup="inputChangeHandle" @keydown="inputChangeHandle"  />
+                    <input type="text" class="el-input__inner" :value="value.productPrice" @keyup="inputChangeHandle($event, value, 'price')" @input="inputChangeHandle($event, value, 'price')" @blur="inputChangeHandle($event, value, 'price')" />
 <!--                     <div :class="!value.productPrice ? 'el-form-item__error' : 'hidden'">价格不能为空！</div> -->
                   </div>
-                    
+                     
                 </td>
-                <td>
+                <td width="150px">
                   <div class="cell cell el-input el-input-group el-input-group--append">
-                    <input type="number" class="el-input__inner"  v-model="value.productSkuQuantity" @keyup="inputChangeHandle" @keydown="inputChangeHandle" />
+                    <input 
+                    type="text" 
+                    class="el-input__inner"  
+                    :value="value.productSkuQuantity" 
+                    maxlength="9" 
+                    @keyup="inputChangeHandle($event, value, 'quantity')" @input="inputChangeHandle($event, value, 'quantity')" @blur="inputChangeHandle($event, value, 'quantity')" />
 <!--                     <div :class="!value.productSkuQuantity ? 'el-form-item__error' : 'hidden'">库存不能为空！</div> -->
                   </div>
                   
@@ -47,6 +58,7 @@
 
 <script>
   import merge from 'merge'
+  import { validInputIsNumber, validInputIsFloat } from '@/util/validator'
   export default {
     data() {
       return {
@@ -75,19 +87,17 @@
     },
     watch: {
       userSelectedTheSku(newVal, oldVal){
-
         if(newVal && newVal.length) {
           var genData = this.gen(newVal)
           var result  = this.getProductSkuProperty(genData)
           var resultById = this.formartByIdSku(result)
           var resultBySerialId = this.getProductSkuSerialId(resultById)
-          
-          if(!this.skuData) {
-            this.skuData = resultBySerialId
-          }else {
-            this.skuData = this.selectedSkuChange(resultBySerialId)
-
-          }
+          // if(!this.skuData) {
+          //   this.skuData = resultBySerialId
+          // }else {
+          //   this.skuData = resultBySerialId
+          // }
+          this.skuData = resultBySerialId
           this.inputChangeHandle()
         }else {
           this.skuData = null
@@ -104,14 +114,16 @@
       var skuProperty = this.productSkuProperty
       var skuTableList = this.value
       var skuPropertyMap = this.getSkuProperty(skuProperty)
-      //判断类目是否完整，商品规格组书否有增删
+      //判断类目是否完整，商品规格组是否有增删
       var isCateIntegrity = this.validCateIntegrity(skuPropertyMap, skuTableList)
       
       if(!isCateIntegrity) {
         this.skuData = []
         return
       }
-      this.getTableList()
+      
+      this.skuData = this.formartByIdSku(skuTableList)
+      this.editorSkuListCache = this.formartByIdSku(skuTableList)
     },
     /**
      * validCateIntegrity 判断类目是否完整，对比用户已保存的商品销售规格的名称和商品规格的品牌
@@ -158,19 +170,12 @@
         for(var item in data){
           if(this.editorSkuListCache[item]) {
             data[item].productSkuSerialId = this.editorSkuListCache[item].productSkuSerialId
+            data[item].productSkuQuantity = this.editorSkuListCache[item].productSkuQuantity
+            data[item].productPrice = this.editorSkuListCache[item].productPrice
           }
         }
       }
       return data
-    },
-    /**
-     * getTableList 生成maps，通过valueId创建唯一的Key
-     * @return {[type]} [description]
-     */
-    getTableList(){
-      var resultById = this.formartByIdSku(this.value)
-      this.skuData = resultById
-      this.editorSkuListCache = resultById
     },
     /**
      * selectedSkuChange 获取用户已组合出来的项，并把其值赋值给最新的项 this.skuData 商品销售规格数据
@@ -178,13 +183,15 @@
      * @return {[type]}         [description]
      */
     selectedSkuChange(options){
-      var skuData = this.skuData
-      
+      var skuData = this.editorSkuListCache
       for(var key in skuData) {
         if(options[key]) {
+          //obj[key] = skuData[key]
           options[key] = skuData[key]
-          var data = this.validValuesIntegrity(skuData[key].data, options[key].data)
-          options[key].data = data
+          //obj[key].data = this.validValuesIntegrity(skuData[key].data, options[key].data)
+          options[key].data.productPrice = skuData[key].data.productPrice
+          options[key].data.productPrice = skuData[key].data.productPrice
+          //options[key].data = data
         }
       }
       return options
@@ -199,7 +206,7 @@
       var arr = []
       for(var i=0;i<skuData.length;i++) {
         for(var j=0;j<options.length;j++) {
-          if(skuData[i].value == options[j].value) {
+          if(skuData[i].name ==  options[j].name && skuData[i].value == options[j].value) {
             arr.push(skuData[i])
           }
         }
@@ -210,11 +217,23 @@
      * inputChangeHandle 向父组件传递数据
      * @return {[type]} [description]
      */
-      inputChangeHandle(){
+      inputChangeHandle(event, obj, type){
+        var value = ''
+        if(event) {
+          if(type == 'price') {
+            value = validInputIsNumber(event.target.value)
+            obj.productPrice = value
+          }else if(type == 'quantity') {
+            value = validInputIsFloat(event.target.value)
+            obj.productSkuQuantity = value
+          }
+          event.target.value = value
+        }
         var data = this.getFormartSkuData()
         this.$emit('input', data)
         this.$emit('updateSkuQuantity', data)
         this.$emit('updateSkuTableError')
+        // this.$store.dispatch('updateProdcutSkuQuantity', sku)
       },
       getFormartSkuData(){
         var skuData = this.skuData
@@ -229,11 +248,15 @@
        * @param  {[type]} list [description]
        * @return {[type]}      [description]
        */
-      formartByIdSku(list){
-        var obj = {}
+      formartByIdSku(data){
+        var json = JSON.stringify(data)
+        var list = JSON.parse(json)
+        var obj = new Object()
+
         for(var i=0;i<list.length;i++){
           var str = ""
           for(var j=0;j < list[i].data.length; j++) {
+            
             if(j) {
               str += '-' + list[i].data[j].valueId
             }else {
@@ -242,6 +265,8 @@
           }
           obj[str] = list[i]
         }
+
+
         return obj
       },
       /**
@@ -295,8 +320,8 @@
         for(var i=0,len = productSkuProperty.length; i< len; i++) {
           this.tableTitle[i] = productSkuProperty[i].catePropertyName
         }
-        this.tableTitle.push('价格')
-        this.tableTitle.push('库存')
+        // this.tableTitle.push('价格')
+        // this.tableTitle.push('库存')
       }
     }
   }

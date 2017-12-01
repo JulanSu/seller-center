@@ -23,6 +23,7 @@
           <el-form-item label="">
             <el-date-picker
               v-model="createDate"
+              :editable="false"
               type="datetimerange"
               @change="datePickerHandle"
               placeholder="选择日期范围">
@@ -71,10 +72,14 @@
        */
       datePickerHandle (value){
         let self = this
+
         if(value) {
           let dateArr = value.split(' - ')
           self.formInline.searchStartTime = dateArr[0] || ''
           self.formInline.searchEndTime = dateArr[1] || ''
+        }else {
+          self.formInline.searchStartTime = ''
+          self.formInline.searchEndTime = ''
         }
       },
       /**
@@ -137,6 +142,7 @@
             finished = true
           }
         }
+
         if(!finished) {
           this.$message({
             message: '查询商品至少填写一条查询条件',

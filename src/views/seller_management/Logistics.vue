@@ -87,6 +87,7 @@
     </el-row>
     <el-dialog
       title="选择区域"
+      width="900px"
       :visible.sync="dialogVisible"
       :close-on-press-escape="false"
       size="small" @close="resetForm('dialogForm')">
@@ -94,7 +95,7 @@
           <el-form-item label="" prop="checkedCities">
               <ul class="area-wrap">
                 <el-checkbox-group v-model="dialogForm.checkedCities">
-                  <li v-for="(value, key, index) in citiesMap">
+                  <li v-for="(value, key, index) in citiesMap" style="width:150px">
                     <template v-if="value.checked">
                       <el-checkbox :label="key" v-if="checkedCitiesIndex != value.index" :key="value.name" disabled></el-checkbox>
                       <el-checkbox :label="key" v-else :key="key"></el-checkbox>
@@ -481,7 +482,6 @@
             return 
         }
         let tData = self.formartSaveData(templateValueList)
-        console.log('提交物流模板数据', tData)
         self.submitFormData(tData)
       },
       /**

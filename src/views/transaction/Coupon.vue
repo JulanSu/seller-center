@@ -20,7 +20,7 @@
                     <div>{{switchTime(scope.row.createdAt)}}</div>
                 </template>
             </el-table-column>
-            <el-table-column prop="voucherProductTitle" label="商品名称" align='center'></el-table-column>
+            <el-table-column prop="productTitle" label="商品名称" align='center'></el-table-column>
             <el-table-column prop="infoTelephone" label="用户手机号" align='center'></el-table-column>
             <el-table-column label="已核销" align='center' >
                 <template slot-scope="scope">
@@ -36,7 +36,7 @@
         </el-table>
         <div class="block" v-if="total > pageSize">
             <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[20, 50, 100]" :page-size="pageSize" layout="sizes, prev, pager, next, jumper,total" :total="total">
-                </el-pagination>
+            </el-pagination>
         </div>
     </section>
 </template>
@@ -72,7 +72,7 @@
                     storeId: config.storeId,
                     page: 1,
                     size: 20,
-                    voucherStatus: -1
+                    voucherStatus: -1   
                 };
             self.getTableData(params)
         },
@@ -194,7 +194,7 @@
         .search-row{
             .span-sty{
                 font-size:14px;
-                color:#666666;
+                color:#666;
                 margin:0 10px;
             }
             .search-btn{
@@ -218,6 +218,9 @@
                         cursor: pointer;
                     }
                 }
+            }
+            .cell span{
+                font-size: 14px;
             }
         }
         .block{

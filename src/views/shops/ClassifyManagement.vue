@@ -1,20 +1,20 @@
 <template>
   <section class="fenlei-list" v-if='$route.name=="分类管理"'  v-loading="listLoading">
     <!--工具条-->
-    <el-col :span="24" class="tool-bar" style="padding-bottom: 0px;">
+    <el-col class="tool-bar" style="padding-bottom: 0px;">
       <router-link to="/store/classify-management/add-fen-lei">
-        <el-button type="primary" icon="plus">新增分类</el-button>
+        <el-button type="primary" icon="plus" class="wid125">新增分类</el-button>
       </router-link>
     </el-col>
     <!--列表-->
-    <el-table :data="datas">
-      <el-table-column prop="cateName" label="分类名称" min-width="190" align="center">
+    <el-table :data="datas" width="100%;" class="hover-style">
+      <el-table-column prop="cateName" label="分类名称" min-width="200" align="center">
       </el-table-column>
-      <el-table-column prop="productNum" label="商品数量" min-width="190" align="center">
+      <el-table-column prop="productNum" label="商品数量" min-width="200" align="center">
       </el-table-column>
-      <el-table-column prop="isUsed" :formatter="formatUsed" label="显示状态" min-width="190" align="center">
+      <el-table-column prop="isUsed" :formatter="formatUsed" label="显示状态" min-width="200" align="center">
       </el-table-column>
-      <el-table-column label="操作" min-width="300" align="center">
+      <el-table-column label="操作" min-width="200" align="center">
         <template slot-scope="scope">
           <router-link :to="{ name: '编辑分类', params: { id: scope.row.storeCateId }}">编辑</router-link>
           <span @click="handleOptation(scope.row)">{{scope.row.isUsed==1?"隐藏":"显示"}}</span>
@@ -25,7 +25,7 @@
     </el-table>
 
     <!--工具条-->
-    <el-col :span="24" class="tool-bar pages-bar" style="margin-top:20px;">
+    <el-col :span="24" class="tool-bar pages-bar" style="margin-top:20px;" v-if="total">
       <el-pagination
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
@@ -99,11 +99,12 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
             isUsed=0;
         }
 
-        this.$confirm('确定要'+tit+row.cateName+'该分类?', "提示", {
+        this.$confirm('确定要'+tit+'“'+row.cateName+'”'+'该分类?', "提示", {
           type: 'warning'
         }).then(() => {
           this.listLoading = true;
           var para = new URLSearchParams();
+          para.append('storeId',config.storeId);
           para.append('storeCateId',row.storeCateId);
           para.append('isUsed',isUsed);
           cateUpdate(para).then((res) => {
@@ -123,12 +124,13 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
       },
        //删除子帐号
       handleDel: function (row) {
-        this.$confirm('确定要删除'+row.cateName+'该分类吗?', "提示", {
+        this.$confirm('确定要删除“'+row.cateName+'”该分类吗?', "提示", {
           type: 'warning'
         }).then(() => {
           this.listLoading = true;
           var para = new URLSearchParams();
           para.append('storeCateId',row.storeCateId);
+          para.append('storeId', config.storeId);
 
           cateRemove(para).then((res) => {
             this.listLoading = false;
@@ -157,32 +159,11 @@ import { cateList,cateRemove,cateUpdate } from '@/api/shopApi';
       }
     },
     mounted() {
-      this.getCateList();
+      if(this.$route.name=="分类管理"){
+        this.getCateList();
+      }
+      
     }
   }
 
 </script>
-
-<style lang="scss">
-.fenlei-list{
-  a{
-  text-decoration:none;
-  }
-  .tool-bar{
-    background:none;
-    padding:0;
-    margin-bottom:20px;
-  }
-  .cell{
-    a{
-      color:#45cdb6;
-      padding-right:20px;
-    }
-    span{
-      color:#45cdb6;
-      padding-right:20px;
-      cursor:pointer;
-    }
-  }
-}
-</style>

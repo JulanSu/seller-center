@@ -1,12 +1,12 @@
 <template>
   <section  class="find-good" v-loading="listLoading" v-if='$route.name=="查看商品"'>
     <!--工具条-->
-    <el-col :span="24" class="tool-bar" style="padding-bottom: 0px;">
-      <el-button type="primary" @click="relevance">关联其他商品</el-button>
+    <el-col class="tool-bar" style="padding-bottom: 0px;">
+      <el-button class="wid125" type="primary" @click="relevance">关联其他商品</el-button>
     </el-col>
 
     <!--列表-->
-    <el-table :data="datas" style="width: 100%;">
+    <el-table :data="datas" style="width: 100%;"  class="hover-style">
       <el-table-column prop="productId" label="ID" min-width="200" align="center">
       </el-table-column>
       <el-table-column prop="productTitle" label="商品名称" min-width="200" align="center">
@@ -21,7 +21,7 @@
     </el-table>
 
     <!--工具条-->
-    <el-col :span="24" class="tool-bar pages-bar" style="margin-top:20px;">
+    <el-col :span="24" class="tool-bar pages-bar" style="margin-top:20px;" v-if="total">
       <el-pagination
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
@@ -77,6 +77,7 @@ import { productList,productRemove} from '@/api/shopApi';
       //获取用户列表
       getProductList() {
         let para = {
+          storeId: config.storeId,
           storeCateId:this.$route.query.id,
           pageNum: this.pageNum,
           pageSize: this.pageSize
@@ -105,6 +106,7 @@ import { productList,productRemove} from '@/api/shopApi';
         }).then(() => {
           this.listLoading = true;
           var para = new URLSearchParams();
+          para.append('storeId',config.storeId);
           para.append('storeCateProductId',row.storeCateProductId);
           
           productRemove(para).then((res) => {
@@ -135,26 +137,3 @@ import { productList,productRemove} from '@/api/shopApi';
   }
 
 </script>
-
-<style lang="scss">
-.find-good{
-  a{
-    text-decoration:none;
-  }
-  .tool-bar{
-    margin-bottom:20px;
-    background:none;
-    padding:0;
-  }
-  .cell{
-    a{
-      color:#45cdb6;
-    }
-    span{
-      color:#45cdb6;
-      padding-left:20px;
-      cursor:pointer;
-    }
-  }
-}
-</style>

@@ -30,7 +30,7 @@
 			<el-form-item label="门店地址"  label-width="120px" prop="address">
 				<v-distpicker :province="select.province" :city="select.city" :area="select.area" @province="onProvince" @city="onCity" @selected="onSelected"></v-distpicker>
 			</el-form-item>
-			<el-form-item label="" label-width="120px" prop="address">
+			<el-form-item label="" label-width="120px" prop="address" class="xxAddress">
 				<el-input v-model="ruleForm.address" id="ser" placeholder="输入详细地址" class="wid280"></el-input>
 				<el-button type="primary" class="mapbtn" @click="searchbtn">搜索地图</el-button>
 			</el-form-item>
@@ -70,7 +70,7 @@
 				</div>
 			</el-form-item>
 			<el-form-item label="" label-width="120px">
-				<el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
+				<el-button class="wid100" type="primary" @click="submitForm('ruleForm')">保存</el-button>
 
 			</el-form-item>	
 		</el-form>
@@ -144,9 +144,9 @@ export default {
 			csname:'',
 
 			select: { 
-				province: '省',
-			    city: '市',
-			    area: '区'
+				province: '',
+			    city: '',
+			    area: ''
 			},
 			ruleForm: {
 				storeId:'',
@@ -233,7 +233,9 @@ export default {
 
     },
     mounted() {
-      	this.getShop();
+      	this.getShop();//获取店铺信息
+
+
       	var o=document.getElementsByClassName("content-container")[0];
  		o.addEventListener('scroll', this.handleScroll);
 
@@ -277,7 +279,8 @@ export default {
 				return false;
 			}
 			let para = {
-	          storeName: this.ruleForm.name
+				storeId: config.storeId,
+	            storeName: this.ruleForm.name
 	        };
 	        storeCheckname(para).then((res) => {
 	        	if(res.data.code!=0){
@@ -297,7 +300,6 @@ export default {
 
 		//获取店铺信息
 	    getShop() {
-
 	        let para = {
 	          storeId: config.storeId
 	        };
@@ -349,7 +351,8 @@ export default {
     		}else{
     			this.ruleForm.address=arrAddress[0];
     		}
-    		this.$refs.MapView.againAddr(this.ruleForm.address);
+    		//当时标记页面时，添加noShow,为不展示下拉列表
+    		this.$refs.MapView.againAddr(this.ruleForm.address,"noShow");
 	    },
 		/*城市三级联动，选择城市后将数据存储起来，点击搜索地图按钮时，加在自己输入的地址之前*/
 		onProvince(data) {
@@ -398,11 +401,11 @@ export default {
 		    this.$refs[formName].validate((valid) => {
 		    	if (valid) {
 			    	if(!this.selProvince){//如果没有选择省，提示选择省市区
-						this.$message({
+						/*this.$message({
 				          message: '请选择省市区',
 				          type: 'warning'
 				        });
-				        return false;
+				        return false;*/
 					}else{//选择了城市，将选择的城市拼接
 						this.sel=this.selProvince;
 						if(this.selCity){
@@ -411,6 +414,7 @@ export default {
 						if(this.selArea){
 							this.sel+="*"+this.selArea;
 						}
+						this.sel=this.sel+"*";
 					}
 					var para = new URLSearchParams();
 					
@@ -419,7 +423,7 @@ export default {
 					para.append('notice',this.ruleForm.notice);
 					para.append('logo',this.ruleForm.logo);
 					para.append('broadwiseLogo',this.ruleForm.broadwiseLogo);
-					para.append('address',this.sel+'*'+this.ruleForm.address);
+					para.append('address',this.sel+this.ruleForm.address);
 					para.append('longitude',Number(this.ruleForm.longitude*1000000));
 					para.append('latitude',Number(this.ruleForm.latitude*1000000));
 					para.append('workTime',this.ruleForm.workTime);
@@ -449,35 +453,3 @@ export default {
 }
 
 </script>
-
-<style lang="scss">
-.shop-message{
-	/* 公共样式 */
-	p{
-		margin: 0;
-	}
-    .wid280{
-    	width:280px;
-    }
-    .wid400{
-    	width:400px;
-    }
-
-    /* 只读样式 */
-    .exhibition{
-    	padding-left:10px;
-    	font-size:14px;
-		color:#333333;
-    }
-    ol,ul,li{
-    	padding:0;
-    	margin:0;
-    	list-style:none;
-    }
-    .address + .el-form-item__error{
-    	display:none;
-    }
-    
-}
-    
-</style>

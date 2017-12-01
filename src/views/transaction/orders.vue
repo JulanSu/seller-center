@@ -125,7 +125,9 @@
         },
         created(){ 
             /*获取订单类型和状态*/
-            orderStatus().then(res => {
+            orderStatus({
+                storeId: config.storeId
+            }).then(res => {
                 if(res.data.data){
                     this.form.orderType = [...this.form.orderType,...res.data.data];
                     this.form.orderStatus = [...this.form.statusArr[0].status]
@@ -233,12 +235,14 @@
                         return false;
                     }
                     if(moc.data.list){
-                       for(let i=0; i<moc.data.list.length; i++) {
+                        for(let i=0; i<moc.data.list.length; i++) {
                             let that = moc.data.list[i];
-                            that.pName = self.textSubstr(that.productNames.join(''), that.productNames.length);
+                            if(that.productNames){
+                                that.pName = self.textSubstr(that.productNames.join(''), that.productNames.length);    
+                            }
                             that.orderStoreStatus = this.switchStatus(that.orderStoreStatus)
                         }
-                    } 
+                    }
                     this.total = Number(moc.data.total);
                     this.tableData = moc.data.list
                 })
@@ -322,6 +326,14 @@
         }
         .table-con{
             margin-top: 40px;
+        }
+        .el-button{
+            span{
+                font-size: 14px;
+            }
+        }
+        .el-table::after{
+            width: 0;
         }
         .block{
             float: right;

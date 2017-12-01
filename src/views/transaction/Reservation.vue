@@ -180,6 +180,9 @@
                 }
             }
         }
+        .el-table::after{
+            width: 0;
+        }
         .block{
             float: right;
         }

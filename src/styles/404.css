@@ -1,0 +1,51 @@
+.error {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: #f5f5f5;
+}
+
+.error .errContent .pic {
+  width: 725px;
+  height: 290px;
+  background: url(../../assets/404.jpg) no-repeat center;
+  background-size: 100%;
+  margin: 178px  auto 65px;
+}
+
+.error .errContent p {
+  text-align: center;
+}
+
+.error .errContent .gotoIndextBtn {
+  display: block;
+  margin: 30px auto 0;
+}
+
+.error .errContent .gotoIndextBtn button {
+  border-radius: 20px;
+}
+
+.error .errContent .gotoIndextBtn button span {
+  font-size: 18px;
+}
+
+.error .tishi {
+  font-size: 24px;
+  color: #333333;
+  height: 33px;
+  line-height: 33px;
+}
+
+.error .footWord {
+  width: 100%;
+  margin-top: 140px;
+}
+
+.error .footWord p {
+  text-align: center;
+  font-size: 12px;
+  color: #333333;
+}

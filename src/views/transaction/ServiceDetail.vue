@@ -123,7 +123,6 @@
                 detail:'',
                 after: {},
                 disabled: true
-
             }
         },
         beforeCreate(){
@@ -131,11 +130,11 @@
         created(){
             let orderId = this.$route.query.orderId,
                 productId = this.$route.query.productId;
-            afterDetail({orderStoreId: orderId, orderProductId:productId}).then(res => {
+            afterDetail({orderStoreId: orderId, orderProductId:productId, storeId: config.storeId}).then(res => {
                 this.detail = res.data.data;
                 this.detail.proPri = [],this.detail.priMoney = 0;
                 for(let key in this.detail.productPrivileges){
-                    let money = {mes: key,count: that.productPrivileges[key]}
+                    let money = {mes: key,count: this.detail.productPrivileges[key]}
                     this.detail.proPri.push(money)
                 }
                 this.detail.orderProductAfterProof = this.detail.orderProductAfterProof.split(',')
@@ -231,7 +230,6 @@
             font-size: 16px;
             color: #333333;
             border-left: 3px solid $color;
-            font-weight:600;
             text-indent: 12px;
         }
         .user-message{
@@ -279,7 +277,6 @@
             text-align: center;
             font-size: 14px;
             color: #333333;
-            font-weight: 600;
             height:44px;
             line-height: 44px;
             background: #F5F7FA;
@@ -390,10 +387,10 @@
             padding: 10px 0;
             div{
                 margin-top: 10px;
-                font-size: 12px;
+                font-size: 14px;
                 p{
                     display: inline-block;
-                    width: 60px;
+                    width: 70px;
                     margin-right:35px;
                     color: #666666;
                     text-align: right;

@@ -19,7 +19,7 @@
 			    </el-radio-group>
 			</el-form-item>
       <el-form-item label="角色" prop="roleId" label-width="100px">
-        <el-select v-model="ruleForm.roleId" placeholder="请选择角色">
+        <el-select v-model="ruleForm.roleId" placeholder="请选择角色" @change="getRoleId">
           <el-option
             v-for="item in ruleForm.role"
             :key="item.id"
@@ -35,7 +35,7 @@
 				<el-input :maxlength="18" v-model="ruleForm.identityNumber" placeholder="请输入身份证号码" class="wid280"></el-input>
 			</el-form-item> 
 			<el-form-item label="" label-width="100px">
-				<el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
+				<el-button class="wid100" type="primary" @click="submitForm('ruleForm')">保存</el-button>
 			</el-form-item>
 			
 		</el-form>
@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import {operatorGet,roleList,operatorUpdate,operatorSave,operatorCheckaccount,roleUsedlist} from '@/api/shopApi';
+import {operatorGet,operatorUpdate,operatorSave,operatorCheckaccount,roleUsedlist} from '@/api/shopApi';
 import md5 from 'js-md5';
 import crypto from 'crypto'
   export default {
@@ -92,6 +92,7 @@ import crypto from 'crypto'
         listLoading:false,
         isAdd:1,
         csname:'',
+        flag:0,
         ruleForm: {
           storeOperatorId:'',
           account: '',
@@ -101,6 +102,7 @@ import crypto from 'crypto'
           gender: 1,
           role:'',
           roleId:'',
+          newRoleId:'',
           mobile: '',
           identityNumber: ''
         },
@@ -146,7 +148,8 @@ import crypto from 'crypto'
         if(res.data.code==0){
           this.roleList=res.data.data;
           this.ruleForm.role=res.data.data;
-          this.csname=this.ruleForm.account;
+          
+
         }
         
       });
@@ -176,15 +179,19 @@ import crypto from 'crypto'
         if(!(this.ruleForm.account)||(this.ruleForm.account==this.csname)){
           return false;
         }
-        operatorCheckaccount({"account":this.ruleForm.account}).then((res) => {
+        operatorCheckaccount({"account":this.ruleForm.account,storeId: config.storeId}).then((res) => {
             if(res.data.code==1){
               this.$message.error('用户名重复，请重新输入');
             }
         });
       },
+      getRoleId(){
+        this.flag++;
+      },
       /*如果是编辑子账号页面，需要取该子账号的数据*/
       dataFetch(id){ 
         let para = {
+          storeId: config.storeId,
           storeOperatorId:id
         };
         this.listLoading = true;
@@ -193,11 +200,14 @@ import crypto from 'crypto'
             this.ruleForm= res.data.data;
             this.ruleForm.againpass=this.ruleForm.password;
             this.ruleForm.role=this.roleList;
-            console.log(this.roleList)
+
             this.ruleForm.password="********************";
             if(res.data.data.roleName){
+              this.ruleForm.newRoleId=this.ruleForm.roleId;
               this.ruleForm.roleId=res.data.data.roleName;
+
             }
+            this.csname=this.ruleForm.account;
           }else{
             this.$message.error(res.data.message);
           }
@@ -231,17 +241,23 @@ import crypto from 'crypto'
             this.listLoading = true;
     
             var para = new URLSearchParams();
+            para.append('storeId',config.storeId);
             para.append('account',this.ruleForm.account);
             
             para.append('name',this.ruleForm.name);
             para.append('gender',this.ruleForm.gender);
-            para.append('roleId',this.ruleForm.roleId);
+           
             para.append('mobile',this.ruleForm.mobile);
             para.append('identityNumber',this.ruleForm.identityNumber);
             
             if(this.isAdd==2){//2是编辑
               if(this.ruleForm.password!="********************"){
                 para.append('password',md5(this.ruleForm.password));
+              }
+              if(this.flag==1){
+                para.append('roleId',this.ruleForm.newRoleId);
+              }else{
+                para.append('roleId',this.ruleForm.roleId);
               }
               para.append('storeOperatorId',this.ruleForm.storeOperatorId);
               operatorUpdate(para).then((res)=> { 
@@ -251,6 +267,7 @@ import crypto from 'crypto'
                 this.$message.error('接口建立连接失败');
               });
             }else{
+              para.append('roleId',this.ruleForm.roleId);
               para.append('password',md5(this.ruleForm.password));
               para.append('storeId',config.storeId);
               operatorSave(para).then((res)=> {
@@ -269,39 +286,3 @@ import crypto from 'crypto'
     }
   }
 </script>
-
-<style lang="scss">
-.add-sub-account{
-  .wid280{
-    width:280px;
-  }
-  .el-select{
-    width:130px;
-  }
-  .el-button{
-    width:100px;
-    height:34px;
-    line-height:34px;
-    background:#41cac0;
-    padding:0;
-    border-color:#41cac0;
-  }
-  .passhezi{
-    position:relative;
-    .wid280{
-      input{
-        padding-right:25px;
-      }
-    }
-    .iconfont{
-      position:absolute;
-      left:255px;
-      top:2px;
-      color:rgb(191, 216, 217);
-      font-size:20px;
-      cursor:pointer;
-    }
-  }
-  
-}
-</style>

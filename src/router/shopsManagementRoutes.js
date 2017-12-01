@@ -1,5 +1,3 @@
-/*阶段一*/
-const merchantEnter = resolve => require(['@/views/shops/MerchantEnter.vue'],resolve);
 
 /*/*店铺信息*/
 const message = resolve => require(['@/views/shops/Message.vue'],resolve);

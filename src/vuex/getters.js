@@ -10,3 +10,7 @@ export const getStoreId = state => {
 export const getUserSelectedSku = state => {
     return state.userSelectedTheSku
 }
+
+export const getProductSkuQuantity = state => {
+    return state.productForm.skuQuantity
+}

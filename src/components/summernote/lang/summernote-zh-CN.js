@@ -39,7 +39,7 @@ import jQuery from 'jquery'
         videoLink: '视频链接',
         insert: '插入视频',
         url: '视频地址',
-        providers: '(支持腾讯、优酷、爱奇艺、芒果tv、搜狐、百度、土豆、乐视、新浪等)'
+        providers: "(支持腾讯、优酷、爱奇艺、芒果tv、搜狐、百度、土豆、乐视、新浪等)；<br/><span style='color: #f00'>注意</span>：为了能够更好的在手机里展示视频，请尽可能使用&lt;iframe&gt;&lt;/iframe&gt;加载视频。"
       },
       link: {
         link: '链接',

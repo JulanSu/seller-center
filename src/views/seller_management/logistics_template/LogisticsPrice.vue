@@ -120,12 +120,6 @@
       value(newVal, oldVal){
         this.templateValueList = newVal
         this.renderView(newVal)
-      },
-      areaList(newVal, oldVal){
-        //this.citiesMap = this.createAreaMpas(newVal) 
-      },
-      templateType(newVal, oldVal) {
-        console.log('模板类型',newVal)
       }
     },
     created (){

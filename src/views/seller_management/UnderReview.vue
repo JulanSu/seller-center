@@ -198,6 +198,7 @@
               content: '确定要取消审核这个商品吗?'
             }, function(){
               onCancelReview({
+                storeId: storeId,
                 productId: row.productId
               }).then((res)=>{
                 var data = res.data.data
@@ -205,9 +206,11 @@
                   self.listLoading = false;
                   self.messageHandle('商品取消审核成功！', 'success')
                   self.getProductList({
-                    pageNum: this.pagination.curPage,
-                    pageSize: this.pagination.pageSize
+                    pageNum: self.pagination.curPage,
+                    pageSize: self.pagination.pageSize
                   })                    
+                }else {
+                  self.messageHandle(res.data.message, 'warning')
                 }
               })
             })

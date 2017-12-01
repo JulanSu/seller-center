@@ -1,18 +1,18 @@
 <template>
   <section class="role-list"  v-loading="listLoading">
     <!--工具条-->
-    <el-col :span="24" class="tool-bar" style="padding-bottom: 0px;">
+    <el-col class="tool-bar" style="padding-bottom: 0px;">
       <router-link to="/store/bypass-management/new-role" class="add-role">
-          <el-button type="primary" icon="plus">新建角色</el-button>
+          <el-button class="wid125" type="primary" icon="plus">新建角色</el-button>
       </router-link>
     </el-col>
     <!--列表-->
-    <el-table :data="users" width="100%;">
-      <el-table-column prop="roleName" label="角色名称" min-width="180"  align="center">
+    <el-table :data="users" width="100%;"  class="hover-style">
+      <el-table-column prop="roleName" label="角色名称" min-width="200"  align="center">
       </el-table-column>
-      <el-table-column prop="isUsed" label="状态" :formatter="formatUsed" min-width="180"  align="center">
+      <el-table-column prop="isUsed" label="状态" :formatter="formatUsed" min-width="200"  align="center">
       </el-table-column>
-      <el-table-column label="操作" min-width="180"  align="center">
+      <el-table-column label="操作" min-width="200"  align="center">
         <template slot-scope="scope">
           <router-link :to="{ name: '编辑角色', params: { id: scope.row.storeOperatorRoleId }}">编辑</router-link>
           <span @click="handleBtn(scope.$index, scope.row)">{{scope.row.isUsed==1?"禁用":"启用"}}</span>
@@ -54,6 +54,7 @@ import { roleList,roleChangeStatus } from '@/api/shopApi';
           this.listLoading = true;
 
           var para = new URLSearchParams();
+          para.append('storeId',config.storeId);
           para.append('storeOperatorRoleId',row.storeOperatorRoleId);
           para.append('isUsed',isUsed);
 
@@ -100,26 +101,3 @@ import { roleList,roleChangeStatus } from '@/api/shopApi';
   }
 
 </script>
-
-<style lang="scss">
-.role-list{
-  a{
-    text-decoration:none;
-  }
-  .tool-bar{
-    background:none;
-    padding:0;
-    margin:0 0 20px;
-  }
-  .cell{
-    a{
-      color:#45cdb6;
-    }
-    span{
-      color:#45cdb6;
-      padding-left:20px;
-      cursor:pointer;
-    }
-  }
-}
-</style>

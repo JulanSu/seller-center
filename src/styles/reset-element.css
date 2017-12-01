@@ -2,8 +2,13 @@
   font-weight: 400;
 }
 
-.el-button--text:hover {
+.el-table .el-button--text:hover {
   text-decoration: underline;
+}
+
+.el-table tr:hover {
+  -webkit-box-shadow: 0px 2px 1px 0px #eee;
+  box-shadow: 0px 2px 1px 0px #eee;
 }
 
 .el-form-item__label {
@@ -14,4 +19,29 @@
 .pagination-wrap {
   float: right;
   padding: 30px 0 50px 0;
+}
+
+.el-table:after {
+  width: 0;
+}
+
+.el-table, .el-table__body-wrapper {
+  overflow: initial;
+}
+
+.el-checkbox__label {
+  font-weight: 400;
+}
+
+.el-message-box {
+  border-radius: 0;
+}
+
+.el-message-box .el-message-box__title {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.el-message-box .el-message-box__close {
+  font-size: 12px;
 }

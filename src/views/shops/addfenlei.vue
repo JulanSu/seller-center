@@ -4,7 +4,7 @@
       <el-form-item label="名称" label-width="100px" prop="cateName">
         <el-input :maxlength="10" v-model="ruleForm.cateName" placeholder="请输入店铺名称" class="wid280"></el-input>
       </el-form-item>
-      <el-form-item label="店铺LOGO" label-width="100px">
+      <el-form-item label="图片" label-width="100px">
         <upload-pictures :note="uploadLogo" :url="ruleForm.catePic" :listen="'listenToPic1'" :picSize='"10.MB"' @listenToPic1="sucpic1"></upload-pictures>
       </el-form-item>
       <el-form-item label="显示" label-width="100px" prop="isUsed" class="requireHezi">
@@ -15,7 +15,7 @@
           </el-radio-group>
       </el-form-item>
       <el-form-item label="" label-width="100px">
-        <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
+        <el-button class="wid100" type="primary" @click="submitForm('ruleForm')">保存</el-button>
       </el-form-item>
       
     </el-form>
@@ -68,7 +68,8 @@ export default {
     /*如果是编辑分类页面，需要取该分类的数据*/
     dataFetch(id){
       let para = {
-        storeCateId:id
+        storeCateId:id,
+        storeId: config.storeId
       };
       this.listLoading = true;
       cateGet(para).then((res) => {
@@ -105,6 +106,7 @@ export default {
           para.append('cateName',this.ruleForm.cateName);
           para.append('catePic',this.ruleForm.catePic);
           para.append('isUsed',this.ruleForm.isUsed);
+          para.append('storeId',config.storeId);
           
           if(this.isAdd==2){//2是编辑
             para.append('storeCateId',this.ruleForm.storeCateId);
@@ -129,11 +131,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.add-fenlei{
-  .wid280{
-    width:280px;
-  }
-}
-</style>

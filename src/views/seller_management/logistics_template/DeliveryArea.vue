@@ -28,7 +28,7 @@
       
     },
     created (){
-      console.log(citySiteList)
+
     },
     methods: {
       citySiteHandel (value){

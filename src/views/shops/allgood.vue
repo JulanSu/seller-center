@@ -13,14 +13,17 @@
           :value="item.storeCateId">
         </el-option>
       </el-select>
-      <el-date-picker type="date" v-model="form.searchStartTime" class='w160' :editable="false" placeholder='创建起始时间'></el-date-picker>
+      <el-date-picker class='wid320'
+        v-model="form.searchDate"
+        :editable="false"
+        type="datetimerange"
+        @change="datePickerHandle"
+        placeholder="选择日期范围">
       </el-date-picker>
-      <span>—</span>
-      <el-date-picker type="date" v-model="form.searchEndTime" class='w160' :editable="false" placeholder='创建结束时间'></el-date-picker>
       <el-button type="primary" class='search-btn' @click="findGood">查询</el-button>
     </el-row>
     <!--列表-->
-    <el-table :data="datas"  style="width: 100%;">
+    <el-table :data="datas"  style="width: 100%;"  class="hover-style">
       <el-table-column prop="productId" label="ID" min-width="120" align="center">
       </el-table-column>
       <el-table-column prop="productTitle" label="商品名称" min-width="120" align="center">
@@ -46,7 +49,7 @@
     </el-table>
 
      <!--工具条-->
-    <el-col :span="24" class="tool-bar pages-bar" style="margin-top:20px;">
+    <el-col :span="24" class="tool-bar pages-bar" style="margin-top:20px;" v-if="total">
       <el-pagination
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
@@ -94,6 +97,7 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
           storeCateId:"",
           goodId:'',
           productTitle:'',
+          searchDate:'',
           searchStartTime:'',
           searchEndTime:''
         },
@@ -134,13 +138,21 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
       });
     },
     methods: {
-      /*时间转换为字符串*/
-      transitionTime(t){
-        if(t instanceof Date){
-          var y=t.getMonth()+Number(1);
-          t= t.getFullYear()+"-"+y+"-"+t.getDate();
+      /**
+       * datePickerHandle 用户选择时间后回调方法
+       * @param  { String } value 用户选择后时间
+       * @return {[type]}       [description]
+       */
+      datePickerHandle (value){
+        let self = this
+        if(value) {
+          let dateArr = value.split(' - ')
+          self.form.searchStartTime = dateArr[0] || ''
+          self.form.searchEndTime = dateArr[1] || ''
+        }else {
+          self.form.searchStartTime = ''
+          self.form.searchEndTime = ''
         }
-        return t;
       },
       //当选择每页多少条时触发
       handleSizeChange(val){
@@ -181,7 +193,8 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
         this.productId=row.productId;
         this.roleAuthority=[];
         let para = {
-          productId:row.productId
+          productId:row.productId,
+          storeId: config.storeId
         };
         productListcate(para).then((res) => {
           if(res.data.code==0){
@@ -208,6 +221,7 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
         }
         this.flag=false;
         var para = new URLSearchParams();
+        para.append('storeId', config.storeId);
         para.append('productId',this.productId);
         para.append('storeCateIdList',this.roleAuthority);
 
@@ -246,12 +260,7 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
           searchStartTime:this.form.searchStartTime,
           searchEndTime:this.form.searchEndTime
         };
-        if(para.searchStartTime){
-          para.searchStartTime=this.transitionTime(this.form.searchStartTime)+" "+"00:00:00";
-        }
-        if(para.searchEndTime){
-          para.searchEndTime=this.transitionTime(this.form.searchEndTime)+" "+"23:59:59";
-        }
+
         this.listLoading = true;
         productPagetheshelves(para).then((res) => {
           if(res.data.code==0){
@@ -275,105 +284,3 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
   }
 
 </script>
-<style lang="scss">
-
-.all-good{
-  a{
-    text-decoration:none;
-  }
-  .tool-bar{
-    background:none;
-    padding:0;
-    margin:20px 0;
-  }
-  .search-row{
-    padding-bottom:40px;
-    .search-btn{
-        width: 60px;
-        span{
-            color: #fff;
-        }
-    }
-  }
-  .w180{
-    width:180px ;
-  }
-  .w160{
-    width:160px !important;
-    margin-right:10px;
-  }
-  .search-row{
-    .el-select{
-      width:160px;
-    }
-  }
-  
-  .cell{
-    a{
-      color:#45cdb6; 
-    }
-    span{
-      color:#45cdb6;
-      padding-left:20px;
-      cursor:pointer;
-    }
-  }
-  .table-pic {
-      width: 60px;
-      height: 60px;
-      overflow: hidden;
-      line-height:60px;
-      margin:10px auto;
-      img {
-        width: 100%;
-        vertical-align: middle;
-      }
-    }
-  .el-dialog--tiny{
-    width:362px;
-    .el-dialog__header{
-      border-bottom:1px solid #ddd;
-      padding:15px 20px;
-      span{
-        font-size:14px;
-        color:#333333;
-        font-weight: normal;
-      }
-      .el-dialog__headerbtn{
-        font-size:12px;
-        color:#666;
-      }
-    }
-    .el-dialog__body{
-      padding:20px;
-      .relevanceGood{
-        width:342px;
-        .el-checkbox-group{
-          width:320px;
-          height:280px;
-          overflow-y: auto;
-          overflow-x: hidden;
-          border:1px solid #dddddd;
-          padding:10px 0;
-          label.el-checkbox{
-            padding-left:20px;
-            margin :0;
-            width:285px;
-            height:34px;
-            line-height:34px;
-            color:#333;
-            font-size:14px;
-          }
-        }
-      } 
-    }
-    .el-dialog__footer{
-      padding:10px 20px 50px;
-      button{
-        padding:10px 30px;
-      }
-    }
-    
-  } 
-}
-</style>

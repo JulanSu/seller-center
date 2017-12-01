@@ -1,21 +1,21 @@
 <template>
   <section class="account-list" v-loading="listLoading">
     <!--工具条-->
-    <el-col :span="24" class="tool-bar" style="padding-bottom: 0px;">
-      <el-button type="primary" icon="plus" @click="addAccount">新建子账号</el-button>
+    <el-col class="tool-bar" style="padding-bottom: 0px;">
+      <el-button class="wid140" type="primary" icon="plus" @click="addAccount">新建子账号</el-button>
     </el-col>
 
     <!--列表-->
-    <el-table :data="datas">
-      <el-table-column prop="account" label="账号名" min-width="200" align="center">
+    <el-table :data="datas" class="hover-style">
+      <el-table-column prop="account" label="账号名" min-width="150" align="center">
       </el-table-column>
-      <el-table-column prop="name" label="使用者" min-width="200" align="center">
+      <el-table-column prop="name" label="使用者" min-width="150" align="center">
       </el-table-column>
-      <el-table-column prop="roleName" label="岗位" min-width="200" align="center">
+      <el-table-column prop="roleName" label="岗位" min-width="150" align="center">
       </el-table-column>
-      <el-table-column prop="isUsed" :formatter="formatUsed" label="状态" min-width="200" align="center">
+      <el-table-column prop="isUsed" :formatter="formatUsed" label="状态" min-width="150" align="center">
       </el-table-column>
-      <el-table-column label="操作" min-width="200" align="center">
+      <el-table-column label="操作" min-width="150" align="center">
         <template slot-scope="scope">
           <router-link :to="{name:'编辑子账号', query: { id: scope.row.storeOperatorId}}">编辑</router-link>
           <span @click="handleOptation(scope.row)">{{scope.row.isUsed==1?"冻结":"解冻"}}</span>
@@ -24,7 +24,7 @@
     </el-table>
 
     <!--工具条-->
-    <el-col :span="24" class="tool-bar pages-bar" style="margin-top:20px;">
+    <el-col :span="24" class="tool-bar pages-bar" style="margin-top:20px;" v-if="total">
       <el-pagination
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
@@ -138,12 +138,13 @@ import {operatorList,operatorChangeStatus,operatorGetNum} from '@/api/shopApi';
           isUsed=0;
 
         }
-        this.$confirm('确定要'+tit+row.account+'这个账号吗?', "提示", {
+        this.$confirm('确定要'+tit+'“'+row.account+'”'+'这个账号吗?', "提示", {
           type: 'warning'
         }).then(() => {
           this.listLoading = true;
           var para = new URLSearchParams();
           para.append('storeOperatorId',row.storeOperatorId);
+          para.append('storeId',config.storeId);
           para.append('isUsed',isUsed);
 
           operatorChangeStatus(para).then((res) => {
@@ -177,26 +178,3 @@ import {operatorList,operatorChangeStatus,operatorGetNum} from '@/api/shopApi';
   }
 
 </script>
-
-<style lang="scss">
-.account-list{
-  a{
-    text-decoration:none;
-  }
-  .tool-bar{
-    background:none;
-    padding:0;
-    margin-bottom:20px;
-  }
-  .cell{
-    a{
-      color:#45cdb6;
-    }
-    span{
-      color:#45cdb6;
-      padding-left:20px;
-      cursor:pointer;
-    }
-  }
-}
-</style>

@@ -49,7 +49,7 @@
 					<p class="tishi">审核同学有疑问时，会通过此联系方式联系您</p>
 				</el-form-item>
 				<el-form-item label="" label-width="120px">
-					<el-button :class="{notclick:btnClick}" type="primary" @click="submitForm('ruleForm')">提交审核</el-button>
+					<el-button :class="{notclick:btnClick,wid100:true}" type="primary" @click="submitForm('ruleForm')">提交审核</el-button>
 				</el-form-item>
 				
 			</el-form>
@@ -170,7 +170,8 @@ export default {
 	    	this.isCompile=false;
 	    	//获取品牌信息
 	    	let para = {
-		          storeBrandId:storeBrandId
+	    			storeId:config.storeId,
+		            storeBrandId:storeBrandId
 		        };
 
 	        this.listLoading = true;
@@ -387,7 +388,7 @@ export default {
 		          	this.ruleForm.endValidTime=this.transitionTime(this.ruleForm.endValidTime);
 
 		            var para = new URLSearchParams();
-			       
+			       	para.append('storeId', config.storeId);
 			        para.append('authorizationUrl',this.ruleForm.authorizationUrl);
 			        para.append('trademarkCertificate',this.ruleForm.authorizationUrl);
 			        para.append('ways',this.ruleForm.ways);
@@ -415,123 +416,3 @@ export default {
 	    }
   	}
 </script>
-
-<style lang="scss">
-.el-date-picker{
-	width:250px !important;
-}
-.add-account{
-	overflow: hidden;
-	/* 公共样式 */
-	.wid400{
-    	width:400px;
-    }
-    a{
-    	text-decoration: none;
-    }
-    p,h6,ul{
-    	margin:0;
-    	padding:0;
-    }
-    .tishi{
-		font-size: 12px;
-		color: #999999;
-	}
-	.notclick{
-		background:#ddd !important;
-		border-color:#ddd !important;
-	}
-	
-	.timers{
-		.el-date-editor{
-			width:400px !important;
-		}
-		.el-form-item__content{
-			width:224px;
-		}
-		.el-input__inner{
-			width:400px;
-		}
-	}
-	.gotoPrev{
-		width:300px;
-		background:#fff;
-		height:60px;
-		line-height:60px;
-		position:fixed;
-		top:0;
-		b{
-			display:inline-block;
-			border:1px solid #cccccc;
-			width:30px;
-			line-height:18px;
-			height:20px;
-			text-align:center;
-			color:#aaa;
-			margin-right:10px;
-		}
-		span{
-			font-size:14px;
-			color:#666666;
-		}
-	}
-	ul{
-		float:left;
-		list-style: none;
-		width:195px;
-		min-height:850px;
-		background:#F5F7FA;
-		border-top:1px solid #ddd;
-		li{
-			text-align:center;
-			font-size: 14px;
-			padding:22px 0;
-			border-bottom:1px solid #ddd;
-			border-left:2px solid transparent;
-			cursor:pointer;
-			position:relative;
-			h6,p{
-				height:20px;
-			}
-			h6{
-				color: #666666;
-				padding-bottom:6px;
-			}
-			p{
-				color: #FF0201;
-			}
-		}
-		li.on{
-			background:#fff;
-			border-left-color:#41CAC0;
-			border-right:1px solid #ddd;
-		}
-		li.on:before,li.on:after{
-			border: solid transparent;
-		  	content: ' ';
-		  	height: 0;
-		  	left: 172px;
-		  	position: absolute;
-		  	width: 0;
-		}
-		li.on:before {
-		    border-width: 10px;
-		    border-right-color: #ddd;
-		    top: 35px;
-		}
-		li.on:after{
-			border-width: 12px;
-			border-right-color: #fff;
-			top: 33px;
-			left:172px;
-		}
-		
-	}
-	form.el-form{
-		float:left;
-		height:620px;
-		min-width:600px;
-		padding-top:30px;
-	}	
-}
-</style>

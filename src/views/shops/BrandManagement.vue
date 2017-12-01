@@ -1,8 +1,8 @@
 <template>
 	<section class="brand" v-if='$route.name==="品牌管理"'>
-		<el-col :span="24" class="tool-bar" style="padding-bottom: 0px;">
+		<el-col class="tool-bar" style="padding-bottom: 0px;">
 		    <router-link to="/store/brand-management/sel-brand" class="selbrand" icon="plus">
-		      	<el-button type="primary" icon="plus">添加品牌</el-button>
+		      	<el-button class="wid115" type="primary" icon="plus">添加品牌</el-button>
 		    </router-link>
 	    </el-col>
 		<ul v-loading="listLoading">
@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { brandList,brandChangeStatus,brandCancelverify,baseBrandGet } from '@/api/shopApi';
+import { brandList,brandCancelverify} from '@/api/shopApi';
 import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 
 	export default {
@@ -64,7 +64,10 @@ import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 		    }
 		},
 	    mounted() {
-	        this.getBrandList();//获取品牌列表
+	    	if(this.$route.name==="品牌管理"){
+	    		this.getBrandList();//获取品牌列表
+	    	}
+	        
 	    },
 
 		methods: {
@@ -97,6 +100,7 @@ import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 			cancel(id){		
 			    var para = new URLSearchParams();  
 			        para.append('storeBrandId',id);
+			        para.append('storeId',config.storeId);
 		        this.listLoading = true;
 		        brandCancelverify(para).then((res) => {
 		        	if(res.data.code==0){

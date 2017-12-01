@@ -3,7 +3,7 @@
     <div class="load_hezi">
       <p>{{note}}</p>
         <el-upload
-          class="avatar-uploader"
+          :class="{ 'avatar-uploader': true, 'picSuc': url}"
           action="http://gss.dmp.hzjiehun.bid/gss/upload/"
           :show-file-list="false"
           :on-success="handleAvatarSuccess"
@@ -11,14 +11,14 @@
           :before-upload="beforeAvatarUpload">
           <img v-if="imageUrl" :src="imageUrl" class="avatar">
           <img v-if="url" :src="url" class="avatar1">
-          <i v-else class="el-icon-plus avatar-uploader-icon">
+          <i v-else class="iconfont icon-tianjia">
             <p>添加上传图片</p>
           </i>
           <div class="btn">重新上传</div>
           
         </el-upload>
         <el-dialog v-model="dialogVisible" size="tiny">
-          <img width="100%" :src="dialogImageUrl" alt="">
+          <img width="100%" :src="dialogImageUrl" alt=""/>
         </el-dialog>
     </div>
   </div>
@@ -121,14 +121,15 @@ export default {
   .avatar-uploader{
     height:100px;
   }
-  .avatar-uploader-icon{
+  .icon-tianjia{
     padding-top:23px;
     width:100px;
     height:100px;
     line-height:30px;
     font-size: 28px;
     color: #41CAC0;
-
+    text-align:center;
+    display:block;
     p{
       font-size:14px;
       color:#666;
@@ -145,9 +146,17 @@ export default {
       height:100%;
     }
   }
-  .el-upload--text:hover > .btn{
+  .picSuc{
+    width:100px;
+     
+  }
+  .picSuc:hover .btn{
     display:block;
-  } 
+  }
+  .btn:hover{
+    color:#fff;
+    display:block;
+  }
 
   .btn{
     display:none;
@@ -180,17 +189,13 @@ export default {
   position: relative;
   overflow: hidden;
 }
+.load_hezi .picSuc .el-upload{
+  border-style:solid;
+}
 .avatar-uploader .el-upload:hover {
-  border-color: #409EFF;
+  border-color: #41cac0;
 }
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
-}
+
 .avatar {
   width: 178px;
   height: 178px;

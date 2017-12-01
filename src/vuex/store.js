@@ -13,6 +13,9 @@ const state = {
     userId: '',
     storeType: '',
     apiHost: '',
+    productForm: {
+        skuQuantity: ''
+    },
     userSelectedTheSku: [],
     templateValueList: []
 }
@@ -31,6 +34,10 @@ const mutations = {
     UPDATE_USER_SELECTED_THE_SKU(state, data){
         //state.userSelectedTheSku = data
         Vue.set(state, 'userSelectedTheSku',  data)
+    },
+    //更新商品库存
+    UPDATE_PRODCUT_SKU_QUANTITY(state, data){
+        state.productForm.skuQuantity = data
     }
 }
 

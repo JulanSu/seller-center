@@ -5,6 +5,7 @@
     <div style="margin-top:5px;" v-if="publishTimeType === '定时上架'">
       <el-date-picker
         v-model="value1"
+        :editable="false"
         type="datetime"
         placeholder="选择日期时间" style="width: 280px;" @change="timeHandle">
       </el-date-picker>

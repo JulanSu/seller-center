@@ -8,7 +8,7 @@
         <p>商户中心登录</p>
       </a>
     </div>
-    <div class="main">
+    <div class="main mains">
     <section class="content-container">
       <div class="grid-content bg-purple-light">
         <div :span="24" class="content-wrapper">
@@ -42,9 +42,9 @@
         }
     },
     watch: {
-     '$route' (to, from) {
+     /*'$route' (to, from) {
         console.log(this.$route.path)
-     }
+     }*/
    },
     methods: {
       //退出登录
@@ -95,10 +95,16 @@
       height:4px;
       z-index:999;
       box-shadow: 0 2px 5px 0 rgba(204, 204, 204, 0.5);
-
     }
   }
-
+  .mains{
+    .content-container{
+      background:#fff;
+    }
+    .content-wrapper{
+      padding:0 !important;
+    }
+  }
   .errorTop{
     position:absolute;
     top:0;

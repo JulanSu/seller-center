@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from './newAxios';
 
 const base = config.apiHost;
 
@@ -25,5 +25,10 @@ export const accountList = params => { return axios.get(`${base}/order/listaccou
 export const accountDetail = params => { return axios.get(`${base}/order/getaccountproductdetail`,  {params:params}); }
 /*发出的点券*/
 export const cashList = params => { return axios.get(`${base}/marketing/voucher/list`,  {params:params}); }
+
+/*绑定支付宝*/
+export const getPayMessage = params => { return axios.get(`${base}/store/alipay/get`,  {params:params}); }
+/*获得支付宝*/
+export const savePayMessage = params => { return axios.post(`${base}/store/alipay/save`, params); }
 
 

@@ -225,6 +225,14 @@
         .table-con{
             margin-top: 40px;
         }
+        .el-button{
+            span{
+                font-size: 14px;
+            }
+        }
+        .el-table::after{
+            width: 0;
+        }
         .block{
             float: right;
         }

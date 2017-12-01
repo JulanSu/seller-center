@@ -16,7 +16,7 @@
 			<el-form-item label="门店地址"  label-width="120px" prop="address">
 				<v-distpicker :province="select.province" :city="select.city" :area="select.area" @province="onProvince" @city="onCity" @selected="onSelected"></v-distpicker>
 			</el-form-item>
-			<el-form-item label="" label-width="120px" prop="address">
+			<el-form-item label="" label-width="120px" prop="address" class="xxAddress">
 				<el-input v-model="ruleForm.address" id="ser" placeholder="输入详细地址" class="wid280"></el-input>
 				<el-button type="primary" class="mapbtn" @click="searchbtn">搜索地图</el-button>
 			</el-form-item>
@@ -28,7 +28,7 @@
 				</map-view>
 			</el-form-item>
 			<el-form-item label="" label-width="120px">
-				<el-button type="primary" @click="submitForm('ruleForm')">
+				<el-button class="wid100" type="primary" @click="submitForm('ruleForm')">
 					<span v-if="isAdd==1" >添加</span>
 					<span v-else>保存</span>
 				</el-button>
@@ -81,9 +81,9 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 		sel:'',
 		isAdd:1,
 		select: { 
-			province: '省',
-		    city: '市',
-		    area: '区'
+			province: '',
+		    city: '',
+		    area: ''
 		},
 
         ruleForm: {
@@ -185,12 +185,12 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 		/*如果是编辑门店页面，需要取该店铺的数据*/
 		dataFetch(id){
 			let para = {
-				storeBranchId:id
+				storeBranchId:id,
+				storeId:config.storeId
 			}
 			getClassifyGet(para).then((res) => {
 	        	if(res.data.data){
 	        		this.ruleForm=res.data.data;
-	        		let address="浙江省*杭州市*下城区*野风现代中心";
 	        		this.switchover(this.ruleForm.address);
 	        		this.ruleForm.longitude/=1000000;
 	        		this.ruleForm.latitude/=1000000;
@@ -203,7 +203,6 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 						}
 	        			window.clearTimeout(timer1);
 	        		},500);
-
 	        	}else{
 	        		this.$message.error(res.data.message);
 	        	}
@@ -231,7 +230,8 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
     		}else{
     			this.ruleForm.address=arrAddress[0];
     		}
-    		this.$refs.MapView.againAddr(this.ruleForm.address);
+    		//当时标记页面时，添加noShow,为不展示下拉列表
+    		this.$refs.MapView.againAddr(this.ruleForm.address,"noShow");
 	    },
 		/*返回商户中心按钮*/
 	    getBack(){
@@ -281,27 +281,28 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 	        this.$refs[formName].validate((valid) => {
 	            if (valid) {
 					if(!this.selProvince){//如果没有选择省，提示选择省市区
-						this.$message({
+						/*this.$message({
 				          message: '请选择省市区',
 				          type: 'warning'
 				        });
-				        return false;
+				        return false;*/
 					}else{//选择了城市，将选择的城市拼接
 						this.sel=this.selProvince;
 						if(this.selCity){
-							this.sel+="*"+this.selCity;
+							this.sel=this.sel+"*"+this.selCity;
 						}
 						if(this.selArea){
-							this.sel+="*"+this.selArea;
+							this.sel=this.sel+"*"+this.selArea;
 						}
+						this.sel=this.sel+"*";
 					}
 					var para = new URLSearchParams();
-					
+					para.append('storeId',config.storeId);
 					para.append('name',this.ruleForm.name);
 					para.append('contactPerson',this.ruleForm.contactPerson);
 					para.append('contactMobile',this.ruleForm.contactMobile);	
 					para.append('workTime',this.ruleForm.workTime);
-					para.append('address',this.sel+'*'+this.ruleForm.address);
+					para.append('address',this.sel+this.ruleForm.address);
 					para.append('longitude',Number(this.ruleForm.longitude*1000000));
 					para.append('latitude',Number(this.ruleForm.latitude*1000000));
 					para.append('isHead',Number(this.ruleForm.isHead));
@@ -322,83 +323,3 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
     }
   }
 </script>
-
-<style lang="scss">
-.add-store{
-	ol,ul,li{
-    	padding:0;
-    	margin:0;
-    	list-style:none;
-    }
-	/* 公共样式 */
-	p{
-		margin: 0;
-	}
-    .wid280{
-    	width:280px;
-    }
-    .wid400{
-    	width:400px;
-    }
-
-    /* 只读样式 */
-    .exhibition{
-    	font-size:14px;
-		color:#333333;
-    }
-    .address + .el-form-item__error{
-    	display:none;
-    }
-    /* 成功弹框样式 */
-	.el-dialog--tiny{
-		min-width:490px;
-		.el-dialog__footer{
-			padding-bottom:50px;
-			.dialog-footer{
-				display:block;
-				text-align:center;
-			}
-		}
-		.el-dialog__body{
-			padding:40px 20px;
-			.suc{
-				width:340px;
-				height:50px;
-				margin:0 auto;
-				
-				span{
-					float:left;
-					display:inline-block;
-					width:50px;
-					height:50px;
-					font-size: 46px;
-		    		margin-top: 3px;
-		    		color:#41cac0;
-		    		padding-right:10px;
-				}
-				div{
-					float:left;
-					width:280px;
-					h2{
-						font-size: 18px;
-						color: #333333;
-						height:50px;
-						line-height:50px;
-						margin:0;
-						margin-left:15px;
-					}
-					p{
-						font-size: 14px;
-						color: #999999;
-						height:20px;
-						line-height:20px;
-						padding-top:5px;
-					}
-				}
-			}
-		}
-		
-	}
-}
-
-</style>

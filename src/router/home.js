@@ -8,7 +8,7 @@ const routers = [
         path: '/home/index',  
         component: homeIndex, 
         name: '' 
-    },
+    }
 ];
 
 export default routers;

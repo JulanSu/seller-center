@@ -1,17 +1,17 @@
 <template>
   <section class="shop-list" v-if='$route.name=="门店管理"'  v-loading="listLoading">
     <!--工具条-->
-    <el-col :span="24" class="tool-bar">
+    <el-col class="tool-bar">
       <router-link to="/store/shop-management/add"  icon="plus">
-        <el-button type="primary" icon="plus">添加门店</el-button>
+        <el-button class="wid125" type="primary" icon="plus">添加门店</el-button>
       </router-link>
     </el-col>
 
     <!--列表-->
-    <el-table :data="users" style="width: 100%;">
+    <el-table :data="users" style="width: 100%;"  class="hover-style">
       <el-table-column prop="name" label="门店名称" min-width="150" align="center">
       </el-table-column>
-      <el-table-column prop="address" label="门店地址" min-width="150" align="center">
+      <el-table-column prop="address" label="门店地址" min-width="150" align="center" :formatter="formatAddress">
       </el-table-column>
       <el-table-column prop="workTime" label="营业时间" min-width="150" align="center">
       </el-table-column>
@@ -28,7 +28,7 @@
     </el-table>
 
     <!--工具条-->
-    <el-col :span="24" class="tool-bar pages-bar">
+    <el-col :span="24" class="tool-bar pages-bar" v-if="total">
       <el-pagination
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
@@ -68,6 +68,10 @@ import {getClassifyList, updateClassify} from '@/api/shopApi';
      }
    },
     methods: {
+      //将省市区的*去掉
+      formatAddress(row){
+        return row.address=row.address.replace("*",'');
+      },
       //获取用户列表
       getUsers() {
         let para = {
@@ -105,6 +109,7 @@ import {getClassifyList, updateClassify} from '@/api/shopApi';
         }).then(() => {
          //编辑门店提交接口
           var para = new URLSearchParams();
+          para.append('storeId',config.storeId);
           para.append('storeBranchId',row.storeBranchId);
           para.append('isHead',isHead);
           this.listLoading = true;
@@ -125,58 +130,11 @@ import {getClassifyList, updateClassify} from '@/api/shopApi';
       }
     },
     mounted() {
-      this.getUsers();
+      if(this.$route.name=="门店管理"){
+        this.getUsers();
+      }
+      
     }
   }
 
 </script>
-
-<style lang="scss">
-
-.shop-list{
-  a{
-    text-decoration:none;
-  }
-  .tool-bar{
-    width:100%;
-    background:none;
-    margin:0 0 20px;
-    position:relative;
-    /* .el-pagination{
-      margin:10px 0;
-    } */
-
-  }
-  .cell{
-    a{
-      color:#45cdb6;
-    }
-    span{
-      color:#45cdb6;
-      padding-left:20px;
-      cursor:pointer;
-    }
-  }
-  .el-table{
-    border:0;
-    table.el-table__header{
-      thead{
-        tr{
-          height:44px;
-          background:#f5f7fa;
-          box-shadow:0 1px 0 0 #eeeeee;
-        }
-      }
-    }
-    table.el-table__body{
-      tbody{
-        tr{
-          height:90px;
-          background:#ffffff;
-          box-shadow:0 1px 0 0 #eeeeee;
-        }
-      }
-    }
-  }
-}
-</style>

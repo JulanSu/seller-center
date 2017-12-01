@@ -29,9 +29,11 @@
             action="http://gss.dmp.hzjiehun.bid/gss/upload/"
             list-type="picture-card"
             :before-upload="beforeAvatarUpload"
+            :on-progress="progressHandle"
             :on-success="handleAvatarSuccess"
             :file-list="fileList"
             :on-error="errorHandle"
+            :disabled="isDisabled"
             :show-file-list="false">
             <i class="el-icon-plus"></i>
             <p class="desc">添加上传图片</p>
@@ -79,6 +81,8 @@ export default {
   },
   data () {
     return {
+      isDisabled: false,
+      isUpload: false,
       fileList: [],
       picLimit: 9,
       imageUrl: this.value || [],
@@ -90,24 +94,45 @@ export default {
   //   console.log('图片组件',this.value, this.imageUrl)
   // },
   methods: {
+    progressHandle(event, file, fileList){
+      //console.log(event, file, fileList)
+    },
+    /**
+     * datadragEnd 拖拽方法
+     * @return {[type]} [description]
+     */
     datadragEnd(){
       this.$emit('input', this.imageUrl);
     },
+    /**
+     * delPicHandel 删除图片回调方法
+     * @param  { Array } row   图片list
+     * @param  { Number } index 当前所删除图片的下标
+     * @return {[type]}       [description]
+     */
     delPicHandel (row, index) {
       row.splice(index, 1)
     },
+    /**
+     * errorHandle 
+     * @param  {[type]} value [description]
+     * @return {[type]}       [description]
+     */
     errorHandle(value){
       this.$message.warning('上传商品图片失败！请重新尝试。');
     },
+    /**
+     * beforeAvatarUpload 图片上传成功之前
+     * @param  { Object } file 图片Object
+     * @return {[type]}      [description]
+     */
     beforeAvatarUpload(file){
       let isWarning = true
-
+        this.isDisabled = true
         const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
         const isLt2M = file.size / 1024 / 1024 < 10;
-
         if (!isJPG) {
           this.$message.warning('上传的商品图片只能是 JPG,JPEG,PNG 格式！');
-
         }
         if (!isLt2M) {
           this.$message.warning('上传的商品图片大小不能超过 10MB！');
@@ -116,19 +141,31 @@ export default {
         if(this.imageUrl.length >= this.picLimit) {
           isWarning = false
           this.$message.warning('上传的商品图片最多不能超过'+ this.picLimit+'张！');
-        } 
-        return isJPG && isLt2M && isWarning;
+        }
+
+        if(!isJPG || !isLt2M || !isWarning) {
+          this.isDisabled = false
+          return false
+        }else {
+          return true
+        }
+        
       },
-
-    handleAvatarSuccess(res, file, fileList) {
-
+    /**
+     * handleAvatarSuccess 图片上传成功后
+     * @param  { Object } res    respons
+     * @return {[type]}          [description]
+     */
+    handleAvatarSuccess(res) {
+      this.isDisabled = false
       if(res.code === 0) {
+        this.isDisabled = false
         this.imageUrl.push(res.data);
         this.$emit('change', res.data)
       }else {
+        this.isDisabled = false
         this.$message.warning('上传商品图片失败！请重新尝试。');
       }
-      console.log(this.imageUrl)
       this.$emit('input', this.imageUrl);
       //传递值给父组件
     },
@@ -178,6 +215,7 @@ export default {
   }
   .el-upload--picture-card {
     line-height: 98px;
+    border-radius: 0;
     .el-icon-plus {
       color: #41CAC0;
     }
@@ -191,5 +229,30 @@ export default {
   .upload-pictrues {
     float: left;
   }
+}
+.picbox {
+  .el-upload-list--picture-card {
+    .el-upload-list__item-actions {
+      background: none;
+          cursor: move;
+      .el-upload-list__item-delete {
+          background-color: rgba(0, 0, 0, .5);
+          width: 100%;
+          margin: 0;
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          height: 28px;
+          top: initial;
+          .el-icon-delete {
+            position: absolute;
+            top: 5px;
+            right: 3px;
+          }
+      }
+    }
+  }
+
+
 }
 </style>

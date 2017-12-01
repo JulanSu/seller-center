@@ -206,14 +206,19 @@
               content: '确定要恢复这个商品吗'
             }, function(){
               onRecycleBinToDraftBox({
-                productId: row.productId
+                productId: row.productId,
+                storeId: storeId
               }).then((res)=>{
-                self.listLoading = false;
-                self.messageHandle('商品恢复成功！', 'success')
-                self.getProductList({
-                  pageNum: this.pagination.curPage,
-                  pageSize: this.pagination.pageSize
-                })
+                if(res.data.code == 0) {
+                  self.listLoading = false;
+                  self.messageHandle('商品恢复成功！', 'success')
+                  self.getProductList({
+                    pageNum: self.pagination.curPage,
+                    pageSize: self.pagination.pageSize
+                  })
+                }else {
+                  self.messageHandle(res.data.message, 'warning')
+                }
               })
             })
           },

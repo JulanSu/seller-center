@@ -1,0 +1,1389 @@
+@charset "UTF-8";
+/* 店铺模块的所有页面样式 */
+/* 公共样式 */
+.w180 {
+  width: 180px;
+}
+
+.wid270 {
+  width: 270px;
+}
+
+.wid280 {
+  width: 280px;
+}
+
+.wid400 {
+  width: 400px;
+}
+
+.exhibition {
+  padding-left: 10px;
+  font-size: 14px;
+  color: #333333;
+}
+
+.mapbtn {
+  width: 76px;
+  border-radius: 5px;
+  padding: 10px 0;
+}
+
+/* 三级联动公共样式 */
+div.address {
+  /* select:nth-of-type(2){
+  	margin:0 18px;
+  } */
+}
+
+div.address select {
+  border-radius: 0;
+  height: 36px;
+  font-size: 14px;
+  border-color: #ccc !important;
+  min-width: 155px;
+}
+
+div.address select option {
+  font-size: 14px;
+}
+
+/* 1店铺信息页 */
+.shop-message p {
+  margin: 0;
+}
+
+.shop-message ol, .shop-message ul, .shop-message li {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.shop-message .address + .el-form-item__error {
+  display: none;
+}
+
+/* 2品牌管理列表页 */
+.brand {
+  /*公共样式*/
+  /* 创建商品按钮 */
+  /* 列表样式 */
+}
+
+.brand a {
+  text-decoration: none;
+}
+
+.brand ul, .brand ol {
+  list-style: none;
+}
+
+.brand h3, .brand p, .brand ul, .brand ol, .brand li {
+  margin: 0;
+}
+
+.brand .tool-bar {
+  background: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+}
+
+.brand ul {
+  width: 100%;
+  overflow: hidden;
+  padding: 0;
+}
+
+.brand ul li {
+  float: left;
+  width: 480px;
+  height: 160px;
+  margin-bottom: 30px;
+  cursor: pointer;
+}
+
+.brand ul li .brandlogo {
+  width: 158px;
+  height: 158px;
+  line-height: 158px;
+  text-align: center;
+  overflow: hidden;
+  float: left;
+  border: 1px solid #ccc;
+}
+
+.brand ul li .brandlogo img {
+  max-width: 100%;
+}
+
+.brand ul li .brandlist {
+  float: left;
+  padding-left: 20px;
+}
+
+.brand ul li .brandlist h3 {
+  font-size: 16px;
+  color: #333333;
+  height: 22px;
+  line-height: 22px;
+  margin-bottom: 10px;
+}
+
+.brand ul li .brandlist h3 b {
+  float: left;
+  height: 22px;
+  line-height: 22px;
+  max-width: 200px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 16px;
+  color: #333;
+  font-weight: normal;
+}
+
+.brand ul li .brandlist h3 span {
+  font-size: 14px;
+  float: left;
+  height: 22px;
+  line-height: 22px;
+  padding-left: 15px;
+}
+
+.brand ul li .brandlist p {
+  font-size: 14px;
+  color: #666666;
+  height: 20px;
+  line-height: 20px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 260px;
+}
+
+.brand ul li .brandlist .btns {
+  margin-top: 15px;
+}
+
+.brand ul li .brandlist .btns span {
+  display: inline-block;
+  width: 60px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  margin-right: 20px;
+  color: #666666;
+  font-size: 12px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.brand ul li .brandlist .btns .forbidden {
+  background: #45cdb6;
+  color: #fff !important;
+  border: 1px solid #45cdb6 !important;
+}
+
+/* 3.选择品牌页 */
+.sel-brand a {
+  text-decoration: none;
+  color: #333;
+}
+
+.sel-brand a:hover {
+  color: #333;
+}
+
+.sel-brand ul, .sel-brand ol {
+  list-style: none;
+  padding: 0;
+}
+
+.sel-brand h3, .sel-brand p, .sel-brand ul, .sel-brand ol {
+  margin: 0;
+}
+
+.sel-brand .el-dialog__header {
+  background: #f5f7fa;
+  -webkit-box-shadow: inset 0 -1px 0 0 #dddddd;
+  box-shadow: inset 0 -1px 0 0 #dddddd;
+  padding: 15px 20px;
+}
+
+.sel-brand .show-sel {
+  width: 980px;
+  background: #f5f7fa;
+  border: 1px solid #41cac0;
+  height: 27px;
+  padding: 5px 0;
+  margin-top: 20px;
+  font-size: 12px;
+  position: relative;
+}
+
+.sel-brand .show-sel .brand-sel {
+  padding-left: 20px;
+  font-size: 12px;
+  min-width: 150px;
+  float: left;
+}
+
+.sel-brand .show-sel .brand-sel b {
+  color: #333;
+}
+
+.sel-brand .show-sel .brand-sel i {
+  font-style: normal;
+}
+
+.sel-brand .show-sel .brand-sel span {
+  cursor: pointer;
+  position: relative;
+  margin-right: 20px;
+}
+
+.sel-brand .show-sel .brand-sel span b {
+  font-weight: 100;
+}
+
+.sel-brand .show-sel .brand-sel span i {
+  position: absolute;
+  display: block;
+  top: -10px;
+  right: -14px;
+  color: red;
+}
+
+.sel-brand .show-sel .brand-btn {
+  float: right;
+  width: 220px;
+  text-align: right;
+  padding-right: 20px;
+  color: #333;
+  font-size: 12px;
+}
+
+.sel-brand .show-sel:before, .sel-brand .show-sel:after {
+  border: solid transparent;
+  content: ' ';
+  height: 0;
+  left: 44px;
+  position: absolute;
+  width: 0;
+}
+
+.sel-brand .show-sel:before {
+  border-width: 8px;
+  border-bottom-color: #41cac0;
+  top: -16px;
+}
+
+.sel-brand .show-sel:after {
+  border-width: 7px;
+  border-bottom-color: #f5f7fa;
+  top: -14px;
+  left: 45px;
+}
+
+.sel-brand .btns {
+  width: 980px;
+  text-align: center;
+  text-align: center;
+  margin-top: 30px;
+}
+
+.sel-brand .btns a {
+  margin-left: 30px;
+}
+
+.sel-brand .all-logo {
+  width: 500px;
+  height: 365px;
+  border: 1px solid #ddd;
+  border-left: 0;
+}
+
+.sel-brand .all-logo ul {
+  height: 40px;
+  line-height: 40px;
+  border-bottom: 1px solid #ddd;
+}
+
+.sel-brand .all-logo ul li {
+  display: inline-block;
+  width: 17px;
+  cursor: pointer;
+  text-align: center;
+  display: inline;
+  padding: 0 4px;
+}
+
+.sel-brand .all-logo ul li.sel {
+  color: #41cac0;
+}
+
+.sel-brand .all-logo ol {
+  padding: 8px 0;
+}
+
+.sel-brand .all-logo ol li {
+  display: inline-block;
+  width: 112px;
+  text-align: center;
+  height: 34px;
+  line-height: 34px;
+  cursor: pointer;
+  margin: 0 0 10px 10px;
+}
+
+.sel-brand .all-logo ol li.on {
+  color: #41cac0;
+  background: #eee;
+}
+
+.sel-brand .no-bor .category-nav {
+  border-left: 0;
+}
+
+.sel-brand .hezi .searchbrand::-webkit-input-placeholder {
+  /* WebKit browsers */
+  color: #333;
+}
+
+.sel-brand .hezi .searchbrand:-moz-placeholder {
+  /* Mozilla Firefox 4 to 18 */
+  color: #333;
+}
+
+.sel-brand .hezi .searchbrand::-moz-placeholder {
+  /* Mozilla Firefox 19+ */
+  color: #333;
+}
+
+.sel-brand .hezi .searchbrand:-ms-input-placeholder {
+  /* Internet Explorer 10+ */
+  color: #333;
+}
+
+/* 4.品牌详情页与新增页 */
+.add-account {
+  overflow: hidden;
+}
+
+.add-account .el-date-picker {
+  width: 250px !important;
+}
+
+.add-account a {
+  text-decoration: none;
+}
+
+.add-account p, .add-account h6, .add-account ul {
+  margin: 0;
+  padding: 0;
+}
+
+.add-account .tishi {
+  font-size: 12px;
+  color: #999999;
+}
+
+.add-account .notclick {
+  background: #ddd !important;
+  border-color: #ddd !important;
+}
+
+.add-account .timers .el-date-editor {
+  width: 400px !important;
+}
+
+.add-account .timers .el-form-item__content {
+  width: 224px;
+}
+
+.add-account .timers .el-input__inner {
+  width: 400px;
+}
+
+.add-account .gotoPrev {
+  width: 300px;
+  background: #fff;
+  height: 60px;
+  line-height: 60px;
+  position: fixed;
+  top: 0;
+}
+
+.add-account .gotoPrev b {
+  display: inline-block;
+  border: 1px solid #cccccc;
+  width: 30px;
+  line-height: 18px;
+  height: 20px;
+  text-align: center;
+  color: #aaa;
+  margin-right: 10px;
+}
+
+.add-account .gotoPrev span {
+  font-size: 14px;
+  color: #666666;
+}
+
+.add-account ul {
+  float: left;
+  list-style: none;
+  width: 195px;
+  min-height: 850px;
+  background: #F5F7FA;
+  border-top: 1px solid #ddd;
+}
+
+.add-account ul li {
+  text-align: center;
+  font-size: 14px;
+  padding: 22px 0;
+  border-bottom: 1px solid #ddd;
+  border-left: 2px solid transparent;
+  cursor: pointer;
+  position: relative;
+}
+
+.add-account ul li h6, .add-account ul li p {
+  height: 20px;
+}
+
+.add-account ul li h6 {
+  color: #666666;
+  padding-bottom: 6px;
+}
+
+.add-account ul li p {
+  color: #FF0201;
+}
+
+.add-account ul li.on {
+  background: #fff;
+  border-left-color: #41CAC0;
+  border-right: 1px solid #ddd;
+}
+
+.add-account ul li.on:before, .add-account ul li.on:after {
+  border: solid transparent;
+  content: ' ';
+  height: 0;
+  left: 172px;
+  position: absolute;
+  width: 0;
+}
+
+.add-account ul li.on:before {
+  border-width: 10px;
+  border-right-color: #ddd;
+  top: 35px;
+}
+
+.add-account ul li.on:after {
+  border-width: 12px;
+  border-right-color: #fff;
+  top: 33px;
+  left: 172px;
+}
+
+.add-account form.el-form {
+  float: left;
+  height: 620px;
+  min-width: 600px;
+  padding-top: 30px;
+}
+
+/* 5.新创品牌，品牌库里面没有 */
+.create-brand {
+  /* 公共样式 */
+  /* 成功弹框样式 */
+}
+
+.create-brand p, .create-brand h2 {
+  margin: 0;
+}
+
+.create-brand .tishi {
+  font-size: 12px;
+  color: #999999;
+}
+
+.create-brand h2 {
+  font-size: 16px;
+  color: #333333;
+  font-weight: normal;
+  margin-bottom: 20px;
+}
+
+.create-brand .gotoPrev {
+  width: 300px;
+  background: #fff;
+  height: 60px;
+  line-height: 60px;
+  position: fixed;
+  top: 0;
+  left: 240px;
+  font-size: 14px;
+  color: #666666;
+}
+
+.create-brand .el-dialog--tiny {
+  min-width: 490px;
+}
+
+.create-brand .el-dialog--tiny .el-dialog__footer {
+  padding-bottom: 50px;
+}
+
+.create-brand .el-dialog--tiny .el-dialog__footer .dialog-footer {
+  display: block;
+  text-align: center;
+}
+
+.create-brand .el-dialog--tiny .el-dialog__body {
+  padding: 40px 20px;
+}
+
+.create-brand .el-dialog--tiny .el-dialog__body .suc {
+  width: 340px;
+  height: 50px;
+  margin: 0 auto;
+}
+
+.create-brand .el-dialog--tiny .el-dialog__body .suc span {
+  float: left;
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  font-size: 46px;
+  margin-top: 3px;
+  color: #41cac0;
+  padding-right: 10px;
+}
+
+.create-brand .el-dialog--tiny .el-dialog__body .suc div {
+  float: left;
+  width: 280px;
+}
+
+.create-brand .el-dialog--tiny .el-dialog__body .suc div h2 {
+  font-size: 18px;
+  color: #333333;
+  height: 25px;
+  line-height: 25px;
+  margin: 0;
+}
+
+.create-brand .el-dialog--tiny .el-dialog__body .suc div p {
+  font-size: 14px;
+  color: #999999;
+  height: 20px;
+  line-height: 20px;
+  padding-top: 5px;
+}
+
+.create-brand .timers .el-form-item__content {
+  width: 400px;
+}
+
+.create-brand .timers .el-input__inner {
+  width: 400px;
+}
+
+.create-brand .category-bar {
+  padding-top: 0;
+  margin: 20px 0;
+}
+
+.create-brand .big-img {
+  width: 480px;
+  height: 360px;
+  margin-bottom: 0;
+  background: transparent;
+  -webkit-box-shadow: 0 0 0;
+  box-shadow: 0 0 0;
+}
+
+.create-brand .big-img .el-dialog__body {
+  width: 430px;
+  height: 270px;
+  text-align: center;
+  line-height: 270px;
+  padding: 0;
+}
+
+.create-brand .big-img .el-dialog__body img {
+  width: 430px;
+}
+
+.create-brand .example {
+  position: absolute;
+  width: 200px;
+  height: 100px;
+  bottom: 0px;
+  left: 195px;
+  cursor: pointer;
+}
+
+.create-brand .example span {
+  float: right;
+  font-size: 14px;
+  color: #666666;
+  line-height: 40px;
+  padding-right: 20px;
+}
+
+.create-brand .example div {
+  float: right;
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  line-height: 100px;
+  text-align: center;
+}
+
+.create-brand .example div img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* 6.店铺资质 */
+.qualification p {
+  margin: 0;
+}
+
+.qualification .category-bar {
+  padding-top: 0;
+}
+
+.qualification .unchangeable {
+  width: 100px;
+  height: 100px;
+  text-align: center;
+  line-height: 100px;
+  overflow: hidden;
+  border: 1px solid #c0ccda;
+}
+
+.qualification .unchangeable img {
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+/* 7.分类管理列表页 */
+.fenlei-list a {
+  text-decoration: none;
+}
+
+.fenlei-list .tool-bar {
+  background: none;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.fenlei-list .cell a {
+  color: #45cdb6;
+  padding-right: 20px;
+}
+
+.fenlei-list .cell span {
+  color: #45cdb6;
+  padding-right: 20px;
+  cursor: pointer;
+}
+
+/* 8.该分类下的商品列表页 */
+.find-good a {
+  text-decoration: none;
+}
+
+.find-good .tool-bar {
+  margin-bottom: 20px;
+  background: none;
+  padding: 0;
+}
+
+.find-good .cell a {
+  color: #45cdb6;
+}
+
+.find-good .cell span {
+  color: #45cdb6;
+  padding-left: 20px;
+  cursor: pointer;
+}
+
+/* 9.全部商品列表页 */
+.all-good a {
+  text-decoration: none;
+}
+
+.all-good .tool-bar {
+  background: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.all-good .search-row {
+  padding-bottom: 40px;
+  min-width: 960px;
+}
+
+.all-good .search-row .search-btn span {
+  color: #fff;
+}
+
+.all-good .w160 {
+  width: 160px !important;
+  margin-right: 10px;
+}
+
+.all-good .search-row .el-select {
+  width: 160px;
+}
+
+.all-good .cell a {
+  color: #45cdb6;
+}
+
+.all-good .cell span {
+  color: #45cdb6;
+  padding-left: 20px;
+  cursor: pointer;
+}
+
+.all-good .table-pic {
+  width: 60px;
+  height: 60px;
+  overflow: hidden;
+  line-height: 60px;
+  margin: 10px auto;
+}
+
+.all-good .table-pic img {
+  width: 100%;
+  vertical-align: middle;
+}
+
+.all-good .el-dialog--tiny {
+  width: 362px;
+}
+
+.all-good .el-dialog--tiny .el-dialog__header {
+  border-bottom: 1px solid #ddd;
+  padding: 15px 20px;
+}
+
+.all-good .el-dialog--tiny .el-dialog__header span {
+  font-size: 14px;
+  color: #333333;
+  font-weight: normal;
+}
+
+.all-good .el-dialog--tiny .el-dialog__header .el-dialog__headerbtn {
+  font-size: 12px;
+  color: #666;
+}
+
+.all-good .el-dialog--tiny .el-dialog__body {
+  padding: 20px;
+}
+
+.all-good .el-dialog--tiny .el-dialog__body .relevanceGood {
+  width: 342px;
+}
+
+.all-good .el-dialog--tiny .el-dialog__body .relevanceGood .el-checkbox-group {
+  width: 320px;
+  height: 280px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: 1px solid #dddddd;
+  padding: 10px 0;
+}
+
+.all-good .el-dialog--tiny .el-dialog__body .relevanceGood .el-checkbox-group label.el-checkbox {
+  padding-left: 20px;
+  margin: 0;
+  width: 285px;
+  height: 34px;
+  line-height: 34px;
+  color: #333;
+  font-size: 14px;
+}
+
+.all-good .el-dialog--tiny .el-dialog__footer {
+  padding: 10px 20px 50px;
+}
+
+.all-good .el-dialog--tiny .el-dialog__footer button {
+  padding: 10px 30px;
+}
+
+/* 10.子账号管理 */
+.bypass-index {
+  width: 962px;
+}
+
+.bypass-index a {
+  text-decoration: none;
+}
+
+.bypass-index h2 {
+  margin: 0;
+  font-size: 14px;
+  color: #333333;
+  height: 44px;
+  line-height: 44px;
+  padding-left: 20px;
+  font-weight: 100;
+  background: #f5f7fa;
+  -webkit-box-shadow: 0 1px 0 0 #dddddd;
+  box-shadow: 0 1px 0 0 #dddddd;
+}
+
+.bypass-index ul {
+  padding: 0;
+  margin-top: 0;
+  height: 95px;
+  line-height: 95px;
+  border: 1px solid #ddd;
+  margin-bottom: 30px;
+  list-style: none;
+}
+
+.bypass-index ul li {
+  float: left;
+  width: 306px;
+  height: 93px;
+  text-align: center;
+}
+
+.bypass-index ul li span {
+  font-size: 14px;
+  color: #666666;
+  padding-right: 15px;
+}
+
+.bypass-index ul li b {
+  font-size: 30px;
+  color: #ff6c60;
+}
+
+.bypass-index ul li a {
+  display: block;
+}
+
+.bypass-index ul li:nth-of-type(1) b {
+  color: #6bcac9;
+}
+
+.bypass-index ul li:nth-of-type(2) {
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+
+.bypass-index ul li:nth-of-type(3) b {
+  color: #56c8f2;
+}
+
+.bypass-index .bapass-btn {
+  cursor: pointer;
+  background: #fff;
+  height: 80px;
+  line-height: 80px;
+}
+
+.bypass-index .bapass-btn li:hover {
+  background: #f5f7fa;
+}
+
+.bypass-index .bapass-btn li:hover span {
+  color: #41cac0 !important;
+}
+
+.bypass-index .bapass-btn li:hover a {
+  color: none;
+  text-decoration: none;
+}
+
+.bypass-index .bapass-btn li {
+  height: 78px;
+}
+
+.bypass-index .bapass-btn li i {
+  font-size: 24px;
+  color: #41cac0;
+  padding-right: 10px;
+  vertical-align: middle;
+}
+
+/* 11.新建子账号 */
+.add-sub-account .el-select {
+  width: 130px;
+}
+
+.add-sub-account .passhezi {
+  position: relative;
+}
+
+.add-sub-account .passhezi .wid280 input {
+  padding-right: 25px;
+}
+
+.add-sub-account .passhezi .iconfont {
+  position: absolute;
+  left: 255px;
+  top: 2px;
+  color: #bfd8d9;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* 12.角色列表 */
+.role-list a {
+  text-decoration: none;
+}
+
+.role-list .tool-bar {
+  background: none;
+  padding: 0;
+  margin: 0 0 20px;
+}
+
+.role-list .cell a {
+  color: #45cdb6;
+}
+
+.role-list .cell span {
+  color: #45cdb6;
+  padding-left: 20px;
+  cursor: pointer;
+}
+
+/* 14.子账号列表 */
+.account-list a {
+  text-decoration: none;
+}
+
+.account-list .tool-bar {
+  background: none;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.account-list .cell a {
+  color: #45cdb6;
+}
+
+.account-list .cell span {
+  color: #45cdb6;
+  padding-left: 20px;
+  cursor: pointer;
+}
+
+/* 15.门店列表 */
+.shop-list a {
+  text-decoration: none;
+}
+
+.shop-list .tool-bar {
+  width: 100%;
+  background: none;
+  margin: 0 0 20px;
+  position: relative;
+  /* .el-pagination{
+      margin:10px 0;
+    } */
+}
+
+.shop-list .cell a {
+  color: #45cdb6;
+}
+
+.shop-list .cell span {
+  color: #45cdb6;
+  padding-left: 20px;
+  cursor: pointer;
+}
+
+.shop-list .el-table {
+  border: 0;
+}
+
+.shop-list .el-table table.el-table__header thead tr {
+  height: 44px;
+  background: #f5f7fa;
+  -webkit-box-shadow: 0 1px 0 0 #eeeeee;
+  box-shadow: 0 1px 0 0 #eeeeee;
+}
+
+.shop-list .el-table table.el-table__body tbody tr {
+  height: 90px;
+  background: #ffffff;
+  -webkit-box-shadow: 0 1px 0 0 #eeeeee;
+  box-shadow: 0 1px 0 0 #eeeeee;
+}
+
+/* 16.添加门店 */
+.add-store {
+  /* 公共样式 */
+  /* 只读样式 */
+  /* 成功弹框样式 */
+}
+
+.add-store ol, .add-store ul, .add-store li {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.add-store p {
+  margin: 0;
+}
+
+.add-store .wid280 {
+  width: 280px;
+}
+
+.add-store .wid400 {
+  width: 400px;
+}
+
+.add-store .exhibition {
+  font-size: 14px;
+  color: #333333;
+}
+
+.add-store .address + .el-form-item__error {
+  display: none;
+}
+
+.add-store .el-dialog--tiny {
+  min-width: 490px;
+}
+
+.add-store .el-dialog--tiny .el-dialog__footer {
+  padding-bottom: 50px;
+}
+
+.add-store .el-dialog--tiny .el-dialog__footer .dialog-footer {
+  display: block;
+  text-align: center;
+}
+
+.add-store .el-dialog--tiny .el-dialog__body {
+  padding: 40px 20px;
+}
+
+.add-store .el-dialog--tiny .el-dialog__body .suc {
+  width: 340px;
+  height: 50px;
+  margin: 0 auto;
+}
+
+.add-store .el-dialog--tiny .el-dialog__body .suc span {
+  float: left;
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  font-size: 46px;
+  margin-top: 3px;
+  color: #41cac0;
+  padding-right: 10px;
+}
+
+.add-store .el-dialog--tiny .el-dialog__body .suc div {
+  float: left;
+  width: 280px;
+}
+
+.add-store .el-dialog--tiny .el-dialog__body .suc div h2 {
+  font-size: 18px;
+  color: #333333;
+  height: 50px;
+  line-height: 50px;
+  margin: 0;
+  margin-left: 15px;
+}
+
+.add-store .el-dialog--tiny .el-dialog__body .suc div p {
+  font-size: 14px;
+  color: #999999;
+  height: 20px;
+  line-height: 20px;
+  padding-top: 5px;
+}
+
+/* 17.商家入驻 */
+.merchant-enter {
+  margin: 0 auto;
+  position: relative;
+  width: 960px;
+  /* 公共样式 */
+  /* 选择行业弹框 */
+  /* 成功弹框样式 */
+}
+
+.merchant-enter .address + .el-form-item__error {
+  display: none;
+}
+
+.merchant-enter p, .merchant-enter ul, .merchant-enter ol, .merchant-enter li, .merchant-enter h4 {
+  margin: 0;
+  padding: 0;
+}
+
+.merchant-enter ol, .merchant-enter ul {
+  list-style: none;
+}
+
+.merchant-enter .wid400 {
+  width: 400px !important;
+}
+
+.merchant-enter .wid280 {
+  width: 280px !important;
+}
+
+.merchant-enter form {
+  margin: 20px 0 0 40px;
+}
+
+.merchant-enter .search-hezi {
+  position: relative;
+}
+
+.merchant-enter .search-hezi .search-ol {
+  border: 1px solid #bfd8d9;
+  position: absolute;
+  top: 36px;
+  width: 280px;
+  background: #fff;
+  z-index: 999;
+  padding-left: 10px;
+}
+
+.merchant-enter .big-img {
+  width: 480px;
+  height: 360px;
+  margin-bottom: 0;
+  background: transparent;
+  -webkit-box-shadow: 0 0 0;
+  box-shadow: 0 0 0;
+}
+
+.merchant-enter .big-img .el-dialog__body {
+  width: 430px;
+  height: 270px;
+  text-align: center;
+  line-height: 270px;
+  padding: 0;
+}
+
+.merchant-enter .big-img .el-dialog__body img {
+  width: 430px;
+}
+
+.merchant-enter .example {
+  position: absolute;
+  width: 200px;
+  height: 100px;
+  bottom: 0px;
+  left: 195px;
+}
+
+.merchant-enter .example span {
+  float: right;
+  font-size: 14px;
+  color: #666666;
+  line-height: 40px;
+  padding-right: 20px;
+}
+
+.merchant-enter .example div {
+  cursor: pointer;
+  float: right;
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  line-height: 100px;
+  text-align: center;
+  background: #d7d7d7;
+  text-align: center;
+}
+
+.merchant-enter .example div img {
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+.merchant-enter .selector-btn {
+  padding: 0;
+  position: absolute;
+  right: 20px;
+  top: 40px;
+  height: 22px;
+  line-height: 22px;
+  font-size: 16px;
+  color: #41cac0;
+}
+
+.merchant-enter .category-bar {
+  padding: 40px 0 20px 20px;
+}
+
+.merchant-enter .selIndustryBtn {
+  background: #eeeeee;
+  width: 118px;
+}
+
+.merchant-enter .myIndustry {
+  width: 398px;
+  border: 1px solid #eee;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #333333;
+}
+
+.merchant-enter .myIndustry h4 {
+  background: #f5f7fa;
+  width: 398px;
+  height: 38px;
+  line-height: 38px;
+  padding-left: 20px;
+  font-weight: normal;
+}
+
+.merchant-enter .myIndustry li {
+  border-top: 1px solid #eee;
+  padding: 0 20px;
+}
+
+.merchant-enter .myIndustry li b {
+  font-weight: normal;
+}
+
+.merchant-enter .myIndustry li .el-button--text {
+  float: right;
+}
+
+.merchant-enter .myIndustry li .el-button--text span {
+  color: #ff0201;
+}
+
+.merchant-enter .myIndustry li .el-button--text span:hover {
+  text-decoration: underline;
+}
+
+.merchant-enter .relevance-good {
+  min-width: 680px !important;
+}
+
+.merchant-enter .relevance-good .el-dialog__header {
+  background: #f5f7fa;
+  -webkit-box-shadow: inset 0 -1px 0 0 #dddddd;
+  box-shadow: inset 0 -1px 0 0 #dddddd;
+  padding: 15px 20px;
+}
+
+.merchant-enter .relevance-good .el-col-8 {
+  width: 50%;
+}
+
+.merchant-enter .relevance-good .category-nav {
+  border-bottom: 0;
+}
+
+.merchant-enter .relevance-good .el-col:nth-of-type(2) .category-nav {
+  border-left: 0;
+}
+
+.merchant-enter .relevance-good .category-nav-breadcrumb {
+  margin: 0;
+  border-color: #ddd;
+}
+
+.merchant-enter .relevance-good .category-nav-breadcrumb .arrow-top-a {
+  display: none;
+}
+
+.merchant-enter .relevance-good .category-nav-breadcrumb .el-breadcrumb {
+  height: 14px;
+  line-height: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.merchant-enter .relevance-good .category-nav-breadcrumb .el-breadcrumb .breadcrumb-tips {
+  color: #999;
+}
+
+.merchant-enter .relevance-good .category-nav-breadcrumb .el-breadcrumb span b {
+  color: #333;
+}
+
+.merchant-enter .relevance-good .category-nav-breadcrumb .el-breadcrumb .el-breadcrumb__separator {
+  color: #333;
+}
+
+.merchant-enter .suc {
+  min-width: 490px;
+}
+
+.merchant-enter .suc .el-dialog__footer {
+  padding-bottom: 50px;
+}
+
+.merchant-enter .suc .el-dialog__footer .dialog-footer {
+  display: block;
+  text-align: center;
+}
+
+.merchant-enter .suc .el-dialog__body {
+  padding: 40px 20px;
+}
+
+.merchant-enter .suc .el-dialog__body .suc-string {
+  width: 340px;
+  height: 50px;
+  margin: 0 auto;
+}
+
+.merchant-enter .suc .el-dialog__body .suc-string span {
+  float: left;
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  font-size: 46px;
+  margin-top: 3px;
+  color: #41cac0;
+  padding-right: 10px;
+}
+
+.merchant-enter .suc .el-dialog__body .suc-string div {
+  float: left;
+  width: 280px;
+}
+
+.merchant-enter .suc .el-dialog__body .suc-string div h2 {
+  font-size: 18px;
+  color: #333333;
+  height: 25px;
+  line-height: 25px;
+  margin: 0;
+}
+
+.merchant-enter .suc .el-dialog__body .suc-string div p {
+  font-size: 14px;
+  color: #999999;
+  height: 20px;
+  line-height: 20px;
+  padding-top: 5px;
+}

@@ -62,14 +62,14 @@
                 <section class="cash" v-if="cashType.type=='满减券'">
                     <el-row style='margin-top: 10px;padding-left: 10px' v-for='(item,index) in cashType.manJian' :key="">
                         <el-input placeholder='现金券面值' style='width:210px' v-model='item.smallPrice' :maxlength="10" @change='isNumber($event,"float",3)' @input='btnChanges'></el-input>
-                        <span style="margin:0 8px">————</span>
+                        <span style="margin:0 8px;color:#ccc">————</span>
                         <el-input placeholder='消费满足金额' style='width:210px' :maxlength="10" @change='isNumber($event,"float",3)'  v-model='item.largePrice' @input='btnChanges'></el-input>
                         <span style="margin:0 8px">元</span>
                         <el-input placeholder='发放数量' style='width:120px' v-if="index == 0" :maxlength="10" @change='isNumber($event,"init",3)' v-model='item.count' @input='btnChanges'></el-input>
                         <span style="margin:0 8px" v-if="index == 0">张</span>
                     </el-row>
                     <el-row style='margin-top: 10px;padding-left: 10px' class='add' v-if="cashType.manJian.length < 4" >
-                        <div @click="addCash"> + <b>添加</b> </div>
+                        <div @click="addCash"><b>增加</b> </div>
                     </el-row>
                 </section>
                 <section class="cash" v-if="cashType.type=='折扣券'">
@@ -112,7 +112,7 @@
                 <el-row v-if='forProduct.type == "部分商品可用"'>
                     <div class="area">
                         <div class='add-pro' @click="dialogProduct = true">
-                            <p>+</p>
+                            <p class="iconfont icon-tianjia"><i></i></p>
                             <span>添加商品</span>
                         </div>
                         <div class="img-con" v-for="item in forProduct.product" @mouseenter="item.deleteBtn=true" @mouseleave="item.deleteBtn=false" :key="item.productId">
@@ -143,7 +143,7 @@
                         <p v-if='showAgainBtn'>重新上传</p>
                     </div>
                     <div v-else>
-                        <p>+</p>
+                        <p class="iconfont icon-tianjia"><i></i></p>
                         <span>添加上传图片</span>
                     </div>
                 </el-upload>
@@ -166,6 +166,7 @@
                     <div class="img-con">
                         <img :src="item.productCoverUrl" alt="">
                         <div class="mask" v-if="item.checked"></div>
+                        <i class="icon-bg" v-if="item.checked"></i>
                         <i class="el-icon-circle-check" v-if="item.checked"></i>
                     </div>
                     <p>{{item.productTitle}}</p>
@@ -329,18 +330,18 @@
                         self.cashType.type = '会员等级券';
                         self.cashType.huiYuan[0].count = cBase.couponDeliveryNum;
                         for(let i=0; i<cMoney.length; i++){
-                            self.cashType.huiYuan[i].money = cMoney[i].couponUseMoney
+                            self.cashType.huiYuan[i].money = cMoney[i].couponShowUseMoney
                         }
                     }else if(cBase.couponUseType == 1){
                         self.cashType.type = '固定金额券';
                         self.cashType.guDing.count = cBase.couponDeliveryNum;
-                        self.cashType.guDing.money = cMoney[0].couponUseMoney;
+                        self.cashType.guDing.money = cMoney[0].couponShowUseMoney;
                     }else if(cBase.couponUseType == 2){
                         self.cashType.type = '满减券'
                         self.cashType.manJian = [];
                         for(let i=0; i<cMoney.length; i++){
                             let prm = {
-                                smallPrice: cMoney[i].couponUseMoney, 
+                                smallPrice: cMoney[i].couponShowUseMoney, 
                                 largePrice: cMoney[i].couponMinMoney, 
                                 count: cBase.couponDeliveryNum
                             }
@@ -349,7 +350,7 @@
                     }else{
                         self.cashType.type = '折扣券'
                         self.cashType.zheKou.count = cBase.couponDeliveryNum;
-                        self.cashType.zheKou.percent = cMoney[0].couponUseMoney;
+                        self.cashType.zheKou.percent = cMoney[0].couponShowUseMoney;
                         self.cashType.zheKou.max = cMoney[0].couponMaxMoney;
                         self.cashType.zheKou.min = cMoney[0].couponMinMoney;
                     }
@@ -729,7 +730,7 @@
                         line-height: 37px;
                         font-weight: 400;
                         font-size: 14px;
-                        margin-left: 10px;
+                        margin-left: 2px;
                     }
                 }
             }
@@ -754,8 +755,18 @@
                 cursor: pointer;
                 p{
                     margin:18px 0 5px;
-                    font-size: 80px;
+                    font-size: 44px;
                     color:#41cac0;
+                    position: relative;
+                    i{
+                        position: absolute;
+                        background: #41cac0;
+                        display: block;
+                        width: 5px;
+                        height: 5px;
+                        top: 15px;
+                        left: 20px;
+                    }
                 }
                 span{
                     font-size:14px;
@@ -830,7 +841,7 @@
             .el-upload--text{
                 width: 100px;
                 height: 100px;
-                border:1px dashed #cccccc;
+                border:1px solid #cccccc;
                 background: #fff;
                 display: flex;
                 flex-direction: column;
@@ -839,8 +850,18 @@
                 border-radius: none;
                 p{
                     margin:18px 0 5px;
-                    font-size: 80px;
+                    font-size: 44px;
                     color:#41cac0;
+                    position: relative;
+                    i{
+                        position: absolute;
+                        background: #41cac0;
+                        display: block;
+                        width: 5px;
+                        height: 5px;
+                        top: 15px;
+                        left: 40px;
+                    }
                 }
                 span{
                     font-size:14px;
@@ -885,6 +906,7 @@
             margin-left: 10px;
             width: 100px;
             height: 34px;
+            border-radius: 0;
         }
         /*弹窗样式*/
         .pro-dialog{
@@ -945,8 +967,13 @@
                                 position: absolute;
                                 right: 5px;
                                 top: 5px;
+                            }
+                            .icon-bg{
                                 background: #fff;
-                                border-radius: 7px 7px 8px 8px;
+                                width: 10px;
+                                height: 10px;
+                                top: 7px;
+                                right: 9px
                             }
                         }
                         p{
@@ -992,6 +1019,12 @@
                     float: right;
                 }
             }
+        }
+        .el-radio__label{
+            font-weight: 400;
+        }
+        .el-radio + .el-radio{
+            margin-left: 40px;
         }
     }
     .el-time-panel__content{

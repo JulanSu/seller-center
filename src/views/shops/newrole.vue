@@ -12,7 +12,7 @@
 			    </el-checkbox-group> 
 			</el-form-item>
 			<el-form-item label="" label-width="100px">
-				<el-button type="primary" @click="changePermission('ruleForm')">{{btnHtml}}</el-button>
+				<el-button class="wid100" type="primary" @click="changePermission('ruleForm')">{{btnHtml}}</el-button>
 			</el-form-item>
 		</el-form>
 	</section>	
@@ -50,7 +50,7 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority,roleCheckname} from '@/api/
     created:function(){
       //获取店铺权限列表
       this.listLoading = true;
-      roleGetAuthority({}).then((res) => {
+      roleGetAuthority({storeId: config.storeId}).then((res) => {
         this.listLoading = false;
         if(res.data.code==0){
           this.jurisdiction=res.data.data;
@@ -91,6 +91,7 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority,roleCheckname} from '@/api/
       dataFetch(id){
         this.btnHtml='修改权限';
         let para = {
+          storeId: config.storeId,
           storeOperatorRoleId:id
         };
         this.listLoading = true;
@@ -138,6 +139,7 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority,roleCheckname} from '@/api/
             this.listLoading = true;
 
             var para = new URLSearchParams();
+            para.append('storeId',config.storeId);
             para.append('roleName',this.ruleForm.roleName);
             para.append('roleAuthority',JSON.stringify(this.ruleForm.roleAuthority));
             
@@ -150,7 +152,6 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority,roleCheckname} from '@/api/
                 this.$message.error('接口建立连接失败');
               });
             }else{
-              para.append('storeId',config.storeId);
               roleSave(para).then((res)=>{
                 this.sucFun(res);
               }).catch((res)=> {
@@ -167,20 +168,3 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority,roleCheckname} from '@/api/
     }
   }
 </script>
-
-<style lang="scss">
-.new-role{
-  .wid270{
-    width:270px;
-  }
-  .el-button{
-    width:100px;
-    height:34px;
-    line-height:34px;
-    background:#41cac0;
-    padding:0;
-    border-color:#41cac0;
-    border-radius:0;
-  }
-} 
-</style>
