@@ -8,11 +8,11 @@
     </el-col>
     <!--列表-->
     <el-table :data="users" width="100%;"  class="hover-style">
-      <el-table-column prop="roleName" label="角色名称" min-width="180"  align="center">
+      <el-table-column prop="roleName" label="角色名称" min-width="200"  align="center">
       </el-table-column>
-      <el-table-column prop="isUsed" label="状态" :formatter="formatUsed" min-width="180"  align="center">
+      <el-table-column prop="isUsed" label="状态" :formatter="formatUsed" min-width="200"  align="center">
       </el-table-column>
-      <el-table-column label="操作" min-width="180"  align="center">
+      <el-table-column label="操作" min-width="200"  align="center">
         <template slot-scope="scope">
           <router-link :to="{ name: '编辑角色', params: { id: scope.row.storeOperatorRoleId }}">编辑</router-link>
           <span @click="handleBtn(scope.$index, scope.row)">{{scope.row.isUsed==1?"禁用":"启用"}}</span>

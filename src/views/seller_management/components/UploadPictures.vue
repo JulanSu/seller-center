@@ -131,10 +131,8 @@ export default {
         this.isDisabled = true
         const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
         const isLt2M = file.size / 1024 / 1024 < 10;
-
         if (!isJPG) {
           this.$message.warning('上传的商品图片只能是 JPG,JPEG,PNG 格式！');
-
         }
         if (!isLt2M) {
           this.$message.warning('上传的商品图片大小不能超过 10MB！');
@@ -143,8 +141,15 @@ export default {
         if(this.imageUrl.length >= this.picLimit) {
           isWarning = false
           this.$message.warning('上传的商品图片最多不能超过'+ this.picLimit+'张！');
-        } 
-        return isJPG && isLt2M && isWarning;
+        }
+
+        if(!isJPG || !isLt2M || !isWarning) {
+          this.isDisabled = false
+          return false
+        }else {
+          return true
+        }
+        
       },
     /**
      * handleAvatarSuccess 图片上传成功后
@@ -154,12 +159,13 @@ export default {
     handleAvatarSuccess(res) {
       this.isDisabled = false
       if(res.code === 0) {
+        this.isDisabled = false
         this.imageUrl.push(res.data);
         this.$emit('change', res.data)
       }else {
+        this.isDisabled = false
         this.$message.warning('上传商品图片失败！请重新尝试。');
       }
-      
       this.$emit('input', this.imageUrl);
       //传递值给父组件
     },
@@ -209,6 +215,7 @@ export default {
   }
   .el-upload--picture-card {
     line-height: 98px;
+    border-radius: 0;
     .el-icon-plus {
       color: #41CAC0;
     }
@@ -222,5 +229,30 @@ export default {
   .upload-pictrues {
     float: left;
   }
+}
+.picbox {
+  .el-upload-list--picture-card {
+    .el-upload-list__item-actions {
+      background: none;
+          cursor: move;
+      .el-upload-list__item-delete {
+          background-color: rgba(0, 0, 0, .5);
+          width: 100%;
+          margin: 0;
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          height: 28px;
+          top: initial;
+          .el-icon-delete {
+            position: absolute;
+            top: 5px;
+            right: 3px;
+          }
+      }
+    }
+  }
+
+
 }
 </style>

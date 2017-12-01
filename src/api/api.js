@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from './newAxios';
 
 let base = '';
 let host = 'http://localhost:8080/Urban/rest';

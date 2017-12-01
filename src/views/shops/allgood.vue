@@ -13,10 +13,13 @@
           :value="item.storeCateId">
         </el-option>
       </el-select>
-      <el-date-picker type="date" v-model="form.searchStartTime" class='w160' :editable="false" placeholder='创建起始时间'></el-date-picker>
+      <el-date-picker class='wid320'
+        v-model="form.searchDate"
+        :editable="false"
+        type="datetimerange"
+        @change="datePickerHandle"
+        placeholder="选择日期范围">
       </el-date-picker>
-      <span>—</span>
-      <el-date-picker type="date" v-model="form.searchEndTime" class='w160' :editable="false" placeholder='创建结束时间'></el-date-picker>
       <el-button type="primary" class='search-btn' @click="findGood">查询</el-button>
     </el-row>
     <!--列表-->
@@ -94,6 +97,7 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
           storeCateId:"",
           goodId:'',
           productTitle:'',
+          searchDate:'',
           searchStartTime:'',
           searchEndTime:''
         },
@@ -134,13 +138,21 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
       });
     },
     methods: {
-      /*时间转换为字符串*/
-      transitionTime(t){
-        if(t instanceof Date){
-          var y=t.getMonth()+Number(1);
-          t= t.getFullYear()+"-"+y+"-"+t.getDate();
+      /**
+       * datePickerHandle 用户选择时间后回调方法
+       * @param  { String } value 用户选择后时间
+       * @return {[type]}       [description]
+       */
+      datePickerHandle (value){
+        let self = this
+        if(value) {
+          let dateArr = value.split(' - ')
+          self.form.searchStartTime = dateArr[0] || ''
+          self.form.searchEndTime = dateArr[1] || ''
+        }else {
+          self.form.searchStartTime = ''
+          self.form.searchEndTime = ''
         }
-        return t;
       },
       //当选择每页多少条时触发
       handleSizeChange(val){
@@ -248,12 +260,7 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
           searchStartTime:this.form.searchStartTime,
           searchEndTime:this.form.searchEndTime
         };
-        if(para.searchStartTime){
-          para.searchStartTime=this.transitionTime(this.form.searchStartTime)+" "+"00:00:00";
-        }
-        if(para.searchEndTime){
-          para.searchEndTime=this.transitionTime(this.form.searchEndTime)+" "+"23:59:59";
-        }
+
         this.listLoading = true;
         productPagetheshelves(para).then((res) => {
           if(res.data.code==0){

@@ -41,45 +41,14 @@
           @updateSkuQuantity="updateSkuQuantity"></product-sku-table>
         </el-form-item>
         <el-form-item label="展示价格及库存" prop="productSellPrice" class="sellFormat-sku">
-          <div class="el-table el-table--fit el-table--striped el-table--enable-row-hover el-table--enable-row-transition" style="width: 100%;">
-              <div class="el-table__header-wrapper">
-                <table cellspacing="0" cellpadding="0" border="0" class="el-table__header" style="width:100%">
-                  <thead>
-                    <tr>
-                      <th colspan="1" rowspan="1" class="is-leaf">
-                        <div class="cell">价格（元）</div>
-                      </th>
-                      <th colspan="1" rowspan="1" class="is-leaf">
-                        <div class="cell">总数量</div>
-                      </th>
-                    </tr>
-                  </thead>
-                </table>
-              </div>
-              <div class="el-table__body-wrapper">
-                <table cellspacing="0" cellpadding="0" border="0" class="el-table__body" style="width: 100%">
-                  <tbody>
-                      <tr class="el-table__row">
-                        <td >
-                          <div class="cell el-input el-input-group el-input-group--append">
-                            <input :value="goodsForm.productSellPrice" @keyup="blurValidHandle($event, goodsForm)" @input="blurValidHandle($event, goodsForm)" @blur="blurValidHandle($event, goodsForm)" class="el-input__inner" type="text" />
-                          </div>
-                        </td>
-                        <td>
-                          <div class="cell" v-if="initForm.productSkuQuantity">
-                            {{initForm.productSkuQuantity}}
-                          </div>
-                        </td>
-                      </tr>
-                  </tbody>
-                </table><!---->
-              </div><!----><!----><!----><!---->
-          </div> 
+          <product-sell-price 
+            v-model="goodsForm.productSellPrice"
+            :skuQuantity="initForm.productSkuQuantity" 
+            @change="changeProductSellPrice"></product-sell-price>
         </el-form-item>
         <el-form-item label="商品图片" prop="productPicUrlList" class="sellFormat-sku update-img">
           <upload-pictures v-model="goodsForm.productPicUrlList" :note="initForm.uploadTishi1" @change="uploadHandle"></upload-pictures>
         </el-form-item>
-
         <el-form-item label="商品描述" prop="detailsContent" class="sellFormat-sku">
          <goods-summernote v-model="goodsForm.detailsContent" @change="contentChangehandle"></goods-summernote>
         </el-form-item>
@@ -180,7 +149,8 @@
         <el-form-item>
           <el-button type="primary" @click="submitForm('goodsForm', 1)" :loading="submitLoading">保存</el-button>
           <template v-if="!$route.query.productStatus || $route.query.productStatus != 1">
-            <el-button type="primary" @click="submitForm('goodsForm', 0)" :loading="draftboxLoading">放入草稿箱</el-button>
+            <!-- <el-button @click="submitForm('goodsForm', 0)" :loading="draftboxLoading">放入草稿箱</el-button> -->
+          <el-button @click="putRecycleBin('goodsForm')" :loading="draftboxLoading">放入草稿箱</el-button>
           </template>
           <!-- <el-button @click="resetForm('goodsForm')">重置</el-button> -->
         </el-form-item>
@@ -195,7 +165,6 @@
 <script>
 
   import CategoryBar from '@/components/CategoryBar.vue'
-  import UpdateImg from './goods_form/UpdateImg.vue'
   import CateProperty from './goods_form/CateProperty.vue'
   import ProductSkuOptions from './goods_form/ProductSkuOptions.vue'
   import ProductSkuTable from './goods_form/ProductSkuTable.vue'
@@ -204,6 +173,7 @@
   import StoreCate from './goods_form/StoreCate.vue'
   import BrandSelect from './goods_form/BrandSelect.vue'
   import LogisticsServices from './goods_form/LogisticsServices.vue'
+  import ProductSellPrice from './goods_form/ProductSellPrice.vue'
   import VueQuillEditor from 'vue-quill-editor'
   import { getStrLength } from '@/util/validator'
   import UploadPictures from './components/UploadPictures.vue'/*上传图片组件*/
@@ -223,7 +193,6 @@
       GoodsSummernote,
       CategoryBar, 
       VueQuillEditor, 
-      UpdateImg, 
       CateProperty,
       LogisticsServices,
       ProductSkuOptions,
@@ -232,7 +201,8 @@
       PublishTime,
       StoreCate,
       BrandSelect,
-      UploadPictures
+      UploadPictures,
+      ProductSellPrice
     },
     data() {
       var validatorStrLength = (rule, value, callback) => {
@@ -370,8 +340,8 @@
             {required: true, type: 'array', message: '请上传商品图片', trigger: 'change, blur' }
           ],
           productSellPrice: [
-            {required: true,validator: (rule, value, callback) => {
-              console.log('校验展示价格',value)
+            {required: true, validator: (rule, value, callback) => {
+
               if(!value){
                 callback(new Error('展示价格不能为空！'))
               }else {
@@ -391,13 +361,13 @@
           productSkuTable: [
             {required: true, validator: (rule, value, callback) => {
               var isFinished = true
-              console.log('你好',value)
               if(!value.length){
                 callback(new Error('请先选择商品规格！'))
               }
               if(value.length){
                 for(var i=0;i<value.length;i++) {
-                  if(!value[i].productPrice || !value[i].productSkuQuantity){
+                  
+                  if(!value[i].productPrice.length || !value[i].productSkuQuantity.toString().length){
                     callback(new Error('价格和库存不能为空！'))
                   }
                   if(value[i].productPrice) {
@@ -407,13 +377,12 @@
                   }
                   if(value[i].productSkuQuantity) {
                     if(!(/^\d+$/.test(value[i].productSkuQuantity))){
-
                       callback(new Error('库存只能为整数！'))
                     }
                   }
                 }
-                callback()
               }
+              callback()
             }, trigger: 'change'}
           ]
           // applicableShop: [
@@ -442,6 +411,24 @@
       
     },
     methods: {
+      /**
+       * putRecycleBin 放入草稿箱
+       * @param  { String } str 表单对象名称
+       * @return {[type]}     [description]
+       */
+      putRecycleBin(str){
+        let self = this
+        if(!self.goodsForm.productTitle) {
+          self.$message({
+            message: '填写标题后方可以放入草稿箱！',
+            type: 'warning'
+          });
+          self.$refs.goodsForm.validateField('productTitle');
+          return
+        }
+        self.goodsForm.productStatus = 0
+        self.submitProductFormData(0)
+      },
       validField(){
         var productType = this.goodsForm.productType
         var templateType = this.template.templateType
@@ -669,25 +656,13 @@
         var goodsForm = self.goodsForm
         var initForm = self.initForm
         goodsForm.productStatus = statusVal
-
         if(initForm.productCateProperty && initForm.productCateProperty.length) {
           self.$refs.subjectchildMethod.submitForm();
         }else {
           self.catePropertyValidStatus = true
         }
         
-        if(!statusVal) {
-          if(!self.goodsForm.productTitle) {
-            self.$message({
-              message: '填写标题后方可以放入草稿箱！',
-              type: 'warning'
-            });
-            return
-          }
-          self.submitProductFormData(statusVal)
-          return
-        }
-        console.log('表单提交', self.goodsForm, self.applicableShopStatus, self.catePropertyValidStatus)
+        // console.log('表单提交', self.goodsForm, self.applicableShopStatus, self.catePropertyValidStatus)
         self.$refs[formName].validate((valid) => {
           if(!self.applicableShopStatus){
             return false;
@@ -741,9 +716,15 @@
         this.$refs.goodsForm.validateField('productSkuTable')
       },
       updateSkuQuantity(value){
-
         this.initForm.productSkuQuantity  = this.getProductSkuQuantity(value)
-        
+      },
+      /**
+       * changeProductSellPrice 商品展示价格校验，又子组件触发
+       * @param  { String } value 商品展示价格
+       * @return {[type]}       [description]
+       */
+      changeProductSellPrice(value) {
+        this.$refs.goodsForm.validateField('productSellPrice');
       },
       upSysAreaHandle (value) {
         this.goodsForm.serviceArea = value
@@ -757,20 +738,23 @@
         setTimeout(function(){
           self.$refs.goodsForm.validateField('detailsContent');
         },100)
-        
-        
       }
     }
   }
 </script>
 <style lang="scss">
+  .el-upload-list--picture-card {
+    .el-upload-list__item {
+      border-radius: 0;
+    }
+  }
   .content-wrapper {
     padding-right: 20px;
   }
   .block-form {
     background:#f5f7fa;
     border:1px solid #eeeeee;
-    padding: 20px;
+    padding: 10px 20px 10px;
   }
   .error.error-red {
     color: #f00
@@ -816,4 +800,5 @@
   .note-group-image-url {
     display: none;
   }
+
 </style>

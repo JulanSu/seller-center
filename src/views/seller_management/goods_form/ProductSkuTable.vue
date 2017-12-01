@@ -233,6 +233,7 @@
         this.$emit('input', data)
         this.$emit('updateSkuQuantity', data)
         this.$emit('updateSkuTableError')
+        // this.$store.dispatch('updateProdcutSkuQuantity', sku)
       },
       getFormartSkuData(){
         var skuData = this.skuData

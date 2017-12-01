@@ -203,6 +203,7 @@
                 }
                 a{
                     color: #41cac0;
+                    font-size: 13pt;
                 }
             }
         }

@@ -1122,6 +1122,7 @@ div.address select option {
 
 /* 17.商家入驻 */
 .merchant-enter {
+  margin: 0 auto;
   position: relative;
   width: 960px;
   /* 公共样式 */

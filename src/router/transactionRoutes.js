@@ -26,7 +26,7 @@ const routers = [
                 { path: '/transaction/reservation/reservation-detail', component: ReservationDetail, name: '结算明细' },
             ]
         },
-        { path: '/transaction/bind', component: Bind, name: '绑定支付宝' },
+        { path: '/transaction/bind', component: Bind, name: '绑定支付宝' }
 ]
 
 

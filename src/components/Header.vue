@@ -14,9 +14,7 @@
         </div>
       <div class="userinfo">
 
-        <div class="user-item">
-            <router-link to="/home/index">欢迎你，{{ueseName}}</router-link>
-        </div>
+        <div class="user-item" @click='jump("index")'>欢迎你，{{ueseName}}</div>
         <div class="user-item" style="padding:0 30px 0 10px;">
           <el-dropdown trigger="click"  @command="handleCommand" @visible-change="triangle">
             <span class="el-dropdown-link userinfo-inner">商户中心<i class="iconfont icon-xiala2" :class="{'el-xuanzhuan1':elXuanzhuan1,'el-xuanzhuan2':elXuanzhuan2}"></i></span>
@@ -27,9 +25,9 @@
           </el-dropdown>          
         </div>
         <i class="pipe"></i>
-        <div class="user-item" style="width:90px;text-align:center;"><router-link to="/person/message">消息<i>{{total}}</i></router-link></div>
+        <div class="user-item" style="width:90px;text-align:center;"  @click='jump("note")'>消息<i>{{total}}</i></div>
         <i class="pipe"></i>
-        <div class="user-item" style="cursor:pointer;"><i class="iconfont icon-shouji"></i>商户中心手机版</div>
+        <div class="user-item" style="cursor:pointer;" @click='jump("phone")'><i class="iconfont icon-shouji"></i>商户中心手机版</div>
       </div>
   </div>
 </template>
@@ -82,11 +80,27 @@ export default {
     
   },
   methods: {
+    //跳转首页，手机版页面前判断是否是入驻页面
+    jump(str){
+      console.log(this.$route.path)
+      if(this.$route.path=="/merchant/merchant-enter-before"||this.$route.path=="/merchant/merchant-enter"){
+        return false;
+      }
+      if(str=="index"){
+        this.$router.push({ path: '/home/index'});
+      }else if(str=="phone"){
+        this.$router.push({ path: '/home/phone'});
+      }else{
+        this.$router.push({ path: '/person/message'});
+      }
+    },
     handleCommand(command) {
      if(command=="exit"){
         userLogout({}).then((res) => {
           window.location.href= config.apiHost + '/login';
-        });
+        }).catch(error => {
+          console.log(error)
+        })
       }
        
     },
@@ -146,20 +160,20 @@ export default {
         .user-item {
           display: inline-block;
           padding: 0px 5px; 
+          cursor:pointer;
           a{
             color: #666;
-            i{
+          }
+          &>i{
               font-style: normal;
               display: inline-block;
               color: #f00;
               margin-left: 3px;
             }
-
-          }
           
         }
         i.icon-shouji{
-          color:#41cac0;
+          color:#41cac0 !important;
           font-size:20px;
           vertical-align: middle;
           padding:0 8px 0 30px;

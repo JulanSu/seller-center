@@ -7,15 +7,15 @@
 
     <!--列表-->
     <el-table :data="datas" class="hover-style">
-      <el-table-column prop="account" label="账号名" min-width="200" align="center">
+      <el-table-column prop="account" label="账号名" min-width="150" align="center">
       </el-table-column>
-      <el-table-column prop="name" label="使用者" min-width="200" align="center">
+      <el-table-column prop="name" label="使用者" min-width="150" align="center">
       </el-table-column>
-      <el-table-column prop="roleName" label="岗位" min-width="200" align="center">
+      <el-table-column prop="roleName" label="岗位" min-width="150" align="center">
       </el-table-column>
-      <el-table-column prop="isUsed" :formatter="formatUsed" label="状态" min-width="200" align="center">
+      <el-table-column prop="isUsed" :formatter="formatUsed" label="状态" min-width="150" align="center">
       </el-table-column>
-      <el-table-column label="操作" min-width="200" align="center" >
+      <el-table-column label="操作" min-width="150" align="center">
         <template slot-scope="scope">
           <router-link :to="{name:'编辑子账号', query: { id: scope.row.storeOperatorId}}">编辑</router-link>
           <span @click="handleOptation(scope.row)">{{scope.row.isUsed==1?"冻结":"解冻"}}</span>

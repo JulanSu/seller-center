@@ -85,7 +85,7 @@
                   :label="item.catePropertyName" 
                   :key="item.catePropertyParentId"
                   :prop="'list.'+index+'.values[0].value'"
-                  :rules="{required: true, type: 'string', message:item.catePropertyName + '不能为空或格式不正确！', trigger: 'change'}">
+                  :rules="{required: true, validator: validateDate, trigger: 'change, blur'}">
                     <el-date-picker
                       v-model="item.values[0].value"
                       :editable="false"
@@ -212,7 +212,7 @@
                 v-if="!item.catePropertyRequired"
                 :key="item.catePropertyParentId"
                 :prop="'list.'+index+'.values[0].value'"
-                :rules="{required: true, type: 'string', message:item.catePropertyName + '不能为空或格式不正确！', trigger: 'change'}">
+                :rules="{required: true, validator: validateDate, trigger: 'change, blur'}">
                   <el-date-picker
                     v-model="item.values[0].value"
                     :editable="false"
@@ -277,10 +277,15 @@
       this.catePropertyForm.map = this.initCatePropertyFormMap(catePropertyData)
     },
     methods: {
+      validateDate(rule, value, callback){
+        if(!value) {
+          callback(new Error('日期不能为空！'))
+        }
+        callback()
+      },
       initCatePropertyFormMap(data){
         var obj = {}
         for(var i=0; i<data.length; i++) {
-          console.log(data[i].productCatePropertyId, data[i].catePropertyName, data[i].catePropertyParentId, data[i].catePropertyRequired)
           obj[data[i].productCatePropertyId] = data[i]
         }
         return obj

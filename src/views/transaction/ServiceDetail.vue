@@ -123,7 +123,6 @@
                 detail:'',
                 after: {},
                 disabled: true
-
             }
         },
         beforeCreate(){

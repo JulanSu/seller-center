@@ -15,5 +15,8 @@
 export default {
 	updateUserSelectedSku( {commit}, data ) {
 		commit('UPDATE_USER_SELECTED_THE_SKU', data)
+	},
+	updateProdcutSkuQuantity( {commit}, data ) {
+		commit('UPDATE_PRODCUT_SKU_QUANTITY', data)
 	}
 }

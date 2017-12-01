@@ -7,14 +7,14 @@
       </router-link>
     </el-col>
     <!--列表-->
-    <el-table :data="datas"  class="hover-style">
-      <el-table-column prop="cateName" label="分类名称" min-width="190" align="center">
+    <el-table :data="datas" width="100%;" class="hover-style">
+      <el-table-column prop="cateName" label="分类名称" min-width="200" align="center">
       </el-table-column>
-      <el-table-column prop="productNum" label="商品数量" min-width="190" align="center">
+      <el-table-column prop="productNum" label="商品数量" min-width="200" align="center">
       </el-table-column>
-      <el-table-column prop="isUsed" :formatter="formatUsed" label="显示状态" min-width="190" align="center">
+      <el-table-column prop="isUsed" :formatter="formatUsed" label="显示状态" min-width="200" align="center">
       </el-table-column>
-      <el-table-column label="操作" min-width="300" align="center">
+      <el-table-column label="操作" min-width="200" align="center">
         <template slot-scope="scope">
           <router-link :to="{ name: '编辑分类', params: { id: scope.row.storeCateId }}">编辑</router-link>
           <span @click="handleOptation(scope.row)">{{scope.row.isUsed==1?"隐藏":"显示"}}</span>

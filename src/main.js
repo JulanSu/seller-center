@@ -30,6 +30,7 @@ Vue.use(LoadingMask)
 
 Vue.use(VueSummernote, {
   height: 300,
+  disableDragAndDrop: true,
   toolbar: [
     ['style', ['style']],
     ['font', ['bold', 'underline', 'clear']],

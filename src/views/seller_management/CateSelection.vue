@@ -29,7 +29,7 @@
         <div class="block">
           <div style="text-align: center" class="create-rule">
             <el-button type="primary" @click="linkGoodsForm" :class="{disabled: !hunbohuiRule || !cateSelected}">我已阅读以下规则，现在创建商品</el-button>
-            <div class="block">
+            <div class="block hbh-rule">
               <el-checkbox class="rule-info" v-model="hunbohuiRule"><a href="https://wh.jiehun.com.cn/help/77272.html" target="_black">中国婚博会规则</a></el-checkbox>
             </div>
           </div>
@@ -166,6 +166,18 @@
 
 <style lang="scss">
   @import '~scss_vars';
+  .hbh-rule {
+    a {
+      color: #333;
+    }
+    a:hover {
+      color: #337ab7;
+    }
+    .el-checkbox__label {
+      padding-left: 10px;
+    }
+  }
+
   .create-rule {
     .disabled {
       background-color: #ccc;

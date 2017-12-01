@@ -30,6 +30,23 @@
   overflow: initial;
 }
 
+.el-checkbox__label {
+  font-weight: 400;
+}
+
+.el-message-box {
+  border-radius: 0;
+}
+
+.el-message-box .el-message-box__title {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.el-message-box .el-message-box__close {
+  font-size: 12px;
+}
+
 .seller-table th .cell {
   padding: 0;
   height: 40px;
@@ -1231,6 +1248,7 @@ div.address select option {
 
 /* 17.商家入驻 */
 .merchant-enter {
+  margin: 0 auto;
   position: relative;
   width: 960px;
   /* 公共样式 */
@@ -1673,6 +1691,11 @@ div.address select option {
   width: 140px;
 }
 
+.wid320 {
+  width: 320px !important;
+  margin-right: 10px;
+}
+
 .updata .el-input {
   display: none;
 }
@@ -1901,6 +1924,7 @@ input[type=file].el-upload__input {
 .category-nav-breadcrumb .breadcrumb-tips {
   color: #333;
   float: left;
+  font-weight: 700;
 }
 
 .update-img .desc {

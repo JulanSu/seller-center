@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from './newAxios';
 
 let base = '';
 let host = 'http://192.168.88.42:8083';

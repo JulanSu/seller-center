@@ -4,8 +4,8 @@ import Full from '@/components/Full.vue'
 import FullNoLeft from '@/components/FullNoLeft.vue'
 import Demo from '@/views/Demo'
 
-import MerchantEnter from '@/views/shops//MerchantEnter.vue'
-import MerchantEnter1 from '@/views/shops//MerchantEnter1.vue'
+/*import MerchantEnter from '@/views/shops//MerchantEnter.vue'
+import MerchantEnter1 from '@/views/shops//MerchantEnter1.vue'*/
 
 //import mendian from '@/views/charts/mendian.vue'
 import PersonMessage from '@/views/message/PersonMessage.vue'
@@ -18,6 +18,9 @@ import home from './home.js'
 
 /*404*/
 import NotFound from './404.js'
+
+//商家入驻
+import MerchantEnter from './merchantEnter.js'
 
 //店铺管理路由
 import shopsManagementRoutes from './shopsManagementRoutes.js'
@@ -33,22 +36,7 @@ import marketingCenter from './marketingCenterRoutes.js'
 Vue.use(VueRouter)
 
 const routers = new VueRouter({
-
-    // mode: 'history',
     routes:[
-    // {
-    //     path: '/login',
-    //     component: Login,
-    //     name: '',
-    //     hidden: true
-    // },
-    // {
-    //     path: '/404',
-    //     component: NotFound,
-    //     name: '',
-    //     hidden: true
-    // },
-
     {
         path: '/',
         component: Full,
@@ -70,21 +58,7 @@ const routers = new VueRouter({
         redirect: '/home/index',
         children: home
     },
-    // {
-    //     path: '/productsku',
-    //     component: ProductSku,
-    //     name: '',
-    //     hidden: true
-    // },
-    // {
 
-    //     path: '/seller-management',
-    //     component: Full,
-    //     redirect: '/seller-management/goods',
-    //     name: '商品管理',
-    //     iconCls: 'iconfont icon-shangpu',//图标样式class
-    //     children: goodsManagementRoutes
-    // },
     /*消息中心*/
     {
         path: '/person',
@@ -97,25 +71,18 @@ const routers = new VueRouter({
             name: '消息中心' 
         }]
     },
-    // {
-    //     path: '/transaction',
-    //     component: Full,
-    //     name: '交易管理',
-    //     iconCls: 'iconfont icon-jiaoyiguanli',//图标样式class
-    //     children: transaction
-    // },
-    // {
-    //     path: '/store',
-    //     component: Full,
-    //     name: '店铺管理',
-    //     iconCls: 'iconfont icon-shangpinguanli',
-    //     children:shopsManagementRoutes 
-    // },
-    {
+    /*{
         path: '/merchant-enter',
         component: MerchantEnter,
         name: '',
         hidden: true
+    },*/
+    {
+        path: '/merchant',
+        component: FullNoLeft,
+        name: '',
+        hidden: true,
+        children:MerchantEnter
     },
     {
         path: '/404',
@@ -129,13 +96,6 @@ const routers = new VueRouter({
         redirect: '/404',
         hidden: true
     }
-
-    // {   path: '/marketing-center',
-    //     component: Full,
-    //     name: '营销中心',
-    //     iconCls: 'iconfont icon-yingxiaozhongxin',
-    //     children:marketingCenter 
-    // }
   ]
 })
 

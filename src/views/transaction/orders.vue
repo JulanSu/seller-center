@@ -235,12 +235,14 @@
                         return false;
                     }
                     if(moc.data.list){
-                       for(let i=0; i<moc.data.list.length; i++) {
+                        for(let i=0; i<moc.data.list.length; i++) {
                             let that = moc.data.list[i];
-                            that.pName = self.textSubstr(that.productNames.join(''), that.productNames.length);
+                            if(that.productNames){
+                                that.pName = self.textSubstr(that.productNames.join(''), that.productNames.length);    
+                            }
                             that.orderStoreStatus = this.switchStatus(that.orderStoreStatus)
                         }
-                    } 
+                    }
                     this.total = Number(moc.data.total);
                     this.tableData = moc.data.list
                 })
