@@ -77,7 +77,6 @@ import {operatorList,operatorChangeStatus,operatorGetNum} from '@/api/shopApi';
           }
         }).catch((res)=> {
           this.listLoading = false;
-          this.$message.error('接口建立连接失败');
         });
       },
 
@@ -113,7 +112,6 @@ import {operatorList,operatorChangeStatus,operatorGetNum} from '@/api/shopApi';
           this.listLoading = false;
         }).catch((res)=> {
           this.listLoading = false;
-          this.$message.error('接口建立连接失败');
         });
       },
       //当选择每页多少条时触发
@@ -161,7 +159,6 @@ import {operatorList,operatorChangeStatus,operatorGetNum} from '@/api/shopApi';
       
           }).catch((res)=> {
             this.listLoading = false;
-            this.$message.error('接口建立连接失败');
           });
         }).catch(() => {
         });

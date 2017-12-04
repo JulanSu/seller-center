@@ -143,23 +143,24 @@
         }
         $color: #45cdb6;
         box-sizing: border-box !important;
+        margin-top: -10px;
         .w180{
             width: 180px;
+            margin: 10px 10px 0 0;
+
         }
         .w120{
             width:120px;
+            margin: 10px 10px 0 0;
         }
         .search-row{
-            >div:nth-of-type(2){
-                margin-left:20px;
-            }
             >span{
                 font-size:14px;
                 color:#666666;
-                margin: 0 10px;
+                margin-right: 10px;
             }
             .search-btn{
-                margin-left: 40px;
+                margin-top: 10px;
                 width: 60px;
                 background: $color;
                 color: #fff;

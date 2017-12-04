@@ -14,20 +14,27 @@
         </div>
       <div class="userinfo">
 
-        <div class="user-item" @click='jump("index")'>欢迎你，{{ueseName}}</div>
-        <div class="user-item" style="padding:0 30px 0 10px;">
+        <div v-if="!login" class="user-item" @click='jump("index")'>欢迎您，{{ueseName}}</div>
+        <div v-else class="user-item" @click='jump("login")'>登录</div>
+        <div v-if="!login" class="user-item" style="padding:0 30px 0 10px;">
           <el-dropdown trigger="click"  @command="handleCommand" @visible-change="triangle">
             <span class="el-dropdown-link userinfo-inner">商户中心<i class="iconfont icon-xiala2" :class="{'el-xuanzhuan1':elXuanzhuan1,'el-xuanzhuan2':elXuanzhuan2}"></i></span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item  command="a">设置</el-dropdown-item>
               <el-dropdown-item command="exit">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>          
         </div>
-        <i class="pipe"></i>
-        <div class="user-item" style="width:90px;text-align:center;"  @click='jump("note")'>消息<i>{{total}}</i></div>
-        <i class="pipe"></i>
-        <div class="user-item" style="cursor:pointer;" @click='jump("phone")'><i class="iconfont icon-shouji"></i>商户中心手机版</div>
+        <div v-if='!login' class="user-item" style="width:120px;text-align:center;"> 
+          <i class="pipe"></i> 
+          <div class="user-item" style="width:90px;text-align:center;"  @click='jump("note")'>消息<i>{{total}}</i>
+          </div><i class="pipe"></i>
+        </div>
+        
+        
+        <div class="user-item" style="cursor:pointer;" @click='jump("phone")'>
+          <i class="iconfont icon-shouji"></i>
+          <span style="vertical-align:middle;">商户中心手机版</span>
+        </div>
       </div>
   </div>
 </template>
@@ -39,25 +46,14 @@ export default {
     return {
       total: null,
       ueseName:'',
-
+      message:true,
       elXuanzhuan1:false,
-      elXuanzhuan2:false
+      elXuanzhuan2:false,
+      login:false
     }
   },
   created(){
-    let params = {
-      uid: config.uid,
-      page: 1,
-      size: 20
-    }
-    msgNumber(params).then( res => {
-      if(res.data.data){
-        let tal = Number(res.data.data)
-        this.total = tal > 999 ? '999+' : tal;
-      } 
-    }).catch(res => {
-
-    })
+    this.getMessageNumber()
   },
   props: {
     sysName: {
@@ -77,12 +73,18 @@ export default {
   },
   mounted(){
     this.ueseName=config.userName;
-    
+    //没有登录，标记login为true，显示登录按钮
+    if(!config.storeId){
+      this.login=true;
+    }
+    //如果是入驻页面，右上角的操作都是显示的，但是不可以点击
+    if(this.$route.path=="/merchant/merchant-enter-before"||this.$route.path=="/merchant/merchant-enter"){
+        this.login=false;
+      }
   },
   methods: {
     //跳转首页，手机版页面前判断是否是入驻页面
     jump(str){
-      console.log(this.$route.path)
       if(this.$route.path=="/merchant/merchant-enter-before"||this.$route.path=="/merchant/merchant-enter"){
         return false;
       }
@@ -90,6 +92,8 @@ export default {
         this.$router.push({ path: '/home/index'});
       }else if(str=="phone"){
         this.$router.push({ path: '/home/phone'});
+      }else if(str=="login"){
+        window.location.href=config.apiHost+"/login";
       }else{
         this.$router.push({ path: '/person/message'});
       }
@@ -102,7 +106,6 @@ export default {
           console.log(error)
         })
       }
-       
     },
     //下拉框出现/隐藏时触发
     triangle(isShow){
@@ -114,7 +117,23 @@ export default {
         this.elXuanzhuan2=true;
       }
       
-    }
+    },
+    //获得消息总数量
+    getMessageNumber(){
+      let login = this.$route.query.login;
+      if(login){
+        this.message = false;
+        return false;
+      }
+      msgNumber({uid: config.uid}).then( res => {
+        if(res.data.data){
+          let tal = Number(res.data.data)
+            this.total = tal > 999 ? '999+' : tal;
+          }
+        }).catch(res => {
+          console.log(res)
+        })
+      }
   }
 }
 </script>

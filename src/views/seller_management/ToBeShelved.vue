@@ -174,17 +174,6 @@
             })
           },
           /**
-           * onEditorHandle 编辑回调,跳转到编辑页
-           * @param  { Object } row 当前行的数据
-           * @return {[type]}     [description]
-           */
-          onEditorHandle (row){
-            this.$route.push({
-              path: '/seller-management/goods/editor', 
-              query:{productId: row.productId}
-            })
-          },
-          /**
            * onRecommendHandle 推荐/取消推荐回调方法
            * @param  { Object } row 当前行的数据
            * @return {[type]}     [description]

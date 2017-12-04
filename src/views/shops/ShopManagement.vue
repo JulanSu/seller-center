@@ -90,7 +90,6 @@ import {getClassifyList, updateClassify} from '@/api/shopApi';
           }  
         }).catch((res)=> {
           this.listLoading = false;
-          this.$message.error('接口建立连接失败');
         });
       },
       handleCurrentChange(val) {
@@ -123,7 +122,6 @@ import {getClassifyList, updateClassify} from '@/api/shopApi';
             }
           }).catch(()=> {
             this.listLoading = false;
-            this.$message.error('接口建立连接失败');
           });
         }).catch(() => {
         });

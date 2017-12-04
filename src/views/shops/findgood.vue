@@ -95,7 +95,6 @@ import { productList,productRemove} from '@/api/shopApi';
 
           this.listLoading = false;
         }).catch((res)=> {
-          this.$message.error('建立连接失败');
           this.listLoading = false;
         });
       },
@@ -120,7 +119,6 @@ import { productList,productRemove} from '@/api/shopApi';
             
           }).catch((res)=> {
             this.listLoading = false;
-            this.$message.error('建立连接失败');
           });
         }).catch(() => {
         });

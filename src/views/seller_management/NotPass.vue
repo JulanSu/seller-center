@@ -80,7 +80,7 @@
   import SearchNav from './components/SearchNav.vue'
   import Pagination from './components/Pagination.vue'
   import { getProductStatus } from '@/util/product_status'
-  import { getProductList, getStoreCate, cancelReview, delNotPassStoreCycleBin } from '@/api/seller'
+  import { getProductList, getStoreCate, cancelReview, delNotPassStoreCycleBin, getCheckeEditStatus } from '@/api/seller'
   import merge from 'merge'
   const win = window;
   const storeId = win.config && win.config.storeId ? win.config.storeId : ''
@@ -137,9 +137,21 @@
            * @return {[type]}     [description]
            */
           onEditorHandle (row){
-            this.$router.push({
-              path: '/seller-management/goods/editor', 
-              query:{productId: row.productId, productStatus: row.productStatus}
+            var self = this
+            getCheckeEditStatus({
+              productId: row.productId,
+              storeId: storeId,
+              productStatus: row.productStatus
+            }).then((res)=>{
+              var data = res.data.data
+              if(res.data.code === 0) {
+                self.$router.push({
+                  path: '/seller-management/goods/editor', 
+                  query:{productId: row.productId, productStatus: row.productStatus}
+                })
+              }else {
+                self.messageHandle(res.data.message, 'warning')
+              }
             })
           },
           /**

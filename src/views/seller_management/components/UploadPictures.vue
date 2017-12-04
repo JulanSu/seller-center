@@ -119,6 +119,7 @@ export default {
      * @return {[type]}       [description]
      */
     errorHandle(value){
+      this.isDisabled = false
       this.$message.warning('上传商品图片失败！请重新尝试。');
     },
     /**

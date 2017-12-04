@@ -88,7 +88,7 @@
 			<el-form-item label="" prop="logo"  label-width="200px" class='updata'>
 				<el-input v-model="ruleForm.logo" class="wid280"></el-input>
 			</el-form-item>
-			<div v-if="!isshow" >
+			<div v-if="!isshow">
 				<el-form-item label="品牌资质" label-width="200px" class="requireHezi">
 					<span class="require" style='left:-78px;'>*</span>
 					<upload-pictures2 :note="uploadTishi1" :url="ruleForm.trademarkCertificate" :listen="'listenToPic1'" :picSize='"800.KB"' @listenToPic1="sucpic1" ref="uploadPic1" class="h"></upload-pictures2>
@@ -342,7 +342,6 @@ export default {
 	          	this.listLoading = false;
 	        }).catch((res)=> {
 	          	this.listLoading = false;
-	          	this.$message({message: '接口建立连接失败',type: 'warning'});
 	        });
     	}
     	
@@ -450,7 +449,6 @@ export default {
 			          	this.listLoading = false;
 			        }).catch((res)=> {
 			          	this.listLoading = false;
-			          	this.$message.error('接口建立连接失败');
 			        });
 		        }else {
 	            	return false;
@@ -466,15 +464,21 @@ export default {
         	
 
         	if(this.ruleForm.registerLocation=="中国大陆"){
-        		console.log(this.ruleForm.trademarkCertificate)
         		if(this.ruleForm.trademarkCertificate){
-        			this.$refs.uploadPic1.revise("");//修改图片的值
+        			var self=this;
+        			setTimeout(function(){console.log(self.$refs.uploadPic1)
+						self.$refs.uploadPic1.revise("");//修改图片的值
+        			},500)
+        			
         		}
 
         	}else{
-        		
         		if(this.ruleForm.customsDeclaration){
-        			this.$refs.uploadPic3.revise("");//修改图片的值
+        			var self=this;
+        			setTimeout(function(){console.log(self.$refs.uploadPic1)
+						this.$refs.uploadPic3.revise("");//修改图片的值
+        			},500)
+        			
         		}
         		
         	}
@@ -482,6 +486,7 @@ export default {
         	this.ruleForm.trademarkType=1;
         	this.ruleForm.registerIndustry='农、林、牧、渔业';
         	this.ruleForm.trademarkApplicant='';
+        	console.log(this.ruleForm.trademarkCertificate)
         },
 	    /*返回商户中心按钮*/
 	    getBack(){

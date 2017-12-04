@@ -23,7 +23,7 @@
             <el-table-column prop="orderStoreStatus" label="售后进度" align='center'></el-table-column>
             <el-table-column label="操作" align='center'>
                 <template slot-scope="scope">
-                    <el-button @click="handleClick(scope.row)" type="text" size="small" style="color: #45cdb6" v-if="scope.row.orderStoreStatus == '待处理'">去处理</el-button>
+                    <el-button @click="handleClick(scope.row)" type="text" size="small" style="color: #45cdb6" v-if="scope.row.orderStoreStatus == '待商家处理'">去处理</el-button>
                     <el-button @click="handleClick(scope.row)" type="text" size="small">查看详情</el-button>
                   </template>
             </el-table-column>
@@ -192,31 +192,35 @@
             box-sizing: border-box !important;
         }
         $color: #45cdb6;
+        margin-top: -10px;
         p{
             margin: 0;
             padding: 0;
         }
         .w180{
             width: 180px;
+            margin-right: 10px;
         }
         .w120{
             width:120px;
+            margin-right: 10px;            
         }
         .search-row1{
-            >div:nth-of-type(n+2){
-                margin-left:10px;
+            >div{
+                margin-right:10px;
+                margin-top: 10px;
             }
             >span{
                 font-size:14px;
                 color:#666666;
-                margin-left: 10px;
+                margin-right: 10px;
             }
             .search-btn{
-                margin-left: 40px;
                 width: 60px;
                 background: $color;
                 color: #fff;
                 border: none;
+                margin-top: 10px;
                 span{
                     color: #fff;
                 }

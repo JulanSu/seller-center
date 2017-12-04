@@ -214,7 +214,6 @@ import crypto from 'crypto'
           this.listLoading = false;
         }).catch((res)=> {
           this.listLoading = false;
-          this.$message.error('接口建立连接失败');
         });
 
       },
@@ -264,7 +263,6 @@ import crypto from 'crypto'
                 this.sucFun(res);  
               }).catch((res)=> {
                 this.listLoading = false;
-                this.$message.error('接口建立连接失败');
               });
             }else{
               para.append('roleId',this.ruleForm.roleId);
@@ -274,7 +272,6 @@ import crypto from 'crypto'
                 this.sucFun(res);
               }).catch((res)=> {
                 this.listLoading = false;
-                this.$message.error('接口建立连接失败');
               });
             }
             

@@ -180,25 +180,25 @@
                 padding: 0;
             }
         }
+        margin-top: -10px;
         box-sizing: border-box !important;
         $color: #45cdb6;
         .w180{
             width: 180px;
+            margin: 10px 10px 0 0;
         }
         .w120{
             width:120px;
-        }
-        .ml10{
-            margin-left: 10px;
+            margin: 10px 10px 0 0;            
         }
         .search-row{
             .span-sty{
                 font-size:14px;
                 color:#666;
-                margin:0 10px;
+                margin-right:10px;
             }
             .search-btn{
-                margin-left: 40px;
+                margin-top: 10px;
                 width: 60px;
                 background: $color;
                 color: #fff;

@@ -111,7 +111,6 @@ import CategoryMenu from '@/components/CategoryMenu.vue'/*类目选择*/
 		          	this.listLoading = false;
 		        }).catch((res)=> {
 		          	this.listLoading = false;
-		          	this.$message.error('接口建立连接失败');
 		        });
 			},
 

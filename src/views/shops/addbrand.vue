@@ -187,13 +187,10 @@ export default {
 			    	if(res.data.data.registerLocationType==0){
 			    		this.ruleForm.registerLocation=1;
 			    	}
-	        	}else{
-	        		this.$message.error(res.data.message);
 	        	}
 	          	this.listLoading = false;
 	        }).catch((res)=> {
 	          	this.listLoading = false;
-	          	this.$message.error('接口建立连接失败');
 	        });
 
 	    	this.$set(this.database,"key"+storeBrandId,this.ruleForm);
@@ -354,7 +351,6 @@ export default {
 	          	this.listLoading = false;
 	        }).catch((res)=> {
 	          	this.listLoading = false;
-	          	this.hint('提交失败','warning',2000,this.fail)
 	        });
     	},
 
@@ -373,7 +369,6 @@ export default {
 	          	this.listLoading = false;
 	        }).catch((res)=> {
 	          	this.listLoading = false;
-	          	this.hint('提交失败','warning',2000,this.fail)
 	        });
     	},
 

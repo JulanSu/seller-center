@@ -134,7 +134,6 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
         
       }).catch((res)=> {
         this.listLoading = false;
-        this.$message.error('接口建立连接失败');
       });
     },
     methods: {
@@ -206,7 +205,6 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
          
         }).catch((res)=> {
           this.listLoading = false;
-          this.$message.error('接口建立连接失败');
         });
        
       },
@@ -225,18 +223,12 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
         para.append('productId',this.productId);
         para.append('storeCateIdList',this.roleAuthority);
 
+
         productSave(para).then((res) => {
           var that=this;
           if(res.data.code==0){
             that.dialogVisible1=false;
-            this.$message({
-              message: '关联成功',
-              type: 'success',
-              onClose:function(){
-                that.getProductPagetheshelves();
-               
-              }
-            });
+            that.getProductPagetheshelves();
           }else{
             this.$message.error('关联失败');
           }
@@ -245,7 +237,6 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
         }).catch((res)=> {
           this.flag=true;
           this.listLoading = false;
-          this.$message.error('接口建立连接失败');
         });
       },
       //获取列表
@@ -272,7 +263,6 @@ import { cateList,productListcate,productSave,productPagetheshelves } from '@/ap
           this.listLoading = false;
         }).catch((res)=> {
           this.listLoading = false;
-          this.$message.error('接口建立连接失败');
         });
       },
       handleCurrentChange(val) {

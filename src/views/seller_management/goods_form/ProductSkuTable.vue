@@ -31,9 +31,7 @@
                 <td width="150px">
                   <div class="cell cell el-input el-input-group el-input-group--append">
                     <input type="text" class="el-input__inner" :value="value.productPrice" @keyup="inputChangeHandle($event, value, 'price')" @input="inputChangeHandle($event, value, 'price')" @blur="inputChangeHandle($event, value, 'price')" />
-<!--                     <div :class="!value.productPrice ? 'el-form-item__error' : 'hidden'">价格不能为空！</div> -->
                   </div>
-                     
                 </td>
                 <td width="150px">
                   <div class="cell cell el-input el-input-group el-input-group--append">
@@ -43,9 +41,7 @@
                     :value="value.productSkuQuantity" 
                     maxlength="9" 
                     @keyup="inputChangeHandle($event, value, 'quantity')" @input="inputChangeHandle($event, value, 'quantity')" @blur="inputChangeHandle($event, value, 'quantity')" />
-<!--                     <div :class="!value.productSkuQuantity ? 'el-form-item__error' : 'hidden'">库存不能为空！</div> -->
                   </div>
-                  
                 </td>
               </tr>
             </template>
@@ -65,7 +61,9 @@
         tableTitle: [],
         tableList: [],
         skuData: null,
-        editorSkuListCache: null
+        writeSkuListCache: null,
+        isEditor: false,
+        edotorSkuListCache: null
       }
     },
     props: {
@@ -82,22 +80,31 @@
     mounted(){
       this.initTableTitle()
       if(this.value && this.value.length) {
+        this.isEditor = true
         this.initEditorSku()
       }
     },
     watch: {
+      skuData: {
+        handler: function(newVal, oldVal){
+          this.writeSkuListCache = newVal
+        },
+        deep: true
+      },
       userSelectedTheSku(newVal, oldVal){
         if(newVal && newVal.length) {
           var genData = this.gen(newVal)
           var result  = this.getProductSkuProperty(genData)
           var resultById = this.formartByIdSku(result)
-          var resultBySerialId = this.getProductSkuSerialId(resultById)
-          // if(!this.skuData) {
-          //   this.skuData = resultBySerialId
-          // }else {
-          //   this.skuData = resultBySerialId
-          // }
-          this.skuData = resultBySerialId
+          //var resultBySerialId = this.getProductSkuSerialId(resultById)
+
+            var userCurWriteSku = this.getProductSkuSerialId(resultById, this.writeSkuListCache)
+            if(!this.isEditor) {
+              this.skuData = userCurWriteSku
+            }else {
+              this.skuData =  this.getProductSkuSerialId(userCurWriteSku, this.edotorSkuListCache)
+            }
+                                      
           this.inputChangeHandle()
         }else {
           this.skuData = null
@@ -123,7 +130,8 @@
       }
       
       this.skuData = this.formartByIdSku(skuTableList)
-      this.editorSkuListCache = this.formartByIdSku(skuTableList)
+      //把用户保存过的SKU缓存起来
+      this.edotorSkuListCache = this.formartByIdSku(skuTableList)
     },
     /**
      * validCateIntegrity 判断类目是否完整，对比用户已保存的商品销售规格的名称和商品规格的品牌
@@ -165,13 +173,13 @@
        * @param  {[type]} data [description]
        * @return {[type]}      [description]
        */
-    getProductSkuSerialId(data){
-      if(this.editorSkuListCache) {
+    getProductSkuSerialId(data, catchData){
+      if(catchData) {
         for(var item in data){
-          if(this.editorSkuListCache[item]) {
-            data[item].productSkuSerialId = this.editorSkuListCache[item].productSkuSerialId
-            data[item].productSkuQuantity = this.editorSkuListCache[item].productSkuQuantity
-            data[item].productPrice = this.editorSkuListCache[item].productPrice
+          if(catchData[item]) {
+            data[item].productSkuSerialId = catchData[item].productSkuSerialId
+            data[item].productSkuQuantity = catchData[item].productSkuQuantity
+            data[item].productPrice = catchData[item].productPrice
           }
         }
       }
@@ -183,7 +191,7 @@
      * @return {[type]}         [description]
      */
     selectedSkuChange(options){
-      var skuData = this.editorSkuListCache
+      var skuData = this.writeSkuListCache
       for(var key in skuData) {
         if(options[key]) {
           //obj[key] = skuData[key]
@@ -334,6 +342,9 @@
   }
   .el-form-item__error {
     position: static;
+  }
+  .el-input__inner {
+    border: 0
   }
 }
 </style>

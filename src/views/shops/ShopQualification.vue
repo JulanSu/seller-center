@@ -220,7 +220,6 @@ export default {
           	this.listLoading = false;
         }).catch((res)=> {
 	        this.listLoading = false;
-	        this.$message.error('接口建立连接失败');
 	    });
         if(config.storeType!=1){
         	this.ident1="身份证正面";
@@ -273,7 +272,6 @@ export default {
 		        	}
 		        }).catch((res)=> {
 			        this.listLoading = false;
-			        this.$message.error('接口建立连接失败');
 			    });
 		      } else {
 		        return false;

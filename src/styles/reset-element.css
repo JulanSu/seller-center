@@ -45,3 +45,13 @@
 .el-message-box .el-message-box__close {
   font-size: 12px;
 }
+
+.el-scrollbar .el-select-dropdown__item.hover, .el-scrollbar .el-select-dropdown__item:hover {
+  background-color: #5CD3BF;
+  color: #fff;
+}
+
+.el-scrollbar .el-select-dropdown__item.selected {
+  background-color: #5CD3BF;
+  color: #fff;
+}

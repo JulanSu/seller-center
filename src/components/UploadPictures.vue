@@ -11,7 +11,7 @@
           :before-upload="beforeAvatarUpload">
           <img v-if="imageUrl" :src="imageUrl" class="avatar">
           <img v-if="url" :src="url" class="avatar1">
-          <i v-else class="iconfont icon-tianjia">
+          <i v-else class="iconfont icon-tianjiajiahaowubiankuang">
             <p>添加上传图片</p>
           </i>
           <div class="btn">重新上传</div>
@@ -121,7 +121,7 @@ export default {
   .avatar-uploader{
     height:100px;
   }
-  .icon-tianjia{
+  .icon-tianjiajiahaowubiankuang{
     padding-top:23px;
     width:100px;
     height:100px;

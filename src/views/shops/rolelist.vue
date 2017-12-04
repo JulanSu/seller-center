@@ -68,7 +68,6 @@ import { roleList,roleChangeStatus } from '@/api/shopApi';
             
           }).catch((res)=> {
             this.listLoading = false;
-            this.$message.error('接口建立连接失败');
           });
         }).catch(() => {
         });
@@ -91,7 +90,6 @@ import { roleList,roleChangeStatus } from '@/api/shopApi';
           this.listLoading = false;
         }).catch((res)=> {
           this.listLoading = false;
-          this.$message.error('接口建立连接失败');
         });
       }
     },
