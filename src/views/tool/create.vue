@@ -243,11 +243,17 @@
             this.typeFrom();
             rules.init(this);
             productList({'storeId':config.storeId}).then(res => {
+                if(!res.data.data){
+                    this.warn('获取商品列表错误');
+                    return false;
+                }
                 this.allProduct = res.data.data;
                 for(let i=0; i<this.allProduct.length; i++){
                     let that = this.allProduct[i];
                     this.$set(that,'checked',false);
                 }
+            }).catch(res => {
+                this.warn('网络有误')
             })
         },
         watch:{

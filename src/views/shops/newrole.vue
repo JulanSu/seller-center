@@ -60,7 +60,6 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority,roleCheckname} from '@/api/
         
       }).catch((res)=> {
         this.listLoading = false;
-        this.$message.error('接口建立连接失败');
       });
     },
     mounted:function(){
@@ -111,7 +110,6 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority,roleCheckname} from '@/api/
           this.listLoading = false;
         }).catch((res)=> {
           this.listLoading = false;
-          this.$message.error('接口建立连接失败');
         });
 
       },
@@ -149,14 +147,12 @@ import {roleGet,roleUpdate,roleSave,roleGetAuthority,roleCheckname} from '@/api/
                 this.sucFun(res);
               }).catch((res)=> {
                 this.listLoading = false;
-                this.$message.error('接口建立连接失败');
               });
             }else{
               roleSave(para).then((res)=>{
                 this.sucFun(res);
               }).catch((res)=> {
                 this.listLoading = false;
-                this.$message.error('接口建立连接失败');
               });
             }
             

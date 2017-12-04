@@ -1,40 +1,38 @@
 <template>
-  <div class="">
-    <el-row> 
-      <el-col :span="2">
-        <el-button type="primary" icon="plus" @click="linkHandle" class="create-goods">创建商品</el-button>
-      </el-col>
-      <el-col :span="22">
-        <el-form :inline="true" :model="formInline" :rolus="formInline" rel="formInline" class="demo-form-inline">
-          <el-form-item label="">
-            <el-input v-model="formInline.productTitle" placeholder="请输入商品名称"></el-input>
-          </el-form-item>
-          <el-form-item label="">
-            <input type="number" class="el-input__inner" v-model="formInline.productId" placeholder="商品ID" />
-            <!-- <el-input v-model="formInline.productId" placeholder="商品ID"></el-input> -->
-          </el-form-item>
-          <el-form-item label="">
-            <el-select v-model="formInline.storeCateId" placeholder="店铺分类" style="width: 160px;">
-              <template v-if="storeCate.length" v-for="item in storeCate">
-                <el-option :label="item.cateName" :value="item.storeCateId"></el-option>
-              </template>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="">
-            <el-date-picker
-              v-model="createDate"
-              :editable="false"
-              type="datetimerange"
-              @change="datePickerHandle"
-              placeholder="选择日期范围">
-            </el-date-picker>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">查询</el-button>
-          </el-form-item>
-        </el-form>
-      </el-col>
-    </el-row>
+  <div class="search-main">
+    <div class="search-nav">
+      <el-button type="primary" icon="plus" @click="linkHandle" class="btn-create-goods">创建商品</el-button>
+    </div>
+    <div style="search-table">
+      <el-form :inline="true" :model="formInline" :rolus="formInline" rel="formInline" class="demo-form-inline">
+        <el-form-item label="">
+          <el-input v-model="formInline.productTitle" placeholder="请输入商品名称"></el-input>
+        </el-form-item>
+        <el-form-item label="">
+          <input type="number" class="el-input__inner" v-model="formInline.productId" placeholder="商品ID" />
+          <!-- <el-input v-model="formInline.productId" placeholder="商品ID"></el-input> -->
+        </el-form-item>
+        <el-form-item label="">
+          <el-select v-model="formInline.storeCateId" placeholder="店铺分类" style="width: 160px;">
+            <template v-if="storeCate.length" v-for="item in storeCate">
+              <el-option :label="item.cateName" :value="item.storeCateId"></el-option>
+            </template>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="">
+          <el-date-picker
+            v-model="createDate"
+            :editable="false"
+            type="datetimerange"
+            @change="datePickerHandle"
+            placeholder="选择日期范围">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit">查询</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
   </div>
 </template>
 
@@ -159,5 +157,18 @@
 <style>
   .el-picker-panel {
     z-index: 99999 !important;
+  }
+  .btn-create-goods {
+    margin-right: 15px;
+  }
+  .search-main {
+    overflow: hidden;
+  }
+  .search-nav {
+    float: left;
+
+  }
+  .search-table {
+    float: left;
   }
 </style>

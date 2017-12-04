@@ -91,8 +91,17 @@
       return {
       }
     },
+    mounted:function(){ 
+      if(localStorage.getItem('merchant0')!=1){
+        window.location.reload();
+        localStorage.setItem("merchant0",1);
+      }
+      if(localStorage.getItem('merchant')==1){
+        localStorage.removeItem("merchant");
+      } 
+    },
     methods:{
-
+      
     }
 
   }
@@ -117,11 +126,13 @@
   }
   ol{
     overflow: hidden;
-    width:1380px;
-    margin:0 auto 70px;
+    max-width:1380px;
+    min-width:290px;
+    margin:0 auto 20px;
     &>li{
       float:left;
       width:220px;
+      padding-bottom:50px;
       h6{
         margin:0;
         padding:0;
@@ -165,6 +176,9 @@
         color: #999999;
         letter-spacing: 0;
         line-height: 22px;
+      }
+      ul{
+        height:66px;
       }
     }
     &>li{

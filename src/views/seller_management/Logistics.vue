@@ -3,7 +3,7 @@
     <loading-mask v-if="!isRenderFinished"></loading-mask>
     <el-row>
       <el-col :span="24">
-        <el-form :model="logisticsForm" :rules="logisticsRules" ref="logisticsForm" label-width="120px" class="logistics-form">
+        <el-form :model="logisticsForm" :rules="logisticsRules" ref="logisticsForm" label-width="130px" class="logistics-form">
           <el-form-item label="物流模板" prop="storeShippingTemplateId">
             <el-select v-model="defaultTemplateId" @change="changeTemplateHandle" placeholder="选择物流模板">
               <el-option label="新建物流模板" value="-1"></el-option>
@@ -657,13 +657,13 @@
           }
         }
         return maps;
-      },
+      }
     }
   }
 </script>
 
 <style lang="scss">
   .logistics-block {
-
+    width: 800px;
   }
 </style>

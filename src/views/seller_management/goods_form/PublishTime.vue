@@ -25,13 +25,16 @@
     props: {
       value: {
         type: [String,Number],
-        default: ''
-      }
+        default: 'productPublishedOnTime'
+      },
+      validPublishTime: Function
     },
     watch: {
       publishTimeType: function (newVal, oldVal){
+        console.log(newVal)
         if(newVal === '立即上架'){
           this.$emit('input', 'productPublishedOnTime')
+          this.$emit('validPublishTime', 'productPublishedOnTime')
         }else if(newVal === '定时上架'){
           this.$emit('input', this.value1)        
         }

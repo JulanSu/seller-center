@@ -43,12 +43,10 @@
                         {message: '请输入正确格式的App-ID', trigger: 'blur', pattern:/^[0-9a-z]+$/},
                     ],
                     privateKey: [
-                        {required: true, message: '请输入Private-key私钥', trigger: 'blur'},
-                        {message: '请输入正确格式的私钥', trigger: 'blur', pattern:/^[0-9a-z]+$/},
+                        {required: true, message: '请输入Private-key私钥', trigger: 'blur'}
                     ],
                     publicKey: [
-                        {required: true, message: '请输入Private-key公钥', trigger: 'blur'},
-                        {message: '请输入正确格式的公钥', trigger: 'blur', pattern:/^[0-9a-z]+$/},
+                        {required: true, message: '请输入Private-key公钥', trigger: 'blur'}
                     ],
                 }
             }
@@ -78,14 +76,17 @@
                 let self = this;
                 self.$refs[data].validate((valid) => {
                     if (valid) {
-                        savePayMessage(qs.stringify(this.ruleForm)).then(res => {
+                        savePayMessage(qs.stringify(self.ruleForm)).then(res => {
                             if(res.data.success){
-                                this.$message({
+                                self.$message({
                                     message: '保存成功',
                                     type: 'success'
                                 });
                             }else{
-                                this.$message.error(res.data.errorData);
+                                self.$message({
+                                    message: res.data.message,
+                                    type: 'warning'
+                                });
                             }
                         })
                     }

@@ -83,7 +83,6 @@ export default {
 		    	}
 		    }).catch((res)=> {
 		        this.listLoading = false;
-		        this.$message.error('接口建立连接失败');
 		    });
 		}
     },

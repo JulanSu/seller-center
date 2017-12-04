@@ -260,7 +260,6 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 	        	}
 	        }).catch((res)=> {
 		        this.listLoading = false;
-		        this.$message.error('接口建立连接失败');
 		    });
 		},
 		update(para){//编辑门店提交接口
@@ -274,7 +273,6 @@ import {saveClassify,getClassifyGet, updateClassify} from '@/api/shopApi';
 	        	
 	        }).catch((res)=> {
 		        this.listLoading = false;
-		        this.$message.error('接口建立连接失败');
 		    });
 		},
         submitForm(formName) {

@@ -24,7 +24,7 @@
                   @keyup="validtorPriceHandle" 
                   @input="validtorPriceHandle" 
                   @blur="validtorPriceHandle" 
-                  class="el-input__inner" type="text" />
+                  class="el-input__inner" style="border: 0" type="text" />
                 </div>
               </td>
               <td>

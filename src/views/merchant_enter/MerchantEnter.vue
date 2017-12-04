@@ -666,7 +666,6 @@ export default {
 		                
 		            }).catch((res)=> {
 		                this.listLoading = false;
-		                this.$message.error('接口建立连接失败');
 		            });
 		      	}else {
 		        	return false;
@@ -678,7 +677,6 @@ export default {
 	    	this.dialogVisible1 = false;
 	    	localStorage.setItem("merchant",1);
 	    	window.location.reload();
-	    	
 	    }
 
 	}

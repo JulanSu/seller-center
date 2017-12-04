@@ -44,7 +44,7 @@
           <product-sell-price 
             v-model="goodsForm.productSellPrice"
             :skuQuantity="initForm.productSkuQuantity" 
-            @change="changeProductSellPrice"></product-sell-price>
+            @change="changeProductSellPrice"  style="width:400px;"></product-sell-price>
         </el-form-item>
         <el-form-item label="商品图片" prop="productPicUrlList" class="sellFormat-sku update-img">
           <upload-pictures v-model="goodsForm.productPicUrlList" :note="initForm.uploadTishi1" @change="uploadHandle"></upload-pictures>
@@ -137,7 +137,7 @@
         <div class="other-info">
           <category-bar title="其他信息"></category-bar> 
           <el-form-item label="上架时间" prop="publishTime" >
-            <publish-time v-model="goodsForm.publishTime"></publish-time>
+            <publish-time v-model="goodsForm.publishTime" @validPublishTime="validPublishTime"></publish-time>
           </el-form-item>
           <el-form-item label="是否推荐" prop="productRecommend">
             <el-radio-group v-model="goodsForm.productRecommend">
@@ -355,7 +355,13 @@
 
           // 上架时间
           publishTime: [
-            {required: true, message: '请选择商品上架时间', trigger: 'change, blur' },
+            {required: true, validator: (rule, value, callback) => {
+              console.log('你好',value)
+              if(!value) {
+                callback(new Error('上架时间不能为空！'))
+              }
+              callback()
+            }, trigger: 'change, blur' },
             // { validator: validatorTime}
           ],
           productSkuTable: [
@@ -411,6 +417,9 @@
       
     },
     methods: {
+      validPublishTime(value){
+        this.$refs.goodsForm.validateField('publishTime');
+      },
       /**
        * putRecycleBin 放入草稿箱
        * @param  { String } str 表单对象名称
@@ -559,11 +568,11 @@
         }).then((res) => {
           let data = res.data.data
           if(res.data.code === 0) {
-           self.initForm = merge(self.initForm, data)
+            self.initForm = merge(self.initForm, data)
             self.formartEditorData(data)
+            self.validField()
+            self.initForm.finished = true
           }
-          self.validField()
-          self.initForm.finished = true
         })
 
       },

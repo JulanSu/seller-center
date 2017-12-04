@@ -1,105 +1,110 @@
 <template>
   <section class="phone">
     <div class="top-banner">
-    <div class="top-banner-bg"><img src="//s.hzjiehun.bid/static-branch-dmp/dmpLogin/static/images/registerbg.png" height="600" width="1920"></div>
+    <div class="top-banner-bg"></div>
     <div class="banner-con">
+      <div>
+        <div class="erweima"></div>
+        <div class='down'>
+          <a href="javascript:;" style="margin-top:9px;">
+            <b class="iconfont icon-ios"></b>
+            <span>iphone 下载</span>
+          </a>
+          <a href="javascript:;" style="margin-top:30px;">
+            <b class="iconfont icon-android"></b>
+            <span>Android 下载</span>
+          </a>
+        </div>
+      </div>
     </div>
 </div>
     <div class="foot">
         <div class="w">
             <div class="hezi">
-                <div class="descrip">
-                    <h3>新手帮助</h3>
-                    <ol>
-                        <li>消费保障</li>
-                        <li>购物流程</li>
-                        <li>积分兑换协议</li>
-                        <li>预约服务条款</li>
-                        <li>会员注册</li>
-                    </ol>
-                </div>
-                <div class="descrip">
-                    <h3>会员服务</h3>
-                    <ol>
-                        <li>什么是品牌认证</li>
-                        <li>婚博会特供产品</li>
-                        <li>会员服务条款</li>
-                        <li>婴芭莎协议</li>
-                        <li>婴芭莎会员服务</li>
-                    </ol>
-                </div>
-                <div class="descrip">
-                    <h3>商家服务</h3>
-                    <ol>
-                        <li>商家常见问题</li>
-                        <li>商家店铺管理</li>
-                        <li>商家店铺装修</li>
-                    </ol>
-                </div>
-                <div class="descrip">
-                    <h3>合作通道</h3>
-                    <ol>
-                        <li>商家入驻</li>
-                        <li>中国婚博会</li>
-                        <li>广告服务</li>
-                    </ol>
-                </div>
-                <div class="erWeima">
-                    <div class="xiaZai"><img src="//s.hzjiehun.bid/static-branch-dmp/dmpLogin/static/images/weix.jpg">
-                        <p>扫码下载APP</p>
-                    </div>
-                    <p class="dianHua"><span class="iconfont icon-dianhua"></span><b class="tel">4000-365-520</b></p>
-                </div>
-            </div>
+              <div class="descrip">
+                  <h3>新手帮助</h3>
+                  <ol>
+                      <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/77308.html">预约服务条款</a></li>
+                      <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/190996.html">积分兑换协议</a></li>
+                      <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/600.html">会员注册</a></li>
+                      <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/599.html">购物流程</a></li>
+                      <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/598.html">消费保障</a></li>
+                  </ol>
+              </div>
+              <div class="descrip">
+                  <h3>会员服务</h3>
+                  <ol>
+                      <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/548169.html">什么是品牌认证</a></li>
+                      <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/15250.html">婚博会特供产品</a></li>
+                      <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/77300.html">会员服务条款</a></li>
+                      <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/975914.html">婴芭莎服务协议</a></li>
+                      <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/975913.html">婴芭莎会员服务条款</a></li>
+                  </ol>
+              </div>
+              <div class="descrip">
+                  <h3>商家服务</h3>
+                  <ol>
+                      <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/632.html">商家店铺装修</a></li>
+                      <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/634.html">商家店铺管理</a></li>
+                      <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/636.html">商家常见问题</a></li>
+                  </ol>
+              </div>
+              <div class="descrip">
+                  <h3>合作通道</h3>
+                  <ol>
+                      <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/637.html">中国婚博会</a></li>
+                      <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/638.html">商家入驻</a></li>
+                      <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/676331.html">广告服务</a></li>
+                  </ol>
+              </div>
+              <div class="erWeima">
+                  <div class="xiaZai"><img src="//s6.tthunbohui.cn/pc/dist/common/images/weix.jpg?v=2017091407">
+                      <p>扫码下载APP</p>
+                  </div>
+                  <p class="dianHua"><span class="iconfont icon-dianhua"></span><b class="tel">4000-365-520</b></p>
+              </div>
+          </div>
             <dl class="lianjie">
-                <dt>友情链接</dt>
-                <dd><a href="">北京婚博会</a></dd>
-                <dd><a href="">武汉婚博会</a></dd>
-                <dd><a href="">上海婚博会</a></dd>
-                <dd><a href="">广州婚博会</a></dd>
-                <dd><a href="">杭州婚博会</a></dd>
-                <dd><a href="">天津婚博会</a></dd>
-                <dd><a href="">上海婚博会</a></dd>
-                <dd><a href="">天津家婚博会</a></dd>
-                <dd><a href="">武汉家婚博会</a></dd>
-                <dd><a href="">广州家婚博会</a></dd>
-                <dd><a href="">上海婚庆公司</a></dd>
-                <dd><a href="">绵阳二手房</a></dd>
-                <dd><a href="">中国婚博会</a></dd>
-                <dd><a href="">北京办公室装修手感洗机</a></dd>
-                <dd><a href="">美缝剂</a></dd>
-                <dd><a href="">中国冷库网</a></dd>
-                <dd><a href="">电磁炉火锅桌</a></dd>
-                <dd><a href="">广州母婴博览会</a></dd>
-                <dd><a href="">北京家博会</a></dd>
-                <dd><a href="">山东新风净化器</a></dd>
-                <dd><a href="">中国衣柜十大品牌长沙装修</a></dd>
-                <dd><a href="">保定门窗</a></dd>
-                <dd><a href="">原建E家装修信息平台</a></dd>
-                <dd><a href="">深圳装修公司 </a></dd>
-                <dd><a href="">太原装修</a></dd>
-                <dd><a href="">杭州家博会</a></dd>
-                <dd><a href="">武汉律师</a></dd>
-                <dd><a href="">徐州婚纱摄影 </a></dd>
-                <dd><a href="">上海装修网</a></dd>
-            </dl>
+            <dt>友情链接</dt>
+            <dd><a href="https://bj.jiehun.com.cn/">北京婚博会</a></dd>
+            <dd><a href="https://wh.jiehun.com.cn/">武汉婚博会</a></dd>
+            <dd><a href="https://sh.jiehun.com.cn/">上海婚博会</a></dd>
+            <dd><a href="https://gz.jiehun.com.cn/">广州婚博会</a></dd>
+            <dd><a href="https://tj.jiehun.com.cn/">天津婚博会</a></dd>
+            <dd><a href="http://sh.jiabasha.com/">上海家博会</a></dd>
+            <dd><a href="http://wh.jiabasha.com/">武汉家博会</a></dd>
+            <dd><a href="http://tj.jiabasha.com/">天津家博会</a></dd>
+            <dd><a href="http://gz.jiabasha.com/">广州家博会</a></dd>
+            <dd><a href="http://www.lmwa.net/">防腐涂料</a></dd>
+            <dd><a href="http://jd.qizuang.com/">江都装修网</a></dd>
+            <dd><a href="https://www.jiehun.com.cn/">中国婚博会</a></dd>
+            <dd><a href="https://gz.yingbasha.com/">广州母婴博览会</a></dd>
+            <dd><a href="http://www.dehechina.com/">不锈钢屏风</a></dd>
+            <dd><a href="http://tj.expo.jiabasha.com/">天津家博会</a></dd>
+            <dd><a href="http://gz.expo.jiabasha.com/">广州家博会</a></dd>
+            <dd><a href="http://wh.expo.jiabasha.com/">武汉家博会</a></dd>
+            <dd><a href="http://sh.expo.jiabasha.com/">上海家博会</a></dd>
+            <dd><a href="http://bj.jiabasha.com/">北京家博会</a></dd>
+            <dd><a href="http://hz.jiabasha.com/">杭州家博会</a></dd>
+            <dd><a href="http://hz.expo.jiabasha.com/">杭州家博会索票</a></dd>
+        </dl>
         </div>
     </div>
     <div class="dibu w">
       <ul>
-          <li><a href="">商务合作  |</a></li>
-          <li><a href="">免责声明  |</a></li>
-          <li><a href="">预约服务条款  |</a></li>
-          <li><a href="">会员服务条款  |</a></li>
-          <li><a href="">关于我们  |</a></li>
-          <li><a href="">诚聘英才  |</a></li>
-          <li><a href="">联系我们  |</a></li>
-          <li><a href="">投诉建议  |</a></li>
-          <li><a href="">网站地图  |</a></li>
-          <li><a href="">友情链接  |</a></li>
-          <li><a href="">隐私保护  |</a></li>
-          <li><a href="">内容版权声明协议  |</a></li>
-          <li><a href="">申请店铺</a></li>
+        <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/674671.html">商务合作  |</a></li>
+        <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/77304.html">免责声明  |</a></li>
+        <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/77303.html">预约服务条款  |</a></li>
+        <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/77272.html">会员服务条款  |</a></li>
+        <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/595.html">关于我们  |</a></li>
+        <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/613.html">诚聘英才  |</a></li>
+        <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/593.html">联系我们  |</a></li>
+        <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/591.html">投诉建议  |</a></li>
+        <li><a rel="nofollow" href="//www.jiabasha.com/sitemap/">网站地图  |</a></li>
+        <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/flinks.html">友情链接  |</a></li>
+        <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/77306.html">隐私保护  |</a></li>
+        <li><a rel="nofollow" href="//tj.jiehun.com.cn/help/308529.html">内容版权声明协议  |</a></li>
+        <li><a rel="nofollow" href="//tj.jiehun.com.cn/my/store/apply">申请店铺</a></li>
       </ul>
       <p>主办单位：中国婚博会</p>
       <p>2008-2017 www.jiehun.com.cn All rights reserved.</p>
@@ -129,33 +134,71 @@
     width: 1200px;
     margin: 0 auto;
   }
-  ol,ul,li{
+  ol,ul,li,h3{
     list-style:none;
     padding:0;
     margin:0;
   }
-  
+  b{
+    font-weight:100;
+  }
 .top-banner {
   width: 100%;
   min-width: 1200px;
-  height: 600px;
+  height: 797px;
   overflow: hidden;
   position: relative;
 }
 
 .top-banner .top-banner-bg {
   position: absolute;
-  left: 50%;
-  margin-left: -960px;
+  left: 0;
   top: 0;
+  background:url(../../assets/phone.png) no-repeat center;
+  background-size:1920px 732px;
+  width:100%;
+  height:732px;
 }
 
 .top-banner .banner-con {
   width: 1140px;
-  height: 600px;
+  height: 732px;
   margin: 0 auto;
   position: relative;
   z-index: 99;
+  &>div{
+    padding:310px 0 0 570px;
+    overflow: hidden;
+    div.erweima{
+      width:160px;
+      height:160px;
+      float:left;
+      background:url(http://s.hzjiehun.bid/static-branch-dmp/dmpLogin/static/images/weix.jpg) no-repeat center;
+      background-size:100%;
+    }
+    div.down{
+      float:left;
+      margin-left:55px;
+      width:188px;
+      a{
+        display:flex;
+        justify-content:center;
+        height:56px;
+        line-height:56px;
+        background: #121922;
+        border-radius: 100px;
+        font-size: 16px;
+        color: #FFFFFF;
+        text-align:center;
+        text-decoration: none;
+        vertical-align: middle;
+        b{
+          font-size:22px;
+          padding-right:6px;
+        }
+      }
+    }
+  }
 }
   /* 底部样式 */
 .foot {

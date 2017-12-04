@@ -60,7 +60,7 @@
                 </el-col>
                 <el-col :span="3"><p>￥{{detail.unitPrice}}</p></el-col>
                 <el-col :span="3">{{detail.orderNum}}</el-col>
-                <el-col :span="4">{{detail.productType}}</el-col>
+                <el-col :span="4">{{switchOrderType(detail.productType)}}</el-col>
                 <el-col :span="4">{{switchStatus(detail.orderProductStatus)}}</el-col>
                 <el-col :span="5">
                     <div class="order-price">￥{{detail.unitPrice * detail.orderNum}}</div>
@@ -139,7 +139,7 @@
                 }
                 this.detail.orderProductAfterProof = this.detail.orderProductAfterProof.split(',')
                 for(let i=0; i<this.detail.proPri.length; i++) {
-                    this.detail.priMoney += this.detail.proPri[i].count
+                    this.detail.priMoney += Number(this.detail.proPri[i].count)
                 }
                 this.serviceIsOk = this.detail.orderProductAfterStatus == 1 ? false : true; 
             })
@@ -172,6 +172,17 @@
                 }
                 return st;
             },
+            /*订单类型转换*/
+            switchOrderType(a){
+                let st = ''
+                switch(a) {
+                    case 1:st = '全款订单'; break;
+                    case 2:st = '定金订单';break;
+                    case 3:st = '点券订单';break;
+                    case 4:st = '现金券订单';break;
+                }
+                return st;
+            },
             /*发货方式转换*/
             changeType() {
                 var self = this;
@@ -193,7 +204,8 @@
                 postAfter(qs.stringify(params)).then(res => {
                     if(res.data.message == '成功'){
                         self.detail.orderProductAfterStatus = 2;
-                        self.detail.serviceIsOk = true;
+                        self.detail.orderProductAfterStoreRemark = self.serviceText;
+                        self.serviceIsOk = true;
                         this.$message({
                             message: '售后提交成功，请等待审核',
                             type: 'success'

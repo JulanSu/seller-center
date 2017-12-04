@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const newAxios = axios.create({
-    headers: { 'X-Requested-With': 'ajax' }
+   headers: { 'X-Requested-With': 'ajax' }
 });
 
 newAxios.interceptors.response.use(function (res) {
@@ -10,7 +10,7 @@ newAxios.interceptors.response.use(function (res) {
     }
     return res;
 }, function (error) {
-    console.log(res)
+    console.log(error)
 });
 
 export default newAxios;

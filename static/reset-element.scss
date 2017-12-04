@@ -14,7 +14,6 @@
 	}
 }
 
-
 .el-form-item__label {
 	color: #666;
 	font-weight: 400;
@@ -30,4 +29,28 @@
 }
 .el-table, .el-table__body-wrapper {
 	overflow: initial;
+}
+.el-checkbox__label {
+	font-weight: 400
+}
+
+.el-message-box {
+	border-radius: 0;
+	.el-message-box__title {
+		font-size: 12px;
+		font-weight: 400;
+	}
+	.el-message-box__close {
+		font-size: 12px;
+	}
+}
+.el-scrollbar {
+	.el-select-dropdown__item.hover, .el-select-dropdown__item:hover{
+		background-color: #5CD3BF;
+		color: #fff
+	}	
+	.el-select-dropdown__item.selected {
+		background-color: #5CD3BF;
+		color: #fff
+	}
 }

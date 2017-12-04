@@ -259,20 +259,6 @@ export default {
 
 	methods: {
 		
-		handleScroll () {
-			var arr=document.getElementsByClassName("tangram-suggestion-main");
-
-			for(var i=0;i<arr.length;i++){
-				arr[i].style.display="none";
-			}
-		},
-		fillOut(key){
-			if(this.biaoji[key]!=this.ruleForm[key]){
-				this.flag=true;
-			}else{
-				this.flag=false;
-			}
-		},
 		//判断店铺名是否重名
 		findName(){
 			if(!(this.ruleForm.name)||(this.ruleForm.name==this.csname)){
@@ -288,6 +274,22 @@ export default {
 	        	}
 	        });
 		},
+		fillOut(key){
+			if(this.biaoji[key]!=this.ruleForm[key]){
+				this.flag=true;
+			}else{
+				this.flag=false;
+			}
+		},
+		handleScroll () {
+			var arr=document.getElementsByClassName("tangram-suggestion-main");
+
+			for(var i=0;i<arr.length;i++){
+				arr[i].style.display="none";
+			}
+		},
+		
+		
 		
 		//店铺logo上传成功之后
 		sucpic1(url){
@@ -297,7 +299,6 @@ export default {
 		sucpic2(url){
 			this.ruleForm.broadwiseLogo=url;
 		},
-
 		//获取店铺信息
 	    getShop() {
 	        let para = {
@@ -328,7 +329,6 @@ export default {
 	        	}
 	        	
 	        }).catch((res)=> {
-		          	console.log("cw")
 		    });
 	    },
 	    /*将取到的地址信息分割传到三级联动组件上面*/
@@ -441,7 +441,6 @@ export default {
 			        		this.$message.error(res.data.message);
 			        	}
 			        }).catch((res)=> {
-				        this.$message.error('接口建立连接失败');
 				    });
 		        }else {
 		        	return false;

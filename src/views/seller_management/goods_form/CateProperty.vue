@@ -10,14 +10,14 @@
             :key="item.catePropertyParentId"
             :prop="'list.'+index+'.values[0].value'"
             :rules="{required: true, message: item.catePropertyName + '不能为空！', trigger: 'blur'}">
-            <el-select v-model="item.values[0].value" :placeholder="'请选择'+item.catePropertyName">
+            <el-select v-model="item.values[0].value" :placeholder="'请选择'+item.catePropertyName" @change="onChangeEmit">
               <template v-for="option in item.options">  
                 <el-option :label="option.catePropertyValue" :value="option.catePropertyValue" :key="option.itemPropertyValuesId"></el-option>
               </template>
             </el-select>
           </el-form-item>
           <el-form-item v-else :label="item.catePropertyName">
-            <el-select v-model="item.values[0].value" :placeholder="'请选择'+item.catePropertyName">
+            <el-select v-model="item.values[0].value" :placeholder="'请选择'+item.catePropertyName" @change="onChangeEmit">
               <template v-for="option in item.options">  
                 <el-option ::label="option.catePropertyValue" :value="option.catePropertyValue" :key="option.itemPropertyValuesId"></el-option>
               </template>
@@ -33,7 +33,7 @@
             :prop="'list.'+index+'.values'"
             :rules="{required: true, type: 'array', message:item.catePropertyName + '不能为空！', trigger: 'blur'}">
             
-            <el-checkbox-group v-model="item.values">
+            <el-checkbox-group v-model="item.values" @change="onChangeEmit">
               <template v-for="(option, index) in item.options">
                 <el-checkbox :key="option.catePropertyValue" :label="option.catePropertyValue"></el-checkbox>
               </template>
@@ -41,7 +41,7 @@
           </el-form-item>
 
           <el-form-item v-else :label="item.catePropertyName">
-            <el-checkbox-group v-model="item.values">
+            <el-checkbox-group v-model="item.values" @change="onChangeEmit">
               <template v-for="(option, index) in item.options">
                 <el-checkbox :key="option.catePropertyValue" :label="option.catePropertyValue"></el-checkbox>
               </template>
@@ -57,7 +57,7 @@
                   :key="item.catePropertyParentId"
                   :prop="'list.'+index+'.values[0].value'"
                   :rules="{required: true, message:item.catePropertyName + '不能为空！', trigger: 'blur'}">
-                    <el-input  v-model="item.values[0].value" :value="item.values[0].value" placeholder="自定义内容" @change="" :maxlength="20">
+                    <el-input @change="onChangeEmit"  v-model="item.values[0].value" :value="item.values[0].value" placeholder="自定义内容" :maxlength="20">
                       <template slot="append" v-if="item.catePropertyUnit">
                         <span>{{item.catePropertyUnit}}</span>
                       </template>
@@ -71,7 +71,7 @@
                   :prop="'list.'+index+'.values[0].value'"
                   :rules="[
                   {required: true, message:item.catePropertyName + '不能为空！', trigger: 'change, blur'}]">
-                    <el-input  v-model="item.values[0].value" :value="item.values[0].value" placeholder="自定义内容" @change="" :maxlength="20">
+                    <el-input @change="onChangeEmit"  v-model="item.values[0].value" :value="item.values[0].value" placeholder="自定义内容" :maxlength="20">
                       <template slot="append" v-if="item.catePropertyUnit">
                         <span>{{item.catePropertyUnit}}</span>
                       </template>
@@ -101,7 +101,7 @@
                 <el-form-item 
                   :label="item.catePropertyName" 
                   :key="item.catePropertyParentId">
-                    <el-input  v-model="item.values[0].value" :value="item.values[0].value" placeholder="自定义内容" @change="" :maxlength="20">
+                    <el-input  v-model="item.values[0].value" :value="item.values[0].value" placeholder="自定义内容" @change="onChangeEmit" :maxlength="20">
                       <template slot="append" v-if="item.catePropertyUnit">
                         <span>{{item.catePropertyUnit}}</span>
                       </template>
@@ -112,7 +112,7 @@
               <template v-if="item.catePropertyInputLimit == 1">
                 <el-form-item 
                   :label="item.catePropertyName">
-                    <el-input  v-model="item.values[0].value" :value="item.values[0].value" placeholder="自定义内容" @change="" :maxlength="20">
+                    <el-input  v-model="item.values[0].value" :value="item.values[0].value" placeholder="自定义内容" @change="onChangeEmit" :maxlength="20">
                       <template slot="append" v-if="item.catePropertyUnit">
                         <span>{{item.catePropertyUnit}}</span>
                       </template>
@@ -146,7 +146,7 @@
                 :key="item.catePropertyParentId"
                 :prop="'list.'+index+'.values[0].value'"
                 :rules="{required: true, message:item.catePropertyName + '不能为空！', trigger: 'blur'}">
-                  <el-input  v-model="item.values[0].value" :value="item.values[0].value" placeholder="自定义内容" @change="" :maxlength="20">
+                  <el-input  v-model="item.values[0].value" :value="item.values[0].value" placeholder="自定义内容" @change="onChangeEmit" :maxlength="20">
                     <template slot="append" v-if="item.catePropertyUnit">
                       <span>{{item.catePropertyUnit}}</span>
                     </template>
@@ -156,7 +156,7 @@
                 :label="item.catePropertyName" 
                 v-else
                 :key="item.catePropertyParentId">
-                  <el-input  v-model="item.values[0].value" :value="item.values[0].value" placeholder="自定义内容" @change="" :maxlength="20">
+                  <el-input  v-model="item.values[0].value" :value="item.values[0].value" placeholder="自定义内容" @change="onChangeEmit" :maxlength="20">
                     <template slot="append" v-if="item.catePropertyUnit">
                       <span>{{item.catePropertyUnit}}</span>
                     </template>
@@ -172,7 +172,7 @@
                 :prop="'list.'+index+'.values[0].value'"
                 :rules="[
                 {required: true, message:item.catePropertyName + '不能为空！', trigger: 'change, blur'}]">
-                  <el-input  v-model="item.values[0].value" :value="item.values[0].value" placeholder="自定义内容" @change="" :maxlength="20">
+                  <el-input  v-model="item.values[0].value" :value="item.values[0].value" placeholder="自定义内容" @change="onChangeEmit" :maxlength="20">
                     <template slot="append" v-if="item.catePropertyUnit">
                       <span>{{item.catePropertyUnit}}</span>
                     </template>
@@ -192,7 +192,7 @@
               <el-form-item 
                 :label="item.catePropertyName" 
                 v-else>
-                  <el-input  v-model="item.values[0].value" :value="item.values[0].value" placeholder="自定义内容" @change="" :maxlength="20">
+                  <el-input  v-model="item.values[0].value" :value="item.values[0].value" placeholder="自定义内容" @change="onChangeEmit" :maxlength="20">
                     <template slot="append" v-if="item.catePropertyUnit">
                       <span>{{item.catePropertyUnit}}</span>
                     </template>
@@ -275,8 +275,20 @@
       let catePropertyData = this.catePropertyData.concat()
       this.catePropertyForm.list = this.initCatePropertyFormData(catePropertyData)
       this.catePropertyForm.map = this.initCatePropertyFormMap(catePropertyData)
+
+    },
+    mounted(){
+      if(this.catePropertyData.length)
+        this.onChangeEmit()
     },
     methods: {
+      onChangeEmit(){
+        let self = this
+        let fdata = self.formartSubmitData()
+        let sdata = self.getSubmitData(fdata)
+        let results = self.formartValues(sdata)
+        self.$emit('input', results)
+      },
       validateDate(rule, value, callback){
         if(!value) {
           callback(new Error('日期不能为空！'))
@@ -303,6 +315,7 @@
             obj.value = dataStr
           }
         }
+        this.onChangeEmit()
       },
       /**
        * submitForm 表单校验，校验通过后向父组件传递参数

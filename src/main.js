@@ -61,7 +61,7 @@ router.beforeEach((to, from, next) => {
   // }
   next()
 })*/
-router.beforeEach((to, from, next) => {
+/*router.beforeEach((to, from, next) => {
   if(localStorage.getItem('merchant')==1){//控制入驻成功后刷新页面
     localStorage.setItem("merchant",0);
     next({ path: '/store/message'}); // 确保一定要调用 next()
@@ -69,7 +69,7 @@ router.beforeEach((to, from, next) => {
   
   
   next(); // 确保一定要调用 next()
-})
+})*/
 
 //router.afterEach(transition => {
 //NProgress.done();

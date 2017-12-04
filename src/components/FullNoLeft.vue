@@ -42,9 +42,6 @@
         }
     },
     watch: {
-     /*'$route' (to, from) {
-        console.log(this.$route.path)
-     }*/
    },
     methods: {
       //退出登录
@@ -71,12 +68,12 @@
     },
     mounted() {
 
-      var user = sessionStorage.getItem('user');
+      /*var user = sessionStorage.getItem('user');
       if (user) {
         user = JSON.parse(user);
         this.sysUserName = user.name || '';
         this.sysUserAvatar = user.avatar || '';
-      }
+      }*/
 
     }
   }

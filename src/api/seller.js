@@ -5,6 +5,12 @@ import axios from './newAxios';
 // let base = 'http://shop.dmp.hzjiehun.bid'
 const base = window.config ? window.config.apiHost : '';
 
+
+//商品列表编辑商品
+export const getCheckeEditStatus = params => {
+	return axios.get(`${base}/product/checkedit`, { params: params })
+}
+
 //获取商品列表POST 
 export const getStoreCategory = params => {
 	return axios.get(`${base}/product/category/store`, { params: params })

@@ -294,31 +294,34 @@
         }
         $color: #45cdb6;
         box-sizing: border-box !important;
+        margin-top: -10px;
         p{
             margin: 0;
             padding: 0;
         }
         .w180{
             width: 180px;
+            margin-top: 10px;
         }
         .w120{
             width:120px;
+            margin-top: 10px;            
         }
         .search-row{
-            >div:nth-of-type(n+2){
-                margin-left: 10px;
+            >div{
+                margin-right: 10px;
             }
             >span{
                 font-size:14px;
                 color:#666666;
-                margin-left: 10px;
+                margin-right: 10px;
             }
             .search-btn{
-                margin-left: 40px;
                 width: 60px;
                 background: $color;
                 color: #fff;
                 border: none;
+                margin-top: 10px;
                 span{
                     color: #fff;
                 }

@@ -200,10 +200,11 @@
                 p{
                     display:inline;
                     line-height: 150%;
+                    color: #8c959f
                 }
                 a{
                     color: #41cac0;
-                    font-size: 13pt;
+                    font-size: 14px;
                 }
             }
         }
